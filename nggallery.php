@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: NextGEN Gallery
-Plugin URI: http://alexrabe.boelinger.com/
+Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta). At the moment onyl poor Web1.0 :-(
 Author: Alex Rabe
 Version: 0.33a
