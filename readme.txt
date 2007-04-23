@@ -22,8 +22,8 @@ Features:
 * Multiple CSS Stylesheet : Use a nice shadow effect for your thumbnails with your own CSS file 
 * Slideshow : Full integrated flash slideshow
 
+
 PLEASE NOTE !! This gallery plugin is still in development, it can be contain many bugs !
-More functions will be added very soon.
 
 == Credits ==
 
