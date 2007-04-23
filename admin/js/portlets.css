@@ -1,0 +1,65 @@
+.groupItem
+{
+	background-color:#FBFBFB;
+	border:1px solid #CCCCCC;
+	cursor:move;
+	display:block;
+	line-height:75px;
+	cursor: move;
+	margin: 0 0 10px;
+	width: 390px;
+}
+
+.innerhandle {
+	border-color:#F2F2F2 rgb(232, 232, 232) rgb(232, 232, 232) rgb(242, 242, 242);
+	border-style:solid;
+	border-width:1px;
+	display:block;
+}
+
+.itemContent {
+	padding: 5px;
+}
+
+.itemContent p {
+	border: 0;  
+	margin: 0;  
+	padding: 0;
+}
+
+.inlinepicture
+{
+	float:left;
+	display:inline;
+	margin:0pt;
+	padding:0pt 3px 1px;
+}
+
+.sort_placeholder
+{
+	border:1px dashed #bba !important;
+	background: #F9F9F9;
+}
+
+#galleryContainer {
+	background-color:#F0F8FF;
+	border:1px solid #BBBBBB;
+	margin:10px 440px 10px 10px;
+	padding:0px 10px 10px 10px;
+	height:500px;
+}
+
+#selectContainer {
+	float:right;
+	background:#F0F8FF none repeat scroll 0%;
+	border:1px solid #BBBBBB;
+	margin:0pt 10px 10px;
+	padding:0px 5px 5px 10px;
+	width:395px;
+}
+
+#galleryContainer h3, #selectContainer h3 {
+	color:#333333;
+	text-align:center;
+	line-height:25px;	
+}

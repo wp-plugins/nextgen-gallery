@@ -1,0 +1,168 @@
+/*
+CSS Name: Default Style
+Description: NextGEN Default Gallery Stylesheet
+Author: Alex Rabe
+Version: 1.000
+   
+This is a template stylesheet that can be used with NextGEN Gallery. I tested the
+styles with a default theme Kubrick. Modify it when your theme struggle with it,
+it's only a template design
+
+*/
+
+/* ----------- Album Styles Extend -------------*/
+
+.ngg-albumoverview {
+	margin-top: 10px;
+	width: 100%;
+	clear:both; 
+	display:block !important;
+}
+
+.ngg-album {
+	height: 130px;
+	padding: 5px;
+	margin-bottom: 5px;
+	border: 1px solid #cccccc;
+}
+
+.ngg-albumtitle {
+	text-align: left;
+ 	font-weight: bold;
+	margin:0px;
+	padding:0px;
+	font-size: 1.4em;
+	margin-bottom: 10px;
+}
+
+.ngg-thumbnail {
+	float: left;
+	margin-right: 12px;
+}
+
+.ngg-thumbnail img {
+	background-color:#FFFFFF;
+	border:1px solid #A9A9A9;
+	margin:4px 0px 4px 5px;
+	padding:4px;
+	position:relative;
+	width:100px;
+	height:75px;
+}
+
+.ngg-thumbnail img:hover {
+	background-color: #A9A9A9;
+}
+
+.ngg-description {
+	text-align: left;
+}
+
+/* ----------- Album Styles Compact -------------*/
+
+.ngg-album-compact {
+	float:left;
+	height:180px;
+	padding-right:6px !important;
+	margin:0px !important; 
+	text-align:left;
+	width:120px;	
+}
+
+.ngg-album-compactbox {
+	background:transparent url(albumset.gif) no-repeat scroll 0%;
+	height:86px;
+	margin:0pt 0pt 6px !important;
+	padding:12px 0pt 0pt 7px !important;
+	width:120px;
+}
+
+
+.ngg-album-compactbox .Thumb {
+	border:1px solid #000000;
+	margin:0px !important;
+	padding:0px !important;
+}
+
+.ngg-album-compact h4 {
+	font-size:15px;
+	font-weight:bold;
+	margin-bottom:0px;
+	margin-top:0px;
+	width:110px;
+}
+
+.ngg-album-compact p {
+	font-size:11px;
+	margin-top:2px;
+}
+
+/* ----------- Gallery style -------------*/
+
+.ngg-galleryoverview {
+	margin-top: 10px;
+	width: 100%;
+	clear:both; 
+	display:block !important;
+}
+
+.ngg-gallery-thumbnail-box {
+	float: left;
+}
+
+.ngg-gallery-thumbnail {
+	float: left;
+	margin-right: 5px;
+}
+
+.ngg-gallery-thumbnail img {
+	background-color:#FFFFFF;
+	border:1px solid #A9A9A9;
+	display:block;  
+	margin:4px 0px 4px 5px;
+	padding:4px;
+	position:relative;
+}
+
+.ngg-gallery-thumbnail img:hover {
+	background-color: #A9A9A9;
+} 
+
+/* ----------- Gallery navigation -------------*/
+
+.ngg-navigation {
+	font-size:0.9em !important;
+	clear:both !important;
+	display:block !important;
+	padding-top:15px;
+	text-align:center;
+	
+}
+
+.ngg-navigation span {
+	font-weight:bold;
+	margin:0pt 6px;
+}
+
+.ngg-navigation a.page-numbers, a.next, a.prev {
+	border:1px solid #DDDDDD;
+	margin-right:3px;
+	padding:3px 7px;
+}
+
+.ngg-navigation a.page-numbers:hover, a.next:hover, a.prev:hover {
+	background-color: #0066CC;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+/* ----------- Slideshow -------------*/
+.slideshow {
+	margin-left: auto; 
+	margin-right: auto;
+	text-align:center;	
+}
+
+.slideshowlink {
+	
+}
