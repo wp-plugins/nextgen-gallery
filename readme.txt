@@ -68,3 +68,20 @@ That's it ... Have fun
 2. Screenshot Album Selection
 2. Screenshot Thickbox Effect
 2. Screenshot Watermark function
+
+== Usage ==
+
+When writing a page/post, you can use the follow tags:
+
+For a slideshow : [slideshow=id,width,height]
+Example : http://nextgen.boelinger.com/slideshow/
+
+For a album : [album=id,extend] or [album=id,compact]
+Example : http://nextgen.boelinger.com/album/
+
+For a gallery : [gallery=id]
+Example : http://nextgen.boelinger.com/gallery-page/
+
+For a single picture : [singlepic=id,width,height,mode]
+Example : http://nextgen.boelinger.com/singlepic/
+
