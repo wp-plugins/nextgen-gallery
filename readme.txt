@@ -1,7 +1,7 @@
 === NextGEN Gallery ===
 Contributors: Alex Rabe
 Donate link: http://alexrabe.boelinger.com/?page_id=80
-Tags: flash, swf, swfobject, video, youtube, media, mp3, images, admin
+Tags: flash, swf, slideshow, images, gallery, media, admin
 Requires at least: 2.1.3
 Tested up to: 2.2
 Stable tag: 0.33
@@ -49,8 +49,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 1. 	Upload the files to wp-content/plugins/nggallery
 
-2.  Go to the web page http://www.jeroenwijering.com/?item=Flash_Image_Rotator
-	and download the Flash Media Player and unpack the conent
+2.  Go to the web page http://www.jeroenwijering.com/ and download the Flash Media Player and unpack the conent
 	
 3.	Upload the file imagerotator.swf to the nggallery folder
 
@@ -58,7 +57,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 5.	Add a gallery and upload some images
 
-7. 	Go to your post an enter the tag [Gallery=ID] or [Slideshow=ID].
+6. 	Go to your post an enter the tag [Gallery=ID] or [Slideshow=ID].
 
 That's it ... Have fun
 
