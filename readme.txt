@@ -69,7 +69,7 @@ That's it ... Have fun
 2. Screenshot Thickbox Effect
 2. Screenshot Watermark function
 
-== Usage ==
+== FAQ ==
 
 When writing a page/post, you can use the follow tags:
 
