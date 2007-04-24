@@ -50,7 +50,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 1. 	Upload the files to wp-content/plugins/nggallery
 
-2.  Go to the web page http://www.jeroenwijering.com/ and download the Flash Media Player and unpack the conent
+2.  Go to the web page http://www.jeroenwijering.com/ and download the Flash Image Rotator and unpack the conent
 	
 3.	Upload the file imagerotator.swf to the nggallery folder
 
@@ -69,7 +69,8 @@ That's it ... Have fun
 2. Screenshot Thickbox Effect
 2. Screenshot Watermark function
 
-== FAQ ==
+== Frequently Asked Questions ==
+
 
 When writing a page/post, you can use the follow tags:
 
