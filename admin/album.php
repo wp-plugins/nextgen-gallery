@@ -80,9 +80,7 @@ function serialize(s)
 };
 </script>
 
-<style type="text/css" media="all">
-@import 'http://localhost/saegolf/wp-content/plugins/nggallery/admin/js/portlets.css';
-</style>
+<style type="text/css" media="all">@import '<?php echo NGGALLERY_URLPATH ?>admin/js/portlets.css';</style>
 <div class="wrap">
 	<h2><?php _e('Manage Albums', 'nggallery') ?></h2>
 	<form id="selectalbum" method="POST" onsubmit="serialize(galleryContainer)">
