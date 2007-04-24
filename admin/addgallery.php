@@ -209,6 +209,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 		if (is_dir($myabspath.$nggpath))return '<font color="red">'.__('Directory', 'nggallery').' <strong>'.$nggpath.'</strong> '.__('already exists!', 'nggallery').'</font>';	
 
+		//TODO: Set Permission and Check for Safe_Mode
 		// create new directories
 		$result = @mkdir ($myabspath.$nggpath,0777);
 		if (!$result) return  ('<font color="red">'.__('Unable to create directory ', 'nggallery').$nggpath.'!</font>');

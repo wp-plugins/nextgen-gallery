@@ -50,6 +50,7 @@ function nggallery_admin_manage_album()  {
 <script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/jquery.js"></script>
 <script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/interface.js"></script>
 <style type="text/css" media="all">@import "<?php echo NGGALLERY_URLPATH ?>css/nggallery.css";</style>
+<style type="text/css" media="all">@import "<?php echo NGGALLERY_URLPATH ?>admin/js/portlets.css";</style>
 <script type="text/javascript">
 
 $(document).ready(
@@ -79,8 +80,6 @@ function serialize(s)
 
 };
 </script>
-
-<style type="text/css" media="all">@import '<?php echo NGGALLERY_URLPATH ?>admin/js/portlets.css';</style>
 <div class="wrap">
 	<h2><?php _e('Manage Albums', 'nggallery') ?></h2>
 	<form id="selectalbum" method="POST" onsubmit="serialize(galleryContainer)">

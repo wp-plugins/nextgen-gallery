@@ -160,7 +160,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<div id="thumbnails" style="display:none">
 			<h2><?php _e('Thumbnail settings','nggallery'); ?></h2>
 			<form name="thumbnailsettings" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#thumbnails-slider'; ?>" >
-			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbcrop,thumbquality,thumbResampleMode" />
+			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbfix,thumbcrop,thumbquality,thumbResampleMode" />
 			<fieldset class="options"> 
 				<table class="optiontable editform">
 					<tr valign="top">
@@ -169,9 +169,14 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<?php _e('This values are maxium values ','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
+						<th align="left"><?php _e('Set fix dimension','nggallery') ?></th>
+						<td><input type="checkbox" name="thumbfix" value="1" <?php checked('1', $ngg_options[thumbfix]); ?> /><br />
+						<?php _e('Ignore the aspect ratio, no portrait thumbnails','nggallery') ?></td>
+					</tr>
+					<tr valign="top">
 						<th align="left"><?php _e('Crop thumbnail from image','nggallery') ?></th>
 						<td><input type="checkbox" name="thumbcrop" value="1" <?php checked('1', $ngg_options[thumbcrop]); ?> /><br />
-						<?php _e('Create square image from the center','nggallery') ?></td>
+						<?php _e('Create square thumbnails from the center','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Thumbnail quality','nggallery') ?></th>
