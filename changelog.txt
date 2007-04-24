@@ -8,8 +8,8 @@ V0.34 - 24.04.2006
 - Add language file file
 
 V0.33 - 23.04.2006
-- Overview Page
-- Core function
-- Slideshow
-
+-First alpha release
+-Album management
+-Slideshow
+-Thickbox support
 
