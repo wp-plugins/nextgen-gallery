@@ -101,7 +101,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<div class="wrap" style="text-align: center">
 		<div id="tabs">
 			<a href="#addgallery-slider"><?php _e('Add new gallery', 'nggallery') ;?></a> -
+			<?php if (!SAFE_MODE) { ?>
 			<a href="#zipupload-slider"><?php _e('Upload a Zip-File', 'nggallery') ;?></a> -
+			<?php } ?>
 			<a href="#importfolder-slider"><?php _e('Import image folder', 'nggallery') ;?></a> -
 			<a href="#uploadimage-slider"><?php _e('Upload Images', 'nggallery') ;?></a>
 		</div>
@@ -117,7 +119,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<tr valign="top"> 
 					<th scope="row"><?php _e('New Gallery', 'nggallery') ;?>:</th> 
 					<td><input type="text" size="35" name="galleryname" value="" /><br />
-					<?php _e('Create a new , empty gallery', 'nggallery') ;?><br />
+					<?php _e('Create a new , empty gallery below the folder', 'nggallery') ;?>  <strong><?php echo $defaultpath ?></strong><br />
 					<i>( <?php _e('Allowed characters for file and folder names are', 'nggallery') ;?>: a-z, A-Z, 0-9, -, _ )</i></td>
 				</tr>
 				</table>
@@ -205,23 +207,31 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		$new_pathname = preg_replace('|[^a-z0-9-]|i', '', $new_pathname);
 		
 		if (empty($new_pathname)) return '<font color="red">'.__('No valid gallery name!', 'nggallery'). '</font>';			
+		if ( substr(decoct(@fileperms($myabspath.$defaultpath)),1) != '0777' )
+			return '<font color="red">'.__('Directory', 'nggallery').' <strong>'.$defaultpath.'</strong> '.__('didn\'t have the permissions 777!', 'nggallery').'</font>';
+
 		$nggpath = $defaultpath.$new_pathname;
 
-		if (is_dir($myabspath.$nggpath))return '<font color="red">'.__('Directory', 'nggallery').' <strong>'.$nggpath.'</strong> '.__('already exists!', 'nggallery').'</font>';	
+		if (is_dir($myabspath.$nggpath))
+			return '<font color="red">'.__('Directory', 'nggallery').' <strong>'.$nggpath.'</strong> '.__('already exists!', 'nggallery').'</font>';	
 
-		//TODO: Set Permission and Check for Safe_Mode
 		// create new directories
-		$result = @mkdir ($myabspath.$nggpath,0777);
-		if (!$result) return  ('<font color="red">'.__('Unable to create directory ', 'nggallery').$nggpath.'!</font>');
-		$result = @mkdir ($myabspath.$nggpath.'/thumbs',0777);
-		if (!$result) return ('<font color="red">'.__('Unable to create directory ', 'nggallery').$nggpath.'/thumbs !</font>');
-		
+		if (!SAFE_MODE) {
+			if (!@mkdir ($myabspath.$nggpath,0777)) return  ('<font color="red">'.__('Unable to create directory ', 'nggallery').$nggpath.'!</font>');
+			if (!@chmod ($myabspath.$nggpath,0777)) return  ('<font color="red">'.__('Unable to set directory permissions ', 'nggallery').$nggpath.'!</font>');
+			if (!@mkdir ($myabspath.$nggpath.'/thumbs',0777)) return ('<font color="red">'.__('Unable to create directory ', 'nggallery').$nggpath.'/thumbs !</font>');
+			if (!@chmod ($myabspath.$nggpath.'/thumbs',0777)) return ('<font color="red">'.__('Unable to set directory permissions', 'nggallery').$nggpath.'/thumbs !</font>');
+		} else {
+			$safemode  = '<br /><font color="green">'.__('The server Safe-Mode is on !', 'nggallery');	
+			$safemode .= '<br />'.__('Please create directory ', 'nggallery').'<strong>'.$nggpath.'</strong> ';	
+			$safemode .= __('and the thumbnails directory ', 'nggallery').'<strong>'.$nggpath.'/thumbs</strong> '.__('with permission 777 manually !', 'nggallery').'</font>';	
+		}
 		$result=$wpdb->get_var("SELECT name FROM $wpdb->nggallery WHERE name = '$galleryname' ");
 		if ($result) {
 			return '<font color="red">'.__('Gallery', 'nggallery').' <strong>'.$newgallery.'</strong> '.__('already exists', 'nggallery').'</font>';			
 		} else { 
 			$result = $wpdb->query("INSERT INTO $wpdb->nggallery (name, path) VALUES ('$galleryname', '$nggpath') ");
-			if ($result) return '<font color="green">'.__('Gallery successfully created!','nggallery').'</font>';
+			if ($result) return '<font color="green">'.__('Gallery successfully created!','nggallery').'</font>'.$safemode;
 		} 
 	}
 	
@@ -405,10 +415,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		if (!is_dir($newfolder)) {
 			// create new directories
-			$result = @mkdir ($newfolder,0777);
-			if (!$result) return ('<font color="red">'.__('Unable to create directory ', 'nggallery').$newfolder.'!</font>');
-			$result = @mkdir ($newfolder.'/thumbs',0777);
-			if (!$result) return ('<font color="red">'.__('Unable to create directory ', 'nggallery').$newfolder.'/thumbs !</font>');
+			if (!@mkdir ($newfolder, 0777)) return ('<font color="red">'.__('Unable to create directory ', 'nggallery').$newfolder.'!</font>');
+			if (!@chmod ($newfolder, 0777)) return ('<font color="red">'.__('Unable to set directory permissions ', 'nggallery').$newfolder.'!</font>');
+			if (!@mkdir ($newfolder.'/thumbs', 0777)) return ('<font color="red">'.__('Unable to create directory ', 'nggallery').$newfolder.'/thumbs !</font>');
+			if (!@chmod ($newfolder.'/thumbs', 0777)) return ('<font color="red">'.__('Unable to set directory permissions ', 'nggallery').$newfolder.'/thumbs !</font>');
 		}
 		else {
 			return '<font color="red">'.__('Directory already exists, please rename zip file', 'nggallery').'!</font>';	
@@ -450,9 +460,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		} 
 		
 		$dest_file = WINABSPATH.$gallerypath."/".$filename;
-
-		$result = @move_uploaded_file($_FILES['imagefiles']['tmp_name'], $dest_file); // save temp file to gallery
-		if (!$result) return '<font color="red">'.__('Error, the file could not moved to : ','nggallery').$dest_file.'</font>';
+		
+		// save temp file to gallery
+		if (!@move_uploaded_file($_FILES['imagefiles']['tmp_name'], $dest_file)) return '<font color="red">'.__('Error, the file could not moved to : ','nggallery').$dest_file.'</font>';
+		if (!@chmod ($dest_file, 0666)) return '<font color="red">'.__('Error, the file permissions could not set','nggallery').'</font>';
 
 		// Images must be an array
 		$imageslist = array();

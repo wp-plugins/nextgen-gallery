@@ -1,6 +1,17 @@
 NextGEN Gallery
 by Alex Rabe
 
+V0.35 - 25.04.2006
+- Remove get_settings
+- Folder name can be flexible
+- Correction for Safe-Mode ON
+- New option : Fullsize pic for Singlepic mode
+- New option : Select show order
+- Add Check for WP2.1
+- Bugfix for sort order
+- Check for permission for default folder
+- Set Default '0' for table album.sortorder
+
 V0.34 - 24.04.2006
 - Bugfix for Album
 - Add fix ration setting
@@ -8,8 +19,8 @@ V0.34 - 24.04.2006
 - Add language file file
 
 V0.33 - 23.04.2006
--First alpha release
--Album management
--Slideshow
--Thickbox support
+- Overview Page
+- Core function
+- Slideshow
+
 

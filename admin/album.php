@@ -20,7 +20,7 @@ if ($_POST['ajax']){
 				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '$serial_sort' WHERE id = $albumid ");
 			}
 		} else {
-			$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '' WHERE id = $albumid ");
+			$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '0' WHERE id = $albumid ");
 		}
 		die; // stop ongoing output
 	} else die;
@@ -32,7 +32,7 @@ function nggallery_admin_manage_album()  {
 	if ($_POST['update']){
 		if ($_POST['newalbum']){ 
 			$newablum = $_POST['newalbum'];
-			$result = $wpdb->query(" INSERT INTO $wpdb->nggalbum (name) VALUES ('$newablum')");
+			$result = $wpdb->query(" INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newablum','0')");
 			if ($result) $messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
 		} else $messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
 	}

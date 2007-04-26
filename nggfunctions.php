@@ -141,10 +141,12 @@ function nggShowGallery($galleryID) {
 	else $thumbcode = str_replace("%GALLERY_NAME%", $act_gallery->name, $thumbcode);
 
 	// set gallery url
-	$folder_url 	= get_settings ('siteurl')."/".$act_gallery->path."/";
-	$thumbnailURL 	= get_settings ('siteurl')."/".$act_gallery->path.ngg_get_thumbnail_folder($act_gallery->path, FALSE);
+	$folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
+	$thumbnailURL 	= get_option ('siteurl')."/".$act_gallery->path.ngg_get_thumbnail_folder($act_gallery->path, FALSE);
 	$thumb_prefix   = ngg_get_thumbnail_prefix($act_gallery->path, FALSE);
 
+	// slideshow first
+	if ( !isset( $_GET['show'] ) AND ($ngg_options[galShowOrder] == 'slide')) $_GET['show'] = slide;
 	// show a slide show
 	if ( isset( $_GET['show'] ) AND ($_GET['show'] == slide) ) {
 		$getvalue['show'] = "gallery";
@@ -162,10 +164,10 @@ function nggShowGallery($galleryID) {
 		else $page = 1; 
 	 	$start = $offset = ( $page - 1 ) * $maxElement;
 	
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude = 0 ORDER BY '$ngg_options[galSort]' ASC LIMIT $start, $maxElement ");
+		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude = 0 ORDER BY $ngg_options[galSort] ASC LIMIT $start, $maxElement ");
 		$total = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude = 0 ");	
 	} else {
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND alttext = 0 ORDER BY '$ngg_options[galSort]' ASC ");	
+		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND alttext = 0 ORDER BY $ngg_options[galSort] ASC ");	
 	}
 	
 	if (is_array($picturelist)) {
@@ -296,16 +298,37 @@ function nggCreateGalleryDiv($galleryID,$mode = "extend") {
 function nggSinglePicture($imageID,$width=250,$height=250,$mode="") {
 	
 	global $wpdb;
+	$ngg_options = get_option('ngg_options');
 
 	// remove the comma
 	$mode = ltrim($mode,',');
 	$width = ltrim($width,',');
 	$height = ltrim($height,',');
+
+	// get picturedata
+	$picture = $wpdb->get_row("SELECT * FROM $wpdb->nggpictures WHERE pid = '$imageID' ");
 	
-	// get alttext
-	$alttext = $wpdb->get_var("SELECT alttext FROM $wpdb->nggpictures WHERE pid = '$imageID' ");
+	// add fullsize picture as link
+	if ($ngg_options[imgSinglePicLink]) {	
+		// get gallery values
+		$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$picture->galleryid' ");
+		
+		// set gallery url
+		$folder_url = get_option ('siteurl')."/".$act_gallery->path."/";
+		
+	    // get the effect code
+		if ($ngg_options[thumbEffect] != "none") $thumbcode = stripslashes($ngg_options[thumbCode]);
+		if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'".$act_gallery->name."'", $thumbcode);
+		else $thumbcode = str_replace("%GALLERY_NAME%", $act_gallery->name, $thumbcode);
+		
+		$link  = '<a href="'.$folder_url.$picture->filename.'" title="'.$picture->alttext.'" '.$thumbcode.' >';
+	}
+
+	$content = $link . '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.$picture->alttext.'" title="'.$picture->alttext.'" />';
+
+	if ($ngg_options[imgSinglePicLink]) $content .= '</a>';
 	
-	return '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.$alttext.'" title="'.$alttext.'" />';
+	return $content;
 }
 
 /**********************************************************/
@@ -321,7 +344,7 @@ function ngg_get_thumbnail_url($imageID){
 	$picturepath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
 
 	// set gallery url
-	$folder_url 	= get_settings ('siteurl')."/".$picturepath.ngg_get_thumbnail_folder($picturepath, FALSE);
+	$folder_url 	= get_option ('siteurl')."/".$picturepath.ngg_get_thumbnail_folder($picturepath, FALSE);
 	$thumb_prefix   = ngg_get_thumbnail_prefix($picturepath, FALSE);
 	$thumbnailURL	= $folder_url.$thumb_prefix.$fileName;
 	
@@ -339,7 +362,7 @@ function ngg_get_image_url($imageID){
 	$picturepath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
 
 	// set gallery url
-	$imageURL 	= get_settings ('siteurl')."/".$picturepath.$fileName;
+	$imageURL 	= get_option ('siteurl')."/".$picturepath.$fileName;
 	
 	return $imageURL;	
 }

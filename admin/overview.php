@@ -163,7 +163,7 @@ function ngg_version_check() {
 		   	
 			$server_version = unserialize($remote);
 			if (is_array($server_version)) {
-				if ( $server_version[0] > NGGVERSION )
+				if ( version_compare($server_version[0], NGGVERSION, '>') )
 				 	return true;
 			} 
 			// come back in 24 hours :-)

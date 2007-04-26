@@ -136,7 +136,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<table class="optiontable editform">
 					<tr valign="top">
 						<th align="left"><?php _e('Gallery path','nggallery') ?></th>
-						<td><input type="text" size="35" name="gallerypath" value="<?php echo $ngg_options[gallerypath]; ?>" /><br />
+						<td><input type="text" size="35" name="gallerypath" value="<?php echo $ngg_options[gallerypath]; ?>" title="TEST" /><br />
 						<?php _e('This is the default path for all galleries','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
@@ -198,7 +198,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<div id="images" style="display:none">
 			<h2><?php _e('Image settings','nggallery'); ?></h2>
 			<form name="imagesettings" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#images-slider'; ?>" >
-			<input type="hidden" name="page_options" value="imgResize,imgWidth,imgHeight,imgQuality,imgResampleMode" />
+			<input type="hidden" name="page_options" value="imgResize,imgWidth,imgHeight,imgQuality,imgResampleMode,imgSinglePicLink" />
 			<fieldset class="options"> 
 				<table class="optiontable">
 					<tr valign="top">
@@ -218,6 +218,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<td><input type="text" size="1" maxlength="1" name="imgResampleMode" value="<?php echo $ngg_options[imgResampleMode]; ?>" /><br />
 						<?php _e('Value between 1-5 (higher value, more CPU load)','nggallery') ?></td>
 					</tr>
+					<tr valign="top">
+						<th align="left"><?php _e('Add link in [singlepic] tag ','nggallery') ?></th>
+						<td></td>
+						<td><input type="checkbox" name="imgSinglePicLink" value="1" <?php checked('1', $ngg_options[imgSinglePicLink]); ?> /><br />
+						<?php _e('Add the fullsize picture as link. Didn\'t support watermark mode on the fly.','nggallery') ?></td>
+					</tr>
 				</table>
 			<div class="submit"><input type="submit" name="updateoption" value="<?php _e('Update') ;?> &raquo;"/></div>
 			</fieldset>	
@@ -229,7 +235,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<div id="gallery" style="display:none">
 			<h2><?php _e('Gallery settings','nggallery'); ?></h2>
 			<form name="galleryform" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#gallery-slider'; ?>" >
-			<input type="hidden" name="page_options" value="galImages,galShowSlide,galTextSlide,galTextGallery,galSort" />
+			<input type="hidden" name="page_options" value="galImages,galShowSlide,galTextSlide,galTextGallery,galShowOrder,galSort" />
 			<fieldset class="options"> 
 				<table class="optiontable">
 					<tr>
@@ -243,6 +249,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 							<input type="text" name="galTextSlide" value="<?php echo $ngg_options[galTextSlide] ?>" size="20" />
 							<input type="text" name="galTextGallery" value="<?php echo $ngg_options[galTextGallery] ?>" size="20" />
 						</td>
+					</tr>
+					<tr>
+						<th valign="top"><?php _e('Show first','nggallery') ?>:</th>
+						<td><label><input name="galShowOrder" type="radio" value="gallery" <?php checked('gallery', $ngg_options[galShowOrder]); ?> /> <?php _e('Thumbnails', 'nggallery') ;?></label><br />
+						<label><input name="galShowOrder" type="radio" value="slide" <?php checked('slide', $ngg_options[galShowOrder]); ?> /> <?php _e('Slideshow', 'nggallery') ;?></label></td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Sort thumbnails','nggallery') ?>:</th>

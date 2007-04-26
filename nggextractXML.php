@@ -27,7 +27,7 @@ $act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$gall
 $thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude = 0 ORDER BY '$ngg_options[galSort]' ASC");
 
 // set gallery url
-$folder_url 	= get_settings ('siteurl')."/".$act_gallery->path."/";
+$folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
 
 // Create XML output
 header("content-type:text/xml;charset=utf-8");

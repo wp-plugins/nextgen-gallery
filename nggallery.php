@@ -4,11 +4,14 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta). At the moment only poor Web1.0 :-(
 Author: Alex Rabe
-Version: 0.34a
+Version: 0.35a
 
 Author URI: http://alexrabe.boelinger.com/
 
 Copyright 2007 by Alex Rabe
+
+The NextGEN button is taken from the Silk set of FamFamFam. See more at 
+http://www.famfamfam.com/lab/icons/silk/
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -33,23 +36,27 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 //#################################################################
 // Let's Go
 
+global $wpdb, $wp_version;
+
+//This work only in WP2.1
+if (version_compare($wp_version, '2.1', '>=')) {
+
 // Version and path to check version
-define('NGGVERSION', "0.34");
+define('NGGVERSION', "0.35");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
 $myabspath = str_replace("\\","/",ABSPATH);  // required for Windows & XAMPP
 define('WINABSPATH', $myabspath);
-define('NGGALLERY_ABSPATH', $myabspath.'wp-content/plugins/' . dirname(plugin_basename(__FILE__)).'/');
-define('NGGALLERY_URLPATH', get_option('siteurl').'/wp-content/plugins/' . dirname(plugin_basename(__FILE__)).'/');
+define('NGGFOLDER', dirname(plugin_basename(__FILE__)));
+define('NGGALLERY_ABSPATH', $myabspath.'wp-content/plugins/' . NGGFOLDER .'/');
+define('NGGALLERY_URLPATH', get_option('siteurl').'/wp-content/plugins/' . NGGFOLDER.'/');
 
 // look for imagerotator
 define('NGGALLERY_IREXIST', file_exists(NGGALLERY_ABSPATH.'imagerotator.swf'));
 
 //get value for safe mode
 define('SAFE_MODE', ini_get('safe_mode'));
-
-global $wpdb;
 
 //read the options
 $ngg_options = get_option('ngg_options');
@@ -62,7 +69,7 @@ $wpdb->nggalbum						= $wpdb->prefix . 'ngg_album';
 // Load language
 function nggallery_init ()
 {
-load_plugin_textdomain('nggallery','wp-content/plugins/nggallery/lang');
+load_plugin_textdomain('nggallery','wp-content/plugins/' . NGGFOLDER.'/lang');
 }
 
 // Load admin panel
@@ -97,7 +104,7 @@ function ngg_nocache() {
 // load language file
 add_action('init', 'nggallery_init');
 
-add_action('activate_nggallery/nggallery.php', 'ngg_install');
+add_action('activate_' . NGGFOLDER.'/nggallery.php', 'ngg_install');
 // init wpTable in wp-database if plugin is activated
 function ngg_install() {
 	nggallery_install();
@@ -151,5 +158,86 @@ function ngg_wp_upload_tabs ($array) {
     return array_merge($array,$tab);
 }
 //#################################################################
+// TinyMCE Button Integration
 
+// Load the Script for the Button
+function insert_nextgen_script() {	
+ 
+ 	//TODO: Do with WP2.1 Script Loader
+ 	// thanks for this idea to www.jovelstefan.de
+	echo "\n"."
+	<script type='text/javascript'> 
+		function ngg_buttonscript()	{ 
+		if(window.tinyMCE) {
+
+			var template = new Array();
+	
+			template['file'] = '".NGGALLERY_URLPATH."nggbutton.php';
+			template['width'] = 360;
+			template['height'] = 220;
+	
+			args = {
+				resizable : 'no',
+				scrollbars : 'no',
+				inline : 'yes'
+			};
+	
+			tinyMCE.openWindow(template, args);
+			return true;
+		} 
+	} 
+	</script>"; 
+	return;
+}
+
+function ngg_addbuttons() {
+ 
+	global $wp_db_version;
+
+	// Don't bother doing this stuff if the current user lacks permissions
+	if ( !current_user_can('edit_posts') && !current_user_can('edit_pages') ) return;
+ 
+	// Add only in Rich Editor mode
+	if ( get_user_option('rich_editing') == 'true') {
+	 
+	// add the button for wp21 in a new way
+		add_filter("mce_plugins", "nextgen_button_plugin", 5);
+		add_filter('mce_buttons', 'nextgen_button', 5);
+		add_action('tinymce_before_init','nextgen_button_script');
+		}
+}
+
+// used to insert button in wordpress 2.1x editor
+function nextgen_button($buttons) {
+
+	array_push($buttons, "separator", "NextGEN");
+	return $buttons;
+
+}
+
+// Tell TinyMCE that there is a plugin (wp2.1)
+function nextgen_button_plugin($plugins) {    
+
+	array_push($plugins, "-NextGEN");    
+	return $plugins;
+}
+
+// Load the TinyMCE plugin : editor_plugin.js (wp2.1)
+function nextgen_button_script() {	
+ 
+ 	$pluginURL =  NGGALLERY_URLPATH.'js/';
+	echo 'tinyMCE.loadPlugin("NextGEN", "'.$pluginURL.'");' . "\n"; 
+	return;
+}
+
+// init process for button control
+// add_action('init', 'ngg_addbuttons');
+// add_action('edit_page_form', 'insert_nextgen_script');
+// add_action('edit_form_advanced', 'insert_nextgen_script');
+
+//#################################################################
+
+} else {
+	add_action('admin_notices', create_function('', 'echo \'<div id="message" class="error fade"><p><strong>' . __('Sorry, NextGEN Gallery works only under WordPress 2.1 or higher',"nggallery") . '</strong></p></div>\';'));
+}// End Check for WP 2.1
 ?>
