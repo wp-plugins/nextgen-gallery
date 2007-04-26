@@ -1,6 +1,9 @@
 NextGEN Gallery
 by Alex Rabe
 
+V0.36 - 25.04.2006
+- Stupid PHP beginner failure in album management
+
 V0.35 - 25.04.2006
 - Remove get_settings
 - Folder name can be flexible
