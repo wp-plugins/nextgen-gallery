@@ -42,7 +42,7 @@ global $wpdb, $wp_version;
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.35");
+define('NGGVERSION', "0.36");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
