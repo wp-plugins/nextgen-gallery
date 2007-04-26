@@ -82,7 +82,7 @@ function serialize(s)
 </script>
 <div class="wrap">
 	<h2><?php _e('Manage Albums', 'nggallery') ?></h2>
-	<form id="selectalbum" method="POST" onsubmit="serialize(galleryContainer)">
+	<form id="selectalbum" method="POST" onsubmit="serialize('galleryContainer')">
 		<table width="60%" border="0" cellspacing="3" cellpadding="3" >
 			<tr>
 				<th align="right">Select album</th>  
