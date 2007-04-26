@@ -29,8 +29,8 @@ PLEASE NOTE !! This gallery plugin is still in development, it can be contain ma
 
 Copyright 2007 Alex Rabe
 
-THX to the plugin's from Thomas Boley (myGallery) and GaMerZ (WP-Polls),
-which gives me a lot of education.
+The NextGEN button is taken from the Silk set of FamFamFam. See more at 
+http://www.famfamfam.com/lab/icons/silk/
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 4. 	Activate the plugin
 
-5.	Add a gallery and upload some images
+5.	Add a gallery and upload some images (the main gallery folder must have permission 777)
 
 6. 	Go to your post an enter the tag [Gallery=ID] or [Slideshow=ID].
 
@@ -75,19 +75,19 @@ That's it ... Have fun
 When writing a page/post, you can use the follow tags:
 
 
-For a slideshow : [slideshow=id,width,height]
+For a slideshow : **[slideshow=id,width,height]**
 
 Example : http://nextgen.boelinger.com/slideshow/
 
-For a album : [album=id,extend] or [album=id,compact]
+For a album : **[album=id,extend]** or **[album=id,compact]**
 
 Example : http://nextgen.boelinger.com/album/
 
-For a gallery : [gallery=id]
+For a gallery : **[gallery=id]**
 
 Example : http://nextgen.boelinger.com/gallery-page/
 
-For a single picture : [singlepic=id,width,height,mode]
+For a single picture : **[singlepic=id,width,height,mode]**
 
 Example : http://nextgen.boelinger.com/singlepic/
 
