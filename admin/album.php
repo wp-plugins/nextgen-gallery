@@ -4,28 +4,6 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 global $wpdb;
 
-// POST proceed by AJAX jQuery
-if ($_POST['ajax']){
-	if ($_POST['act_album'] > 0){
-		$albumid = $_POST['act_album'];
-		if ($_POST['galleryContainer']){ 
-			$galleryorder = $_POST['galleryContainer'];
-			if(is_array($galleryorder)) {
-				$sortorder = array();
-				foreach($galleryorder as $gallery) {		
-					$gid = substr($gallery, 4); // get id from "gid-x"
-					$sortorder[] = $gid;
-				}
-				$serial_sort = serialize($sortorder); 
-				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '$serial_sort' WHERE id = $albumid ");
-			}
-		} else {
-			$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '0' WHERE id = $albumid ");
-		}
-		die; // stop ongoing output
-	} else die;
-}
-
 function nggallery_admin_manage_album()  {
 	global $wpdb;
 		
@@ -34,7 +12,26 @@ function nggallery_admin_manage_album()  {
 			$newablum = $_POST['newalbum'];
 			$result = $wpdb->query(" INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newablum','0')");
 			if ($result) $messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
-		} else $messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
+		} 
+		
+		if ($_POST['act_album'] > 0){
+			$albumid = $_POST['act_album'];
+			
+			// get variable galleryContainer 
+			parse_str($_POST['sortorder']); 
+			if (is_array($galleryContainer)){ 
+				$sortorder = array();
+				foreach($galleryContainer as $gallery) {		
+					$gid = substr($gallery, 4); // get id from "gid-x"
+					$sortorder[] = $gid;
+				}
+				$serial_sort = serialize($sortorder); 
+				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '$serial_sort' WHERE id = $albumid ");
+			} else {
+				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '0' WHERE id = $albumid ");
+			}
+			$messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
+		} 
 	}
 	
 	if ($_POST['delete']){
@@ -72,17 +69,13 @@ $(document).ready(
 function serialize(s)
 {
 	serial = $.SortSerialize(s);
-	act_album = document.getElementById("act_album").value;
-	mypostvars= "ajax=1&act_album="+act_album+"&"+serial.hash;
-//	$.post(document.URL, mypostvars , function(data) { alert("Output: " + data); } );
-	$.post(document.URL, mypostvars );
-
-
+	$('input[@name=sortorder]').val(serial.hash);
 };
 </script>
 <div class="wrap">
 	<h2><?php _e('Manage Albums', 'nggallery') ?></h2>
 	<form id="selectalbum" method="POST" onsubmit="serialize('galleryContainer')">
+		<input name="sortorder" type="hidden" />
 		<table width="60%" border="0" cellspacing="3" cellpadding="3" >
 			<tr>
 				<th align="right">Select album</th>  
