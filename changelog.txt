@@ -1,6 +1,11 @@
 NextGEN Gallery
 by Alex Rabe
 
+V0.38 - 
+- One time more remove get_settings :-)
+- Another Bugfix for $_GET in Manage gallery
+- Bugfix for exclude option
+
 V0.37 - 28.04.2007
 - Bugfix for $_GET in Manage gallery
 - Bugfix in installation routine
