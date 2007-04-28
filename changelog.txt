@@ -3,7 +3,7 @@ by Alex Rabe
 
 V0.37 - 28.04.2007
 - Bugfix for $_GET in Manage gallery
-- Bugif in installation routine
+- Bugfix in installation routine
 
 V0.36 - 26.04.2007
 - Stupid PHP beginner failure in album management
