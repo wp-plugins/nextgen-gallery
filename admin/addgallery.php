@@ -274,7 +274,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		// add images to database		
 		if (is_array($imageslist)) {
 			foreach($imageslist as $picture) {
-			$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext) VALUES ('$gallery_id', '$picture', '$picture') ");
+			$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES ('$gallery_id', '$picture', '$picture' , 0) ");
 			if ($result) $count_pic++;
 			}
 		}
@@ -472,10 +472,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		//create thumbnails
 		ngg_generatethumbnail(WINABSPATH.$gallerypath,$imageslist);
 		
-		// add images to database		
+		// add images to database 		
 		if (is_array($imageslist)) {
 			foreach($imageslist as $picture) {
-			$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext) VALUES ('$dest_gallery', '$picture', '$picture') ");
+			$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES ('$dest_gallery', '$picture', '$picture', 0) ");
 			if ($result) $count_pic++;
 			}
 		}

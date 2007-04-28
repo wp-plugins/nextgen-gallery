@@ -241,7 +241,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<tr>
 						<th valign="top"><?php _e('Number of images per page','nggallery') ?>:</th>
 						<td><input type="text" name="galImages" value="<?php echo $ngg_options[galImages] ?>" size="3" maxlength="3" /><br />
-						<?php _e('Value 0 = No Navigation, all images on one page','nggallery') ?></td>
+						<?php _e('0 will disable pagination, all images on one page','nggallery') ?></td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Integrate slideshow','nggallery') ?>:</th>

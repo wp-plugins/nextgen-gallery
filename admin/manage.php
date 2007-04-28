@@ -134,9 +134,9 @@ function nggallery_admin_manage_gallery() {
 
 	if ($_POST['scanfolder'])  {
 	// Rescan folder
-		//TODO: Wenn keine bilder vorhanden sind , fehler beim scannen
 		$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
-		$old_imageslist = $wpdb->get_col("SELECT filename FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ");
+		$old_imageslist = array();
+		$old_imageslist[] = $wpdb->get_col("SELECT filename FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ");
 		// read list of images in folder
 		$new_imageslist = ngg_scandir(WINABSPATH.$gallerypath);
 		// check difference
@@ -187,7 +187,7 @@ function nggallery_manage_gallery_main() {
 			</thead>
 			<tbody>
 <?php			
-$gallerylist = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ");
+$gallerylist = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY gid ASC");
 if($gallerylist) {
 	foreach($gallerylist as $gallery) {
 		$class = ( $class == 'class="alternate"' ) ? '' : 'class="alternate"';
@@ -230,8 +230,8 @@ function nggallery_pciturelist() {
 	$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
 
 	// set gallery url
-	$act_gallery_url 	= get_settings ('siteurl')."/".$act_gallery->path."/";
-	$act_thumbnail_url 	= get_settings ('siteurl')."/".$act_gallery->path.ngg_get_thumbnail_folder($act_gallery->path, FALSE);
+	$act_gallery_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
+	$act_thumbnail_url 	= get_option ('siteurl')."/".$act_gallery->path.ngg_get_thumbnail_folder($act_gallery->path, FALSE);
 	$act_thumb_prefix   = ngg_get_thumbnail_prefix($act_gallery->path, FALSE);
 
 	//TODO: Do with wp_register_script
@@ -432,7 +432,7 @@ if($picturelist) {
 function ngg_update_pictures( $nggdescription, $nggalttext, $nggexclude, $nggalleryid ) {
 // update all pictures
 	
-	global $wpdb,$act_gid;
+	global $wpdb;
 	
 	if (is_array($nggdescription)) {
 		foreach($nggdescription as $key=>$value) {
@@ -447,7 +447,7 @@ function ngg_update_pictures( $nggdescription, $nggalttext, $nggexclude, $nggall
 		}
 	}
 	
-	$nggpictures = $wpdb->get_results("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$act_gid'");
+	$nggpictures = $wpdb->get_results("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$nggalleryid'");
 
 	if (is_array($nggpictures)){
 		foreach($nggpictures as $picture){

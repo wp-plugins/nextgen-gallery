@@ -167,7 +167,7 @@ function getgallerycontainer($galleryid = 0) {
 	if ($gallery) {
 
 		// set image url
-		$act_thumbnail_url 	= get_settings ('siteurl')."/".$gallery->path.ngg_get_thumbnail_folder($gallery->path, FALSE);
+		$act_thumbnail_url 	= get_option ('siteurl')."/".$gallery->path.ngg_get_thumbnail_folder($gallery->path, FALSE);
 		$act_thumb_prefix   = ngg_get_thumbnail_prefix($gallery->path, FALSE);
 		
 		$post= get_post($gallery->pageid); 	
