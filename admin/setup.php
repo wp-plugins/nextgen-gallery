@@ -19,7 +19,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			delete_option( "ngg_options" );
 			delete_option( "ngg_db_version");
 		 	
-			$messagetext = '<font color="green">'.__('Uninstall sucessfull ! Now delete the plugin and Enjoy your life ! Godd luck !','nggallery').'</font>';
+			$messagetext = '<font color="green">'.__('Uninstall sucessfull ! Now delete the plugin and enjoy your life ! Good luck !','nggallery').'</font>';
 		}
 
 	// message windows

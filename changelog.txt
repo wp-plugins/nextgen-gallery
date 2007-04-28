@@ -1,10 +1,14 @@
 NextGEN Gallery
 by Alex Rabe
 
-V0.36 - 25.04.2006
+V0.37 - 28.04.2007
+- Bugfix for $_GET in Manage gallery
+- Bugif in installation routine
+
+V0.36 - 26.04.2007
 - Stupid PHP beginner failure in album management
 
-V0.35 - 25.04.2006
+V0.35 - 26.04.2007
 - Remove get_settings
 - Folder name can be flexible
 - Correction for Safe-Mode ON
@@ -15,13 +19,13 @@ V0.35 - 25.04.2006
 - Check for permission for default folder
 - Set Default '0' for table album.sortorder
 
-V0.34 - 24.04.2006
+V0.34 - 24.04.2007
 - Bugfix for Album
 - Add fix ration setting
 - Change link in Album to get_bloginfo('wpurl')
 - Add language file file
 
-V0.33 - 23.04.2006
+V0.33 - 23.04.2007
 - Overview Page
 - Core function
 - Slideshow

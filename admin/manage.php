@@ -2,13 +2,13 @@
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
-// GET variables
-$mode = trim($_GET['mode']);
-$act_gid = trim($_GET['gid']);
-$act_pid = trim($_GET['pid']);
-
 function nggallery_admin_manage_gallery() {
-	global $wpdb, $mode, $act_pid, $act_gid;
+	global $wpdb;
+
+	// GET variables
+	$act_gid = trim($_GET['gid']);
+	$act_pid = trim($_GET['pid']);	
+	$mode = trim($_GET['mode']);
 
 	// get the options
 	$ngg_options=get_option('ngg_options');	
@@ -168,8 +168,8 @@ function nggallery_admin_manage_gallery() {
 function nggallery_manage_gallery_main() {
 // *** show main gallery list
 
-	global $wpdb,$act_gid;
-
+	global $wpdb;
+	
 	?>
 	<div class="wrap">
 		<h2><?php _e('Gallery Overview', 'nggallery') ?></h2>
@@ -218,7 +218,13 @@ if($gallerylist) {
 
 function nggallery_pciturelist() {
 // *** show picture list
-	global $wpdb, $act_gid, $ngg_options;
+	global $wpdb;
+	
+	// GET variables
+	$act_gid = trim($_GET['gid']);
+	
+	// get the options
+	$ngg_options=get_option('ngg_options');	
 	
 	// get gallery values
 	$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
