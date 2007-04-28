@@ -22,7 +22,7 @@ function nggallery_install () {
 		filename VARCHAR(255) NOT NULL ,
 		description MEDIUMTEXT NULL ,
 		alttext MEDIUMTEXT NULL ,
-		exclude TINYINT NULL ,
+		exclude TINYINT NULL DEFAULT '0' ,
 		PRIMARY KEY pid (pid)
 		);";
 	

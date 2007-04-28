@@ -164,10 +164,10 @@ function nggShowGallery($galleryID) {
 		else $page = 1; 
 	 	$start = $offset = ( $page - 1 ) * $maxElement;
 	
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude = 0 ORDER BY $ngg_options[galSort] ASC LIMIT $start, $maxElement ");
-		$total = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude = 0 ");	
+		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] ASC LIMIT $start, $maxElement ");
+		$total = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ");	
 	} else {
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND alttext = 0 ORDER BY $ngg_options[galSort] ASC ");	
+		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] ASC ");	
 	}
 	
 	if (is_array($picturelist)) {

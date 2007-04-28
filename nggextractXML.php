@@ -24,7 +24,7 @@ $ngg_options = get_option('ngg_options');
 
 // get gallery values
 $act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
-$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude = 0 ORDER BY '$ngg_options[galSort]' ASC");
+$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY '$ngg_options[galSort]' ASC");
 
 // set gallery url
 $folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
