@@ -53,7 +53,7 @@ function nggallery_install () {
 		$sql = "CREATE TABLE " . $nggalbum . " (
 		id MEDIUMINT(9) NOT NULL AUTO_INCREMENT ,
 		name VARCHAR(255) NOT NULL ,
-		sortorder LONGTEXT DEFAULT '0' NOT NULL,
+		sortorder LONGTEXT NOT NULL,
 		PRIMARY KEY id (id)
 		);";
 	
