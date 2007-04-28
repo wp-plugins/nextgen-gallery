@@ -1,38 +1,45 @@
 NextGEN Gallery
 by Alex Rabe
 
-V0.38 - 
-- One time more remove get_settings :-)
-- Another Bugfix for $_GET in Manage gallery
-- Bugfix for exclude option
+V0.39 - 28.04.2007
+- Added : Set ORDER BY for gallery
+- Bugfix : check now for Exclude != 1
+- Bugfix : DB Query in function wrong
+- Bugfix : DB exlude = DEFAULT '0'
+- Bugfix : Scan folder in empty gallery
+
+V0.38 - 28.04.2007
+- Bugfix : One time more remove get_settings :-)
+- Bugfix : $_GET in Manage gallery
+- Bugfix : exclude option
 
 V0.37 - 28.04.2007
-- Bugfix for $_GET in Manage gallery
-- Bugfix in installation routine
+- Bugfix : $_GET in Manage gallery
+- Bugfix : update DB installation routine
 
 V0.36 - 26.04.2007
-- Stupid PHP beginner failure in album management
+- Bugfix : Stupid PHP beginner failure in album management
 
 V0.35 - 26.04.2007
-- Remove get_settings
-- Folder name can be flexible
-- Correction for Safe-Mode ON
+- Rework : Folder name can be flexible
 - New option : Fullsize pic for Singlepic mode
 - New option : Select show order
-- Add Check for WP2.1
-- Bugfix for sort order
-- Check for permission for default folder
-- Set Default '0' for table album.sortorder
+- Added : Check for WP2.1
+- Added : Check for permission for default folder
+- Bugfix : Remove get_settings
+- Bugfix : Correction for Safe-Mode ON
+- Bugfix : Set Default '0' for table album.sortorder
+- Bugfix : Update sort order
 
 V0.34 - 24.04.2007
-- Bugfix for Album
-- Add fix ration setting
-- Change link in Album to get_bloginfo('wpurl')
-- Add language file file
+- Added : Add fix ration setting
+- Added : Add language file file
+- Bugfix : Change link in Album to get_bloginfo('wpurl')
+- Bugfix : Album CSS file not loaded
 
 V0.33 - 23.04.2007
-- Overview Page
-- Core function
-- Slideshow
+- NEW : Overview Page
+- NEW : Core function
+- NEW : Slideshow
 
 
