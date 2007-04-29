@@ -10,6 +10,9 @@ if (!file_exists($wpconfig))  {
 require_once($wpconfig);
 require_once(ABSPATH.'/wp-admin/admin.php');
 
+// check for rights
+if(!current_user_can('edit_posts')) die;
+
 global $wpdb;
 $ngg_options = get_option('ngg_options');
 
@@ -17,7 +20,7 @@ $ngg_options = get_option('ngg_options');
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>{$lang_insert_link_title}</title>
+	<title>NextGEN Gallery</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<script language="javascript" type="text/javascript" src="<?php echo get_option('siteurl') ?>/wp-includes/js/tinymce/tiny_mce_popup.js"></script>
 	<script language="javascript" type="text/javascript" src="<?php echo get_option('siteurl') ?>/wp-includes/js/tinymce/utils/mctabs.js"></script>
@@ -42,22 +45,23 @@ $ngg_options = get_option('ngg_options');
 		<br />
 		<table border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td nowrap="nowrap"><label for="target"><?php _e("Select gallery", 'nggallery'); ?></label></td>
+            <td nowrap="nowrap"><label for="gallerytag"><?php _e("Select gallery", 'nggallery'); ?></label></td>
             <td><select id="gallerytag" name="gallerytag" style="width: 200px">
-                <option value="_self">gallery</option>
-                <option value="_blank">text 1</option>
+                <option value="0"><?php _e("No gallery", 'nggallery'); ?></option>
+				<?php
+					$gallerylist = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY name ASC");
+					if(is_array($gallerylist)) {
+						foreach($gallerylist as $gallery) {
+							echo '<option value="'.$gallery->gid.'" >'.$gallery->name.'</option>'."\n";
+						}
+					}
+				?>
             </select></td>
           </tr>
           <tr>
-            <td nowrap="nowrap"><label for="linktitle"><?php _e("TEXT ABC", 'nggallery'); ?></label></td>
-            <td><input id="linktitle" name="linktitle" type="text" value="" style="width: 200px" /></td>
-          </tr>
-          <tr id="styleSelectRow">
-            <td><label for="styleSelect"><?php _e("TEXT ABC", 'nggallery'); ?></label></td>
-            <td>
-			 <select id="styleSelect" name="styleSelect">
-                <option value="" selected="selected"><?php __("TEXT ABC", 'nggallery'); ?></option>
-             </select></td>
+            <td nowrap="nowrap" valign="top"><label for="showtype"><?php _e("Show as", 'nggallery'); ?></label></td>
+            <td><label><input name="showtype" type="radio" value="gallery" checked="checked" /> <?php _e('Image list', 'nggallery') ;?></label><br />
+			<label><input name="showtype" type="radio" value="slideshow"  /> <?php _e('Slideshow', 'nggallery') ;?></label></td>
           </tr>
         </table>
 		</div>
@@ -68,10 +72,23 @@ $ngg_options = get_option('ngg_options');
 		<br />
 		<table border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td nowrap="nowrap"><label for="target2"><?php _e("Select album", 'nggallery'); ?></label></td>
-            <td><select id="target2" name="target2" style="width: 200px">
-                <option value="zweirt">album</option>
+            <td nowrap="nowrap"><label for="albumtag"><?php _e("Select album", 'nggallery'); ?></label></td>
+            <td><select id="albumtag" name="albumtag" style="width: 200px">
+                <option value="0"><?php _e("No album", 'nggallery'); ?></option>
+				<?php
+					$albumlist = $wpdb->get_results("SELECT * FROM $wpdb->nggalbum ORDER BY name ASC");
+					if(is_array($albumlist)) {
+						foreach($albumlist as $album) {
+							echo '<option value="'.$album->id.'" >'.$album->name.'</option>'."\n";
+						}
+					}
+				?>
             </select></td>
+          </tr>
+          <tr>
+            <td nowrap="nowrap" valign="top"><label for="showtype"><?php _e("Show as", 'nggallery'); ?></label></td>
+            <td><label><input name="albumtype" type="radio" value="extend" checked="checked" /> <?php _e('Extended version', 'nggallery') ;?></label><br />
+			<label><input name="albumtype" type="radio" value="compact"  /> <?php _e('Compact version', 'nggallery') ;?></label></td>
           </tr>
         </table>
 		</div>
@@ -82,11 +99,30 @@ $ngg_options = get_option('ngg_options');
 		<br />
 		<table border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td nowrap="nowrap"><label for="target3"><?php _e("Select picture", 'nggallery'); ?></label></td>
-            <td><select id="target3" name="target3" style="width: 200px">
-                <option value="start">singlepic</option>
+            <td nowrap="nowrap"><label for="singlepictag"><?php _e("Select picture", 'nggallery'); ?></label></td>
+            <td><select id="singlepictag" name="singlepictag" style="width: 200px">
+                <option value="0"><?php _e("No picture", 'nggallery'); ?></option>
+				<?php
+					$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures ORDER BY filename ASC");
+					if(is_array($picturelist)) {
+						foreach($picturelist as $picture) {
+							echo '<option value="'.$picture->pid.'" >'.$picture->filename.'</option>'."\n";
+						}
+					}
+				?>
             </select></td>
           </tr>
+          <tr>
+            <td nowrap="nowrap"><?php _e("Width x Height", 'nggallery'); ?></td>
+            <td><input type="text" size="5" id="imgWidth" name="imgWidth" value="320" /> x <input type="text" size="5" id="imgHeight" name="imgHeight" value="240" /></td>
+          </tr>
+          <tr>
+            <td nowrap="nowrap" valign="top"><?php _e("Effect", 'nggallery'); ?></td>
+            <td><label><input name="imgeffect" type="radio" value="none" checked="checked" /> <?php _e('No effect', 'nggallery') ;?></label><br />
+			<label><input name="imgeffect" type="radio" value="watermark" /> <?php _e('Watermark', 'nggallery') ;?></label><br />
+			<label><input name="imgeffect" type="radio" value="web20"  /> <?php _e('Web 2.0', 'nggallery') ;?></label></td>
+          </tr>
+
         </table>
 		</div>
 		<!-- single pic panel -->

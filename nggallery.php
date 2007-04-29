@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta). At the moment only poor Web1.0 :-(
 Author: Alex Rabe
-Version: 0.39a
+Version: 0.40a
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -42,7 +42,7 @@ global $wpdb, $wp_version;
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.39");
+define('NGGVERSION', "0.40");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
@@ -174,7 +174,7 @@ function insert_nextgen_script() {
 	
 			template['file'] = '".NGGALLERY_URLPATH."nggbutton.php';
 			template['width'] = 360;
-			template['height'] = 220;
+			template['height'] = 210;
 	
 			args = {
 				resizable : 'no',
@@ -231,9 +231,9 @@ function nextgen_button_script() {
 }
 
 // init process for button control
-// add_action('init', 'ngg_addbuttons');
-// add_action('edit_page_form', 'insert_nextgen_script');
-// add_action('edit_form_advanced', 'insert_nextgen_script');
+add_action('init', 'ngg_addbuttons');
+add_action('edit_page_form', 'insert_nextgen_script');
+add_action('edit_form_advanced', 'insert_nextgen_script');
 
 //#################################################################
 

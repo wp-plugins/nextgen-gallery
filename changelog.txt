@@ -1,6 +1,10 @@
 NextGEN Gallery
 by Alex Rabe
 
+V0.40 - 29.04.2007
+- NEW : TinyMCE Button integration
+- Removed : CSS Style : remove width/height in album
+
 V0.39 - 28.04.2007
 - Added : Set ORDER BY for gallery
 - Bugfix : check now for Exclude != 1
