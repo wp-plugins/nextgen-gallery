@@ -58,7 +58,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 5.	Add a gallery and upload some images (the main gallery folder must have permission 777)
 
-6. 	Go to your post an enter the tag [Gallery=ID] or [Slideshow=ID].
+6. 	Go to your post/page an enter the tag [gallery=ID] or [slideshow=ID].
+	See more tags in the FAQ section
 
 That's it ... Have fun
 
