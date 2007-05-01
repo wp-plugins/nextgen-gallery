@@ -21,6 +21,7 @@ Features:
 * JavaScript Effect : Use any available popular image effect : Thickbox, Lightbox or Highslide
 * Multiple CSS Stylesheet : Use a nice shadow effect for your thumbnails with your own CSS file 
 * Slideshow : Full integrated flash slideshow
+* TinyMCE : Button integration for easy adding the gallery tags
 
 
 PLEASE NOTE !! This gallery plugin is still in development, it can be contain many bugs !
