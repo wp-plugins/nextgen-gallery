@@ -4,7 +4,7 @@ function searchnggallerytags($content) {
 
 	global $wpdb;
 		
-	$search = "/\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)\]/i";
+	$search = "/\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,left|,)\]/i";
 	
 	if	(preg_match_all($search, $content, $matches)) {
 		
@@ -14,7 +14,7 @@ function searchnggallerytags($content) {
 				$result = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$v0' ");
 				if($result){
 					$search = $matches[0][$key];
-					$replace= nggSinglePicture($v0,$matches[2][$key],$matches[3][$key],$matches[4][$key]);
+					$replace= nggSinglePicture($v0,$matches[2][$key],$matches[3][$key],$matches[4][$key],$matches[5][$key]);
 					$content= str_replace ($search, $replace, $content);
 				}
 			}	
@@ -299,12 +299,13 @@ function nggCreateGalleryDiv($galleryID,$mode = "extend") {
 }
 
 /**********************************************************/
-function nggSinglePicture($imageID,$width=250,$height=250,$mode="") {
+function nggSinglePicture($imageID,$width=250,$height=250,$mode="",$float="") {
 	
 	global $wpdb;
 	$ngg_options = get_option('ngg_options');
 
 	// remove the comma
+	$float = ltrim($float,',');
 	$mode = ltrim($mode,',');
 	$width = ltrim($width,',');
 	$height = ltrim($height,',');
@@ -328,7 +329,22 @@ function nggSinglePicture($imageID,$width=250,$height=250,$mode="") {
 		$link  = '<a href="'.$folder_url.$picture->filename.'" title="'.$picture->alttext.'" '.$thumbcode.' >';
 	}
 
-	$content = $link . '<img class="ngg-singlepic" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.$picture->alttext.'" title="'.$picture->alttext.'" />';
+	// add float to img
+	if (!empty($float)) {
+		switch ($float) {
+		
+		case 'left': $float=' style="float:left;" ';
+		break;
+		
+		case 'right': $float=' style="float:right;" ';
+		break;
+		
+		default: $float='';
+		break;
+		}
+	}
+
+	$content = $link . '<img class="ngg-singlepic" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.$picture->alttext.'" title="'.$picture->alttext.'"'.$float.' />';
 
 	if ($ngg_options[imgSinglePicLink]) $content .= '</a>';
 	

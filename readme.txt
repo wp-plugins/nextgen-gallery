@@ -4,7 +4,7 @@ Donate link: http://alexrabe.boelinger.com/?page_id=80
 Tags: flash, slideshow, images, gallery, media, admin, post
 Requires at least: 2.1.3
 Tested up to: 2.2
-Stable tag: 0.41
+Stable tag: 0.42
 
 NextGEN Gallery is a Image Gallery plugin for WordPress.
 

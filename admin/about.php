@@ -82,7 +82,8 @@ function ngg_list_support()	{
 	"Sabine (Haselina)" => "http://www.haselina.de/",
 	"Milemann" => "",
 	"Lazy (German Translation)" => "http://www.lazychris.de/",
-	"Lise Tauber (French Translation)" => "http://liseweb.fr/"		
+	"Lise (French Translation)" => "http://liseweb.fr/",
+	"Anja (Dutch Translation)" => "www.werkgroepen.net/wordpress"	
 	);
 
 

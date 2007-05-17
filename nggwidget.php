@@ -3,7 +3,7 @@
 Plugin Name: NextGEN Gallery Widget
 Description: Adds a sidebar widget to see random images in your NextGEN Gallery!
 Author: KeViN
-Version: 0.9b
+Version: 0.91b
 Author URI: http://www.kev.hu
 Plugin URI: http://www.kev.hu
 
@@ -130,9 +130,9 @@ function widget_nextgenimage_init() {
 		$url_parts = parse_url(get_bloginfo('home'));
 
 		// Null parameters check
-		if ( ($number == '') ) $number = 1;
-		if ( ($sizeX == '') ) $sizeX = 190;
-		if ( ($sizeY == '') ) $sizeY = 190;
+		if ( ($number == '') ) $number = 2;
+		if ( ($sizeX == '') ) $sizeX = 100;
+		if ( ($sizeY == '') ) $sizeY = 75;
 		// if ( ($border == '') ) $border = 0;
 		// if ( ($bordercolor == '') ) $bordercolor = "#dadada";
 		// if ( ($margin == '') ) $margin = 5;
@@ -165,7 +165,7 @@ function widget_nextgenimage_init() {
 			}
 	
 			echo '</ul></div>'."\n";
-			echo '<div style="clear:both;"></div>'."\n";
+//			echo '<div style="clear:both;"></div>'."\n";
 			echo $after_widget;
 		}
 	}
