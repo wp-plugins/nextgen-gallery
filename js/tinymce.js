@@ -51,12 +51,14 @@ function insertNGGLink() {
 		var singlepicid = document.getElementById('singlepictag').value;
 		var imgWidth = document.getElementById('imgWidth').value;
 		var imgHeight = document.getElementById('imgHeight').value;
-		var imgeffect = getCheckedValue(document.getElementsByName('imgeffect'));
+		var imgeffect = document.getElementById('imgeffect').value;
+		var imgfloat = document.getElementById('imgfloat').value;
+
 		if (singlepicid != 0 ) {
 			if (imgeffect == "none")
-				tagtext = "[singlepic=" + singlepicid + "," + imgWidth + "," + imgHeight + "]";
+				tagtext = "[singlepic=" + singlepicid + "," + imgWidth + "," + imgHeight + ",," + imgfloat + "]";
 			else
-				tagtext = "[singlepic=" + singlepicid + "," + imgWidth + "," + imgHeight + "," + imgeffect + "]";
+				tagtext = "[singlepic=" + singlepicid + "," + imgWidth + "," + imgHeight + "," + imgeffect + "," + imgfloat + "]";
 		} else {
 			tinyMCEPopup.close();
 		}

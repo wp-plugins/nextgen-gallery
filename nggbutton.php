@@ -118,9 +118,23 @@ $ngg_options = get_option('ngg_options');
           </tr>
           <tr>
             <td nowrap="nowrap" valign="top"><?php _e("Effect", 'nggallery'); ?></td>
-            <td><label><input name="imgeffect" type="radio" value="none" checked="checked" /> <?php _e('No effect', 'nggallery') ;?></label><br />
-			<label><input name="imgeffect" type="radio" value="watermark" /> <?php _e('Watermark', 'nggallery') ;?></label><br />
-			<label><input name="imgeffect" type="radio" value="web20"  /> <?php _e('Web 2.0', 'nggallery') ;?></label></td>
+            <td>
+				<label><select id="imgeffect" name="imgeffect">
+					<option value="none"><?php _e("No effect", 'nggallery'); ?></option>
+					<option value="watermark"><?php _e("Watermark", 'nggallery'); ?></option>
+					<option value="web20"><?php _e("Web 2.0", 'nggallery'); ?></option>
+				</select></label>
+			</td>
+          </tr>
+          <tr>
+            <td nowrap="nowrap" valign="top"><?php _e("Float", 'nggallery'); ?></td>
+            <td>
+				<label><select id="imgfloat" name="imgfloat">
+					<option value=""><?php _e("No float", 'nggallery'); ?></option>
+					<option value="left"><?php _e("Left", 'nggallery'); ?></option>
+					<option value="right"><?php _e("Right", 'nggallery'); ?></option>
+				</select></label>
+			</td>
           </tr>
 
         </table>

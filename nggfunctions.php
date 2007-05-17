@@ -212,10 +212,14 @@ function nggShowGallery($galleryID) {
 	}
 	
 	foreach ($picturelist as $picture) {
-		
+		$picturefile = str_replace(
+			array('ä',   'ö',   'ü',   'Ä',   'Ö',   'Ü',   'ß',   ' '), 
+			array('%E4', '%F6', '%FC', '%C4', '%D6', '%DC', '%DF', '%20'),
+			utf8_decode($picture->filename)
+		);
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail-box">'."\n\t";
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail">'."\n\t";
-		$gallerycontent .= '<a href="'.$folder_url.$picture->filename.'" title="'.$picture->alttext.'" '.$thumbcode.' >';
+		$gallerycontent .= '<a href="'.$folder_url.$picturefile.'" title="'.$picture->alttext.'" '.$thumbcode.' >';
 		$gallerycontent .= '<img title="'.$picture->alttext.'" alt="'.$picture->alttext.'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
 		$gallerycontent .= '</a>'."\n".'</div>'."\n".'</div>'."\n";
 		}
@@ -269,11 +273,11 @@ function nggCreateGalleryDiv($galleryID,$mode = "extend") {
  			$galleryoutput = '	
 				<div class="ngg-album-compact">
 					<div class="ngg-album-compactbox">
-						<div class="setLinkDiv">
-							<a class="Link" href="'.get_bloginfo('wpurl').'/?page_id='.$gallerycontent->pageid.'">'.$insertpic.'</a>
+						<div class="ngg-album-link">
+							<a class="Link" href="'.get_permalink($gallerycontent->pageid).'">'.$insertpic.'</a>
 						</div>
 					</div>
-					<h4><a class="Seta" title="'.$gallerycontent->title.'" href="'.get_bloginfo('wpurl').'/?page_id='.$gallerycontent->pageid.'">'.$gallerycontent->title.'</a></h4>
+					<h4><a class="ngg-album-desc" title="'.$gallerycontent->title.'" href="'.get_permalink($gallerycontent->pageid).'">'.$gallerycontent->title.'</a></h4>
 					<p><b>'.$counter.'</b> '.__('Photos', 'nggallery').'</p></div>';
 		} else {
 			// mode extend
@@ -283,9 +287,9 @@ function nggCreateGalleryDiv($galleryID,$mode = "extend") {
 				$insertpic = __('Watch gallery', 'nggallery');
 			$galleryoutput = '
 			<div class="ngg-album">
-				<div class="ngg-albumtitle"><a href="'.get_bloginfo('wpurl').'/?page_id='.$gallerycontent->pageid.'">'.$gallerycontent->title.'</a></div>
+				<div class="ngg-albumtitle"><a href="'.get_permalink($gallerycontent->pageid).'">'.$gallerycontent->title.'</a></div>
 				<div class="ngg-albumcontent">
-					<div class="ngg-thumbnail"><a href="'.get_bloginfo('wpurl').'/?page_id='.$gallerycontent->pageid.'">'.$insertpic.'</a></div>
+					<div class="ngg-thumbnail"><a href="'.get_permalink($gallerycontent->pageid).'">'.$insertpic.'</a></div>
 					<div class="ngg-description"><p>'.$gallerycontent->description.'</p></div>'."\n".'</div>'."\n".'</div>';
 
 		}
@@ -324,7 +328,7 @@ function nggSinglePicture($imageID,$width=250,$height=250,$mode="") {
 		$link  = '<a href="'.$folder_url.$picture->filename.'" title="'.$picture->alttext.'" '.$thumbcode.' >';
 	}
 
-	$content = $link . '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.$picture->alttext.'" title="'.$picture->alttext.'" />';
+	$content = $link . '<img class="ngg-singlepic" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.$picture->alttext.'" title="'.$picture->alttext.'" />';
 
 	if ($ngg_options[imgSinglePicLink]) $content .= '</a>';
 	
@@ -362,7 +366,7 @@ function ngg_get_image_url($imageID){
 	$picturepath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
 
 	// set gallery url
-	$imageURL 	= get_option ('siteurl')."/".$picturepath.$fileName;
+	$imageURL 	= get_option ('siteurl')."/".$picturepath."/".$fileName;
 	
 	return $imageURL;	
 }
@@ -374,7 +378,10 @@ function ngg_get_thumbnail_folder($gallerypath, $include_Abspath = TRUE) {
 	if (!$include_Abspath) $gallerypath = WINABSPATH.$gallerypath;
 	if (is_dir($gallerypath."/thumbs")) return "/thumbs/";
 	if (is_dir($gallerypath."/tumbs")) return "/tumbs/";
-
+	if (!is_dir($gallerypath."/thumbs")) {
+		mkdir($gallerypath."/thumbs");
+		return "/thumbs/";
+	}
 	return FALSE;
 	
 }

@@ -2,7 +2,7 @@
 CSS Name: Black Minimalism Theme
 Description: For Black Minimalism Theme 
 Author: Alex Rabe
-Version: 1.00
+Version: 1.10
    
 This is a template stylesheet that can be used with NextGEN Gallery. I tested the
 styles with a default theme Kubrick. Modify it when your theme struggle with it,
@@ -165,4 +165,39 @@ it's only a template design
 
 .slideshowlink {
 	
+}
+
+/* ----------- Single picture -------------*/
+.ngg-singlepic {
+	background-color:#FFFFFF;
+	border:1px solid #A9A9A9;
+	display:block;  
+	margin:5px;
+	padding:4px;
+	position:relative;
+}
+
+/* ----------- Sidebar widget -------------*/
+.ngg-widget {
+	
+}
+
+ul.ngg-randomlist {
+	background:transparent none repeat scroll 0% !important;
+	display:inline;
+	margin:0pt;
+	padding:0pt 0px 0px 0pt;
+}
+
+ul.ngg-randomlist img {
+	border:2px solid #A9A9A9;
+	margin:0pt 2px 2px 0px; 
+	padding:1px; 
+}
+
+ul.ngg-randomlist li {
+	display:block;
+	float:left;
+	padding:0pt 2px 0px 0px;
+	position:relative;
 }

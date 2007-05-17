@@ -160,7 +160,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<div id="thumbnails" style="display:none">
 			<h2><?php _e('Thumbnail settings','nggallery'); ?></h2>
 			<form name="thumbnailsettings" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#thumbnails-slider'; ?>" >
-			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbfix,thumbcrop,thumbquality,thumbResampleMode" />
+			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbfix,thumbcrop,thumbresizebefore,thumbquality,thumbResampleMode" />
 			<fieldset class="options"> 
 				<table class="optiontable editform">
 					<tr valign="top">
@@ -177,6 +177,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<th align="left"><?php _e('Crop thumbnail from image','nggallery') ?></th>
 						<td><input type="checkbox" name="thumbcrop" value="1" <?php checked('1', $ngg_options[thumbcrop]); ?> /><br />
 						<?php _e('Create square thumbnails from the center','nggallery') ?></td>
+					</tr>
+					<tr valign="top">
+						<th align="left"><?php _e('Do resize before cropping','nggallery') ?></th>
+						<td><input type="checkbox" name="thumbresizebefore" value="1" <?php checked('1', $ngg_options[thumbresizebefore]); ?> /><br />
+						<?php _e('Generates square thumbnails without cropping to much','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Thumbnail quality','nggallery') ?></th>

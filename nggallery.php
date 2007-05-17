@@ -2,13 +2,13 @@
 /*
 Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
-Description: A NextGENeration Photo gallery for the WEB2.0(beta). At the moment only poor Web1.0 :-(
-Author: Alex Rabe
-Version: 0.40a
+Description: A NextGENeration Photo gallery for the WEB2.0(beta).
+Author: NextGEN DEV-Team
+Version: 0.41a
 
 Author URI: http://alexrabe.boelinger.com/
 
-Copyright 2007 by Alex Rabe
+Copyright 2007 by Alex Rabe & NextGEN DEV-Team
 
 The NextGEN button is taken from the Silk set of FamFamFam. See more at 
 http://www.famfamfam.com/lab/icons/silk/
@@ -38,11 +38,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 global $wpdb, $wp_version;
 
-//This work only in WP2.1
+//This works only in WP2.1 or higher
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.40");
+define('NGGVERSION', "0.41");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
@@ -55,7 +55,12 @@ define('NGGALLERY_URLPATH', get_option('siteurl').'/wp-content/plugins/' . NGGFO
 // look for imagerotator
 define('NGGALLERY_IREXIST', file_exists(NGGALLERY_ABSPATH.'imagerotator.swf'));
 
-//get value for safe mode
+// get value for safe mode
+if ((gettype(ini_get('safe_mode')) == 'string')) {
+	// if sever did in in a other way
+	if (ini_get('safe_mode') == 'off') define('SAFE_MODE', FALSE);
+	else define('SAFE_MODE', TRUE);
+} else
 define('SAFE_MODE', ini_get('safe_mode'));
 
 //read the options
@@ -84,12 +89,13 @@ function integrate_nggheader() {
 	echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'css/'.$ngg_options[CSSfile].'";</style>';
 	if ($ngg_options[thumbEffect] == "thickbox") {
 	echo "\n".'<script type="text/javascript" src="'.NGGALLERY_URLPATH.'admin/js/jquery.js"></script>';
-	echo "\n".'<script type="text/javascript"> var LoadingImage = "'.NGGALLERY_URLPATH.'thickbox/loadingAnimation.gif";</script>';
+	//TODO: select v2 or v3 via option
+	echo "\n".'<script type="text/javascript"> var tb_pathToImage = "'.NGGALLERY_URLPATH.'thickbox/loadingAnimationv2.gif";</script>';
 	echo "\n".'<script type="text/javascript" src="'.NGGALLERY_URLPATH.'thickbox/thickbox.js"></script>';
 	echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'thickbox/thickbox.css";</style>'."\n";
+	}
 	if (!function_exists('integrate_swfobject'))
 	echo "\n".'<script type="text/javascript" src="'.NGGALLERY_URLPATH.'js/swfobject.js'.'"></script>'."\n";
-	}
 }
 // Filter hook to activate CSS in header
 if ($ngg_options[activateCSS]) add_filter('wp_head', 'integrate_nggheader');

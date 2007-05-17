@@ -8,15 +8,18 @@ $ngg_options = get_option('ngg_options');
 if (isset($_POST['css'])) {
 	$act_cssfile = $_POST['css']; 
 	if (isset($_POST['activate'])) {
-	// save option now
-	$ngg_options[activateCSS] = $_POST['activateCSS']; 
-	$ngg_options[CSSfile] = $act_cssfile;
-	update_option('ngg_options', $ngg_options);
-	$messagetext = '<font color="green">'.__('Update successfully','nggallery').'</font>';
+		// save option now
+		$ngg_options[activateCSS] = $_POST['activateCSS']; 
+		$ngg_options[CSSfile] = $act_cssfile;
+		update_option('ngg_options', $ngg_options);
+		$messagetext = '<font color="green">'.__('Update successfully','nggallery').'</font>';
 	}
 } else {
 	// get the options
-	$act_cssfile = $ngg_options[CSSfile];	
+	if (isset($_POST['file']))
+		$act_cssfile = $_POST['file'];
+	else
+		$act_cssfile = $ngg_options[CSSfile];	
 }
 
 // set the path
@@ -28,6 +31,7 @@ if (isset($_POST['updatecss'])) {
 	wp_die('<p>'.__('You do not have sufficient permissions to edit templates for this blog.').'</p>');
 
 	$newcontent = stripslashes($_POST['newcontent']);
+
 	if (is_writeable($real_file)) {
 		$f = fopen($real_file, 'w+');
 		fwrite($f, $newcontent);
@@ -38,13 +42,14 @@ if (isset($_POST['updatecss'])) {
 }
 
 // get the content of the file
+//TODO: BUG : Read failed after write a file, maybe a Cache problem
 if (!is_file($real_file))
 	$error = 1;
 
 if (!$error && filesize($real_file) > 0) {
 	$f = fopen($real_file, 'r');
 	$content = fread($f, filesize($real_file));
-	$content = htmlspecialchars($content);
+	$content = htmlspecialchars($content); 
 }
 
 // message window

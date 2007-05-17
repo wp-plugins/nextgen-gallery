@@ -53,6 +53,12 @@ function nggallery_admin_manage_album()  {
 $(document).ready(
 	function()
 	{
+		//updating the height of the white backround box, it does not work without this stupid lines
+		//problem: absolute positioning of the minimizing links in item_top does not work :(
+		//position: absolute; right:5px; top:0px; border-bottom: 2px solid #003333; css lines of .groupItem .item_top a
+		var hei = $('.wrap').height();
+		$('.wrap').height(hei);
+		
 		$('div.groupWrapper').Sortable(
 			{
 				accept: 'groupItem',
@@ -60,25 +66,38 @@ $(document).ready(
 				opacity: 0.7,
 				tolerance: 'intersect'
 			}
-		),
-
+		)
+		$('a.min').bind('click', toggleContent);
 		$('.textarea1').Autoexpand([230,400]);
 	}
 );
+
+var toggleContent = function(e)
+{
+	var targetContent = $('div.itemContent', this.parentNode.parentNode);
+	if (targetContent.css('display') == 'none') {
+		targetContent.slideDown(300);
+		$(this).html('[-]');
+	} else {
+		targetContent.slideUp(300);
+		$(this).html('[+]');
+	}
+	return false;
+}
 
 function serialize(s)
 {
 	serial = $.SortSerialize(s);
 	$('input[@name=sortorder]').val(serial.hash);
-};
+}
 </script>
-<div class="wrap">
-	<h2><?php _e('Manage Albums', 'nggallery') ?></h2>
+<div class="wrap" id="wrap" >
+	<h3><?php _e('Manage Albums', 'nggallery') ?></h3>
 	<form id="selectalbum" method="POST" onsubmit="serialize('galleryContainer')">
 		<input name="sortorder" type="hidden" />
-		<table width="60%" border="0" cellspacing="3" cellpadding="3" >
+		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr>
-				<th align="right">Select album</th>  
+				<th align="right"><?php _e('Select album', 'nggallery') ?></th>  
 				<td>
 					<select id="act_album" name="act_album" onchange="this.form.submit();">
 						<option value="0" ><?php _e('No album selected', 'nggallery') ?></option>
@@ -94,17 +113,21 @@ function serialize(s)
 						?>
 					</select>
 				</td> 
-				<th align="right">Add new album</th>
+				<th align="right"><?php _e('Add new album', 'nggallery') ?></th>
 				<td><input id="newalbum" name="newalbum" value="" /></td>
+				<td><p class="submit">
+					<?php if ($_POST['act_album'] > 0){ ?>
+						<input type="submit" name="delete" class="button delete" value="<?php _e('Delete') ?> &raquo;" onclick="javascript:check=confirm('<?php _e('Delete album ?','nggallery'); ?>');if(check==false) return false;"/>
+					<?php } ?>
+					<input type="submit" name="update" value="<?php _e('Update') ?> &raquo;" />
+				<p></td>
 			</tr>
 		</table>
-		<p class="submit">
-		<?php if ($_POST['act_album'] > 0){ ?>
-		<input type="submit" name="delete" class="button delete" value="<?php _e('Delete') ?> &raquo;" onclick="javascript:check=confirm('<?php _e('Delete album ?','nggallery'); ?>');if(check==false) return false;"/>
-		<?php } ?>
-		<input type="submit" name="update" value="<?php _e('Update') ?> &raquo;" /><p>
-	</form>	
+		
+	</form>
+	<p><?php _e('After you create and select a album, you can drag and drop a gallery into your album below','nggallery'); ?></p>	
 	<br class="clear"/>
+	
 	<div class="container">
 		<div id="selectContainer" class="groupWrapper">
 		<h3><?php _e('Select Gallery', 'nggallery') ?></h3>
@@ -149,8 +172,12 @@ function serialize(s)
 						}
 					}
 				}
-			} else echo '<h3>'.__('No Album selected', 'nggallery').'</h3>'."\n";
-			?>
+			} 
+			else
+			{	
+				echo '<h3>'.__('No album selected!', 'nggallery').'</h3>';
+			}
+		?> 
 		</div><!-- /#gallery container -->
 
 	</div><!-- /#container -->
@@ -175,19 +202,21 @@ function getgallerycontainer($galleryid = 0) {
 		$filename = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$gallery->previewpic'");
 		if ($filename) $img = '<img src="'.$act_thumbnail_url.$act_thumb_prefix.$filename.'" />';
 		else $img = '';
-		echo ' 
-		<div id="gid-'.$gallery->gid.'" class="groupItem">
-			<div class="innerhandle">
-				<div class="itemContent">
-				<div class="inlinepicture">'.$img.'</div>
-					<p><strong>'.__('ID', 'nggallery').' : </strong>'.$gallery->gid.'</p>
-					<p><strong>'.__('Name', 'nggallery').' : </strong>'.$gallery->name.'</p>
-					<p><strong>'.__('Title', 'nggallery').' : </strong>'.$gallery->title.'</p>
-					<p><strong>'.__('Page', 'nggallery').' : </strong>'.$pagename.'</p>
+		echo '<div id="gid-'.$gallery->gid.'" class="groupItem">
+				<div class="innerhandle">
+					<div class="item_top">
+						<a href="#" class="min" title="close">[-]</a>
+						ID: '.$gallery->gid.' || Title: '.$gallery->title.'
+					</div>
+					<div class="itemContent">
+						<div class="inlinepicture">'.$img.'</div>
+							<p><strong>'.__('ID', 'nggallery').' : </strong>'.$gallery->gid.'</p>
+							<p><strong>'.__('Name', 'nggallery').' : </strong>'.$gallery->name.'</p>
+							<p><strong>'.__('Title', 'nggallery').' : </strong>'.$gallery->title.'</p>
+							<p><strong>'.__('Page', 'nggallery').' : </strong>'.$pagename.'</p>
+						</div>
 				</div>
-			</div>
-		</div>
-		'; 
+			   </div>'; 
 	}
 }
 ?>

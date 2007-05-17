@@ -291,7 +291,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		   while(false !== ($file = readdir($handle))) 
 		       for($i=0;$i<sizeof($ext);$i++) 
 		           if(stristr($file, ".".$ext[$i])) 
-		               $files[] = $file; 
+		               $files[] = utf8_encode($file); 
 		   closedir($handle); 
 		} 
 		return($files); 
@@ -366,13 +366,18 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		if (is_array($pictures)) {
 			foreach($pictures as $picture) {
 	
-			$thumb = new Thumbnail($gallery_absfolder."/".$picture, TRUE);
+			$thumb = new Thumbnail($gallery_absfolder."/".utf8_decode($picture), TRUE);
 		
 			// echo $thumb->errmsg;	
 			// skip if file is not there
 			if (!$thumb->error) {
-				if ($ngg_options[thumbcrop]) $thumb->cropFromCenter($ngg_options[thumbwidth],$ngg_options[thumbResampleMode]);
-				else $thumb->resize($ngg_options[thumbwidth],$ngg_options[thumbheight],$ngg_options[thumbResampleMode]);
+				if ($ngg_options[thumbresizebefore]) {
+					$thumb->resize($ngg_options[thumbwidth],$ngg_options[thumbheight],$ngg_options[thumbResampleMode]);
+					$thumb->cropFromCenter($ngg_options[thumbwidth],$ngg_options[thumbResampleMode]);
+				} else {
+					if ($ngg_options[thumbcrop]) $thumb->cropFromCenter($ngg_options[thumbwidth],$ngg_options[thumbResampleMode]);
+					else $thumb->resize($ngg_options[thumbwidth],$ngg_options[thumbheight],$ngg_options[thumbResampleMode]);
+				}
 				$thumb->save($gallery_absfolder.$thumbfolder.$prefix.$picture,$ngg_options[thumbquality]);
 			}
 			$thumb->destruct();

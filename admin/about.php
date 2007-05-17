@@ -8,10 +8,17 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<div class="wrap">
 	<h2><?php _e('Copyright notes / Credits', 'nggallery') ;?></h2>
 		<fieldset class="options">
-		<legend><?php _e("About this plugin", 'nggallery'); ?></legend>
-		<p><?php _e('This plugin is written as last study on WordPress. I took the chance to learn PHP, WordPress and programming technics with this plugin.
-		If you study the code of this plugin, you will find out that I mixed a lot of good already existing code and ideas together.', 'nggallery') ;?></p>
-		<p><?php _e('So, I would like to thank the following people for their pioneer work (without this work it\'s impossible to create such a plugin so fast)', 'nggallery') ;?></p>		
+		<legend><?php _e("NextGEN DEV Team", 'nggallery'); ?></legend>
+		<p><?php _e('This plugin is a team work of a virtual developer team around the world. Follow persons take part at the development till now :', 'nggallery') ;?></p>
+		<ul>
+		<li><a href="http://alexrabe.boelinger.com" target="_blank">Alex Rabe</a> <?php _e('(Lead developer)', 'nggallery') ;?></li>
+		<li><a href="http://blog.arctic-media.de" target="_blank">Christian Arnold</a> <?php _e('(Core developer)', 'nggallery') ;?></li>
+		<li><a href="http://mufuschnu.mu.funpic.de" target="_blank">Thomas Matzke</a> <?php _e('(Core developer)', 'nggallery') ;?></li>
+		<li><a href="http://www.kev.hu" target="_blank">KeViN</a> <?php _e('(Sidebar Widget developer)', 'nggallery') ;?></li>
+		</ul>
+		<legend><?php _e("Contributors / Tribute to", 'nggallery'); ?></legend>
+		<p><?php _e('If you study the code of this plugin, you will find out that we mixed a lot of good already existing code and ideas together.', 'nggallery') ;?>
+		<?php _e('So, we would like to thank the following people for their pioneer work (without this work it\'s impossible to create such a plugin so fast)', 'nggallery') ;?></p>		
 		<ul>
 		<li><a href="http://wordpress.org" target="_blank">The WordPress Team</a> <?php _e('for their great documented code', 'nggallery') ;?></li>
 		<li><a href="http://jquery.com" target="_blank">The jQuery Team</a> <?php _e('for jQuery, which is the best Web2.0 framework', 'nggallery') ;?></li>
@@ -25,11 +32,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		</ul>
 		<p><?php _e('If you didn\'t find your name on this list and there is some code which I integrate in my plugin, don\'t hesitate to send me a mail.', 'nggallery') ;?></p>		
 		<legend><?php _e("How to support ?", 'nggallery'); ?></legend>
-		<p><?php _e('There exist several ways to contribute, help or support me in this work. Non of them are mandatory.', 'nggallery') ;?></p>
+		<p><?php _e('There exist several ways to contribute, help or support us in this work. Non of them are mandatory.', 'nggallery') ;?></p>
 		<ul>
-			<li><strong><?php _e('Send me bugfixes / code changes', 'nggallery') ;?></strong><br /><?php _e('The most motivated support for this plugin are your ideas and brain work', 'nggallery') ;?></li>
-			<li><strong><?php _e('Translate my plugin', 'nggallery') ;?></strong><br /><?php _e('To help people to work with this plugin, I would like to have it in all avaivable languages', 'nggallery') ;?></li>
-			<li><strong><?php _e('Donate my work via paypal', 'nggallery') ;?></strong><br />
+			<li><strong><?php _e('Send us bugfixes / code changes', 'nggallery') ;?></strong><br /><?php _e('The most motivated support for this plugin are your ideas and brain work', 'nggallery') ;?></li>
+			<li><strong><?php _e('Translate the plugin', 'nggallery') ;?></strong><br /><?php _e('To help people to work with this plugin, I would like to have it in all avaivable languages', 'nggallery') ;?></li>
+			<li><strong><?php _e('Donate the work via paypal', 'nggallery') ;?></strong><br />
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" >
 				<input type="hidden" name="cmd" value="_xclick"/><input type="hidden" name="business" value="alterego@boelinger.com"/>
 				<input type="hidden" name="item_name" value="WordPress Plugins www.alexrabe.boelinger.com"/>
@@ -39,12 +46,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<input type="hidden" name="tax" value="0"/>
 				<input type="hidden" name="bn" value="PP-DonationsBF"/>
 				<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!" style="border: none;"/>
-				</form><?php _e('No doubt a very usefull and easy motivation :-) I send you an email , when I can buy my first Audi S3 with this money...', 'nggallery') ;?>
+				</form><?php _e('No doubt a very usefull and easy motivation :-)', 'nggallery') ;?>
 			</li>
-			<li><strong><?php _e('Place a link to my plugin in your blog/webpage', 'nggallery') ;?></strong><br /><?php _e('Yes, share and trackback is also a good support for this work ', 'nggallery') ;?></li>
+			<li><strong><?php _e('Place a link to the plugin in your blog/webpage', 'nggallery') ;?></strong><br /><?php _e('Yes, share and trackback is also a good support for this work ', 'nggallery') ;?></li>
 		</ul>
 		<legend><?php _e("Thanks!", 'nggallery'); ?></legend>
-		<p><?php _e('I would like to thank this people which support me in my work :', 'nggallery') ;?></p>
+		<p><?php _e('We would like to thank this people which support us in the work :', 'nggallery') ;?></p>
 		<p><a href="http://www.boelinger.com/heike/" target="_blank">HEIKE</a>, <?php ngg_list_support(); ?></p>
 		</fieldset>
 	</div>
@@ -67,8 +74,18 @@ function ngg_list_support()	{
 	"Alakhnor" => "http://www.alakhnor.info",
 	"Rod" => "http://www.le-hiboo.com",
 	"Ttancm" => "http://www.ttancm.com/",
-	"Francoise Pescatore" => ""	
+	"Francoise Pescatore" => ""	,
+	"Andreas (die-andis)" => "http://www.rummel-platz.de/",
+	"Andreas" => "http://blog.friedlandreas.de/",
+	"Joern Kretzschmar" => "http://diekretzschmars.de/",
+	"Mike" => "http://www.mikemuscroft.com/",
+	"Sabine (Haselina)" => "http://www.haselina.de/",
+	"Milemann" => "",
+	"Lazy (German Translation)" => "http://www.lazychris.de/",
+	"Lise Tauber (French Translation)" => "http://liseweb.fr/"		
 	);
+
+
 	
 	ksort($supporter);
 	$i = count($supporter);

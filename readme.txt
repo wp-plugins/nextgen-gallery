@@ -4,7 +4,7 @@ Donate link: http://alexrabe.boelinger.com/?page_id=80
 Tags: flash, slideshow, images, gallery, media, admin, post
 Requires at least: 2.1.3
 Tested up to: 2.2
-Stable tag: 0.40
+Stable tag: 0.41
 
 NextGEN Gallery is a Image Gallery plugin for WordPress.
 
@@ -22,13 +22,14 @@ Features:
 * Multiple CSS Stylesheet : Use a nice shadow effect for your thumbnails with your own CSS file 
 * Slideshow : Full integrated flash slideshow
 * TinyMCE : Button integration for easy adding the gallery tags
+* Sidebar Widget : Show a random picture at your sidebar 
 
 
 PLEASE NOTE !! This gallery plugin is still in development, it can be contain many bugs !
 
 == Credits ==
 
-Copyright 2007 Alex Rabe
+Copyright 2007 Alex Rabe & NextGEN DEV-Team
 
 The NextGEN button is taken from the Silk set of FamFamFam. See more at 
 http://www.famfamfam.com/lab/icons/silk/
@@ -89,7 +90,7 @@ For a gallery : **[gallery=id]**
 
 Example : http://nextgen.boelinger.com/gallery-page/
 
-For a single picture : **[singlepic=id,width,height,mode]**
+For a single picture : **[singlepic=id,width,height,mode,float]**
 
 Example : http://nextgen.boelinger.com/singlepic/
 
