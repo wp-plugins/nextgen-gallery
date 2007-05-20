@@ -307,7 +307,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			foreach($pictures as $picture) {
 	
 			//TODO: Check for file permission
-			$thumb = new Thumbnail($gallery_absfolder."/".$picture, TRUE);
+			$thumb = new ngg_Thumbnail($gallery_absfolder."/".$picture, TRUE);
 			// echo $thumb->errmsg;	
 			// skip if file is not there
 			if (!$thumb->error) {
@@ -332,7 +332,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			foreach($pictures as $picture) {
 	
 			//TODO: Check for file permission
-			$thumb = new Thumbnail($gallery_absfolder."/".$picture, TRUE);
+			$thumb = new ngg_Thumbnail($gallery_absfolder."/".$picture, TRUE);
 			// echo $thumb->errmsg;	
 			// skip if file is not there
 			if (!$thumb->error) {
@@ -366,7 +366,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		if (is_array($pictures)) {
 			foreach($pictures as $picture) {
 	
-			$thumb = new Thumbnail($gallery_absfolder."/".utf8_decode($picture), TRUE);
+			$thumb = new ngg_Thumbnail($gallery_absfolder."/".utf8_decode($picture), TRUE);
 		
 			// echo $thumb->errmsg;	
 			// skip if file is not there
@@ -409,7 +409,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		$filename = $_FILES['zipfile']['name']; 
 				
 		// check if file is a zip file
-		if ( $_FILES['zipfile']['type'] != "application/x-zip-compressed" ) {
+		if (!eregi('zip', $_FILES['zipfile']['type'])) {
 			@unlink($temp_zipfile); // del temp file
 			return '<font color="red">'.__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type'].'</font>'; 
 		}

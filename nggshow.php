@@ -21,7 +21,7 @@ $filenname = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid =
 $gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
 $filepath = WINABSPATH . "/" . $gallerypath ."/" . $filenname;
 
-$thumb = new Thumbnail($filepath);
+$thumb = new ngg_Thumbnail($filepath);
 if ( isset($_GET['height']) and isset($_GET['width']))
 	$thumb->resize($_GET['width'],$_GET['height']);
 if ($mode == 'watermark') {

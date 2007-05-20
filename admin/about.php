@@ -83,7 +83,8 @@ function ngg_list_support()	{
 	"Milemann" => "",
 	"Lazy (German Translation)" => "http://www.lazychris.de/",
 	"Lise (French Translation)" => "http://liseweb.fr/",
-	"Anja (Dutch Translation)" => "www.werkgroepen.net/wordpress"	
+	"Anja (Dutch Translation)" => "http://www.werkgroepen.net/wordpress",
+	"Wojciech Owczarek (Polish Translation)" => "http://www.owczi.net"		
 	);
 
 

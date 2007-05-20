@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.41a
+Version: 0.43a
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -42,7 +42,7 @@ global $wpdb, $wp_version;
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.41");
+define('NGGVERSION', "0.43");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
@@ -58,8 +58,8 @@ define('NGGALLERY_IREXIST', file_exists(NGGALLERY_ABSPATH.'imagerotator.swf'));
 // get value for safe mode
 if ((gettype(ini_get('safe_mode')) == 'string')) {
 	// if sever did in in a other way
-	if (ini_get('safe_mode') == 'off') define('SAFE_MODE', FALSE);
-	else define('SAFE_MODE', TRUE);
+	if (ini_get('safe_mode') == 'on') define('SAFE_MODE', TRUE);
+	else define('SAFE_MODE', ini_get('safe_mode'));
 } else
 define('SAFE_MODE', ini_get('safe_mode'));
 

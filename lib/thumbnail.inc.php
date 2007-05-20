@@ -13,7 +13,7 @@
  * PHP class for dynamically resizing, cropping, and rotating images for thumbnail purposes and either displaying them on-the-fly or saving them.
  *
  */
-class Thumbnail {
+class ngg_Thumbnail {
     /**
      * Error message to display, if any
      *
@@ -119,7 +119,7 @@ class Thumbnail {
      * @param string $fileName
      * @return Thumbnail
      */
-    function Thumbnail($fileName,$no_ErrorImage = false) {
+    function ngg_Thumbnail($fileName,$no_ErrorImage = false) {
         //make sure the GD library is installed
     	if(!function_exists("gd_info")) {
         	echo 'You do not have the GD Library installed.  This class requires the GD library to function properly.' . "\n";

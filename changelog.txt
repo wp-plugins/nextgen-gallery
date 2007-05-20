@@ -1,6 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.43 - 20.05.2007
+- Changed : Rename Thumbnail class to avoid php name collision
+- Bugfix : Missing translation flag in setup
+- Bugfix : Changed check for safe-mode
+- Bugfix : Changed check for Zip-File
+
 V0.42 - 17.05.2007
 - Bugfix : Float function for singlepic not integrated, sorry !
 - Bugfix : Remove clear:both in widget
