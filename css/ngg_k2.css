@@ -185,26 +185,15 @@ it's only a template design
 }
 
 /* ----------- Sidebar widget -------------*/
-.ngg-widget {
-	
-}
-
-ul.ngg-randomlist {
-	background:transparent none repeat scroll 0% !important;
-	display:inline;
+.ngg-widget,
+.ngg-widget-slideshow {
+	overflow: hidden;
 	margin:0pt;
-	padding:0pt 0px 0px 0pt;
+	padding:5px 0px 0px 0pt;
 }
 
-ul.ngg-randomlist img {
+.ngg-widget img {
 	border:2px solid #A9A9A9;
 	margin:0pt 2px 2px 0px; 
 	padding:1px; 
-}
-
-ul.ngg-randomlist li {
-	display:block;
-	float:left;
-	padding:0pt 2px 0px 0px;
-	position:relative;
 }

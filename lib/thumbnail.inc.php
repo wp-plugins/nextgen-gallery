@@ -679,7 +679,7 @@ class ngg_Thumbnail {
     function gatherImageMeta() {
     	//only attempt to retrieve info if exif exists
     	if(function_exists("exif_read_data") && $this->format == 'JPG') {
-			$imageData = exif_read_data($this->fileName);
+			$imageData = @exif_read_data($this->fileName);
 			if(isset($imageData['Make'])) 
 				$this->imageMeta['make'] = ucwords(strtolower($imageData['Make']));
 			if(isset($imageData['Model'])) 

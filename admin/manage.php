@@ -172,6 +172,7 @@ function nggallery_manage_gallery_main() {
 	global $wpdb;
 	
 	?>
+	<script type="text/javascript"> var tb_pathToImage = '<?php echo NGGALLERY_URLPATH ?>thickbox/loadingAnimationv3.gif';</script>
 	<div class="wrap">
 		<h2><?php _e('Gallery Overview', 'nggallery') ?></h2>
 		<table id="the-list-x" width="100%" cellspacing="3" cellpadding="3" >
@@ -235,25 +236,22 @@ function nggallery_pciturelist() {
 	$act_thumbnail_url 	= get_option ('siteurl')."/".$act_gallery->path.ngg_get_thumbnail_folder($act_gallery->path, FALSE);
 	$act_thumb_prefix   = ngg_get_thumbnail_prefix($act_gallery->path, FALSE);
 
-	//TODO: Do with wp_register_script
 ?>
 
-<script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/jquery.js"></script>
-<script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/interface.js"></script>
-<script type="text/javascript"> $(document).ready(	
+<script type="text/javascript"> 
+jQuery(document).ready(	
 	function()	{ 
-		$('.textarea1').Autoexpand([230,400]); 
-/*		$("input:checkbox").click( 
+		jQuery('.textarea1').Autoexpand([230,400]); 
+/*		jQuery("input:checkbox").click( 
 			function() {
-				$(this).parents('tr').Highlight(500, '#ff0', function(){$(this).parents('tr').css('backgroundColor', 'transparent');});	
-//				$(this).parents('tr').('#td.img').fadeOut(2000);
+				jQuery(this).parents('tr').Highlight(500, '#ff0', function(){jQuery(this).parents('tr').css('backgroundColor', 'transparent');});	
+//				jQuery(this).parents('tr').('#td.img').fadeOut(2000);
 			}
 		); 
 */
 	}); 
 </script>
-<script type="text/javascript"> var tb_pathToImage = '<?php echo NGGALLERY_URLPATH ?>thickbox/loadingAnimationv2.gif';</script>
-<script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>thickbox/thickbox.js"></script>
+<script type="text/javascript"> var tb_pathToImage = '<?php echo NGGALLERY_URLPATH ?>thickbox/loadingAnimationv3.gif';</script>
 <style type="text/css" media="all">@import "<?php echo NGGALLERY_URLPATH ?>thickbox/thickbox.css";</style>
 <style type="text/css" media="all">
 	/** required for view button **/

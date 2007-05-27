@@ -66,8 +66,8 @@ function searchnggallerytags($content) {
 				if($galleryID) {
 					$search = $matches[0][$key];
 					// get the size if they are set
-			 		$ssWidth  =  $matches[3][$key]; 
-					$ssHeight =  $matches[5][$key];
+			 		$irWidth  =  $matches[3][$key]; 
+					$irHeight =  $matches[5][$key];
 					$replace= nggShowSlideshow($galleryID,$irWidth,$irHeight);
 					$content= str_replace ($search, $replace, $content);
 				}
@@ -88,10 +88,10 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	if (empty($irHeight)) $irHeight = $ngg_options[irHeight];
 
 	$replace .= "\n".'<div class="slideshow" id="ngg_slideshow'.$galleryID.'">';
-	$replace .= '<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.</p>';
+	$replace .= '<p>The <a href="http://www.macromedia.com/go/getflashplayer">Flash Player</a> and <a href="http://www.mozilla.com/firefox/">a browser with Javascript support</a> are needed..</p></div>';
     $replace .= "\n\t".'<script type="text/javascript">';
-//  $replace .= "\n\t".'<!--';
-	$replace .= "\n\t".'//<![CDATA[';
+	if ($ngg_options[irXHTMLvalid]) $replace .= "\n\t".'<!--';
+	if ($ngg_options[irXHTMLvalid]) $replace .= "\n\t".'//<![CDATA[';
 	$replace .= "\n\t\t".'var so = new SWFObject("'.NGGALLERY_URLPATH.'imagerotator.swf", "ngg_slideshow'.$galleryID.'", "'.$irWidth.'", "'.$irHeight.'", "7", "#'.$ngg_options[irBackcolor].'");';
 	$replace .= "\n\t\t".'so.addParam("wmode", "opaque");';
 	$replace .= "\n\t\t".'so.addVariable("file", "'.NGGALLERY_URLPATH.'nggextractXML.php?gid='.$galleryID.'");';
@@ -99,19 +99,19 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	if ($ngg_options[irLinkfromdisplay]) $replace .= "\n\t\t".'so.addVariable("linkfromdisplay", "false");';
 	if ($ngg_options[irShownavigation]) $replace .= "\n\t\t".'so.addVariable("shownavigation", "true");';
 	if ($ngg_options[irShowicons]) $replace .= "\n\t\t".'so.addVariable("showicons", "true");';
+	if ($ngg_options[irKenburns]) $replace .= "\n\t\t".'so.addVariable("kenburns", "true");';
 	$replace .= "\n\t\t".'so.addVariable("overstretch", "'.$ngg_options[irOverstretch].'");';
 	$replace .= "\n\t\t".'so.addVariable("backcolor", "0x'.$ngg_options[irBackcolor].'");';
 	$replace .= "\n\t\t".'so.addVariable("frontcolor", "0x'.$ngg_options[irFrontcolor].'");';
 	$replace .= "\n\t\t".'so.addVariable("lightcolor", "0x'.$ngg_options[irLightcolor].'");';
 	$replace .= "\n\t\t".'so.addVariable("rotatetime", "'.$ngg_options[irRotatetime].'");';
-	$replace .= "\n\t\t".'so.addVariable("transition", "'.$ngg_options[irTransition].'");';
+	$replace .= "\n\t\t".'so.addVariable("transition", "'.$ngg_options[irTransition].'");';	
 	$replace .= "\n\t\t".'so.addVariable("width", "'.$irWidth.'");';
 	$replace .= "\n\t\t".'so.addVariable("height", "'.$irHeight.'");'; 
 	$replace .= "\n\t\t".'so.write("ngg_slideshow'.$galleryID.'");';
-	$replace .= "\n\t".'//]]>';
-//	$replace .= "\n\t".'-->';
+	if ($ngg_options[irXHTMLvalid]) $replace .= "\n\t".'//]]>';
+	if ($ngg_options[irXHTMLvalid]) $replace .= "\n\t".'-->';
 	$replace .= "\n\t".'</script>';
-	$replace .= '</div>'."\n";
 		
 	return $replace;
 }
@@ -219,7 +219,7 @@ function nggShowGallery($galleryID) {
 		);
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail-box">'."\n\t";
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail">'."\n\t";
-		$gallerycontent .= '<a href="'.$folder_url.$picturefile.'" title="'.$picture->alttext.'" '.$thumbcode.' >';
+		$gallerycontent .= '<a href="'.$folder_url.$picturefile.'" title="'.$picture->description.'" '.$thumbcode.' >';
 		$gallerycontent .= '<img title="'.$picture->alttext.'" alt="'.$picture->alttext.'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
 		$gallerycontent .= '</a>'."\n".'</div>'."\n".'</div>'."\n";
 		}
@@ -326,7 +326,7 @@ function nggSinglePicture($imageID,$width=250,$height=250,$mode="",$float="") {
 		if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'".$act_gallery->name."'", $thumbcode);
 		else $thumbcode = str_replace("%GALLERY_NAME%", $act_gallery->name, $thumbcode);
 		
-		$link  = '<a href="'.$folder_url.$picture->filename.'" title="'.$picture->alttext.'" '.$thumbcode.' >';
+		$link  = '<a href="'.$folder_url.$picture->filename.'" title="'.$picture->description.'" '.$thumbcode.' >';
 	}
 
 	// add float to img

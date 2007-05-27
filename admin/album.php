@@ -16,7 +16,7 @@ function nggallery_admin_manage_album()  {
 		
 		if ($_POST['act_album'] > 0){
 			$albumid = $_POST['act_album'];
-			
+			echo $_POST['sortorder'];
 			// get variable galleryContainer 
 			parse_str($_POST['sortorder']); 
 			if (is_array($galleryContainer)){ 
@@ -44,22 +44,20 @@ function nggallery_admin_manage_album()  {
 	if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="updated fade"><p>'.$messagetext.'</p></div>'; }
 		
 ?>
-<script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/jquery.js"></script>
-<script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/interface.js"></script>
 <style type="text/css" media="all">@import "<?php echo NGGALLERY_URLPATH ?>css/nggallery.css";</style>
 <style type="text/css" media="all">@import "<?php echo NGGALLERY_URLPATH ?>admin/js/portlets.css";</style>
 <script type="text/javascript">
 
-$(document).ready(
+jQuery(document).ready(
 	function()
 	{
 		//updating the height of the white backround box, it does not work without this stupid lines
 		//problem: absolute positioning of the minimizing links in item_top does not work :(
 		//position: absolute; right:5px; top:0px; border-bottom: 2px solid #003333; css lines of .groupItem .item_top a
-		var hei = $('.wrap').height();
-		$('.wrap').height(hei);
+		var hei = jQuery('.wrap').height();
+		jQuery('.wrap').height(hei);
 		
-		$('div.groupWrapper').Sortable(
+		jQuery('div.groupWrapper').Sortable(
 			{
 				accept: 'groupItem',
 				helperclass: 'sort_placeholder',
@@ -67,33 +65,33 @@ $(document).ready(
 				tolerance: 'intersect'
 			}
 		)
-		$('a.min').bind('click', toggleContent);
-		$('.textarea1').Autoexpand([230,400]);
+		jQuery('a.min').bind('click', toggleContent);
+		jQuery('.textarea1').Autoexpand([230,400]);
 	}
 );
 
 var toggleContent = function(e)
 {
-	var targetContent = $('div.itemContent', this.parentNode.parentNode);
+	var targetContent = jQuery('div.itemContent', this.parentNode.parentNode);
 	if (targetContent.css('display') == 'none') {
 		targetContent.slideDown(300);
-		$(this).html('[-]');
+		jQuery(this).html('[-]');
 	} else {
 		targetContent.slideUp(300);
-		$(this).html('[+]');
+		jQuery(this).html('[+]');
 	}
 	return false;
 }
 
-function serialize(s)
+function ngg_serialize(s)
 {
-	serial = $.SortSerialize(s);
-	$('input[@name=sortorder]').val(serial.hash);
+	serial = jQuery.SortSerialize(s);
+	jQuery('input[@name=sortorder]').val(serial.hash);
 }
 </script>
 <div class="wrap" id="wrap" >
 	<h3><?php _e('Manage Albums', 'nggallery') ?></h3>
-	<form id="selectalbum" method="POST" onsubmit="serialize('galleryContainer')">
+	<form id="selectalbum" method="POST" onsubmit="ngg_serialize('galleryContainer')">
 		<input name="sortorder" type="hidden" />
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr>

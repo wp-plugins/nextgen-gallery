@@ -1,6 +1,25 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.50 - 28.05.2007
+- NEW : Select multiple files for upload (THX to Diego A., http://www.fyneworks.com)
+- NEW : Sidebar widget contain now Slideshow, recent images and random images
+- Added : New Option for Imagerotator 3.8 (Slow zoom effect)
+- Added : Option for CDATA wrapper (not working proper)
+- Added : Option for Thickbox Loading Image
+- Added : CSS file for dKret2 (THK to Joern)
+- Added : Better file permission check
+- Changed : Fixed ratio create better thubnails in portrait mode
+- Changed : All jQuery scripts are now in "No Conflict" mode
+- Changed : Script loading now via wp_enqueue_script
+- Changed : Add constant values for folder/file permission
+- Changed : Use description in <A href title>
+- Bugfix : Remove wrong DIV tag in slideshow
+- Bugfix : Tag [Slideshow=id,width,height] didn't work proper
+- Bugfix : Name conflict in Album script (serialize) (THX to Die-Andis)
+- Bugfix : Changed check for CSS activation
+- Bugfix : Changed check for safe-mode (Don't ask)
+
 V0.43 - 20.05.2007
 - Changed : Rename Thumbnail class to avoid php name collision
 - Bugfix : Missing translation flag in setup

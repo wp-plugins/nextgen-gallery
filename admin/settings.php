@@ -29,21 +29,19 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="updated fade"><p>'.$messagetext.'</p></div>'; }
 	
 	?>
-	<script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/jquery.js"></script>
-	<script type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>admin/js/interface.js"></script>
 	<script type="text/javascript">
 		var currentTab = null;
 		var inSlide = false;
-		$(document).ready(
+		jQuery(document).ready(
 			function()
 			{
 				var url, tab = 0, tabIteration = 0;
 				
 				url = window.location.href.split("#");
 				if (url.length == 2 && url[1].indexOf('-slider') > 0) {
-					currentTab = $('#' + url[1].substr(0, url[1].length-7));
+					currentTab = jQuery('#' + url[1].substr(0, url[1].length-7));
 					if (currentTab.size() == 1) {
-						$('#slider div').each(
+						jQuery('#slider div').each(
 							function(iteration)
 							{
 								if(this === currentTab.get(0)) {
@@ -55,11 +53,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				}
 				
 				if(!currentTab) {
-					currentTab = $('#slider div:first');
+					currentTab = jQuery('#slider div:first');
 				}
 				//Nicer, but buggy: DropToggleRight
 				currentTab.SlideToggleUp(500);
-				$('#tabs a')
+				jQuery('#tabs a')
 					.eq(tabIteration).addClass('active')
 					.end()
 					.bind('click', switchTab);
@@ -71,15 +69,15 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			// get id from link
 			var tabName = this.href.split('#')[1];
 			this.blur();
-			if (inSlide == false && currentTab.get(0) != $('#' + tabName.substr(0, tabName.length-7)).get(0)) {
-				$('#tabs a').removeClass('active');
-				$(this).addClass('active');
+			if (inSlide == false && currentTab.get(0) != jQuery('#' + tabName.substr(0, tabName.length-7)).get(0)) {
+				jQuery('#tabs a').removeClass('active');
+				jQuery(this).addClass('active');
 				inSlide = true;
 				currentTab.SlideToggleUp(
 					500,
 					function()
 					{
-						currentTab = $('#' + tabName.substr(0, tabName.length-7)).SlideToggleUp(500, function(){inSlide=false;});
+						currentTab = jQuery('#' + tabName.substr(0, tabName.length-7)).SlideToggleUp(500, function(){inSlide=false;});
 					}
 				);
 			} else {
@@ -92,23 +90,27 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			switch (value) {
 			  case "none":
 			    effectcode = "";
+			    jQuery('#tbImage').hide("slow");
 			    break;
 			  case "thickbox":
 			    effectcode = 'class="thickbox" rel="%GALLERY_NAME%"';
+			    jQuery('#tbImage').show("slow");
 			    break;
 			  case "lightbox":
 			    effectcode = 'rel="lightbox[%GALLERY_NAME%]"';
+			    jQuery('#tbImage').hide("slow");
 			    break;
 			  case "highslide":
 			    effectcode = 'class="highslide" onclick="return hs.expand(this, { slideshowGroup: %GALLERY_NAME% })"';
+			    jQuery('#tbImage').hide("slow");
 			    break;
 			  default:
 			    break;
 			}
-			$("#thumbCode").val(effectcode);
+			jQuery("#thumbCode").val(effectcode);
 		};
 		function setcolor(fileid,color) {
-			$(fileid).css("background", color );
+			jQuery(fileid).css("background", color );
 		};
 	</script>
 	<div class="wrap" style="text-align: center">
@@ -162,6 +164,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<form name="thumbnailsettings" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#thumbnails-slider'; ?>" >
 			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbfix,thumbcrop,thumbresizebefore,thumbquality,thumbResampleMode" />
 			<fieldset class="options"> 
+				<p><?php _e('Please note : If you change the settings, you need to recreate the thumbnails under -> Manage Gallery .', 'nggallery') ?></p>
 				<table class="optiontable editform">
 					<tr valign="top">
 						<th align="left"><?php _e('Width x height (in pixel)','nggallery') ?></th>
@@ -277,7 +280,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<div id="effects" style="display:none">
 			<h2><?php _e('Effects','nggallery'); ?></h2>
 			<form name="effectsform" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#effects-slider'; ?>" >
-			<input type="hidden" name="page_options" value="thumbEffect,thumbCode" />
+			<input type="hidden" name="page_options" value="thumbEffect,thumbCode,thickboxImage" />
 			<p><?php _e('Here you can select the thumbnail effect, NextGEN Gallery will integrate the required HTML code in the images. Please note that only the Thickbox effect will automatic added to your theme.','nggallery'); ?>
 			<?php _e('With the placeholder','nggallery'); ?><strong> %GALLERY_NAME% </strong> <?php _e('you can activate a navigation through the images (depend on the effect). Change the code line only , when you use a different thumbnail effect or you know what you do.','nggallery'); ?></p>
 			<fieldset class="options"> 
@@ -298,6 +301,18 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<td><textarea id="thumbCode" name="thumbCode" cols="50" rows="5"><?php echo htmlspecialchars(stripslashes($ngg_options[thumbCode])); ?></textarea></td>
 					</tr>
 				</table>
+				
+				<div id="tbImage" <?php if ($ngg_options[thumbEffect] != 'thickbox') echo 'style="display:none"'?> >
+				<table class="optiontable">
+					<tr valign="top">
+						<th><?php _e('Select loading image','nggallery') ?> :</th>
+						<td>
+						<label><input name="thickboxImage" id="v2" type="radio" title="Version 2" value="loadingAnimationv2.gif" <?php checked('loadingAnimationv2.gif', $ngg_options[thickboxImage]); ?> /></label> <img src="<?php echo NGGALLERY_URLPATH.'thickbox/loadingAnimationv2.gif' ?>" alt="Version 2" />
+						<label><input name="thickboxImage" id="v3" type="radio" title="Version 3" value="loadingAnimationv3.gif" <?php checked('loadingAnimationv3.gif', $ngg_options[thickboxImage]); ?> /></label> <img src="<?php echo NGGALLERY_URLPATH.'thickbox/loadingAnimationv3.gif' ?>" alt="Version 3" /></td>
+					</tr>
+				</table>
+				</div>
+				
 			<div class="submit"><input type="submit" name="updateoption" value="<?php _e('Update') ;?> &raquo;"/></div>
 			</fieldset>	
 			</form>	
@@ -413,11 +428,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		<div id="slideshow" style="display:none">
 		<form name="player_options" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#slideshow-slider'; ?>" >
-		<input type="hidden" name="page_options" value="irWidth,irHeight,irShuffle,irLinkfromdisplay,irShownavigation,irShowicons,irOverstretch,irRotatetime,irTransition,irBackcolor,irFrontcolor,irLightcolor" />
+		<input type="hidden" name="page_options" value="irWidth,irHeight,irShuffle,irLinkfromdisplay,irShownavigation,irShowicons,irOverstretch,irRotatetime,irTransition,irKenburns,irBackcolor,irFrontcolor,irLightcolor,irXHTMLvalid" />
 		<h2><?php _e('Slideshow','nggallery'); ?></h2>
 		<fieldset class="options">
 		<?php if (!NGGALLERY_IREXIST) { ?><p><div id="message" class="error fade"><p><?php _e('The imagerotator.swf is not in the nggallery folder, the slideshow will not work.','nggallery') ?></p></div></p><?php }?>
-		<p><?php _e('The settings are used in the Flash Image Rotator Version 3.2 .', 'nggallery') ?> 
+		<p><?php _e('The settings are used in the Flash Image Rotator Version 3.8 .', 'nggallery') ?> 
 		   <?php _e('See more information for the Flash Player on the web page', 'nggallery') ?> <a href="http://www.jeroenwijering.com/?item=Flash_Image_Rotator" target="_blank">Flash Image Rotator from Jeroen Wijering</a>.<br />
 				<table class="optiontable" border="0" >
 					<tr>
@@ -462,12 +477,18 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<select size="1" name="irTransition">
 							<option value="fade" <?php selected('fade', $ngg_options[irTransition]); ?> ><?php _e('fade', 'nggallery') ;?></option>
 							<option value="bgfade" <?php selected('bgfade', $ngg_options[irTransition]); ?> ><?php _e('bgfade', 'nggallery') ;?></option>
+							<option value="slowfade" <?php selected('slowfade', $ngg_options[irTransition]); ?> ><?php _e('slowfade', 'nggallery') ;?></option>
 							<option value="circles" <?php selected('circles', $ngg_options[irTransition]); ?> ><?php _e('circles', 'nggallery') ;?></option>
+							<option value="bubbles" <?php selected('bubbles', $ngg_options[irTransition]); ?> ><?php _e('bubbles', 'nggallery') ;?></option>
 							<option value="blocks" <?php selected('blocks', $ngg_options[irTransition]); ?> ><?php _e('blocks', 'nggallery') ;?></option>
 							<option value="fluids" <?php selected('fluids', $ngg_options[irTransition]); ?> ><?php _e('fluids', 'nggallery') ;?></option>
 							<option value="lines" <?php selected('lines', $ngg_options[irTransition]); ?> ><?php _e('lines', 'nggallery') ;?></option>
 							<option value="random" <?php selected('random', $ngg_options[irTransition]); ?> ><?php _e('random', 'nggallery') ;?></option>
 						</select>
+					</tr>
+					<tr>
+						<th><?php _e('Use slow zooming effect','nggallery') ?>:</th>
+						<td><input name="irKenburns" type="checkbox" value="1" <?php checked('1', $ngg_options[irKenburns]); ?> /></td>
 					</tr>
 					<tr>
 						<th><?php _e('Background Color','nggallery') ?>:</th>
@@ -483,6 +504,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<th><?php _e('Rollover / Active Color','nggallery') ?>:</th>
 						<td><input type="text" size="6" maxlength="6" id="irLightcolor" name="irLightcolor" onchange="setcolor('#previewLight', this.value)" value="<?php echo $ngg_options[irLightcolor] ?>" />
 						<input type="text" size="1" readonly="readonly" id="previewLight" style="background-color: #<?php echo $ngg_options[irLightcolor] ?>" /></td>
+					</tr>
+					<tr>
+						<th><?php _e('Try XHTML validation (with CDATA)','nggallery') ?>:</th>
+						<td><input name="irXHTMLvalid" type="checkbox" value="1" <?php checked('1', $ngg_options[irXHTMLvalid]); ?> />
+						<?php _e('Important : Could causes problem at some browser. Please recheck your page.','nggallery') ?></td>
 					</tr>
 					</table>
 				<div class="clear"> &nbsp; </div>

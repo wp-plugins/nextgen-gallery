@@ -103,6 +103,7 @@ function ngg_default_options() {
 	// Thumbnail Effect
 	$ngg_options[thumbEffect]		= "thickbox";  					// select effect
 	$ngg_options[thumbCode]			= "class=\"thickbox\" rel=\"%GALLERY_NAME%\""; 
+	$ngg_options[thickboxImage]		= "loadingAnimationv3.gif";  	// thickbox Loading Image
 
 	// Watermark settings
 	$ngg_options[wmPos]				= "botRight";					// Postion
@@ -117,6 +118,8 @@ function ngg_default_options() {
 	$ngg_options[wmOpaque]			= "100";  						// Font Opaque
 
 	// Image Rotator settings
+	
+	$ngg_options[irXHTMLvalid]		= false;
 	$ngg_options[irWidth]			= 320; 
 	$ngg_options[irHeight]			= 240;
  	$ngg_options[irShuffle]			= true;
@@ -126,6 +129,7 @@ function ngg_default_options() {
 	$ngg_options[irOverstretch]		= "true";
 	$ngg_options[irRotatetime]		= 10;
 	$ngg_options[irTransition]		= "random";
+	$ngg_options[irKenburns]		= false;
 	$ngg_options[irBackcolor]		= "000000";
 	$ngg_options[irFrontcolor]		= "FFFFFF";
 	$ngg_options[irLightcolor]		= "CC0000";	

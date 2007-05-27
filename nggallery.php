@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.43a
+Version: 0.50a
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -38,11 +38,14 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 global $wpdb, $wp_version;
 
+// ini_set('display_errors', '1');
+// ini_set('error_reporting', E_ALL);
+
 //This works only in WP2.1 or higher
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.43");
+define('NGGVERSION', "0.50");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
@@ -52,13 +55,17 @@ define('NGGFOLDER', dirname(plugin_basename(__FILE__)));
 define('NGGALLERY_ABSPATH', $myabspath.'wp-content/plugins/' . NGGFOLDER .'/');
 define('NGGALLERY_URLPATH', get_option('siteurl').'/wp-content/plugins/' . NGGFOLDER.'/');
 
+// Permission settings
+define('NGGFOLDER_PERMISSION', 0777);
+define('NGGFILE_PERMISSION', 0666);
+
 // look for imagerotator
 define('NGGALLERY_IREXIST', file_exists(NGGALLERY_ABSPATH.'imagerotator.swf'));
 
 // get value for safe mode
 if ((gettype(ini_get('safe_mode')) == 'string')) {
 	// if sever did in in a other way
-	if (ini_get('safe_mode') == 'on') define('SAFE_MODE', TRUE);
+	if (ini_get('safe_mode') == 'off') define('SAFE_MODE', FALSE);
 	else define('SAFE_MODE', ini_get('safe_mode'));
 } else
 define('SAFE_MODE', ini_get('safe_mode'));
@@ -74,7 +81,7 @@ $wpdb->nggalbum						= $wpdb->prefix . 'ngg_album';
 // Load language
 function nggallery_init ()
 {
-load_plugin_textdomain('nggallery','wp-content/plugins/' . NGGFOLDER.'/lang');
+	load_plugin_textdomain('nggallery','wp-content/plugins/' . NGGFOLDER.'/lang');
 }
 
 // Load admin panel
@@ -82,36 +89,34 @@ include_once ("ngginstall.php");
 include_once ("nggfunctions.php");
 include_once ("admin/admin.php");
 
-// add header to theme
-function integrate_nggheader() {
-	global $ngg_options;
+// add javascript to header
+add_action('wp_head', 'ngg_addjs', 1);
+function ngg_addjs() {
+    global $wp_version, $ngg_options;
+    
 	echo "<meta name='NextGEN' content='".NGGVERSION."' />\n";
-	echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'css/'.$ngg_options[CSSfile].'";</style>';
+	if ($ngg_options[activateCSS]) 
+		echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'css/'.$ngg_options[CSSfile].'";</style>';
 	if ($ngg_options[thumbEffect] == "thickbox") {
-	echo "\n".'<script type="text/javascript" src="'.NGGALLERY_URLPATH.'admin/js/jquery.js"></script>';
-	//TODO: select v2 or v3 via option
-	echo "\n".'<script type="text/javascript"> var tb_pathToImage = "'.NGGALLERY_URLPATH.'thickbox/loadingAnimationv2.gif";</script>';
-	echo "\n".'<script type="text/javascript" src="'.NGGALLERY_URLPATH.'thickbox/thickbox.js"></script>';
-	echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'thickbox/thickbox.css";</style>'."\n";
+		echo "\n".'<script type="text/javascript"> var tb_pathToImage = "'.NGGALLERY_URLPATH.'thickbox/'.$ngg_options[thickboxImage].'";</script>';
+		echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'thickbox/thickbox.css";</style>'."\n";
+	    if ($wp_version < "2.2") {
+	    	wp_enqueue_script('jquery', NGGALLERY_URLPATH .'admin/js/jquery.js', FALSE, '1.1.2');
+		} 
+	    	wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.0.1');
+	    }
+	    
+	// test for wordtube function
+	if (!function_exists('integrate_swfobject')) {
+		wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'js/swfobject.js', FALSE, '1.5');
 	}
-	if (!function_exists('integrate_swfobject'))
-	echo "\n".'<script type="text/javascript" src="'.NGGALLERY_URLPATH.'js/swfobject.js'.'"></script>'."\n";
-}
-// Filter hook to activate CSS in header
-if ($ngg_options[activateCSS]) add_filter('wp_head', 'integrate_nggheader');
-
-add_action('admin_head', 'ngg_nocache');
-// add header to theme
-function ngg_nocache() {
-	echo "\n".'<meta name="NextGEN" content="'.NGGVERSION.'" />';
-	echo "\n".'<meta http-equiv="pragma" content="no-cache" />'."\n";
 }
 
 // load language file
 add_action('init', 'nggallery_init');
 
 add_action('activate_' . NGGFOLDER.'/nggallery.php', 'ngg_install');
-// init wpTable in wp-database if plugin is activated
+// init tables in wp-database if plugin is activated
 function ngg_install() {
 	nggallery_install();
 }

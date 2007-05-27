@@ -84,6 +84,8 @@ function ngg_list_support()	{
 	"Lazy (German Translation)" => "http://www.lazychris.de/",
 	"Lise (French Translation)" => "http://liseweb.fr/",
 	"Anja (Dutch Translation)" => "http://www.werkgroepen.net/wordpress",
+	"Adrian (Indonesian Translation)" => "http://adrian.web.id/",
+	"Mika Pennanen (Finnish Translation)" => "http://kapsi.fi/~penni",
 	"Wojciech Owczarek (Polish Translation)" => "http://www.owczi.net"		
 	);
 

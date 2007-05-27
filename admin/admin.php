@@ -1,10 +1,39 @@
 <?php
 // ************************************
 // ** Admin Section for NextGEN Gallery
-// ** for V 0.01
+// ** for V 0.50
 // ** by Alex Rabe
 // ************************************
 
+// add to header in admin area
+add_action('admin_head', 'ngg_nocache');
+function ngg_nocache() {
+	echo "\n".'<meta name="NextGEN" content="'.NGGVERSION.'" />';
+	echo "\n".'<meta http-equiv="pragma" content="no-cache" />'."\n";
+}
+
+// load script files
+add_action('init', 'ngg_add_admin_js',1);
+function ngg_add_admin_js() {
+	if ($wp_version < "2.2") {
+	    wp_register_script('jquery', NGGALLERY_URLPATH .'admin/js/jquery.js', FALSE, '1.1.2');
+	} 
+	switch ($_GET['page']) {
+		case "nggallery-manage-gallery" :
+			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2');
+			wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.0.1');
+		break;
+		case "nggallery-manage-album" :
+		case "nggallery-options" :
+			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2');
+		break;		
+		case "nggallery-add-gallery" :
+			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2');
+			wp_enqueue_script('mutlifile', NGGALLERY_URLPATH .'admin/js/jquery.MultiFile.js', array('jquery'), '1.1.1');
+		break;
+	}
+}
+	
 // add to menu
 add_action('admin_menu', 'add_nextgen_gallery_menu');
 

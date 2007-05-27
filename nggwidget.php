@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: NextGEN Gallery Widget
-Description: Adds a sidebar widget to see random images in your NextGEN Gallery!
+Description: Adds a sidebar widget support to your NextGEN Gallery!
 Author: KeViN
-Version: 0.91b
+Version: 0.98b
 Author URI: http://www.kev.hu
 Plugin URI: http://www.kev.hu
 
@@ -52,35 +52,230 @@ function getCSVValues($string,$separator=",")
     return $elements;
 }
 
-function widget_nextgenimage_init() {
+/**********************************************************/
+/* Slidehow widget function
+/**********************************************************/
+function nggSlideshowWidget($galleryID,$irWidth,$irHeight) {
+	
+	global $wpdb;
+	$ngg_options = get_option('ngg_options');
+	
+	if (empty($irWidth) ) $irWidth = $ngg_options[irWidth];
+	if (empty($irHeight)) $irHeight = $ngg_options[irHeight];
+	
+	$replace .= "\n".'<div class="ngg-widget-slideshow" id="ngg_widget_slideshow'.$galleryID.'">';
+	$replace .= '<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.</div>';
+    $replace .= "\n\t".'<script type="text/javascript">';
+    $replace .= "\n\t".'<!--';
+	$replace .= "\n\t".'//<![CDATA[';
+	$replace .= "\n\t\t".'var so = new SWFObject("'.NGGALLERY_URLPATH.'imagerotator.swf", "ngg_slideshow'.$galleryID.'", "'.$irWidth.'", "'.$irHeight.'", "7", "#'.$ngg_options[irBackcolor].'");';
+	$replace .= "\n\t\t".'so.addParam("wmode", "opaque");';
+	$replace .= "\n\t\t".'so.addVariable("file", "'.NGGALLERY_URLPATH.'nggextractXML.php?gid='.$galleryID.'");';
+	if (!$ngg_options[irShuffle]) $replace .= "\n\t\t".'so.addVariable("shuffle", "false");';
+//	if ($ngg_options[irLinkfromdisplay]) $replace .= "\n\t\t".'so.addVariable("linkfromdisplay", "false");';
+//	if ($ngg_options[irShownavigation]) $replace .= "\n\t\t".'so.addVariable("shownavigation", "true");';
+	if ($ngg_options[irShowicons]) $replace .= "\n\t\t".'so.addVariable("showicons", "true");';
+	$replace .= "\n\t\t".'so.addVariable("overstretch", "'.$ngg_options[irOverstretch].'");';
+	$replace .= "\n\t\t".'so.addVariable("backcolor", "0x'.$ngg_options[irBackcolor].'");';
+	$replace .= "\n\t\t".'so.addVariable("frontcolor", "0x'.$ngg_options[irFrontcolor].'");';
+	$replace .= "\n\t\t".'so.addVariable("lightcolor", "0x'.$ngg_options[irLightcolor].'");';
+	$replace .= "\n\t\t".'so.addVariable("rotatetime", "'.$ngg_options[irRotatetime].'");';
+	$replace .= "\n\t\t".'so.addVariable("transition", "'.$ngg_options[irTransition].'");';
+	$replace .= "\n\t\t".'so.addVariable("width", "'.$irWidth.'");';
+	$replace .= "\n\t\t".'so.addVariable("height", "'.$irHeight.'");'; 
+	$replace .= "\n\t\t".'so.write("ngg_widget_slideshow'.$galleryID.'");';
+	$replace .= "\n\t".'//]]>';
+	$replace .= "\n\t".'-->';
+	$replace .= "\n\t".'</script>';
+		
+	echo $replace;
+}
+
+
+/**********************************************************/
+/* Slidehow widget control
+/**********************************************************/
+function widget_ngg_slideshow() {
+ 
+ 	// Check for the required plugin functions. 
+	if ( !function_exists('register_sidebar_widget') )
+		return;
+	
+	function widget_show_ngg_slideshow($args) {
+	 
+	    extract($args);
+   
+    	// Each widget can store its own options. We keep strings here.
+		$options = get_option('widget_nggslideshow');
+
+		// These lines generate our output. 
+		echo $before_widget . $before_title . $options['title'] . $after_title;
+		$url_parts = parse_url(get_bloginfo('home'));
+		nggSlideshowWidget($options['galleryid'] , $options['width'] , $options['height']);
+		echo $after_widget;
+		
+	}	
+
+	// Admin section
+	function widget_control_ngg_slideshow() {
+	 	global $wpdb;
+	 	$options = get_option('widget_nggslideshow');
+	 	if ( !is_array($options) )
+			$options = array('title'=>'Slideshow', 'galleryid'=>'0','height'=>'120','width'=>'160',);
+			
+		if ( $_POST['ngg-submit'] ) {
+
+			$options['title'] = strip_tags(stripslashes($_POST['ngg-title']));
+			$options['galleryid'] = $_POST['ngg-galleryid'];
+			$options['height'] = $_POST['ngg-height'];
+			$options['width'] = $_POST['ngg-width'];
+			update_option('widget_nggslideshow', $options);
+		}
+		
+		$title = htmlspecialchars($options['title'], ENT_QUOTES);
+		$height = $options['height'];
+		$width = $options['width'];
+		
+		// The Box content
+		echo '<p style="text-align:right;"><label for="ngg-title">' . __('Title:', 'nggallery') . ' <input style="width: 200px;" id="ngg-title" name="ngg-title" type="text" value="'.$title.'" /></label></p>';
+		echo '<p style="text-align:right;"><label for="ngg-galleryid">' . __('Select Gallery:', 'nggallery'). ' </label>';
+		echo '<select size="1" name="ngg-galleryid" id="ngg-galleryid">';
+			$tables = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY 'name' ASC ");
+			if($tables) {
+				foreach($tables as $table) {
+				echo '<option value="'.$table->gid.'" ';
+				if ($table->gid == $options['galleryid']) echo "selected='selected' ";
+				echo '>'.$table->name.'</option>'."\n\t"; 
+				}
+			}
+		echo '</select></p>';
+		echo '<p style="text-align:right;"><label for="ngg-height">' . __('Height:', 'nggallery') . ' <input style="width: 50px;" id="ngg-height" name="ngg-height" type="text" value="'.$height.'" /></label></p>';
+		echo '<p style="text-align:right;"><label for="ngg-width">' . __('Width:', 'nggallery') . ' <input style="width: 50px;" id="ngg-width" name="ngg-width" type="text" value="'.$width.'" /></label></p>';
+		echo '<input type="hidden" id="ngg-submit" name="ngg-submit" value="1" />';
+	 		
+	}
+	
+	register_sidebar_widget(array('NextGEN Slideshow', 'widgets'), 'widget_show_ngg_slideshow');
+	register_widget_control(array('NextGEN Slideshow', 'widgets'), 'widget_control_ngg_slideshow', 300, 200);
+}
+
+/*******************************************************/
+/* DISPLAY FUNCTION TO THE RECENT & RANDOM IMAGES 
+/*******************************************************/
+function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thumbcode) {
+
+
+	// Put your HTML code here if you want to personalize the image display!
+	$IMGbefore	= ''; // NOT IN USE!
+	$IMGafter	= ''; // NOT IN USE!
+	
+	$Abefore	= ''; // NOT IN USE!
+	$Aafter		= ''; // NOT IN USE!
+	
+	for ($i=1; $i<=$number; $i++) {
+
+		global $wpdb;
+
+		// Get a random image from the database
+		if (($imgtype == "random")) {
+			$imageID = $wpdb->get_var("SELECT pid FROM $wpdb->nggpictures ORDER by rand() limit 1");
+		}
+		else {
+		// Get the $i latest image from the database
+			$imageID = $wpdb->get_var("SELECT pid FROM $wpdb->nggpictures ORDER by pid DESC limit ".$i.",1");
+		}
+
+		// [0.97] new variable -> Set up the strings 
+		$Astart		= '<a href="'.ngg_get_image_url($imageID).'" title="" '.$thumbcode.'>';
+		$Aend		= '</a>';
+
+		
+		// Here comes the display
+		echo $Abefore;
+	
+		// [0.95] new function -> Thumbnail or Normal image				
+		if ( ($thumb == "false") ) {
+		// NORMAL IMAGE mode
+			if ( ($mode == 'web20') ) {
+				// [0.95] [deleted]	-> <li> </li>
+				// [0.97] [edited]	-> class="ngg-widget-img" -> id="ngg-widget-img"
+				// [0.98] [deleted]	-> id="ngg-widget-img"
+				echo $Astart;
+				echo $IMGbefore.'<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$sizeX.'&amp;height='.$sizeY.'&amp;mode=web20" />';
+				echo $Aend.$IMGafter."\n";
+			} 
+			else { 
+				// [0.95] [deleted]	-> <li> </li>
+				// [0.97] [edited]	-> class="ngg-widget-img" -> id="ngg-widget-img"
+				// [0.98] [deleted]	-> id="ngg-widget-img"
+				echo $Astart;
+				echo $IMGbefore.'<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$sizeX.'&amp;height='.$sizeY.'" />';
+				echo $Aend.$IMGafter."\n";
+			}
+		}
+		else {
+		// THUMBNAIL mode
+			//if web20
+			if ( ($mode == 'web20') ) {
+				
+				// [0.95] [deleted]	-> <li> </li>
+				// [0.95] [edited]	-> class="ngg-widget-img"
+				echo $Astart;
+				// [0.95] [deleted]	-> nggshow because it displays the ORIGYNAL picture and not the THUMBNAIL! 
+				// [0.95] [new line]	-> showreflection.php -> for the web20 thumbnail!
+				echo $IMGbefore.'<img src="'.NGGALLERY_URLPATH.'showreflection.php?pid='.$imageID.'&amp;width='.$sizeX.'&amp;height='.$sizeY.' />'; 
+				echo $Aend.$IMGafter."\n";
+			}
+			else { 
+				echo $Astart;
+				echo $IMGbefore.'<img src="'.ngg_get_thumbnail_url($imageID).'" style="width:'.$sizeX.'px;height:'.$sizeY.'px;" />';
+				echo $Aend.$IMGafter."\n";
+			}
+		}
+		
+		echo $Aafter;
+
+	}
+}
+
+/**********************************************************/
+/* Recent widget
+/**********************************************************/
+
+/* HERE COMES THE RECENT IMAGE WIDGET */
+
+
+function widget_ngg_recentimage() {
 
 	// Check for the required plugin functions. This will prevent fatal
 	// errors occurring when you deactivate the dynamic-sidebar plugin.
 	if ( !function_exists('register_sidebar_widget') )
 		return;
 	
-	// This is the function that outputs our little Google search form.
-	function widget_nextgenimage($args) {
+	// This is the function that outputs our little widget...
+	function widget_nextgenrecentimage($args) {
 		
 		// $args is an array of strings that help widgets to conform to
 		// the active theme: before_widget, before_title, after_widget,
-		// and after_title are the array keys. Default tags: li and h2.
+		// and after_title are the array keys.
 		extract($args);
 
 		// Each widget can store its own options. We keep strings here.
-		$options = get_option('widget_NextGenimage');
-		$title = $options['title'];
-		$number = $options['number'];
-		$sizeX = $options['sizeX'];
-		$sizeY = $options['sizeY'];
-		$mode = $options['mode'];
-		// $border = $options['border'];
-		// $bordercolor = $options['bordercolor'];
-		// $margin = $options['margin'];
+		$options = get_option('widget_NextGenrecentimage');
+		
+		$title	= $options['title'];
+	    $thumb	= $options['thumb'];
+		$number	= $options['number'];
+		$sizeX	= $options['sizeX'];
+		$sizeY	= $options['sizeY'];
+		$mode	= $options['mode'];
 
-		$showinhome = htmlspecialchars($options['showinhome'], ENT_QUOTES);
-		$showcategory = htmlspecialchars($options['showcategory'], ENT_QUOTES);
-		$categorylist = htmlspecialchars($options['categorylist'], ENT_QUOTES);
+		$showinhome		= htmlspecialchars($options['showinhome'], ENT_QUOTES);
+		$showcategory	= htmlspecialchars($options['showcategory'], ENT_QUOTES);
+		$categorylist	= htmlspecialchars($options['categorylist'], ENT_QUOTES);
+		
+		// [0.95] -> [add function -> imagetype (imgtype) -> random or recent
+		$imgtype = "recent"; //$options['imgtype'];
 		
 		//origy ngg options
 		$ngg_options = get_option('ngg_options');
@@ -90,14 +285,11 @@ function widget_nextgenimage_init() {
 		if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'sidebar'", $thumbcode);
 		else $thumbcode = str_replace("%GALLERY_NAME%", "sidebar", $thumbcode);
 	
-		// checking display status (category or home)
-		$show_widget = false;
-	
-		// Make array for checking the categories
-		$categorieslist = getCSVValues($categorylist,',');
+		
+		$show_widget = false;								// checking display status (category or home)
+		$categorieslist = getCSVValues($categorylist,','); 	// Make array for checking the categories
 
-		// Denied list -> enable everywhere and make false if found!
-		if (($showcategory == "denied")) {
+		if (($showcategory == "denied")) {					// Denied list -> enable everywhere and make false if found!
 			$show_widget = true;
 			foreach((get_the_category()) as $cat) 
 				{ if ((in_array($cat->cat_ID , $categorieslist)))
@@ -105,67 +297,235 @@ function widget_nextgenimage_init() {
 				}
 			}
 
-		// Allow list -> false is the default -> enable if found
-		if (($showcategory == "allow"))
+		if (($showcategory == "allow"))						// Allow list -> false is the default -> enable if found
 		foreach((get_the_category()) as $cat) 
 			{ if ((in_array($cat->cat_ID , $categorieslist)))
 				$show_widget = true;
 			}
-
-		// All categories -> if it's not the home -> enable
-		if (($showcategory == "all"))
+	
+		if (($showcategory == "all"))						// All categories -> if it's not the home -> enable
 			if ((is_home() != true))
 				$show_widget = true;
-			
-			
-		// Home page -> If yes -> enable 
-		if (($showinhome == "yes")) 
+
+		if (($showinhome == "yes")) 						// Home page -> If yes -> enable 
 			if ((is_home())) 
 				$show_widget = true;
 		
-	// here comes the display (v.08)
 	
-		// These lines generate our output. Widgets can be very complex
-		// but as you can see here, they can also be very, very simple.
 		$url_parts = parse_url(get_bloginfo('home'));
 
 		// Null parameters check
-		if ( ($number == '') ) $number = 2;
-		if ( ($sizeX == '') ) $sizeX = 100;
-		if ( ($sizeY == '') ) $sizeY = 75;
-		// if ( ($border == '') ) $border = 0;
-		// if ( ($bordercolor == '') ) $bordercolor = "#dadada";
-		// if ( ($margin == '') ) $margin = 5;
+		if ( ($number == '') ) $number = 1;
+		if ( ($sizeX == '') ) $sizeX = 190;
+		if ( ($sizeY == '') ) $sizeY = 190;
 
 		if ($show_widget) { 
 	
 			echo $before_widget . $before_title . $title . $after_title;
-			echo "\n".'<div class="ngg-widget"><ul class="ngg-randomlist">'."\n";
+			echo "\n".'<div class="ngg-widget">'."\n";
 			
-			for ($i=1; $i<=$number; $i++) {
+			nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thumbcode);
+		
+			echo '</div>'."\n";
+			// v.095 [deleted] -> echo '<div style="clear:both;"></div>'."\n";
+			echo $after_widget;
+		}
+	}
+
+	/**
+	* @desc Output of plugin´s editform in te adminarea
+	* @author KeViN
+	*/
+
+	function widget_nextgenrecentimage_control($number=1) {
+
+	$options = get_option('widget_NextGenrecentimage');
+
+	if ( !is_array($options) )
+			$options = array('title'=>'Recent Images', 'buttontext'=>__('NextGEN Recent Image','nggallery'));
 	
-				global $wpdb;
-		
-				// Get a random image from the database
-				$imageID = $wpdb->get_var("SELECT pid FROM $wpdb->nggpictures ORDER by rand() limit 1");
-		
-				//if web20
-				if ( ($mode == 'web20') ) {
-					echo '<li><a href="'.ngg_get_image_url($imageID).'" title="" '.$thumbcode.'>';
-					echo '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$sizeX.'&amp;height='.$sizeY.'&amp;mode=web20" />';
-					echo '</a></li>'."\n";
-				}
-				else { 
-					echo '<li><a href="'.ngg_get_image_url($imageID).'" title="" '.$thumbcode.'>';
-					echo '<img src="'.ngg_get_thumbnail_url($imageID).'" style="width:'.$sizeX.'px;height:'.$sizeY.'px;" />';
-					echo '</a></li>'."\n";
-				}
+		if ( $_POST['nextgen-recentsubmit'] ) {
+			// Remember to sanitize and format use input appropriately.
+			$options = "";
+			$options['title']		= strip_tags(stripslashes($_POST['nextgen-recenttitle']));
+			$options['thumb']		= strip_tags(stripslashes($_POST['nextgen-recentthumb']));
+			$options['number']		= strip_tags(stripslashes($_POST['nextgen-recentnumber']));
+			$options['sizeX']		= strip_tags(stripslashes($_POST['nextgen-recentsizeX']));
+			$options['sizeY']		= strip_tags(stripslashes($_POST['nextgen-recentsizeY']));
 			
-				//echo '</div>'."\n";
+			// [0.80] [new functiions and newvariables] -> Category controll
+			$options['showinhome'] 	= strip_tags(stripslashes($_POST['nextgen-recentshowinhome']));
+			$options['showcategory']= strip_tags(stripslashes($_POST['nextgen-recentshowcategory']));
+			$options['categorylist']= strip_tags(stripslashes($_POST['nextgen-recentcategorylist']));
+
+			// [0.95] [new variable] -> (random / recent)
+			$options['imgtype'] 	= strip_tags(stripslashes($_POST['nextgen-recentimgtype']));
+
+			update_option('widget_NextGenrecentimage', $options);
+		}
+
+		// Be sure you format your options to be valid HTML attributes.
+			$title = htmlspecialchars($options['title'], ENT_QUOTES);
+			$thumb = htmlspecialchars($options['thumb'], ENT_QUOTES);
+			$number = htmlspecialchars($options['number'], ENT_QUOTES);
+			$sizeX = htmlspecialchars($options['sizeX'], ENT_QUOTES);
+			$sizeY = htmlspecialchars($options['sizeY'], ENT_QUOTES);
+			$mode = htmlspecialchars($options['mode'], ENT_QUOTES);		
+			
+			//  [0.80] [new functiions and newvariables] -> Category controll
+			$showinhome = htmlspecialchars($options['showinhome'], ENT_QUOTES);
+			$showcategory = htmlspecialchars($options['showcategory'], ENT_QUOTES);
+			$categorylist = htmlspecialchars($options['categorylist'], ENT_QUOTES);
+
+			// [0.95] [new variable] -> (random / recent) 
+			$mode = htmlspecialchars($options['imgtype'], ENT_QUOTES);		
+
+		// Here comes the form
+	
+		echo'<p style="text-align:right;"><label for="nextgen-recenttitle">' . __('Title','nggallery') . ': <input style="width: 150px;" id="nextgen-recenttitle" name="nextgen-recenttitle" type="text" value="'.$title.'" /></label></p>';
+		
+		// [0.95] [new function] -> Thumbnail or Normal Image?
+		echo '<p style="text-align:right;"><label for="nextgen-recentthumb">' . __('Display type','nggallery').':';
+		echo ' <select name="nextgen-recentthumb" size="1">';
+		echo '   <option id="1" ';if (($thumb == "true")) echo 'selected="selected"'; echo ' value="true">' . __('Thumbnail','nggallery') . '</option>';
+		echo '   <option id="2" ';if (($thumb == "false")) echo 'selected="selected"'; echo ' value="false">' . __('Orginal','nggallery') . '</option>';
+		echo ' </select></label></p>';
+			
+		echo '<p style="text-align:right;"><label for="nextgen-recentnumber">' . __('Number of pics','nggallery').':';
+		echo ' <select name="nextgen-recentnumber" size="1">';
+		echo '   <option id="1" ';if (($number == 1)) echo 'selected="selected"'; echo ' value="1">1</option>';
+		echo '   <option id="2" ';if (($number == 2)) echo 'selected="selected"'; echo ' value="2">2</option>';
+		echo '   <option id="3" ';if (($number == 3)) echo 'selected="selected"'; echo ' value="3">3</option>';
+		echo '   <option id="4" ';if (($number == 4)) echo 'selected="selected"'; echo ' value="4">4</option>';
+		echo '   <option id="6" ';if (($number == 6)) echo 'selected="selected"'; echo ' value="6">6</option>';
+		echo '   <option id="8" ';if (($number == 8)) echo 'selected="selected"'; echo ' value="8">8</option>';
+		echo '   <option id="10" ';if (($number == 10)) echo 'selected="selected"'; echo ' value="10">10</option>';
+		echo ' </select></label></p>';
+
+		echo '<p style="text-align:right;"><label for="nextgen-recentsizeX">' . __('Width (px)','nggallery') . ': <input style="width: 50px;" id="nextgen-recentsizeX" name="nextgen-recentsizeX" type="text" value="'.$sizeX.'" /></label></p>';
+
+		echo '<p style="text-align:right;"><label for="nextgen-recentsizeY">' . __('Height (px)','nggallery') . ': <input style="width: 50px;" id="nextgen-recentsizeY" name="nextgen-recentsizeY" type="text" value="'.$sizeY.'" /></label></p>';
+
+		echo '<p style="text-align:right;"><label for="nextgen-recentnumber">' . __('Mode','nggallery').':';
+		echo ' <select name="nextgen-recentmode" size="1">';
+		echo '   <option id="none" ';if (($mode == "")) echo 'selected="selected"'; echo ' value="">'. __('none','nggallery').'</option>';
+		echo '   <option id="web20" ';if (($mode == "web20")) echo 'selected="selected"'; echo ' value="web20">'. __('web2.0','nggallery').'</option>';
+		echo ' </select></label></p>';
+
+		// [0.80] [new variables] -> category control 
+		echo '<p style="text-align:right;"><label for="nextgen-recentshowinhome">' . __('Show in the main page','nggallery').':';
+		echo ' <select name="nextgen-recentshowinhome" size="1">';
+		echo '   <option id="1" ';if ($showinhome == "yes") echo 'selected="selected"'; echo ' value="yes" >'. __('yes','nggallery').'</option>';
+		echo '   <option id="2" ';if ($showinhome == "no") echo 'selected="selected"'; echo ' value="no" >'. __('no','nggallery').'</option>';
+		echo ' </select></label></p>';
+
+		echo '<p style="text-align:right;"><label for="nextgen-recentshowcategory">' . __('Show in','nggallery').':';
+		echo ' <select name="nextgen-recentshowcategory" size="1">';
+		echo '   <option id="1" ';if (($showcategory == "all")) echo 'selected="selected"'; echo ' value="all" >'. __('All categories','nggallery').'</option>';
+		echo '   <option id="2" ';if (($showcategory == "denied")) echo 'selected="selected"'; echo ' value="denied" >'. __('Only which are not listed','nggallery').'</option>';
+		echo '   <option id="3" ';if (($showcategory == "allow")) echo 'selected="selected"'; echo ' value="allow" >'. __('Only which are listed','nggallery').'</option>';
+		echo ' </select></label></p>';
+
+		echo '<p style="text-align:right;"><label for="nextgen-recentcategorylist">' . __('Categories (id (use , to seperate)','nggallery') . ': <input style="width: 150px;" id="nextgen-recentcategorylist" name="nextgen-recentcategorylist" type="text" value="'.$categorylist.'" /></label></p>';
+
+		echo '<input type="hidden" id="nextgen-recentsubmit" name="nextgen-recentsubmit" value="1" />';
+	  }
+
+	// This registers our widget so it appears with the other available
+	// widgets and can be dragged and dropped into any active sidebars.
+	register_sidebar_widget(array('NextGEN Recent Image', 'widgets'), 'widget_nextgenrecentimage');
+    register_widget_control(array('NextGEN Recent Image', 'widgets'), 'widget_nextgenrecentimage_control', 300, 400);
+}
+
+
+/* */
+
+/**********************************************************/
+/* Random widget
+/**********************************************************/
+function widget_ngg_randomimage() {
+
+	// Check for the required plugin functions. This will prevent fatal
+	// errors occurring when you deactivate the dynamic-sidebar plugin.
+	if ( !function_exists('register_sidebar_widget') )
+		return;
+	
+	// This is the function that outputs our little widget...
+	function widget_nextgenimage($args) {
+		
+		// $args is an array of strings that help widgets to conform to
+		// the active theme: before_widget, before_title, after_widget,
+		// and after_title are the array keys.
+		extract($args);
+
+		// Each widget can store its own options. We keep strings here.
+		$options = get_option('widget_NextGenimage');
+		
+		$title	= $options['title'];
+	    $thumb	= $options['thumb'];
+		$number	= $options['number'];
+		$sizeX	= $options['sizeX'];
+		$sizeY	= $options['sizeY'];
+		$mode	= $options['mode'];
+
+		$showinhome		= htmlspecialchars($options['showinhome'], ENT_QUOTES);
+		$showcategory	= htmlspecialchars($options['showcategory'], ENT_QUOTES);
+		$categorylist	= htmlspecialchars($options['categorylist'], ENT_QUOTES);
+		
+		// [0.95] -> [add function -> imagetype (imgtype) -> random or recent
+		$imgtype = "random"; //$options['imgtype'];
+		
+		//origy ngg options
+		$ngg_options = get_option('ngg_options');
+
+		// get the effect code
+		if ($ngg_options[thumbEffect] != "none") $thumbcode = stripslashes($ngg_options[thumbCode]);
+		if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'sidebar'", $thumbcode);
+		else $thumbcode = str_replace("%GALLERY_NAME%", "sidebar", $thumbcode);
+	
+		
+		$show_widget = false;								// checking display status (category or home)
+		$categorieslist = getCSVValues($categorylist,','); 	// Make array for checking the categories
+
+		if (($showcategory == "denied")) {					// Denied list -> enable everywhere and make false if found!
+			$show_widget = true;
+			foreach((get_the_category()) as $cat) 
+				{ if ((in_array($cat->cat_ID , $categorieslist)))
+					$show_widget = false;
+				}
+			}
+
+		if (($showcategory == "allow"))						// Allow list -> false is the default -> enable if found
+		foreach((get_the_category()) as $cat) 
+			{ if ((in_array($cat->cat_ID , $categorieslist)))
+				$show_widget = true;
 			}
 	
-			echo '</ul></div>'."\n";
-//			echo '<div style="clear:both;"></div>'."\n";
+		if (($showcategory == "all"))						// All categories -> if it's not the home -> enable
+			if ((is_home() != true))
+				$show_widget = true;
+
+		if (($showinhome == "yes")) 						// Home page -> If yes -> enable 
+			if ((is_home())) 
+				$show_widget = true;
+		
+	
+		$url_parts = parse_url(get_bloginfo('home'));
+
+		// Null parameters check
+		if ( ($number == '') ) $number = 1;
+		if ( ($sizeX == '') ) $sizeX = 190;
+		if ( ($sizeY == '') ) $sizeY = 190;
+
+		if ($show_widget) { 
+	
+			echo $before_widget . $before_title . $title . $after_title;
+			echo "\n".'<div class="ngg-widget">'."\n";
+			
+			nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thumbcode);
+		
+			echo '</div>'."\n";
+			// v.095 [deleted] -> echo '<div style="clear:both;"></div>'."\n";
 			echo $after_widget;
 		}
 	}
@@ -185,39 +545,51 @@ function widget_nextgenimage_init() {
 		if ( $_POST['nextgen-submit'] ) {
 			// Remember to sanitize and format use input appropriately.
 			$options = "";
-			$options['title'] = strip_tags(stripslashes($_POST['nextgen-title']));
-			$options['number'] = strip_tags(stripslashes($_POST['nextgen-number']));
-			$options['sizeX'] = /* 90; */ 		strip_tags(stripslashes($_POST['nextgen-sizeX']));
-			$options['sizeY'] = /* 90; */ 		strip_tags(stripslashes($_POST['nextgen-sizeY']));
-			$options['mode'] =  /* "web20" ; */ strip_tags(stripslashes($_POST['nextgen-mode']));
-			// $options['border'] = strip_tags(stripslashes($_POST['nextgen-border']));
-			// $options['bordercolor'] = strip_tags(stripslashes($_POST['nextgen-bordercolor']));
-			// $options['margin'] = strip_tags(stripslashes($_POST['nextgen-margin']));
+			$options['title']		= strip_tags(stripslashes($_POST['nextgen-title']));
+			$options['thumb']		= strip_tags(stripslashes($_POST['nextgen-thumb']));
+			$options['number']		= strip_tags(stripslashes($_POST['nextgen-number']));
+			$options['sizeX']		= strip_tags(stripslashes($_POST['nextgen-sizeX']));
+			$options['sizeY']		= strip_tags(stripslashes($_POST['nextgen-sizeY']));
+			$options['mode']		= strip_tags(stripslashes($_POST['nextgen-mode']));
 			
-			// Category controll (v0.8b)
-			$options['showinhome'] = strip_tags(stripslashes($_POST['nextgen-showinhome']));
-			$options['showcategory'] = strip_tags(stripslashes($_POST['nextgen-showcategory']));
-			$options['categorylist'] = strip_tags(stripslashes($_POST['nextgen-categorylist']));
+			// [0.80] [new functiions and newvariables] -> Category controll
+			$options['showinhome'] 	= strip_tags(stripslashes($_POST['nextgen-showinhome']));
+			$options['showcategory']= strip_tags(stripslashes($_POST['nextgen-showcategory']));
+			$options['categorylist']= strip_tags(stripslashes($_POST['nextgen-categorylist']));
+
+			// [0.95] [new variable] -> (random / recent)
+			$options['imgtype'] 	= strip_tags(stripslashes($_POST['nextgen-imgtype']));
+
 			update_option('widget_NextGenimage', $options);
 		}
 
-
 		// Be sure you format your options to be valid HTML attributes.
 			$title = htmlspecialchars($options['title'], ENT_QUOTES);
+			$thumb = htmlspecialchars($options['thumb'], ENT_QUOTES);
 			$number = htmlspecialchars($options['number'], ENT_QUOTES);
 			$sizeX = htmlspecialchars($options['sizeX'], ENT_QUOTES);
 			$sizeY = htmlspecialchars($options['sizeY'], ENT_QUOTES);
-			$mode = htmlspecialchars($options['mode'], ENT_QUOTES);		
-			// $border = htmlspecialchars($options['border'], ENT_QUOTES);		
-			// $bordercolor = htmlspecialchars($options['bordercolor'], ENT_QUOTES);		
-			// $margin = htmlspecialchars($options['margin'], ENT_QUOTES);		
-	
+			//$mode = htmlspecialchars($options['mode'], ENT_QUOTES);		
+			
+			//  [0.80] [new functiions and newvariables] -> Category controll
 			$showinhome = htmlspecialchars($options['showinhome'], ENT_QUOTES);
 			$showcategory = htmlspecialchars($options['showcategory'], ENT_QUOTES);
 			$categorylist = htmlspecialchars($options['categorylist'], ENT_QUOTES);
+
+			// [0.95] [new variable] -> (random / recent) 
+			$mode = htmlspecialchars($options['imgtype'], ENT_QUOTES);		
+
 		// Here comes the form
 	
 		echo'<p style="text-align:right;"><label for="nextgen-title">' . __('Title','nggallery') . ': <input style="width: 150px;" id="nextgen-title" name="nextgen-title" type="text" value="'.$title.'" /></label></p>';
+		
+		// [0.95] [new function] -> Thumbnail or Normal Image?
+		echo '<p style="text-align:right;"><label for="nextgen-thumb">' . __('Display type','nggallery').':';
+		echo ' <select name="nextgen-thumb" size="1">';
+		echo '   <option id="1" ';if (($thumb == "true")) echo 'selected="selected"'; echo ' value="true">' . __('Thumbnail','nggallery') . '</option>';
+		echo '   <option id="2" ';if (($thumb == "false")) echo 'selected="selected"'; echo ' value="false">' . __('Orginal','nggallery') . '</option>';
+		echo ' </select></label></p>';
+			
 		
 		echo '<p style="text-align:right;"><label for="nextgen-number">' . __('Number of pics','nggallery').':';
 		echo ' <select name="nextgen-number" size="1">';
@@ -230,9 +602,9 @@ function widget_nextgenimage_init() {
 		echo '   <option id="10" ';if (($number == 10)) echo 'selected="selected"'; echo ' value="10">10</option>';
 		echo ' </select></label></p>';
 
-		echo '<p style="text-align:right;"><label for="nextgen-sizeX">' . __('Width (px)','nggallery') . ': <input style="width: 150px;" id="nextgen-sizeX" name="nextgen-sizeX" type="text" value="'.$sizeX.'" /></label></p>';
+		echo '<p style="text-align:right;"><label for="nextgen-sizeX">' . __('Width (px)','nggallery') . ': <input style="width: 50px;" id="nextgen-sizeX" name="nextgen-sizeX" type="text" value="'.$sizeX.'" /></label></p>';
 
-		echo '<p style="text-align:right;"><label for="nextgen-sizeY">' . __('Height (px)','nggallery') . ': <input style="width: 150px;" id="nextgen-sizeY" name="nextgen-sizeY" type="text" value="'.$sizeY.'" /></label></p>';
+		echo '<p style="text-align:right;"><label for="nextgen-sizeY">' . __('Height (px)','nggallery') . ': <input style="width: 50px;" id="nextgen-sizeY" name="nextgen-sizeY" type="text" value="'.$sizeY.'" /></label></p>';
 
 		echo '<p style="text-align:right;"><label for="nextgen-number">' . __('Mode','nggallery').':';
 		echo ' <select name="nextgen-mode" size="1">';
@@ -240,12 +612,7 @@ function widget_nextgenimage_init() {
 		echo '   <option id="web20" ';if (($mode == "web20")) echo 'selected="selected"'; echo ' value="web20">'. __('web2.0','nggallery').'</option>';
 		echo ' </select></label></p>';
 
-		// moved to CSS file
-		// echo '<p style="text-align:right;"><label for="nextgen-border">' . __('Border (px):') . ' <input style="width: 150px;" id="nextgen-border" name="nextgen-border" type="text" value="'.$border.'" /></label></p>';
-		// echo '<p style="text-align:right;"><label for="nextgen-bordercolor">' . __('Border color:') . ' <input style="width: 150px;" id="nextgen-bordercolor" name="nextgen-bordercolor" type="text" value="'.$bordercolor.'" /></label></p>';
-		// echo '<p style="text-align:right;"><label for="nextgen-margin">' . __('Margin (px):') . ' <input style="width: 150px;" id="nextgen-margin" name="nextgen-margin" type="text" value="'.$margin.'" /></label></p>';
-
-		// v0.8 - category control 
+		// [0.80] [new variables] -> category control 
 		echo '<p style="text-align:right;"><label for="nextgen-showinhome">' . __('Show in the main page','nggallery').':';
 		echo ' <select name="nextgen-showinhome" size="1">';
 		echo '   <option id="1" ';if ($showinhome == "yes") echo 'selected="selected"'; echo ' value="yes" >'. __('yes','nggallery').'</option>';
@@ -261,10 +628,8 @@ function widget_nextgenimage_init() {
 
 		echo '<p style="text-align:right;"><label for="nextgen-categorylist">' . __('Categories (id (use , to seperate)','nggallery') . ': <input style="width: 150px;" id="nextgen-categorylist" name="nextgen-categorylist" type="text" value="'.$categorylist.'" /></label></p>';
 
-
 		echo '<input type="hidden" id="nextgen-submit" name="nextgen-submit" value="1" />';
 	  }
-
 
 	// This registers our widget so it appears with the other available
 	// widgets and can be dragged and dropped into any active sidebars.
@@ -273,6 +638,7 @@ function widget_nextgenimage_init() {
 }
 
 // Run our code later in case this loads prior to any required plugins.
-add_action('widgets_init', 'widget_nextgenimage_init');
-
+add_action('widgets_init', 'widget_ngg_randomimage');
+add_action('widgets_init', 'widget_ngg_slideshow');
+add_action('widgets_init', 'widget_ngg_recentimage');
 ?>

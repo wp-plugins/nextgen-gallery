@@ -26,7 +26,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="updated fade"><p>'.$messagetext.'</p></div>'; }
 	
 	?>
-
+	
 	<div class="wrap">
 	<h2><?php _e('Reset options', 'nggallery') ;?></h2>
 		<form name="resetsettings" method="post">
