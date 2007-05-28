@@ -1,6 +1,11 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.51 - 28.05.2007
+- Bugfix : Thumbnail permission not set correct
+- Bugfix : Folder permission check wrong
+- Bugfix : Remove echo in album (THX to Lazy)
+
 V0.50 - 28.05.2007
 - NEW : Select multiple files for upload (THX to Diego A., http://www.fyneworks.com)
 - NEW : Sidebar widget contain now Slideshow, recent images and random images

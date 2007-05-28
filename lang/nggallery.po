@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NextGEN Gallery\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-05-28 00:51+0100\n"
+"PO-Revision-Date: 2007-05-28 12:07+0100\n"
 "Last-Translator: Alex Rabe\n"
 "Language-Team: Alex Rabe\n"
 "MIME-Version: 1.0\n"
@@ -20,8 +20,8 @@ msgid "Sorry, NextGEN Gallery works only under WordPress 2.1 or higher"
 msgstr ""
 
 #: ../nggbutton.php:36
-#: ../admin/addgallery.php:239
-#: ../admin/addgallery.php:290
+#: ../admin/addgallery.php:240
+#: ../admin/addgallery.php:291
 #: ../admin/admin.php:42
 #: ../admin/manage.php:44
 #: ../admin/manage.php:303
@@ -492,139 +492,140 @@ msgstr ""
 msgid "No valid gallery name!"
 msgstr ""
 
-#: ../admin/addgallery.php:219
-#: ../admin/addgallery.php:224
-#: ../admin/addgallery.php:259
-#: ../admin/addgallery.php:263
+#: ../admin/addgallery.php:220
+#: ../admin/addgallery.php:225
+#: ../admin/addgallery.php:260
+#: ../admin/addgallery.php:264
 msgid "Directory"
 msgstr ""
 
-#: ../admin/addgallery.php:219
+#: ../admin/addgallery.php:220
 msgid "didn't have the permissions "
 msgstr ""
 
-#: ../admin/addgallery.php:224
+#: ../admin/addgallery.php:225
 msgid "already exists!"
 msgstr ""
 
-#: ../admin/addgallery.php:228
-#: ../admin/addgallery.php:230
-#: ../admin/addgallery.php:269
-#: ../admin/addgallery.php:464
+#: ../admin/addgallery.php:229
+#: ../admin/addgallery.php:231
+#: ../admin/addgallery.php:270
 #: ../admin/addgallery.php:466
+#: ../admin/addgallery.php:468
 msgid "Unable to create directory "
 msgstr ""
 
-#: ../admin/addgallery.php:229
-#: ../admin/addgallery.php:465
+#: ../admin/addgallery.php:230
 #: ../admin/addgallery.php:467
+#: ../admin/addgallery.php:469
 msgid "Unable to set directory permissions "
 msgstr ""
 
-#: ../admin/addgallery.php:231
+#: ../admin/addgallery.php:232
 msgid "Unable to set directory permissions"
 msgstr ""
 
-#: ../admin/addgallery.php:233
+#: ../admin/addgallery.php:234
 msgid "The server Safe-Mode is on !"
 msgstr ""
 
-#: ../admin/addgallery.php:234
-msgid "Please create directory "
+#: ../admin/addgallery.php:235
+msgid "Please create directory"
 msgstr ""
 
-#: ../admin/addgallery.php:235
-msgid "and the thumbnails directory "
+#: ../admin/addgallery.php:236
+msgid "and the thumbnails directory"
 msgstr ""
 
-#: ../admin/addgallery.php:235
+#: ../admin/addgallery.php:236
 msgid "with permission 777 manually !"
 msgstr ""
 
-#: ../admin/addgallery.php:239
+#: ../admin/addgallery.php:240
 msgid "already exists"
 msgstr ""
 
-#: ../admin/addgallery.php:242
+#: ../admin/addgallery.php:243
 msgid "Gallery successfully created!"
 msgstr ""
 
-#: ../admin/addgallery.php:259
-#: ../admin/addgallery.php:268
+#: ../admin/addgallery.php:260
+#: ../admin/addgallery.php:269
 msgid "doesn&#96;t exist"
 msgstr ""
 
-#: ../admin/addgallery.php:263
+#: ../admin/addgallery.php:264
 msgid "contains no pictures"
 msgstr ""
 
-#: ../admin/addgallery.php:268
+#: ../admin/addgallery.php:269
 msgid "Thumbnail Directory"
 msgstr ""
 
-#: ../admin/addgallery.php:268
+#: ../admin/addgallery.php:269
 msgid "Please create the folder <i>thumbs</i> in your gallery folder."
 msgstr ""
 
-#: ../admin/addgallery.php:276
+#: ../admin/addgallery.php:277
 msgid "Database error. Could not add gallery!"
 msgstr ""
 
-#: ../admin/addgallery.php:290
+#: ../admin/addgallery.php:291
 msgid "successfully created!"
 msgstr ""
 
-#: ../admin/addgallery.php:290
+#: ../admin/addgallery.php:291
 msgid " pictures added."
 msgstr ""
 
-#: ../admin/addgallery.php:333
-#: ../admin/addgallery.php:371
+#: ../admin/addgallery.php:334
+#: ../admin/addgallery.php:372
 msgid "Some pictures are not writeable :"
 msgstr ""
 
-#: ../admin/addgallery.php:425
-msgid "Some thumbnails are not writeable :"
-msgstr ""
-
-#: ../admin/addgallery.php:455
-msgid "Uploaded file was no or a faulty zip file ! The server recognize : "
-msgstr ""
-
-#: ../admin/addgallery.php:470
-msgid "Directory already exists, please rename zip file"
-msgstr ""
-
-#: ../admin/addgallery.php:475
-msgid "Unable to unlink zip file "
-msgstr ""
-
-#: ../admin/addgallery.php:477
-msgid "Zip-File successfully unpacked"
-msgstr ""
-
-#: ../admin/addgallery.php:504
-#: ../admin/addgallery.php:511
-msgid "Unable to unlink file "
-msgstr ""
-
-#: ../admin/addgallery.php:505
-msgid "No gallery selected !"
-msgstr ""
-
-#: ../admin/addgallery.php:512
-msgid "Failure in database, no gallery path set !"
-msgstr ""
-
-#: ../admin/addgallery.php:518
-msgid "Error, the file could not moved to : "
-msgstr ""
-
-#: ../admin/addgallery.php:519
+#: ../admin/addgallery.php:421
+#: ../admin/addgallery.php:521
 msgid "Error, the file permissions could not set"
 msgstr ""
 
-#: ../admin/addgallery.php:539
+#: ../admin/addgallery.php:427
+msgid "Some thumbnails are not writeable :"
+msgstr ""
+
+#: ../admin/addgallery.php:457
+msgid "Uploaded file was no or a faulty zip file ! The server recognize : "
+msgstr ""
+
+#: ../admin/addgallery.php:472
+msgid "Directory already exists, please rename zip file"
+msgstr ""
+
+#: ../admin/addgallery.php:477
+msgid "Unable to unlink zip file "
+msgstr ""
+
+#: ../admin/addgallery.php:479
+msgid "Zip-File successfully unpacked"
+msgstr ""
+
+#: ../admin/addgallery.php:506
+#: ../admin/addgallery.php:513
+msgid "Unable to unlink file "
+msgstr ""
+
+#: ../admin/addgallery.php:507
+msgid "No gallery selected !"
+msgstr ""
+
+#: ../admin/addgallery.php:514
+msgid "Failure in database, no gallery path set !"
+msgstr ""
+
+#: ../admin/addgallery.php:520
+msgid "Error, the file could not moved to : "
+msgstr ""
+
+#: ../admin/addgallery.php:541
 msgid " Images successfully added"
 msgstr ""
 

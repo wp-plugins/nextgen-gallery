@@ -214,9 +214,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		$new_pathname = strtolower(preg_replace ("/(\s+)/", '-',$galleryname));
 		$new_pathname = preg_replace('|[^a-z0-9-]|i', '', $new_pathname);
 		
-		if (empty($new_pathname)) return '<font color="red">'.__('No valid gallery name!', 'nggallery'). '</font>';			
-		if ( substr(decoct(@fileperms($myabspath.$defaultpath)),1) != NGGFOLDER_PERMISSION )
-			return '<font color="red">'.__('Directory', 'nggallery').' <strong>'.$defaultpath.'</strong> '.__('didn\'t have the permissions ', 'nggallery').NGGFOLDER_PERMISSION.'!</font>';
+		if (empty($new_pathname)) return '<font color="red">'.__('No valid gallery name!', 'nggallery'). '</font>';	
+	
+		if ( substr(decoct(@fileperms($myabspath.$defaultpath)),1) != decoct(NGGFOLDER_PERMISSION) )
+			return '<font color="red">'.__('Directory', 'nggallery').' <strong>'.$defaultpath.'</strong> '.__('didn\'t have the permissions ', 'nggallery').decoct(NGGFOLDER_PERMISSION).'!</font>';
 
 		$nggpath = $defaultpath.$new_pathname;
 
@@ -231,8 +232,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			if (!@chmod ($myabspath.$nggpath.'/thumbs',NGGFOLDER_PERMISSION)) return ('<font color="red">'.__('Unable to set directory permissions', 'nggallery').$nggpath.'/thumbs !</font>');
 		} else {
 			$safemode  = '<br /><font color="green">'.__('The server Safe-Mode is on !', 'nggallery');	
-			$safemode .= '<br />'.__('Please create directory ', 'nggallery').'<strong>'.$nggpath.'</strong> ';	
-			$safemode .= __('and the thumbnails directory ', 'nggallery').'<strong>'.$nggpath.'/thumbs</strong> '.__('with permission 777 manually !', 'nggallery').'</font>';	
+			$safemode .= '<br />'.__('Please create directory', 'nggallery').' <strong>'.$nggpath.'</strong> ';	
+			$safemode .= __('and the thumbnails directory', 'nggallery').' <strong>'.$nggpath.'/thumbs</strong> '.__('with permission 777 manually !', 'nggallery').'</font>';	
 		}
 		$result=$wpdb->get_var("SELECT name FROM $wpdb->nggallery WHERE name = '$galleryname' ");
 		if ($result) {
@@ -417,6 +418,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					}
 				}
 				$thumb->save($gallery_absfolder.$thumbfolder.$prefix.$picture,$ngg_options[thumbquality]);
+				if (!@chmod ($gallery_absfolder.$thumbfolder.$prefix.$picture, NGGFILE_PERMISSION)) return '<font color="red">'.__('Error, the file permissions could not set','nggallery').'</font>';
 			}
 			$thumb->destruct();
 			}

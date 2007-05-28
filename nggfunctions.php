@@ -394,9 +394,11 @@ function ngg_get_thumbnail_folder($gallerypath, $include_Abspath = TRUE) {
 	if (!$include_Abspath) $gallerypath = WINABSPATH.$gallerypath;
 	if (is_dir($gallerypath."/thumbs")) return "/thumbs/";
 	if (is_dir($gallerypath."/tumbs")) return "/tumbs/";
-	if (!is_dir($gallerypath."/thumbs")) {
-		mkdir($gallerypath."/thumbs");
-		return "/thumbs/";
+	if (!SAFE_MODE) {
+		if (!is_dir($gallerypath."/thumbs")) {
+			mkdir($gallerypath."/thumbs");
+			return "/thumbs/";
+		}
 	}
 	return FALSE;
 	

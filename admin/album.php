@@ -16,7 +16,7 @@ function nggallery_admin_manage_album()  {
 		
 		if ($_POST['act_album'] > 0){
 			$albumid = $_POST['act_album'];
-			echo $_POST['sortorder'];
+
 			// get variable galleryContainer 
 			parse_str($_POST['sortorder']); 
 			if (is_array($galleryContainer)){ 
