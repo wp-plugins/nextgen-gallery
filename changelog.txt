@@ -1,6 +1,13 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.52 - 31.05.2007
+- Changed : Create better thubmnails in square mode (THX to Kees de Bruin) 
+- Changed : Again , fixed ratio create better thumbnails (Also for widescreen photos)
+- Removed : Option "Resize image before cropping" removed and included in Create square thumbnail
+- Bugfix : Scan folder for new picture didn't set exclude = 0
+- Bugfix : If no option is checked in thumbnails, resize failed (THK to Joern Kretzschmar)
+
 V0.51 - 28.05.2007
 - Bugfix : Thumbnail permission not set correct
 - Bugfix : Folder permission check wrong
@@ -14,7 +21,7 @@ V0.50 - 28.05.2007
 - Added : Option for Thickbox Loading Image
 - Added : CSS file for dKret2 (THK to Joern)
 - Added : Better file permission check
-- Changed : Fixed ratio create better thubnails in portrait mode
+- Changed : Fixed ratio create better thumbnails in portrait mode
 - Changed : All jQuery scripts are now in "No Conflict" mode
 - Changed : Script loading now via wp_enqueue_script
 - Changed : Add constant values for folder/file permission

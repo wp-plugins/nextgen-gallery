@@ -12,7 +12,7 @@ function ngg_nocache() {
 	echo "\n".'<meta http-equiv="pragma" content="no-cache" />'."\n";
 }
 
-// load script files
+// load script files depend on page
 add_action('init', 'ngg_add_admin_js',1);
 function ngg_add_admin_js() {
 	if ($wp_version < "2.2") {

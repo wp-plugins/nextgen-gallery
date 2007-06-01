@@ -9,13 +9,13 @@ function nggallery_admin_manage_album()  {
 		
 	if ($_POST['update']){
 		if ($_POST['newalbum']){ 
-			$newablum = $_POST['newalbum'];
+			$newablum = attribute_escape($_POST['newalbum']);
 			$result = $wpdb->query(" INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newablum','0')");
 			if ($result) $messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
 		} 
 		
 		if ($_POST['act_album'] > 0){
-			$albumid = $_POST['act_album'];
+			$albumid = attribute_escape($_POST['act_album']);
 
 			// get variable galleryContainer 
 			parse_str($_POST['sortorder']); 
@@ -35,7 +35,7 @@ function nggallery_admin_manage_album()  {
 	}
 	
 	if ($_POST['delete']){
-		$act_album = $_POST['act_album'];
+		$act_album = attribute_escape($_POST['act_album']);
 		$result = $wpdb->query("DELETE FROM $wpdb->nggalbum WHERE id = '$act_album' ");
 		if ($result) $messagetext = '<font color="green">'.__('Album deleted','nggallery').'</font>';
 	}

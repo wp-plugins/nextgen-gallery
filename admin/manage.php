@@ -6,9 +6,9 @@ function nggallery_admin_manage_gallery() {
 	global $wpdb;
 
 	// GET variables
-	$act_gid = trim($_GET['gid']);
-	$act_pid = trim($_GET['pid']);	
-	$mode = trim($_GET['mode']);
+	$act_gid = trim(attribute_escape($_GET['gid']));
+	$act_pid = trim(attribute_escape($_GET['pid']));	
+	$mode = trim(attribute_escape($_GET['mode']));
 
 	// get the options
 	$ngg_options=get_option('ngg_options');	
@@ -120,14 +120,14 @@ function nggallery_admin_manage_gallery() {
 	if ($_POST['updatepictures'])  {
 	// Update pictures	
 		
-		$gallery_title=$_POST[title];
-		$gallery_path=$_POST[path];
-		$gallery_desc=$_POST[gallerydesc];
-		$gallery_pageid=$_POST[pageid];
-		$gallery_preview=$_POST[previewpic];
+		$gallery_title   = attribute_escape($_POST[title]);
+		$gallery_path    = attribute_escape($_POST[path]);
+		$gallery_desc    = attribute_escape($_POST[gallerydesc]);
+		$gallery_pageid  = attribute_escape($_POST[pageid]);
+		$gallery_preview = attribute_escape($_POST[previewpic]);
 		
 		$result = $wpdb->query("UPDATE $wpdb->nggallery SET title= '$gallery_title', path= '$gallery_path', description = '$gallery_desc', pageid = '$gallery_pageid', previewpic = '$gallery_preview' WHERE gid = '$act_gid'");
-		$result = ngg_update_pictures($_POST[description], $_POST[alttext], $_POST[exclude], $act_gid );
+		$result = ngg_update_pictures(attribute_escape($_POST[description]), attribute_escape($_POST[alttext]), attribute_escape($_POST[exclude]), $act_gid );
 
 		$messagetext = '<font color="green">'.__('Update successfully','nggallery').'</font>';
 	}
@@ -148,7 +148,7 @@ function nggallery_admin_manage_gallery() {
 		$count_pic = 0;		
 		if (is_array($imageslist)) {
 			foreach($imageslist as $picture) {
-				$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext) VALUES ('$act_gid', '$picture', '$picture') ");
+				$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES ('$act_gid', '$picture', '$picture', 0) ");
 				if ($result) $count_pic++;
 			}
 			$messagetext = '<font color="green">'.$count_pic.__(' picture(s) successfully added','nggallery').'</font>';
@@ -162,7 +162,7 @@ function nggallery_admin_manage_gallery() {
 		nggallery_manage_gallery_main();
 	
 	if ($mode == 'edit')
-		nggallery_pciturelist();
+		nggallery_picturelist();
 	
 }//nggallery_admin_manage_gallery
 
@@ -218,12 +218,12 @@ if($gallerylist) {
 <?php
 } //nggallery_manage_gallery_main
 
-function nggallery_pciturelist() {
+function nggallery_picturelist() {
 // *** show picture list
 	global $wpdb;
 	
 	// GET variables
-	$act_gid = trim($_GET['gid']);
+	$act_gid = trim(attribute_escape($_GET['gid']));
 	
 	// get the options
 	$ngg_options=get_option('ngg_options');	

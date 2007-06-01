@@ -2,7 +2,7 @@
 CSS Name: DKret2 Styles
 Description: NextGEN dKret2 Gallery Stylesheet
 Author: J. Kretzschmar
-Version: 1.10
+Version: 1.2
    
 This is a template stylesheet that can be used with NextGEN Gallery. I tested the
 styles with the dKret2 theme.
@@ -178,11 +178,12 @@ styles with the dKret2 theme.
 .ngg-widget,
 .ngg-widget-slideshow {
 	overflow: hidden;
-	padding:5px 0px 0px 0pt;
+	padding: 5px 0px 0px 0pt;
+  text-align: center;
 }
 
 .ngg-widget img {
-	border:2px solid #A9A9A9;
-	margin:0pt 2px 2px 0px; 
-	padding:1px; 
+	border: 1px solid #A9A9A9;
+	margin: 0pt 2px 2px 0px; 
+	padding: 2px; 
 }
