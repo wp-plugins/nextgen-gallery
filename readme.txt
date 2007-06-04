@@ -24,8 +24,9 @@ Features:
 * TinyMCE : Button integration for easy adding the gallery tags
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
 
+For support around this plugin please visit http://alexrabe.boelinger.com/forums/
 
-PLEASE NOTE !! This gallery plugin is still in development, it can be contain many bugs !
+** PLEASE NOTE ! This gallery plugin is still in development, it can be contain many bugs ! **
 
 == Credits ==
 
@@ -60,10 +61,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 5.	Add a gallery and upload some images (the main gallery folder must have permission 777)
 
-6. 	Go to your post/page an enter the tag [gallery=ID] or [slideshow=ID].
+6. 	Go to your post/page an enter the tag '[gallery=ID]' or '[slideshow=ID]'.
 	See more tags in the FAQ section
 
 That's it ... Have fun
+
+A first documentation about the usage you can also find here : http://hqcode.com/working-with-next-gen-gallery/
 
 == Screenshots ==
 
@@ -93,4 +96,6 @@ Example : http://nextgen.boelinger.com/gallery-page/
 For a single picture : **[singlepic=id,width,height,mode,float]**
 
 Example : http://nextgen.boelinger.com/singlepic/
+
+A first documentation about the usage you can also find here : http://hqcode.com/working-with-next-gen-gallery/
 
