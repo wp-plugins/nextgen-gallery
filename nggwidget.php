@@ -3,7 +3,7 @@
 Plugin Name: NextGEN Gallery Widget
 Description: Adds a sidebar widget support to your NextGEN Gallery!
 Author: KeViN
-Version: 0.98b
+Version: 0.99b
 Author URI: http://www.kev.hu
 Plugin URI: http://www.kev.hu
 
@@ -57,6 +57,10 @@ function getCSVValues($string,$separator=",")
 /**********************************************************/
 function nggSlideshowWidget($galleryID,$irWidth,$irHeight) {
 	
+	// Check for NextGEN Gallery
+	if ( !function_exists('nggShowSlideshow') )
+		return;	
+	
 	global $wpdb;
 	$ngg_options = get_option('ngg_options');
 	
@@ -100,6 +104,10 @@ function widget_ngg_slideshow() {
  	// Check for the required plugin functions. 
 	if ( !function_exists('register_sidebar_widget') )
 		return;
+		
+	// Check for NextGEN Gallery
+	if ( !function_exists('nggShowSlideshow') )
+		return;	
 	
 	function widget_show_ngg_slideshow($args) {
 	 
@@ -163,6 +171,10 @@ function widget_ngg_slideshow() {
 /* DISPLAY FUNCTION TO THE RECENT & RANDOM IMAGES 
 /*******************************************************/
 function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thumbcode) {
+	
+	// Check for NextGEN Gallery
+	if ( !function_exists('ngg_get_thumbnail_url') )
+		return;
 
 
 	// Put your HTML code here if you want to personalize the image display!
@@ -172,13 +184,32 @@ function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thu
 	$Abefore	= ''; // NOT IN USE!
 	$Aafter		= ''; // NOT IN USE!
 	
+	
+	// [0.99] remember the displayed images
+	$displayedimages = array();
+	
+	global $wpdb;
+
+	// [0.99] Check the number of the images (disable more pictures)
+	$numberofimages = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures");
+	if (($numberofimages < $number)) $number=$numberofimages;
+
+	//echo $number." <-- total display images";
+	//echo $numberofimages." <-- total images in you galleries";
+
 	for ($i=1; $i<=$number; $i++) {
 
-		global $wpdb;
-
+		
 		// Get a random image from the database
 		if (($imgtype == "random")) {
-			$imageID = $wpdb->get_var("SELECT pid FROM $wpdb->nggpictures ORDER by rand() limit 1");
+
+				// [0.99] -> disable duplicate images in random!
+				$imageID = $wpdb->get_var("SELECT pid FROM $wpdb->nggpictures ORDER by rand() limit 1");
+				while ( in_array($imageID, $displayedimages)) {
+				$imageID = $wpdb->get_var("SELECT pid FROM $wpdb->nggpictures ORDER by rand() limit 1");
+				}
+				$displayedimages[$i] = $imageID; 
+				
 		}
 		else {
 		// Get the $i latest image from the database
@@ -237,6 +268,27 @@ function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thu
 
 	}
 }
+/**********************************************************/
+/* SIMPLE INSERT TAGS 
+/**********************************************************/
+
+function nggDisplayRandomImages($number,$width,$height) {
+			echo "\n".'<div class="ngg-widget">'."\n";
+			nggDisplayImagesWidget("true",$number,$width,$height,"","random","");
+			echo '</div>'."\n";
+	
+
+}
+
+
+function nggDisplayRecentImages($number,$width,$height) {
+	
+			echo "\n".'<div class="ngg-widget">'."\n";
+			nggDisplayImagesWidget("true",$number,$width,$height,"","recent","");
+			echo '</div>'."\n";
+
+}
+
 
 /**********************************************************/
 /* Recent widget
@@ -250,6 +302,10 @@ function widget_ngg_recentimage() {
 	// Check for the required plugin functions. This will prevent fatal
 	// errors occurring when you deactivate the dynamic-sidebar plugin.
 	if ( !function_exists('register_sidebar_widget') )
+		return;
+		
+	// Check for NextGEN Gallery
+	if ( !function_exists('ngg_get_thumbnail_url') )
 		return;
 	
 	// This is the function that outputs our little widget...
@@ -448,6 +504,10 @@ function widget_ngg_randomimage() {
 	// Check for the required plugin functions. This will prevent fatal
 	// errors occurring when you deactivate the dynamic-sidebar plugin.
 	if ( !function_exists('register_sidebar_widget') )
+		return;
+		
+	// Check for NextGEN Gallery
+	if ( !function_exists('ngg_get_thumbnail_url') )
 		return;
 	
 	// This is the function that outputs our little widget...

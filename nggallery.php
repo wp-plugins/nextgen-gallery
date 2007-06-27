@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.52a
+Version: 0.60a
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -45,7 +45,7 @@ global $wpdb, $wp_version;
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.52");
+define('NGGVERSION', "0.60");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
@@ -85,9 +85,12 @@ function nggallery_init ()
 }
 
 // Load admin panel
-include_once ("ngginstall.php");
-include_once ("nggfunctions.php");
-include_once ("admin/admin.php");
+include_once (dirname (__FILE__)."/ngginstall.php");
+include_once (dirname (__FILE__)."/nggfunctions.php");
+include_once (dirname (__FILE__)."/admin/admin.php");
+
+// load class
+$nggallery = new nggallery();
 
 // add javascript to header
 add_action('wp_head', 'ngg_addjs', 1);
@@ -95,18 +98,22 @@ function ngg_addjs() {
     global $wp_version, $ngg_options;
     
 	echo "<meta name='NextGEN' content='".NGGVERSION."' />\n";
-	if ($ngg_options[activateCSS]) 
+	if ($ngg_options['activateCSS']) 
 		echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'css/'.$ngg_options[CSSfile].'";</style>';
-	if ($ngg_options[thumbEffect] == "thickbox") {
+	if ($ngg_options['thumbEffect'] == "thickbox") {
 		echo "\n".'<script type="text/javascript"> var tb_pathToImage = "'.NGGALLERY_URLPATH.'thickbox/'.$ngg_options[thickboxImage].'";</script>';
 		echo "\n".'<style type="text/css" media="screen">@import "'.NGGALLERY_URLPATH.'thickbox/thickbox.css";</style>'."\n";
 	    if ($wp_version < "2.2") {
 	    	wp_enqueue_script('jquery', NGGALLERY_URLPATH .'admin/js/jquery.js', FALSE, '1.1.2');
 		} 
-	    	wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.0.1');
+	    	wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.0.2');
+
+    	// add NextGEN jQuery Plugin
+		if ($ngg_options['galUsejQuery'])
+			wp_enqueue_script('nextgen', NGGALLERY_URLPATH .'admin/js/jquery.nextgen.pack.js', array('jquery'), '0.5');
 	    }
 	    
-	// test for wordtube function
+	// test for wordTube function
 	if (!function_exists('integrate_swfobject')) {
 		wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'js/swfobject.js', FALSE, '1.5');
 	}
@@ -138,20 +145,20 @@ Use action upload_files_(tab) to display a page for your custom tab
 */
 
 //TODO: Integrate all galleries in Upload panel
-// add_action('upload_files_ngg_test', 'ngg_action_upload_Tab');
-// add_filter('wp_upload_tabs', 'ngg_wp_upload_tabs');
+add_action('upload_files_ngg_gallery', 'ngg_action_upload_Tab');
+add_filter('wp_upload_tabs', 'ngg_wp_upload_tabs');
 
 function ngg_action_upload_Tab() {
 	// execute when click on the tab
-	add_action('admin_print_scripts', 'ngg_upload_tabs_script');
-}
-
-function ngg_upload_tabs_script() {
-
+	global $style;
+	if ( 'inline' == $style )
+		wp_enqueue_script('nggadmintab', NGGALLERY_URLPATH .'js/nggadmintab-js.php', array('prototype'), '0.6');
 }
 
 function ngg_wp_upload_tabs ($array) {
-
+	
+	global $wpdb;
+	
     /* THX to SilasFlickrPlugin
     0 => tab display name, 
     1 => required cap / role, 
@@ -159,11 +166,17 @@ function ngg_wp_upload_tabs ($array) {
     3 => total number objects OR array(total, objects per page), 
     4 => add_query_args
 	*/
-	
 	include_once ("nggadmintab.php");
 
+	// Create navigation
+	$total = 1;
+	if ($_GET['select_gal']){
+		$galleryID = $_GET['select_gal'];
+		$total = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID'");
+	}
+
 	$tab = array(
-            'ngg_test' => array('Gallery', 'upload_files', 'ngg_upload_tab_content', 0)
+            'ngg_gallery' => array('Gallery', 'upload_files', 'ngg_upload_tab_content', array($total, 10))
     );
 
     return array_merge($array,$tab);
@@ -175,7 +188,7 @@ function ngg_wp_upload_tabs ($array) {
 function insert_nextgen_script() {	
  
  	//TODO: Do with WP2.1 Script Loader
- 	// thanks for this idea to www.jovelstefan.de
+ 	// Thanks for this idea to www.jovelstefan.de
 	echo "\n"."
 	<script type='text/javascript'> 
 		function ngg_buttonscript()	{ 

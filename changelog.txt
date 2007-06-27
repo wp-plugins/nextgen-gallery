@@ -1,6 +1,23 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.60 - 27.06.2007
+- NEW : Select a image from the Upload Tab
+- NEW : Tag [imageborwser=id] for a Inline Gallery Browser
+- NEW : Show gallery without Subpages
+- NEW : Manage gallery : Function "Add a new page"
+- NEW : Manage gallery : Show/Hide thumbnails
+- Added : Slideshow option : Watermark / Background music 
+- Added : Check for memory limit 
+- Added : Show actual memory usage in overview
+- Added : Include function check in widget
+- Added : Latest Sidebar widget from KeViN
+- Added : Check for capability during installation
+- Changed : Remove P Tag around gallery tags ( THX to the work from John Godley )
+- Bugfix : Delete picture, check for pid
+- Bugfix : admin/settings.php line #172: typos corrected (this=these,maxium=maximum). (THX to Helene D.) 
+- Bugfix : admin/settings.php line #311: missing </td> added. (THX to Helene D.) 
+
 V0.52 - 31.05.2007
 - Changed : Create better thubmnails in square mode (THX to Kees de Bruin) 
 - Changed : Again , fixed ratio create better thumbnails (Also for widescreen photos)

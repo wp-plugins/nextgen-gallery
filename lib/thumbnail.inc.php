@@ -164,19 +164,25 @@ class ngg_Thumbnail {
                 $this->error = true;
             }
         }
+        
+		// Check memory consumption if file exists
+		if($this->error == false) { 
+			$this->checkMemoryForImage($this->fileName);
+		}
 
         //initialize resources if no errors
-        if($this->error == false) {
-            switch($this->format) {
+        if($this->error == false) { 
+
+            switch($this->format) {            	
                 case 'GIF':
                     $this->oldImage = ImageCreateFromGif($this->fileName);
                     break;
                 case 'JPG':
-                    $this->oldImage = ImageCreateFromJpeg($this->fileName);
+                       $this->oldImage = ImageCreateFromJpeg($this->fileName);
                     break;
                 case 'PNG':
                     $this->oldImage = ImageCreateFromPng($this->fileName);
-                    break;
+					break;
             }
 
             $size = GetImageSize($this->fileName);
@@ -192,6 +198,51 @@ class ngg_Thumbnail {
             return;
         }
     }
+
+    /**
+     * Calculate the memory limit
+     *
+     */
+	function checkMemoryForImage( $filename ){
+		
+		if (function_exists('memory_get_usage')) {
+			$imageInfo = getimagesize($filename);
+			switch($this->format) {            	
+                case 'GIF':
+                	// measured factor 1 is better
+                    $CHANNEL = 1;
+                    break;
+                case 'JPG':
+                    $CHANNEL = $imageInfo['channels'];
+                    break;
+                case 'PNG':
+					// didn't get the channel for png
+                    $CHANNEL = 3;
+					break;
+            }
+		    $MB = 1048576;  // number of bytes in 1M
+		    $K64 = 65536;    // number of bytes in 64K
+		    $TWEAKFACTOR = 1.5;  // Or whatever works for you
+		    $memoryNeeded = round( ( $imageInfo[0] * $imageInfo[1]
+		                                           * $imageInfo['bits']
+		                                           * $CHANNEL / 8
+		                             + $K64
+		                           ) * $TWEAKFACTOR
+		                         );
+		    $memoryNeeded = memory_get_usage() + $memoryNeeded;
+			// get memory limit
+			$memory_limit = ini_get('memory_limit');
+			if ($memory_limit != '') {
+				$memory_limit = substr($memory_limit, 0, -1) * 1024 * 1024;
+			}
+			
+			if ($memoryNeeded > $memory_limit) {
+				$this->errmsg = 'Exceed Memory limit';
+		        $this->error = true;
+	        }
+		}
+	    return;
+	}
 
     /**
      * Must be called to free up allocated memory after all manipulations are done

@@ -88,9 +88,17 @@ function ngg_list_support()	{
 	"Kees de Bruin" => "http://www.kdbruin.net/fotoalbum/",
 	"Gaspard Tseng / SillyCCSmile (Chinese Translation)" => "",
 	"Mika Pennanen (Finnish Translation)" => "http://kapsi.fi/~penni",
-	"Wojciech Owczarek (Polish Translation)" => "http://www.owczi.net"		
+	"Wojciech Owczarek (Polish Translation)" => "http://www.owczi.net",
+	"Dilip Ramirez (Spanish Translation)" => "http://jmtd.110mb.com/blog",
+	"Oleinikov Vedmak Evgeny (Russian Translation)" => "http://ka-2-03.mirea.org/",
+	"Helene D." => "http://supernatural.hellioness.com/imagegallery/",
+	"Sebastien MALHERBE	(Logo design)" => "http://www.7vision.com/",
+	"Claudia (German documentation)" => "http://www.blog-werkstatt.de/",
+	"Robert (German documentation)" => "http://www.curlyrob.de/",
+	"Pierpaolo Mannone (Italian Translation)" => "http://www.interscambiocasa.com/",
+	"Mattias Tengblad (Swedish Translation)" => "http://www.eyesx.com/",
+	"Joe Pharis" => "http://www.southernstylecruisers.com/"		
 	);
-
 
 	
 	ksort($supporter);

@@ -4,9 +4,9 @@ Donate link: http://alexrabe.boelinger.com/?page_id=80
 Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets
 Requires at least: 2.1.3
 Tested up to: 2.2
-Stable tag: 0.52
+Stable tag: 0.60
 
-NextGEN Gallery is a full integrated Image Gallery plugin for WordPress.
+NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option.
 
 == Description ==
 
@@ -24,6 +24,7 @@ Features:
 * TinyMCE : Button integration for easy adding the gallery tags
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
 * Language support : Translated in more than 12 languages
+* Upload tab integration : You have access to all pictures via the upload tab
 
 For support around this plugin please visit http://alexrabe.boelinger.com/forums/
 
@@ -56,7 +57,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 1. 	Upload the files to wp-content/plugins/nggallery
 
-2.  Go to the web page http://www.jeroenwijering.com/ and download the Flash Image Rotator and unpack the conent
+2.  Go to the web page http://www.jeroenwijering.com/ and download the JW Image Rotator and unpack the conent
 	
 3.	Upload the file imagerotator.swf to the nggallery folder
 
@@ -68,8 +69,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	See more tags in the FAQ section
 
 That's it ... Have fun
-
-A first documentation about the usage you can also find here : http://hqcode.com/working-with-next-gen-gallery/
 
 == Screenshots ==
 
@@ -100,5 +99,9 @@ For a single picture : **[singlepic=id,width,height,mode,float]**
 
 Example : http://nextgen.boelinger.com/singlepic/
 
-A first documentation about the usage you can also find here : http://hqcode.com/working-with-next-gen-gallery/
+Read as startup : http://hqcode.com/?page_id=54
+
+A further FAQ you can found here: http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/
+
+And at least request your question here : http://alexrabe.boelinger.com/forums/
 

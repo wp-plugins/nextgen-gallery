@@ -32,6 +32,9 @@ function ngg_add_admin_js() {
 			wp_enqueue_script('mutlifile', NGGALLERY_URLPATH .'admin/js/jquery.MultiFile.js', array('jquery'), '1.1.1');
 		break;
 	}
+	
+	if ( ($_GET['tab'] == 'ngg_gallery') && ($_GET['style'] != 'inline') )
+		 wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.0.2');
 }
 	
 // add to menu
@@ -45,21 +48,20 @@ add_action('admin_menu', 'add_nextgen_gallery_menu');
     add_submenu_page( NGGFOLDER , __('Album', 'nggallery'), __('Album', 'nggallery'), 'edit_others_posts', 'nggallery-manage-album', 'nggallery_admin_manage_album');
     add_submenu_page( NGGFOLDER , __('Options', 'nggallery'), __('Options', 'nggallery'), 'manage_options', 'nggallery-options', 'nggallery_admin_options');
     add_submenu_page( NGGFOLDER , __('Style', 'nggallery'), __('Style', 'nggallery'), 'manage_options', 'nggallery-style', 'nggallery_admin_style');
-    add_submenu_page( NGGFOLDER , __('Setup Gallery', 'nggallery'), __('Setup', 'nggallery'), 'manage_options', 'nggallery-setup', 'nggallery_admin_setup');
+    add_submenu_page( NGGFOLDER , __('Setup Gallery', 'nggallery'), __('Setup', 'nggallery'), 'activate_plugins', 'nggallery-setup', 'nggallery_admin_setup');
     add_submenu_page( NGGFOLDER , __('About this Gallery', 'nggallery'), __('About', 'nggallery'), 'edit_others_posts', 'nggallery-about', 'nggallery_admin_about');
   }
-  //TODO: Check Rights and Role
   
   /************************************************************************/
   
-  include 'overview.php'; 	// nggallery_admin_overview
-  include 'addgallery.php';	// nggallery_admin_add_gallery
-  include 'manage.php';		// nggallery_admin_manage_gallery
-  include 'album.php';		// nggallery_admin_manage_album
-  include 'settings.php';	// nggallery_admin_options
-  include 'style.php';		// nggallery_admin_style
-  include 'setup.php';		// nggallery_admin_setup
-  include 'about.php';		// nggallery_admin_about
+  include (dirname (__FILE__). '/overview.php'); 	// nggallery_admin_overview
+  include (dirname (__FILE__). '/addgallery.php');	// nggallery_admin_add_gallery
+  include (dirname (__FILE__). '/manage.php');		// nggallery_admin_manage_gallery
+  include (dirname (__FILE__). '/album.php');		// nggallery_admin_manage_album
+  include (dirname (__FILE__). '/settings.php');	// nggallery_admin_options
+  include (dirname (__FILE__). '/style.php');		// nggallery_admin_style
+  include (dirname (__FILE__). '/setup.php');		// nggallery_admin_setup
+  include (dirname (__FILE__). '/about.php');		// nggallery_admin_about
   
   /**************************************************************************/
 

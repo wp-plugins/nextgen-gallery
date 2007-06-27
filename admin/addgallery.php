@@ -8,7 +8,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	global $wpdb;
 	$ngg_options = get_option('ngg_options');
 
-	$defaultpath = $ngg_options[gallerypath];	
+	$defaultpath = $ngg_options['gallerypath'];	
 	
 	if ($_POST['addgallery']){
 		$newgallery = attribute_escape($_POST['galleryname']);
@@ -121,7 +121,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- create gallery -->
 		<div id="addgallery" class="wrap" style="display:none">
 		<h2><?php _e('Add new gallery', 'nggallery') ;?></h2>
-			<form name="addgallery" id="addgallery" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" >
+			<form name="addgallery" id="addgallery" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" accept-charset="utf-8" >
 			<fieldset class="options">
 				<table class="optiontable"> 
 				<tr valign="top"> 
@@ -138,7 +138,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- zip-file operation -->
 		<div id="zipupload" class="wrap" style="display:none">
 		<h2><?php _e('Upload a Zip-File', 'nggallery') ;?></h2>
-			<form name="zipupload" id="zipupload" method="POST" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#zipupload-slider'; ?>" >
+			<form name="zipupload" id="zipupload" method="POST" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#zipupload-slider'; ?>" accept-charset="utf-8" >
 			<fieldset class="options">
 				<table class="optiontable"> 
 				<tr valign="top"> 
@@ -154,7 +154,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- import folder -->
 		<div id="importfolder" class="wrap" style="display:none">
 		<h2><?php _e('Import image folder', 'nggallery') ;?></h2>
-			<form name="importfolder" id="importfolder" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#importfolder-slider'; ?>" >
+			<form name="importfolder" id="importfolder" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#importfolder-slider'; ?>" accept-charset="utf-8" >
 			<fieldset class="options">
 				<table class="optiontable"> 
 				<tr valign="top"> 
@@ -171,7 +171,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- upload images -->
 		<div id="uploadimage" class="wrap" style="display:none">
 		<h2><?php _e('Upload Images', 'nggallery') ;?></h2>
-			<form name="uploadimage" id="uploadimage" method="POST" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#uploadimage-slider'; ?>" >
+			<form name="uploadimage" id="uploadimage" method="POST" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#uploadimage-slider'; ?>" accept-charset="utf-8" >
 			<fieldset class="options">
 				<table class="optiontable"> 
 				<tr valign="top"> 
@@ -434,13 +434,16 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					$thumb->save($gallery_absfolder.$thumbfolder.$prefix.$picture,$ngg_options[thumbquality]);
 					// didn't work under safe mode, but I want to set it if possible
 					@chmod ($gallery_absfolder.$thumbfolder.$prefix.$picture, NGGFILE_PERMISSION); 
+				} else {
+					$errortext .= $picture." <strong>(Error : ".$thumb->errmsg .")</strong><br />";
 				}
 				$thumb->destruct();
 			}
 		}
 
+		if(!empty($errortext)) echo '<div id="message-error" class="error fade"><p><strong>'.__('Follow thumbnails could not created.','nggallery').'</strong><br /><ul>'.$errortext.'</ul></p></div>';		
 		if(!empty($messagetext)) echo '<div id="message-error" class="error fade"><p><strong>'.__('Some thumbnails are not writeable :','nggallery').'</strong><br /><ul>'.$messagetext.'</ul></p></div>';
-		
+
 		return;
 	}
 

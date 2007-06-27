@@ -47,24 +47,25 @@ function nggallery_admin_manage_gallery() {
 
 	if ($mode == 'delpic') {
 	// Delete a picture
-		$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
-		if ($gallerypath){
-			$thumb_folder = ngg_get_thumbnail_folder($gallerypath, FALSE);
-			$thumb_prefix = ngg_get_thumbnail_prefix($gallerypath, FALSE);
-			$filename = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$act_pid' ");
-			if ($ngg_options[deleteImg]) {
-				unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
-				unlink(WINABSPATH.$gallerypath.'/'.$filename);
-			}
-		}		
-		$delete_pic = $wpdb->query("DELETE FROM $wpdb->nggpictures WHERE pid = $act_pid");
-
+		$filename = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$act_pid' ");
+		if ($filename) {
+			$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
+			if ($gallerypath){
+				$thumb_folder = ngg_get_thumbnail_folder($gallerypath, FALSE);
+				$thumb_prefix = ngg_get_thumbnail_prefix($gallerypath, FALSE);
+				if ($ngg_options[deleteImg]) {
+					unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
+					unlink(WINABSPATH.$gallerypath.'/'.$filename);
+				}
+			}		
+			$delete_pic = $wpdb->query("DELETE FROM $wpdb->nggpictures WHERE pid = $act_pid");
+		}
 		if($delete_pic)
 			$messagetext = '<font color="green">'.__('Picture','nggallery').' \''.$act_pid.'\' '.__('deleted successfully','nggallery').'</font>';
 	 	$mode = 'edit'; // show pictures
 	}
 	
-	if (isset($_POST['bulkaction']))  {
+	if (isset ($_POST['bulkaction']))  {
 		// do bulk update
 		
 		$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
@@ -83,17 +84,17 @@ function nggallery_admin_manage_gallery() {
 			case 1:
 			// Set watermark
 				ngg_generateWatermark(WINABSPATH.$gallerypath,$imageslist);
-				$messagetext = '<font color="green">'.__('Watermark successfully added','nggallery').'</font>';	
+				nggallery::show_message(__('Watermark successfully added',"nggallery"));
 				break;
 			case 2:
 			// Create new thumbnails
 				ngg_generatethumbnail(WINABSPATH.$gallerypath,$imageslist);
-				$messagetext = '<font color="green">'.__('Thumbnails successfully created. Please refresh your browser cache.','nggallery').'</font>';	
+				nggallery::show_message(__('Thumbnails successfully created. Please refresh your browser cache.',"nggallery"));
 				break;
 			case 3:
 			// Resample images
 				ngg_resizeImages(WINABSPATH.$gallerypath,$imageslist);
-				$messagetext = '<font color="green">'.__('Images successfully resized','nggallery').'</font>';	
+				nggallery::show_message(__('Images successfully resized',"nggallery"));
 				break;
 			case 4:
 			// Delete images
@@ -111,13 +112,13 @@ function nggallery_admin_manage_gallery() {
 					}
 				}		
 				if($delete_pic)
-					$messagetext = '<font color="green">'.__('Pictures deleted successfully ','nggallery').'</font>';
+					nggallery::show_message(__('Pictures deleted successfully ',"nggallery"));
 				}
 				break;
 		}
 	}
 
-	if ($_POST['updatepictures'])  {
+	if (isset ($_POST['updatepictures']))  {
 	// Update pictures	
 		
 		$gallery_title   = attribute_escape($_POST[title]);
@@ -129,10 +130,10 @@ function nggallery_admin_manage_gallery() {
 		$result = $wpdb->query("UPDATE $wpdb->nggallery SET title= '$gallery_title', path= '$gallery_path', description = '$gallery_desc', pageid = '$gallery_pageid', previewpic = '$gallery_preview' WHERE gid = '$act_gid'");
 		$result = ngg_update_pictures(attribute_escape($_POST[description]), attribute_escape($_POST[alttext]), attribute_escape($_POST[exclude]), $act_gid );
 
-		$messagetext = '<font color="green">'.__('Update successfully','nggallery').'</font>';
+		nggallery::show_message(__('Update successfully',"nggallery"));
 	}
 
-	if ($_POST['scanfolder'])  {
+	if (isset ($_POST['scanfolder']))  {
 	// Rescan folder
 		$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
 		$old_imageslist = $wpdb->get_col("SELECT filename FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ");
@@ -155,6 +156,43 @@ function nggallery_admin_manage_gallery() {
 		}
 	}
 
+	if (isset ($_POST['addnewpage']))  {
+	// Add a new page
+		$parent_id      = attribute_escape($_POST[parent_id]);
+		$gallery_title  = attribute_escape($_POST[title]);
+		$gallery_name   = $wpdb->get_var("SELECT name FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
+		
+		// Create a WP page
+		global $user_ID;
+
+		$page['post_type']    = 'page';
+		$page['post_content'] = '[gallery='.$act_gid.']';
+		$page['post_parent']  = $parent_id;
+		$page['post_author']  = $user_ID;
+		$page['post_status']  = 'publish';
+		$page['post_title']   = $gallery_title == '' ? $gallery_name : $gallery_title;
+
+		$gallery_pageid = wp_insert_post ($page);
+		if ($gallery_pageid != 0) {
+			$result = $wpdb->query("UPDATE $wpdb->nggallery SET title= '$gallery_title', pageid = '$gallery_pageid' WHERE gid = '$act_gid'");
+			$messagetext = '<font color="green">'.__('New gallery page ID','nggallery'). ' ' . $pageid . ' -> <strong>' . $gallery_title . '</strong> ' .__('created','nggallery').'</font>';
+		}
+	}
+	
+	if (isset ($_POST['togglethumbs']))  {
+	// Toggle thumnails, forgive me if it's to complicated
+		$hideThumbs = (isset ($_POST['hideThumbs'])) ?  false : true ;
+	} else {
+		$hideThumbs = (isset ($_POST['hideThumbs'])) ?  true : false ;
+	}
+
+	if (isset ($_POST['toggletags']))  {
+	// Toggle tag view
+		$showTags = (isset ($_POST['showTags'])) ?  false : true ;
+	} else {
+		$showTags = (isset ($_POST['showTags'])) ?  true : false ;
+	}
+	
 	// message windows
 	if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="updated fade"><p>'.$messagetext.'</p></div>'; }
 
@@ -162,7 +200,7 @@ function nggallery_admin_manage_gallery() {
 		nggallery_manage_gallery_main();
 	
 	if ($mode == 'edit')
-		nggallery_picturelist();
+		nggallery_picturelist($hideThumbs,$showTags);
 	
 }//nggallery_admin_manage_gallery
 
@@ -218,7 +256,7 @@ if($gallerylist) {
 <?php
 } //nggallery_manage_gallery_main
 
-function nggallery_picturelist() {
+function nggallery_picturelist($hideThumbs = false,$showTags = false) {
 // *** show picture list
 	global $wpdb;
 	
@@ -302,7 +340,10 @@ function getNumChecked(form)
 <div class="wrap">
 <h2><?php _e('Gallery', 'nggallery') ?> : <?php echo $act_gallery->name; ?></h2>
 
-<form id="updategallery" method="POST">
+<form id="updategallery" method="POST" accept-charset="utf-8">
+
+<?php if ($showTags) { ?><input type="hidden" name="showTags" value="true" /><?php } ?>
+<?php if ($hideThumbs) { ?><input type="hidden" name="hideThumbs" value="true" /><?php } ?>
 
 <fieldset class="options">
 	<table width="100%" border="0" cellspacing="3" cellpadding="3" >
@@ -333,7 +374,7 @@ function getNumChecked(form)
 				<select name="previewpic" >
 					<option value="0" ><?php _e('No Picture', 'nggallery') ?></option>
 					<?php
-						$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ORDER BY '$ngg_options[galSort]' ASC");
+						$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");
 						if(is_array($picturelist)) {
 							foreach($picturelist as $picture) {
 								if ($picture->pid == $act_gallery->previewpic) $selected = 'selected="selected" ';
@@ -348,8 +389,15 @@ function getNumChecked(form)
 		<tr>
 			<th align="left"><?php _e('Path', 'nggallery') ?>:</th> 
 			<th align="left"><input type="text" size="50" name="path" value="<?php echo $act_gallery->path; ?>"  /></th>
-			<th></th>
-			<th></th>
+		
+			<th align="right"><?php _e('Create new page', 'nggallery') ?>:</th>
+			<th align="left"> 
+			<select name="parent_id" style="width:95%">
+				<option value="0"><?php _e ('Main page (No parent)', 'nggallery'); ?></option>
+				<?php parent_dropdown ($group->page_id); ?>
+			</select>
+			<input type="submit" name="addnewpage" value="<?php _e ('Add page', 'nggallery'); ?>" id="group"/>
+			</th>
 		</tr>
 
 	</table>
@@ -366,7 +414,14 @@ function getNumChecked(form)
 	<option value="3" ><?php _e("Resize images",'nggallery')?></option>
 	<option value="4" ><?php _e("Delete images",'nggallery')?></option>
 </select>
+
 <input  type="submit" name="doaction" value="<?php _e("OK",'nggallery')?>" onclick="var numchecked = getNumChecked(document.getElementById('updategallery')); if(numchecked < 1) { alert('<?php echo js_escape(__("No images selected",'nggallery')); ?>'); return false } return confirm('<?php echo sprintf(js_escape(__("You are about to start the bulk edit for %s images \n \n 'Cancel' to stop, 'OK' to proceed.",'nggallery')), "' + numchecked + '") ; ?>')" />
+<?php if (!$hideThumbs) { ?> <input  type="submit" name="togglethumbs" value="<?php _e("Hide thumbnails ",'nggallery')?>" /> <?php } else {?>
+<input  type="submit" name="togglethumbs" value="<?php _e("Show thumbnails ",'nggallery')?>" /><?php } ?>
+<!-- TODO: Tags
+<?php if (!$showTags) { ?><input  type="submit" name="toggletags" value="<?php _e("Show tags",'nggallery')?>" /> <?php } else {?>
+<input  type="submit" name="toggletags" value="<?php _e("Hide tags",'nggallery')?>" /><?php } ?>
+-->
 </p>
 <table id="listimages" width="100%" cellspacing="2" cellpadding="5" class="widefat" >
 	<thead>
@@ -374,10 +429,16 @@ function getNumChecked(form)
 		<th scope="col" style="text-align: center"><input name="checkall" type="checkbox" onclick="checkAll(document.getElementById('updategallery'));" /></th>
 		<th scope="col" style="text-align: center"><?php _e('ID') ?></th>
 		<th scope="col" style="text-align: center"><?php _e('File name', 'nggallery') ?></th>
+		<?php if (!$hideThumbs) { ?>
 		<th scope="col" style="text-align: center"><?php _e('Thumbnail', 'nggallery') ?></th>
+		<?php } ?>
+		<?php if (!$showTags) { ?>
 		<th scope="col" style="text-align: center"><?php _e('Description', 'nggallery') ?></th>
 		<th scope="col" style="text-align: center"><?php _e('Alt &amp; Title Text', 'nggallery') ?></th>
 		<th scope="col" style="text-align: center"><?php _e('exclude', 'nggallery') ?></th>
+		<?php } else {?>
+		<th scope="col" style="width:70%"><?php _e('Tags (comma separated list)', 'nggallery') ?></th>
+		<?php } ?>
 		<th scope="col" colspan="2" style="text-align: center"><?php _e('Action') ?></th>
 	</tr>
 	</thead>
@@ -402,10 +463,16 @@ if($picturelist) {
 			<td><input name="doaction[]" type="checkbox" value="<?php echo $pid ?>" /></td>
 			<th scope="row" style="text-align: center"><?php echo $pid ?></th>
 			<td><?php echo $picture->filename ?></td>
+			<?php if (!$hideThumbs) { ?>
 			<td><img class="thumb" src="<?php echo $act_thumbnail_url.$act_thumb_prefix.$picture->filename ?>" /></td>
+			<?php } ?>
+			<?php if (!$showTags) { ?>
 			<td><textarea name="description[<?php echo $pid ?>]" class="textarea1" cols="30" rows="3" ><?php echo stripslashes($picture->description) ?></textarea></td>
 			<td><input name="alttext[<?php echo $pid ?>]" type="text" size="20"   value="<?php echo $picture->alttext ?>" /></td>
 			<td><input name="exclude[<?php echo $pid ?>]" type="checkbox" value="1" <?php echo $exclude ?> /></td>
+			<?php } else {?>
+			<td ><input name="tags[<?php echo $pid ?>]" type="text" style="width:95%" value="<?php /* TODO: TAGS */ ?>" /></td>
+			<?php } ?>
 			<td><a href="<?php echo $act_gallery_url.$picture->filename ?>" class="thickbox" title="<?php echo $picture->alttext ?>" ><?php _e('View') ?></a></td>
 			<td><a href="admin.php?page=nggallery-manage-gallery&amp;mode=delpic&amp;gid=<?php echo $act_gid ?>&amp;pid=<?php echo $pid ?>" class="delete" onclick="javascript:check=confirm( '<?php _e("Delete this file ?",'nggallery')?>');if(check==false) return false;" ><?php _e('Delete') ?></a></td>
 		</tr>
@@ -435,13 +502,15 @@ function ngg_update_pictures( $nggdescription, $nggalttext, $nggexclude, $nggall
 	
 	if (is_array($nggdescription)) {
 		foreach($nggdescription as $key=>$value) {
-			$result=$wpdb->query( "UPDATE $wpdb->nggpictures SET description = '$value' WHERE pid = $key");
+			$desc = $wpdb->escape($value);
+			$result=$wpdb->query( "UPDATE $wpdb->nggpictures SET description = '$desc' WHERE pid = $key");
 			if($result) $update_ok = $result;
 		}
 	}
 	if (is_array($nggalttext)){
 		foreach($nggalttext as $key=>$value) {
-			$result=$wpdb->query( "UPDATE $wpdb->nggpictures SET alttext = '$value' WHERE pid = $key");
+			$alttext = $wpdb->escape($value);
+			$result=$wpdb->query( "UPDATE $wpdb->nggpictures SET alttext = '$alttext' WHERE pid = $key");
 			if($result) $update_ok = $result;
 		}
 	}

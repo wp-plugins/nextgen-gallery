@@ -12,8 +12,8 @@ $ngg_options=get_option('ngg_options');
 //reference thumbnail class
 include_once('lib/thumbnail.inc.php');
 
-$pictureID = $_GET['pid'];
-$mode = $_GET['mode'];
+$pictureID = attribute_escape($_GET['pid']);
+$mode = attribute_escape($_GET['mode']);
 
 // get the path and filename to the image
 $galleryID = $wpdb->get_var("SELECT galleryid FROM $wpdb->nggpictures WHERE pid = '$pictureID' ");

@@ -39,7 +39,7 @@ global $wpdb;
     
     <p>
       <?php
-        $userlevel = '<strong>' . (current_user_can('manage_options') ? __('forum administrator', 'nggallery') : __('forum moderator', 'nggallery')) . '</strong>';
+        $userlevel = '<strong>' . (current_user_can('manage_options') ? __('gallery administrator', 'nggallery') : __('gallery editor', 'nggallery')) . '</strong>';
         printf(__('Welcome to NextGEN Gallery. Here you can control your images, galleries and albums. You currently have %s rights.', 'nggallery'), $userlevel);
       ?>
     </p>
@@ -120,6 +120,9 @@ function ngg_get_serverinfo() {
 	// Get PHP Safe Mode
 	if(ini_get('safe_mode')) $safe_mode = __('On', 'nggallery');
 	else $safe_mode = __('Off', 'nggallery');
+	// Get PHP allow_url_fopen
+	if(ini_get('allow_url_fopen')) $allow_url_fopen = __('On', 'nggallery');
+	else $allow_url_fopen = __('Off', 'nggallery'); 
 	// Get PHP Max Upload Size
 	if(ini_get('upload_max_filesize')) $upload_max = ini_get('upload_max_filesize');	
 	else $upload_max = __('N/A', 'nggallery');
@@ -132,13 +135,19 @@ function ngg_get_serverinfo() {
 	// Get PHP Memory Limit 
 	if(ini_get('memory_limit')) $memory_limit = ini_get('memory_limit');
 	else $memory_limit = __('N/A', 'nggallery');
+	// Get actual memory_get_usage
+	if (function_exists('memory_get_usage')) $memory_usage = round(memory_get_usage() / 1024 / 1024, 2) . __(' MByte', 'nggallery');
+	else $memory_usage = __('N/A', 'nggallery');
+	
 ?>
 	<li><?php _e('Operating System', 'nggallery'); ?> : <strong><?php echo PHP_OS; ?></strong></li>
 	<li><?php _e('Server', 'nggallery'); ?> : <strong><?php echo $_SERVER["SERVER_SOFTWARE"]; ?></strong></li>
+	<li><?php _e('Memory usage', 'nggallery'); ?> : <strong><?php echo $memory_usage; ?></strong></li>
 	<li><?php _e('MYSQL Version', 'nggallery'); ?> : <strong><?php echo $sqlversion; ?></strong></li>
 	<li><?php _e('SQL Mode', 'nggallery'); ?> : <strong><?php echo $sql_mode; ?></strong></li>
 	<li><?php _e('PHP Version', 'nggallery'); ?> : <strong><?php echo PHP_VERSION; ?></strong></li>
 	<li><?php _e('PHP Safe Mode', 'nggallery'); ?> : <strong><?php echo $safe_mode; ?></strong></li>
+	<li><?php _e('PHP Allow URL fopen', 'nggallery'); ?> : <strong><?php echo $allow_url_fopen; ?></strong></li>
 	<li><?php _e('PHP Memory Limit', 'nggallery'); ?> : <strong><?php echo $memory_limit; ?></strong></li>
 	<li><?php _e('PHP Max Upload Size', 'nggallery'); ?> : <strong><?php echo $upload_max; ?></strong></li>
 	<li><?php _e('PHP Max Post Size', 'nggallery'); ?> : <strong><?php echo $post_max; ?></strong></li>

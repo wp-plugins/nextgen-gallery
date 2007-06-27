@@ -91,7 +91,7 @@ function ngg_serialize(s)
 </script>
 <div class="wrap" id="wrap" >
 	<h3><?php _e('Manage Albums', 'nggallery') ?></h3>
-	<form id="selectalbum" method="POST" onsubmit="ngg_serialize('galleryContainer')">
+	<form id="selectalbum" method="POST" onsubmit="ngg_serialize('galleryContainer')" accept-charset="utf-8">
 		<input name="sortorder" type="hidden" />
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr>

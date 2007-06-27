@@ -4,7 +4,7 @@ function searchnggallerytags($content) {
 
 	global $wpdb;
 		
-	$search = "/\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,left|,)\]/i";
+	$search = "@\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,left|,)\]@i";
 	
 	if	(preg_match_all($search, $content, $matches)) {
 		
@@ -21,7 +21,7 @@ function searchnggallerytags($content) {
 		}
 	}// end singelpic
 
-	$search = "/\[album\s*=\s*(\w+|^\+)(|,extend|,compact)\]/i";
+	$search = "@(?:<p>)*\s*\[album\s*=\s*(\w+|^\+)(|,extend|,compact)\]\s*(?:</p>)*@i";
 	
 	if	(preg_match_all($search, $content, $matches)) {
 		if (is_array($matches)) {
@@ -38,7 +38,7 @@ function searchnggallerytags($content) {
 		}
 	}// end album
 
-	$search = "/\[gallery\s*=\s*(\w+|^\+)\]/i";
+	$search = "@(?:<p>)*\s*\[gallery\s*=\s*(\w+|^\+)\]\s*(?:</p>)*@i";
 	
 	if	(preg_match_all($search, $content, $matches)) {
 		if (is_array($matches)) {
@@ -54,8 +54,25 @@ function searchnggallerytags($content) {
 			}	
 		}
 	}// end gallery
+
+	$search = "@(?:<p>)*\s*\[imagebrowser\s*=\s*(\w+|^\+)\]\s*(?:</p>)*@i";
 	
-	$search = "/\[slideshow\s*=\s*(\w+|^\+)(|,(\d+)|,)(|,(\d+))\]/i";
+	if	(preg_match_all($search, $content, $matches)) {
+		if (is_array($matches)) {
+			foreach ($matches[1] as $key =>$v0) {
+				// check for gallery id
+				$galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$v0' ");
+				if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$v0' ");
+				if($galleryID) {
+					$search = $matches[0][$key];
+					$replace= nggShowImageBrowser($galleryID);
+					$content= str_replace ($search, $replace, $content);
+				}
+			}	
+		}
+	}// end gallery
+	
+	$search = "@(?:<p>)*\s*\[slideshow\s*=\s*(\w+|^\+)(|,(\d+)|,)(|,(\d+))\]\s*(?:</p>)*@i";
 
 	if	(preg_match_all($search, $content, $matches)) {
 		if (is_array($matches)) {
@@ -87,7 +104,7 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	if (empty($irWidth) ) $irWidth = $ngg_options[irWidth];
 	if (empty($irHeight)) $irHeight = $ngg_options[irHeight];
 
-	$replace .= "\n".'<div class="slideshow" id="ngg_slideshow'.$galleryID.'">';
+	$replace  = "\n".'<div class="slideshow" id="ngg_slideshow'.$galleryID.'">';
 	$replace .= '<p>The <a href="http://www.macromedia.com/go/getflashplayer">Flash Player</a> and <a href="http://www.mozilla.com/firefox/">a browser with Javascript support</a> are needed..</p></div>';
     $replace .= "\n\t".'<script type="text/javascript">';
 	if ($ngg_options[irXHTMLvalid]) $replace .= "\n\t".'<!--';
@@ -100,6 +117,8 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	if ($ngg_options[irShownavigation]) $replace .= "\n\t\t".'so.addVariable("shownavigation", "true");';
 	if ($ngg_options[irShowicons]) $replace .= "\n\t\t".'so.addVariable("showicons", "true");';
 	if ($ngg_options[irKenburns]) $replace .= "\n\t\t".'so.addVariable("kenburns", "true");';
+	if ($ngg_options[irWatermark]) $replace .= "\n\t\t".'so.addVariable("logo", "'.$ngg_options[wmPath].'");';
+	if (!empty($ngg_options[irAudio])) $replace .= "\n\t\t".'so.addVariable("audio", "'.$ngg_options[irAudio].'");';
 	$replace .= "\n\t\t".'so.addVariable("overstretch", "'.$ngg_options[irOverstretch].'");';
 	$replace .= "\n\t\t".'so.addVariable("backcolor", "0x'.$ngg_options[irBackcolor].'");';
 	$replace .= "\n\t\t".'so.addVariable("frontcolor", "0x'.$ngg_options[irFrontcolor].'");';
@@ -158,16 +177,22 @@ function nggShowGallery($galleryID) {
 		return $gallerycontent;
 	}
 
+	// use the jQuery Plugin if activated
+	if (($ngg_options[thumbEffect] == "thickbox") && ($ngg_options[galUsejQuery])) {
+		$gallerycontent .= nggShowJSGallery($galleryID);
+		return $gallerycontent;
+	}
+	
  	// check for page navigation
  	if ($maxElement > 0) {	
 		if ( isset( $_GET['nggpage'] ) )	$page = (int) $_GET['nggpage'];
 		else $page = 1; 
 	 	$start = $offset = ( $page - 1 ) * $maxElement;
 	
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] ASC LIMIT $start, $maxElement ");
+		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir] LIMIT $start, $maxElement ");
 		$total = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ");	
 	} else {
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] ASC ");	
+		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir] ");	
 	}
 	
 	if (is_array($picturelist)) {
@@ -212,11 +237,7 @@ function nggShowGallery($galleryID) {
 	}
 	
 	foreach ($picturelist as $picture) {
-		$picturefile = str_replace(
-			array('ä',   'ö',   'ü',   'Ä',   'Ö',   'Ü',   'ß',   ' '), 
-			array('%E4', '%F6', '%FC', '%C4', '%D6', '%DC', '%DF', '%20'),
-			utf8_decode($picture->filename)
-		);
+		$picturefile =  nggallery::remove_umlauts($picture->filename);
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail-box">'."\n\t";
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail">'."\n\t";
 		$gallerycontent .= '<a href="'.$folder_url.$picturefile.'" title="'.$picture->description.'" '.$thumbcode.' >';
@@ -232,36 +253,110 @@ function nggShowGallery($galleryID) {
 }
 
 /**********************************************************/
+function nggShowJSGallery($galleryID) {
+	// create a gallery with a jQuery plugin
+	
+	global $wpdb;
+	$ngg_options = get_option('ngg_options');
+
+	// Get option
+	$maxElement = $ngg_options[galImages];
+
+	// get gallery values
+	$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
+
+	// set gallery url
+	$folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
+	$thumb_folder   = str_replace('/','',ngg_get_thumbnail_folder($act_gallery->path, FALSE));
+
+	$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir] ");	
+	
+	if (is_array($picturelist)) {
+		
+		// create array	
+		$i = 0;
+		
+		$gallerycontent  = '<script type="text/javascript">'."\n";
+		$gallerycontent .= 'var nggal'. $galleryID .'=new Array()'."\n";
+		foreach ($picturelist as $picture) {
+			$picturefile =  nggallery::remove_umlauts($picture->filename);
+			$gallerycontent .= 'nggal'. $galleryID .'['.$i++.']=["'.$picture->filename.'", "'.$picture->alttext.'", "'.strip_tags(nggallery::ngg_nl2br($picture->description)).'"]'."\n";	
+		}
+		$gallerycontent .=	'jQuery(document).ready(function() {'."\n";
+		$gallerycontent .=  '  jQuery("#nggal'. $galleryID .'").nggallery({'."\n";
+		$gallerycontent .=	'		imgarray    : nggal'. $galleryID . ','."\n";
+		$gallerycontent .=	'		name        : "'. $act_gallery->name . '",'."\n";
+		$gallerycontent .=	'		galleryurl  : "'. $folder_url  . '",'."\n";
+		$gallerycontent .=	'		thumbfolder : "'. $thumb_folder  . '",'."\n";
+		if ($ngg_options[thumbEffect] == "thickbox")
+			$gallerycontent .=	'		thickbox    : true,'."\n";	
+		$gallerycontent .=	'		maxelement  : '. $maxElement ."\n";
+		$gallerycontent .=	'	});'."\n";
+		$gallerycontent .=	'});'."\n";
+		
+		$gallerycontent .= '</script>'."\n";
+		$gallerycontent .= '	<div id="nggal'. $galleryID .'">'."\n";
+		$gallerycontent .= '	<!-- The content will be dynamically loaded in here -->'."\n";
+		$gallerycontent .= '</div>'."\n";
+		$gallerycontent .= '<div style="clear:both;"></div>'."\n";
+	}
+		
+	return $gallerycontent;	
+}
+/**********************************************************/
 function nggShowAlbum($albumID,$mode = "extend") {
 	
 	global $wpdb;
+	
+	$albumcontent = "";
 
-	$mode = ltrim($mode,',');
-	$sortorder = $wpdb->get_var("SELECT sortorder FROM $wpdb->nggalbum WHERE id = '$albumID' ");
-	if (!empty($sortorder)) {
-		$gallery_array = unserialize($sortorder);
-//		$gallery_array = $wpdb->get_col("SELECT gid FROM $wpdb->nggallery ");
-	} 
+	// look for gallery variable 
+	if (isset( $_GET['gallery']))  {
+		
+		if ($albumID != $_GET['album']) return $albumcontent;
 
-	$albumcontent = '<div class="ngg-albumoverview">';
-	if (is_array($gallery_array)) {
-	foreach ($gallery_array as $galleryID) {
-		$albumcontent .= nggCreateGalleryDiv($galleryID,$mode);	
+		$galleryID = attribute_escape($_GET['gallery']);
+		$albumcontent = nggShowGallery($galleryID);
+
+	} else {
+
+		$mode = ltrim($mode,',');
+		$sortorder = $wpdb->get_var("SELECT sortorder FROM $wpdb->nggalbum WHERE id = '$albumID' ");
+		if (!empty($sortorder)) {
+			$gallery_array = unserialize($sortorder);
+		} 
+	
+		$albumcontent = '<div class="ngg-albumoverview">';
+		if (is_array($gallery_array)) {
+		foreach ($gallery_array as $galleryID) {
+			$albumcontent .= nggCreateAlbum($galleryID,$mode,$albumID);	
+			}
 		}
+		$albumcontent .= '</div>'."\n";
+		$albumcontent .= '<div style="clear:both;"></div>'."\n";
+	
 	}
-	$albumcontent .= '</div>'."\n";
-	$albumcontent .= '<div style="clear:both;"></div>'."\n";
 	
 	return $albumcontent;
 }
 
 /**********************************************************/
-function nggCreateGalleryDiv($galleryID,$mode = "extend") {
+function nggCreateAlbum($galleryID,$mode = "extend",$albumID = 0) {
 	// create a gallery overview div
 	
 	global $wpdb;
+	$ngg_options = get_option('ngg_options');
 	
 	$gallerycontent = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
+
+	// choose between variable and page link
+	if ($ngg_options[galNoPages]) {
+		$gallerylink['album'] = $albumID; 
+		$gallerylink['gallery'] = $galleryID;
+		$link = add_query_arg($gallerylink);
+	} else {
+		$link = get_permalink($gallerycontent->pageid);
+	}
 	
 	if ($gallerycontent) {
  		if ($mode == "compact") {
@@ -274,10 +369,10 @@ function nggCreateGalleryDiv($galleryID,$mode = "extend") {
 				<div class="ngg-album-compact">
 					<div class="ngg-album-compactbox">
 						<div class="ngg-album-link">
-							<a class="Link" href="'.get_permalink($gallerycontent->pageid).'">'.$insertpic.'</a>
+							<a class="Link" href="'.$link.'">'.$insertpic.'</a>
 						</div>
 					</div>
-					<h4><a class="ngg-album-desc" title="'.$gallerycontent->title.'" href="'.get_permalink($gallerycontent->pageid).'">'.$gallerycontent->title.'</a></h4>
+					<h4><a class="ngg-album-desc" title="'.$gallerycontent->title.'" href="'.$link.'">'.$gallerycontent->title.'</a></h4>
 					<p><b>'.$counter.'</b> '.__('Photos', 'nggallery').'</p></div>';
 		} else {
 			// mode extend
@@ -287,15 +382,84 @@ function nggCreateGalleryDiv($galleryID,$mode = "extend") {
 				$insertpic = __('Watch gallery', 'nggallery');
 			$galleryoutput = '
 			<div class="ngg-album">
-				<div class="ngg-albumtitle"><a href="'.get_permalink($gallerycontent->pageid).'">'.$gallerycontent->title.'</a></div>
+				<div class="ngg-albumtitle"><a href="'.$link.'">'.$gallerycontent->title.'</a></div>
 				<div class="ngg-albumcontent">
-					<div class="ngg-thumbnail"><a href="'.get_permalink($gallerycontent->pageid).'">'.$insertpic.'</a></div>
-					<div class="ngg-description"><p>'.$gallerycontent->description.'</p></div>'."\n".'</div>'."\n".'</div>';
+					<div class="ngg-thumbnail"><a href="'.$link.'">'.$insertpic.'</a></div>
+					<div class="ngg-description"><p>'.html_entity_decode($gallerycontent->description).'</p></div>'."\n".'</div>'."\n".'</div>';
 
 		}
 	}
 	
 	return $galleryoutput;
+}
+
+/**********************************************************/
+function nggShowImageBrowser($galleryID) {
+	
+	global $wpdb;
+	$ngg_options = get_option('ngg_options');
+	
+	// get gallery values
+	$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
+
+	// get the effect code
+	if ($ngg_options[thumbEffect] != "none") $thumbcode = stripslashes($ngg_options[thumbCode]);
+	if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'".$act_gallery->name."'", $thumbcode);
+	else $thumbcode = str_replace("%GALLERY_NAME%", $act_gallery->name, $thumbcode);
+
+	// set gallery url
+	$folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
+	
+	$picarray = $wpdb->get_col("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");	
+	$total = count($picarray);
+
+	// look for gallery variable 
+	if ( isset( $_GET['pid'] )) {
+		$act_pid = attribute_escape($_GET['pid']);
+	} else {
+		reset($picarray);
+		$act_pid = current($picarray);
+	}
+	
+	// get ids for back/next
+	$key = array_search($act_pid,$picarray);
+	if (!$key) {
+		$act_pid = reset($picarray);
+		$key = key($picarray);
+	}
+	$back_pid = ( $key >=1 ) ? $picarray[$key-1] : end($picarray) ;
+	$next_pid = ( $key < ($total-1) ) ? $picarray[$key+1] : reset($picarray) ;
+
+	$picture = $wpdb->get_row("SELECT * FROM $wpdb->nggpictures WHERE pid = '$act_pid'");	
+
+	if ($picture) {
+		$headline = ($ngg_options[ImgBrHead]) ? '<h3>'.$picture->alttext.'</h3>' : '' ;
+		$desc = ($ngg_options[ImgBrDesc]) ? '<div class="ngg-imagebrowser-desc"><p>'.html_entity_decode($picture->description).'</p></div>' : '' ;
+		$galleryoutput = '
+		<div class="ngg-imagebrowser" >
+			'.$headline.'
+			<div class="pic">
+				<a href="'.$folder_url.$picture->filename.'" title="'.$picture->description.'" '.$thumbcode.'>
+					<img alt="'.$picture->alttext.'" src="'.$folder_url.$picture->filename.'"/>
+				</a>
+			</div>
+			<div class="ngg-imagebrowser-nav">';
+		if 	($back_pid) {
+			$backlink['pid'] = $back_pid;
+			$galleryoutput .='<div class="back"><a href="'.add_query_arg($backlink).'">'.$ngg_options[ImgBrTextBack].'</a></div>';
+		}
+		if 	($next_pid) {
+			$nextlink['pid'] = $next_pid;
+			$galleryoutput .='<div class="next"><a href="'.add_query_arg($nextlink).'">'.$ngg_options[ImgBrTextNext].'</a></div>';
+		}
+		$galleryoutput .='
+				<div class="counter">'.__('Picture', 'nggallery').' '.($key+1).' '.__('from', 'nggallery').' '.$total.'</div>
+				'.$desc.'
+			</div>	
+		</div>';
+	}
+	return $galleryoutput;
+	
 }
 
 /**********************************************************/
@@ -416,4 +580,39 @@ function ngg_get_thumbnail_prefix($gallerypath, $include_Abspath = TRUE) {
 	
 }
 
+// NextGEN gallery class : 
+// just started to do it better ;-)
+
+class nggallery {
+	
+	/**********************************************************/
+	function ngg_nl2br($string) {
+		// remove page break
+		$string = str_replace(array("\r\n", "\r", "\n"), "<br />", $string);
+		
+		return $string;
+
+	}
+	
+	function show_error($message) {
+		echo '<div class="fade error" id="message"><p>'.$message.'</p></div>'."\n";
+	}
+	
+	function show_message($message)
+	{
+		echo '<div class="fade updated" id="message"><p>'.$message.'</p></div>'."\n";
+	}
+	
+	function remove_umlauts($filename) {
+	
+		$cleanname = str_replace(
+		array('ä',   'ö',   'ü',   'Ä',   'Ö',   'Ü',   'ß',   ' '), 
+		array('%E4', '%F6', '%FC', '%C4', '%D6', '%DC', '%DF', '%20'),
+		utf8_decode($filename)
+		);
+		
+		return $cleanname;
+	}
+	
+}
 ?>

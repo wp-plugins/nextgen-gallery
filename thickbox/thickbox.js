@@ -5,7 +5,8 @@
  * Licensed under the MIT License: http://www.opensource.org/licenses/mit-license.php
 */
 
-//Version 3.0.1 : alex.rabe : jQuery no colision mode, loading image	
+//Version 3.0.1 : alex.rabe : jQuery no colision mode, loading image
+//Version 3.0.2 : alex.rabe : add external init for nextgen plugin	
 		  
 // var tb_pathToImage = "images/loadingAnimation.gif";
 
@@ -17,13 +18,13 @@
 
 //on page load call tb_init
 $(document).ready(function(){   
-	tb_init('a.thickbox, area.thickbox, input.thickbox');//pass where to apply thickbox
+	$.tb_init('a.thickbox, area.thickbox, input.thickbox');//pass where to apply thickbox
 	imgLoader = new Image();// preload image
 	imgLoader.src = tb_pathToImage;
 });
 
 //add thickbox to href & area elements that have a class of .thickbox
-function tb_init(domChunk){
+$.tb_init = function tb_init(domChunk){
 	$(domChunk).click(function(){
 	var t = this.title || this.name || null;
 	var a = this.href || this.alt;
@@ -32,7 +33,7 @@ function tb_init(domChunk){
 	this.blur();
 	return false;
 	});
-}
+};
 
 function tb_show(caption, url, imageGroup) {//function called when the user clicks on a thickbox link
 
@@ -226,7 +227,7 @@ function tb_show(caption, url, imageGroup) {//function called when the user clic
 					$("#TB_ajaxContent").load(url += "&random=" + (new Date().getTime()),function(){//to do a post change this load method
 						tb_position();
 						$("#TB_load").remove();
-						tb_init("#TB_ajaxContent a.thickbox");
+						$.tb_init("#TB_ajaxContent a.thickbox");
 						$("#TB_window").css({display:"block"});
 					});
 				}

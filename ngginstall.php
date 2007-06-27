@@ -5,9 +5,13 @@ $ngg_db_version = "0.33";
 
 function nggallery_install () {
 	
-   	global $wpdb;
+   	global $wpdb , $wp_roles;
    	global $ngg_db_version;
 
+	// Check for capability
+	if ( !current_user_can('activate_plugins') ) 
+		return;
+	
 	require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
 
    	$nggpictures					= $wpdb->prefix . 'ngg_pictures';
@@ -72,70 +76,81 @@ function nggallery_install () {
 
 function ngg_default_options() {
 
-	$ngg_options[gallerypath]		= "wp-content/gallery/";  		// set default path to the gallery
-	$ngg_options[scanfolder]		= false;						// search for new images
-	$ngg_options[deleteImg]			= false;						// delete Images
+	$ngg_options['gallerypath']			= "wp-content/gallery/";  		// set default path to the gallery
+	$ngg_options['scanfolder']			= false;						// search for new images
+	$ngg_options['deleteImg']			= false;						// delete Images
 	
-	$ngg_options[thumbwidth]		= 100;  						// Thumb Width
-	$ngg_options[thumbheight]		= 75;  							// Thumb height
-	$ngg_options[thumbfix]			= true;							// Fix the dimension
-	$ngg_options[thumbcrop]			= false;						// Crop square thumbnail
-	$ngg_options[thumbquality]		= 100;  						// Thumb Quality
-	$ngg_options[thumbResampleMode]	= 3;  							// Resample speed value 1 - 5
+	$ngg_options['thumbwidth']			= 100;  						// Thumb Width
+	$ngg_options['thumbheight']			= 75;  							// Thumb height
+	$ngg_options['thumbfix']			= true;							// Fix the dimension
+	$ngg_options['thumbcrop']			= false;						// Crop square thumbnail
+	$ngg_options['thumbquality']		= 100;  						// Thumb Quality
+	$ngg_options['thumbResampleMode']	= 3;  						// Resample speed value 1 - 5
 	
 	// Image Settings
-	$ngg_options[imgResize]			= false;						// Activate resize
-	$ngg_options[imgWidth]			= 800;  						// Image Width
-	$ngg_options[imgHeight]			= 600;  						// Image height
-	$ngg_options[imgQuality]		= 85;							// Image Quality
-	$ngg_options[imgResampleMode]	= 4;  							// Resample speed value 1 - 5
-	$ngg_options[imgSinglePicLink]	= false;  						// Add a link to the full size picture
+	$ngg_options['imgResize']			= false;						// Activate resize
+	$ngg_options['imgWidth']			= 800;  						// Image Width
+	$ngg_options['imgHeight']			= 600;  						// Image height
+	$ngg_options['imgQuality']			= 85;							// Image Quality
+	$ngg_options['imgResampleMode']		= 4;  							// Resample speed value 1 - 5
+	$ngg_options['imgSinglePicLink']	= false;  						// Add a link to the full size picture
 	
 	// Gallery Settings
-	$ngg_options[galImages]			= "20";		  					// Number Of images per page
-	$ngg_options[galShowSlide]		= true;							// Show slideshow
-	$ngg_options[galTextSlide]		= __('[Show as slideshow]','nggallery'); // Text for slideshow
-	$ngg_options[galTextGallery]	= __('[Show picture list]','nggallery'); // Text for gallery
-	$ngg_options[galShowOrder]		= "gallery";					// Show order
-	$ngg_options[galSort]			= "pid";						// Sort order
+	$ngg_options['galImages']			= "20";		  					// Number Of images per page
+	$ngg_options['galShowSlide']		= true;							// Show slideshow
+	$ngg_options['galTextSlide']		= __('[Show as slideshow]','nggallery'); // Text for slideshow
+	$ngg_options['galTextGallery']		= __('[Show picture list]','nggallery'); // Text for gallery
+	$ngg_options['galShowOrder']		= "gallery";					// Show order
+	$ngg_options['galSort']				= "pid";						// Sort order
+	$ngg_options['galSortDir']			= "ASC";						// Sort direction
+	$ngg_options['galUsejQuery']   		= false;						// use the jQuery plugin
+	$ngg_options['galNoPages']   		= true;							// use no subpages for gallery
+
+	// Image Browser
+	$ngg_options['ImgBrHead']			= true;		  					// Show header
+	$ngg_options['ImgBrDesc']			= true;							// Show description
+	$ngg_options['ImgBrTextBack']		= '&#9668; '.__('Back','nggallery'); // Text for Back
+	$ngg_options['ImgBrTextNext']		= __('Next','nggallery').' &#9658;'; // Text for Next	
 
 	// Thumbnail Effect
-	$ngg_options[thumbEffect]		= "thickbox";  					// select effect
-	$ngg_options[thumbCode]			= "class=\"thickbox\" rel=\"%GALLERY_NAME%\""; 
-	$ngg_options[thickboxImage]		= "loadingAnimationv3.gif";  	// thickbox Loading Image
+	$ngg_options['thumbEffect']			= "thickbox";  					// select effect
+	$ngg_options['thumbCode']			= "class=\"thickbox\" rel=\"%GALLERY_NAME%\""; 
+	$ngg_options['thickboxImage']		= "loadingAnimationv3.gif";  	// thickbox Loading Image
 
 	// Watermark settings
-	$ngg_options[wmPos]				= "botRight";					// Postion
-	$ngg_options[wmXpos]			= 5;  							// X Pos
-	$ngg_options[wmYpos]			= 5;  							// Y Pos
-	$ngg_options[wmType]			= "text";  						// Type : 'image' / 'text'
-	$ngg_options[wmPath]			= "";  							// Path to image
-	$ngg_options[wmFont]			= "arial.ttf";  				// Font type
-	$ngg_options[wmSize]			= 10;  							// Font Size
-	$ngg_options[wmText]			= get_option('blogname');		// Text
-	$ngg_options[wmColor]			= "000000";  					// Font Color
-	$ngg_options[wmOpaque]			= "100";  						// Font Opaque
+	$ngg_options['wmPos']				= "botRight";					// Postion
+	$ngg_options['wmXpos']				= 5;  							// X Pos
+	$ngg_options['wmYpos']				= 5;  							// Y Pos
+	$ngg_options['wmType']				= "text";  						// Type : 'image' / 'text'
+	$ngg_options['wmPath']				= "";  							// Path to image
+	$ngg_options['wmFont']				= "arial.ttf";  				// Font type
+	$ngg_options['wmSize']				= 10;  							// Font Size
+	$ngg_options['wmText']				= get_option('blogname');		// Text
+	$ngg_options['wmColor']				= "000000";  					// Font Color
+	$ngg_options['wmOpaque']			= "100";  						// Font Opaque
 
 	// Image Rotator settings
 	
-	$ngg_options[irXHTMLvalid]		= false;
-	$ngg_options[irWidth]			= 320; 
-	$ngg_options[irHeight]			= 240;
- 	$ngg_options[irShuffle]			= true;
- 	$ngg_options[irLinkfromdisplay]	= true;
-	$ngg_options[irShownavigation]	= false;
-	$ngg_options[irShowicons]		= false;
-	$ngg_options[irOverstretch]		= "true";
-	$ngg_options[irRotatetime]		= 10;
-	$ngg_options[irTransition]		= "random";
-	$ngg_options[irKenburns]		= false;
-	$ngg_options[irBackcolor]		= "000000";
-	$ngg_options[irFrontcolor]		= "FFFFFF";
-	$ngg_options[irLightcolor]		= "CC0000";	
+	$ngg_options['irXHTMLvalid']		= false;
+	$ngg_options['irAudio']				= "";
+	$ngg_options['irWidth']				= 320; 
+	$ngg_options['irHeight']			= 240;
+ 	$ngg_options['irShuffle']			= true;
+ 	$ngg_options['irLinkfromdisplay']	= true;
+	$ngg_options['irShownavigation']	= false;
+	$ngg_options['irShowicons']			= false;
+	$ngg_options['irWatermark']			= false;
+	$ngg_options['irOverstretch']		= "true";
+	$ngg_options['irRotatetime']		= 10;
+	$ngg_options['irTransition']		= "random";
+	$ngg_options['irKenburns']			= false;
+	$ngg_options['irBackcolor']			= "000000";
+	$ngg_options['irFrontcolor']		= "FFFFFF";
+	$ngg_options['irLightcolor']		= "CC0000";	
 
 	// CSS Style
-	$ngg_options[activateCSS]		= true;							// activate the CSS file
-	$ngg_options[CSSfile]			= "nggallery.css";  			// set default css filename
+	$ngg_options['activateCSS']			= true;							// activate the CSS file
+	$ngg_options['CSSfile']				= "nggallery.css";  			// set default css filename
 	
 	update_option('ngg_options', $ngg_options);
 

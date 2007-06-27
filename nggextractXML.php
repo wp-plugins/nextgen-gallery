@@ -8,9 +8,6 @@
 +----------------------------------------------------------------+
 */
 
-// get the gallery id
-$galleryID = $_GET['gid'];
-
 $wpconfig = realpath("../../../wp-config.php");
 if (!file_exists($wpconfig)) die; // stop when wp-config is not there
 
@@ -22,9 +19,12 @@ add_action('shutdown', 'get_out_now', -1);
 global $wpdb;
 $ngg_options = get_option('ngg_options');
 
+// get the gallery id
+$galleryID = attribute_escape($_GET['gid']);
+
 // get gallery values
 $act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
-$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY '$ngg_options[galSort]' ASC");
+$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");
 
 // set gallery url
 $folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
@@ -40,7 +40,7 @@ if (is_array ($thepictures)){
 	foreach ($thepictures as $picture) {
 		echo "		<track>\n";
 		if (!empty($picture->description))	
-		echo "			<title>".$picture->description."</title>\n";
+		echo "			<title>".strip_tags($picture->description)."</title>\n";
 		else if (!empty($picture->alttext))	
 		echo "			<title>".$picture->alttext."</title>\n";
 		else 
