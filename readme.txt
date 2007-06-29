@@ -4,7 +4,6 @@ Donate link: http://alexrabe.boelinger.com/?page_id=80
 Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets
 Requires at least: 2.1.3
 Tested up to: 2.2
-Stable tag: 0.61
 
 NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option.
 
