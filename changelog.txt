@@ -6,7 +6,7 @@ V0.61 - 29.06.2007
 
 V0.60 - 27.06.2007
 - NEW : Select a image from the Upload Tab
-- NEW : Tag [imageborwser=id] for a Inline Gallery Browser
+- NEW : Tag [imagebrowser=id] for a Inline Gallery Browser
 - NEW : Show gallery without Subpages
 - NEW : Manage gallery : Function "Add a new page"
 - NEW : Manage gallery : Show/Hide thumbnails
