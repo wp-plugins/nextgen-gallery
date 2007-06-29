@@ -2,7 +2,7 @@ NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
 V0.61 - 29.06.2007
-- Added : Forget the file jquery.nextgen.pack.js and jquery.nextgen.js
+- Added : Forgot the file jquery.nextgen.pack.js and jquery.nextgen.js
 
 V0.60 - 27.06.2007
 - NEW : Select a image from the Upload Tab
