@@ -1,6 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.62 - 06.07.2007
+- NEW : Import for myGallery
+- Added : Updated to jQuery 1.1.3.1
+- Bugfix : Check for memory_limit setting, otherwise pass the test
+- Bugfix : Thumbcode not insert for nggDisplayRandomImages and nggDisplayRecentImages
+
 V0.61 - 29.06.2007
 - Added : Forgot the file jquery.nextgen.pack.js and jquery.nextgen.js
 

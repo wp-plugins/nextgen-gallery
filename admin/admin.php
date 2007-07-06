@@ -49,8 +49,10 @@ add_action('admin_menu', 'add_nextgen_gallery_menu');
     add_submenu_page( NGGFOLDER , __('Options', 'nggallery'), __('Options', 'nggallery'), 'manage_options', 'nggallery-options', 'nggallery_admin_options');
     add_submenu_page( NGGFOLDER , __('Style', 'nggallery'), __('Style', 'nggallery'), 'manage_options', 'nggallery-style', 'nggallery_admin_style');
     add_submenu_page( NGGFOLDER , __('Setup Gallery', 'nggallery'), __('Setup', 'nggallery'), 'activate_plugins', 'nggallery-setup', 'nggallery_admin_setup');
+	if (check_for_myGallery())
+    add_submenu_page( NGGFOLDER , __('Import', 'nggallery'), __('Import', 'nggallery'), 'manage_options', 'nggallery-import', 'nggallery_admin_import');
     add_submenu_page( NGGFOLDER , __('About this Gallery', 'nggallery'), __('About', 'nggallery'), 'edit_others_posts', 'nggallery-about', 'nggallery_admin_about');
-  }
+}
   
   /************************************************************************/
   
@@ -61,8 +63,34 @@ add_action('admin_menu', 'add_nextgen_gallery_menu');
   include (dirname (__FILE__). '/settings.php');	// nggallery_admin_options
   include (dirname (__FILE__). '/style.php');		// nggallery_admin_style
   include (dirname (__FILE__). '/setup.php');		// nggallery_admin_setup
+  include (dirname (__FILE__). '/myimport.php');	// nggallery_admin_import
   include (dirname (__FILE__). '/about.php');		// nggallery_admin_about
   
   /**************************************************************************/
+  
+  function check_for_myGallery() {
+  	
+  	global $wpdb;
+
+   	$ngg_check_mygallery					= $wpdb->prefix . 'mygallery';
+	$ngg_check_mygprelation					= $wpdb->prefix . 'mygprelation';
+	$ngg_check_mypictures					= $wpdb->prefix . 'mypictures';
+   
+	// check for correct tables
+	$ngg_dberror = false; 
+	
+	if ($wpdb->get_var("show tables like '$ngg_check_mygallery'") != $ngg_check_mygallery)  
+		return false;
+
+	if($wpdb->get_var("show tables like '$ngg_check_mygprelation'") != $ngg_check_mygprelation)
+		return false;
+	
+	if($wpdb->get_var("show tables like '$ngg_check_mypictures'") != $ngg_check_mypictures)
+		return false;
+	
+	// if all tables exits show import	
+	return true;
+	
+}
 
 ?>

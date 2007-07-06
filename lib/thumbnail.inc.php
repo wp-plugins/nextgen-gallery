@@ -205,7 +205,7 @@ class ngg_Thumbnail {
      */
 	function checkMemoryForImage( $filename ){
 		
-		if (function_exists('memory_get_usage')) {
+		if ( (function_exists('memory_get_usage')) && (ini_get('memory_limit')) ) {
 			$imageInfo = getimagesize($filename);
 			switch($this->format) {            	
                 case 'GIF':

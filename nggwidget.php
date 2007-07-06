@@ -3,7 +3,7 @@
 Plugin Name: NextGEN Gallery Widget
 Description: Adds a sidebar widget support to your NextGEN Gallery!
 Author: KeViN
-Version: 0.99b
+Version: 1.00
 Author URI: http://www.kev.hu
 Plugin URI: http://www.kev.hu
 
@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */ 
 
-function getCSVValues($string,$separator=",") 
+function nggGetCSVValues($string,$separator=",") 
 {
     $string = str_replace('""', "'", $string);
     // split the string at double quotes "
@@ -170,11 +170,19 @@ function widget_ngg_slideshow() {
 /*******************************************************/
 /* DISPLAY FUNCTION TO THE RECENT & RANDOM IMAGES 
 /*******************************************************/
-function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thumbcode) {
+function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype) {
 	
 	// Check for NextGEN Gallery
 	if ( !function_exists('ngg_get_thumbnail_url') )
 		return;
+
+	//origy ngg options
+	$ngg_options = get_option('ngg_options');
+
+	// get the effect code
+	if ($ngg_options[thumbEffect] != "none") $thumbcode = stripslashes($ngg_options[thumbCode]);
+	if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'sidebar'", $thumbcode);
+	else $thumbcode = str_replace("%GALLERY_NAME%", "sidebar", $thumbcode);
 
 
 	// Put your HTML code here if you want to personalize the image display!
@@ -274,7 +282,7 @@ function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thu
 
 function nggDisplayRandomImages($number,$width,$height) {
 			echo "\n".'<div class="ngg-widget">'."\n";
-			nggDisplayImagesWidget("true",$number,$width,$height,"","random","");
+			nggDisplayImagesWidget("true",$number,$width,$height,"","random");
 			echo '</div>'."\n";
 	
 
@@ -284,7 +292,7 @@ function nggDisplayRandomImages($number,$width,$height) {
 function nggDisplayRecentImages($number,$width,$height) {
 	
 			echo "\n".'<div class="ngg-widget">'."\n";
-			nggDisplayImagesWidget("true",$number,$width,$height,"","recent","");
+			nggDisplayImagesWidget("true",$number,$width,$height,"","recent");
 			echo '</div>'."\n";
 
 }
@@ -293,10 +301,6 @@ function nggDisplayRecentImages($number,$width,$height) {
 /**********************************************************/
 /* Recent widget
 /**********************************************************/
-
-/* HERE COMES THE RECENT IMAGE WIDGET */
-
-
 function widget_ngg_recentimage() {
 
 	// Check for the required plugin functions. This will prevent fatal
@@ -308,12 +312,8 @@ function widget_ngg_recentimage() {
 	if ( !function_exists('ngg_get_thumbnail_url') )
 		return;
 	
-	// This is the function that outputs our little widget...
 	function widget_nextgenrecentimage($args) {
 		
-		// $args is an array of strings that help widgets to conform to
-		// the active theme: before_widget, before_title, after_widget,
-		// and after_title are the array keys.
 		extract($args);
 
 		// Each widget can store its own options. We keep strings here.
@@ -330,22 +330,12 @@ function widget_ngg_recentimage() {
 		$showcategory	= htmlspecialchars($options['showcategory'], ENT_QUOTES);
 		$categorylist	= htmlspecialchars($options['categorylist'], ENT_QUOTES);
 		
-		// [0.95] -> [add function -> imagetype (imgtype) -> random or recent
-		$imgtype = "recent"; //$options['imgtype'];
+		$imgtype = "recent";
 		
-		//origy ngg options
-		$ngg_options = get_option('ngg_options');
+		$show_widget = false;									// checking display status (category or home)
+		$categorieslist = nggGetCSVValues($categorylist,','); 	// Make array for checking the categories
 
-		// get the effect code
-		if ($ngg_options[thumbEffect] != "none") $thumbcode = stripslashes($ngg_options[thumbCode]);
-		if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'sidebar'", $thumbcode);
-		else $thumbcode = str_replace("%GALLERY_NAME%", "sidebar", $thumbcode);
-	
-		
-		$show_widget = false;								// checking display status (category or home)
-		$categorieslist = getCSVValues($categorylist,','); 	// Make array for checking the categories
-
-		if (($showcategory == "denied")) {					// Denied list -> enable everywhere and make false if found!
+		if (($showcategory == "denied")) {						// Denied list -> enable everywhere and make false if found!
 			$show_widget = true;
 			foreach((get_the_category()) as $cat) 
 				{ if ((in_array($cat->cat_ID , $categorieslist)))
@@ -380,7 +370,7 @@ function widget_ngg_recentimage() {
 			echo $before_widget . $before_title . $title . $after_title;
 			echo "\n".'<div class="ngg-widget">'."\n";
 			
-			nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype,$thumbcode);
+			nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype);
 		
 			echo '</div>'."\n";
 			// v.095 [deleted] -> echo '<div style="clear:both;"></div>'."\n";
@@ -493,9 +483,6 @@ function widget_ngg_recentimage() {
     register_widget_control(array('NextGEN Recent Image', 'widgets'), 'widget_nextgenrecentimage_control', 300, 400);
 }
 
-
-/* */
-
 /**********************************************************/
 /* Random widget
 /**********************************************************/
@@ -510,12 +497,8 @@ function widget_ngg_randomimage() {
 	if ( !function_exists('ngg_get_thumbnail_url') )
 		return;
 	
-	// This is the function that outputs our little widget...
 	function widget_nextgenimage($args) {
 		
-		// $args is an array of strings that help widgets to conform to
-		// the active theme: before_widget, before_title, after_widget,
-		// and after_title are the array keys.
 		extract($args);
 
 		// Each widget can store its own options. We keep strings here.
@@ -532,8 +515,7 @@ function widget_ngg_randomimage() {
 		$showcategory	= htmlspecialchars($options['showcategory'], ENT_QUOTES);
 		$categorylist	= htmlspecialchars($options['categorylist'], ENT_QUOTES);
 		
-		// [0.95] -> [add function -> imagetype (imgtype) -> random or recent
-		$imgtype = "random"; //$options['imgtype'];
+		$imgtype = "random";
 		
 		//origy ngg options
 		$ngg_options = get_option('ngg_options');
@@ -545,7 +527,7 @@ function widget_ngg_randomimage() {
 	
 		
 		$show_widget = false;								// checking display status (category or home)
-		$categorieslist = getCSVValues($categorylist,','); 	// Make array for checking the categories
+		$categorieslist = nggGetCSVValues($categorylist,','); 	// Make array for checking the categories
 
 		if (($showcategory == "denied")) {					// Denied list -> enable everywhere and make false if found!
 			$show_widget = true;

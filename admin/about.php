@@ -97,7 +97,9 @@ function ngg_list_support()	{
 	"Robert (German documentation)" => "http://www.curlyrob.de/",
 	"Pierpaolo Mannone (Italian Translation)" => "http://www.interscambiocasa.com/",
 	"Mattias Tengblad (Swedish Translation)" => "http://www.eyesx.com/",
-	"Joe Pharis" => "http://www.southernstylecruisers.com/"		
+	"Ghettomaster" => "http://www.ghettoworld.de/",
+	"Joe Pharis" => "http://www.southernstylecruisers.com/",
+	"Gil Yaker (Documentation)" => "http://bamboosoup.com/"		
 	);
 
 	

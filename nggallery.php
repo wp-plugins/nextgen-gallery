@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.61a
+Version: 0.62
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -45,7 +45,7 @@ global $wpdb, $wp_version;
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.61");
+define('NGGVERSION', "0.62");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
@@ -133,18 +133,7 @@ add_filter('the_content', 'searchnggallerytags');
 add_filter('the_excerpt', 'searchnggallerytags');
 
 //#################################################################
-/*
-upload_files_(tab) 
-Runs to print a screen on the upload files admin screen; 
-"tab" is the name of the custom action tab. 
-Define custom tabs using the wp_upload_tabs filter  
-
-wp_upload_tabs
-applied to the list of custom tabs to display on the upload management admin screen. 
-Use action upload_files_(tab) to display a page for your custom tab
-*/
-
-//TODO: Integrate all galleries in Upload panel
+// add action/filter for the upload tab 
 add_action('upload_files_ngg_gallery', 'ngg_action_upload_Tab');
 add_filter('wp_upload_tabs', 'ngg_wp_upload_tabs');
 
