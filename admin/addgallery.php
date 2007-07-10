@@ -146,6 +146,21 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<td><input type="file" name="zipfile" id="zipfile" size="35" class="uploadform"/><br />
 					<?php _e('Upload a zip file with images', 'nggallery') ;?></td> 
 				</tr>
+				<tr valign="top"> 
+					<th scope="row"><?php _e('in to', 'nggallery') ;?></th> 
+					<td><select name="zipgalselect">
+					<option value="0" ><?php _e('a new gallery', 'nggallery') ?></option>
+					<?php
+						$gallerylist = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY gid ASC");
+						if(is_array($gallerylist)) {
+							foreach($gallerylist as $gallery) {
+								echo '<option value="'.$gallery->name.'" >'.$gallery->name.' | '.$gallery->title.'</option>'."\n";
+							}
+						}
+					?>
+					</select>
+					<br /><?php echo _e('Note : The upload limit on your server is ','nggallery') . "<strong>" . ini_get('upload_max_filesize') . "Byte</strong>\n"; ?></td> 
+				</tr> 
 				</table>
 				<div class="submit"> <input type="submit" name= "zipupload" value="<?php _e('Start upload', 'nggallery') ;?>"/></div>
 			</fieldset>
@@ -260,8 +275,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		if (!is_dir($gallerypath)) return '<font color="red">'.__('Directory', 'nggallery').' <strong>'.$gallerypath.'</strong> '.__('doesn&#96;t exist', 'nggallery').'!</font>';
 		
 		// read list of images
-		$imageslist = ngg_scandir($gallerypath);
-		if (empty($imageslist)) return '<font color="blue">'.__('Directory', 'nggallery').' <strong>'.$gallerypath.'</strong> '.__('contains no pictures', 'nggallery').'!</font>';
+		$new_imageslist = ngg_scandir($gallerypath);
+		if (empty($new_imageslist)) return '<font color="blue">'.__('Directory', 'nggallery').' <strong>'.$gallerypath.'</strong> '.__('contains no pictures', 'nggallery').'!</font>';
 
 		// create thumbnail folder
 		$check_thumbnail_folder = ngg_get_thumbnail_folder($gallerypath);
@@ -272,17 +287,30 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		// take folder name as gallery name		
 		$galleryname = basename($galleryfolder);
-
-		$result = $wpdb->query("INSERT INTO $wpdb->nggallery (name, path) VALUES ('$galleryname', '$galleryfolder') ");
-		if (!$result) return '<font color="red">'.__('Database error. Could not add gallery!','nggallery').'</font>';
-		$gallery_id = $wpdb->insert_id;  // get index_id
 		
-		//create thumbnails
-		ngg_generatethumbnail($gallerypath,$imageslist);
+		// check for existing gallery
+		$gallery_id = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$galleryname' ");
+		
+		if (!$gallery_id) {
+			$result = $wpdb->query("INSERT INTO $wpdb->nggallery (name, path) VALUES ('$galleryname', '$galleryfolder') ");
+			if (!$result) 
+				return '<font color="red">'.__('Database error. Could not add gallery!','nggallery').'</font>';
+			$gallery_id = $wpdb->insert_id;  // get index_id
+		}
+		
+		// Look for existing image list
+		$old_imageslist = $wpdb->get_col("SELECT filename FROM $wpdb->nggpictures WHERE galleryid = '$gallery_id' ");
+		// if no images are there, create empty array
+		if ($old_imageslist == NULL) $old_imageslist = array();
+		// check difference
+		$new_images = array_diff($new_imageslist, $old_imageslist);
+		// now create thumbnails
+		ngg_generatethumbnail($gallerypath,$new_images);
 
 		// add images to database		
-		if (is_array($imageslist)) {
-			foreach($imageslist as $picture) {
+		$count_pic = 0;
+		if (is_array($new_images)) {
+			foreach($new_images as $picture) {
 			$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES ('$gallery_id', '$picture', '$picture' , 0) ");
 			if ($result) $count_pic++;
 			}
@@ -395,7 +423,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				}
 	
 				$thumb = new ngg_Thumbnail($gallery_absfolder."/".utf8_decode($picture), TRUE);
-					
+
 				// skip if file is not there
 				if (!$thumb->error) {
 					if ($ngg_options[thumbcrop]) {
@@ -452,15 +480,33 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	// thx to Gregor at http://blog.scoutpress.de/forum/topic/45
 		
 		require_once(NGGALLERY_ABSPATH.'/lib/pclzip.lib.php');
-	
+		
 		$archive = new PclZip($file);
 		
-		//TODO: Check PCLZIP_OPT_REMOVE_ALL_PATH to remove path
-		if ($archive->extract(PCLZIP_OPT_PATH, $dir) == 0) {
+		// extract all files in one folder
+		if ($archive->extract(PCLZIP_OPT_PATH, $dir, PCLZIP_OPT_REMOVE_ALL_PATH, PCLZIP_CB_PRE_EXTRACT, 'ngg_getonlyimages') == 0) {
 			die("Error : ".$archive->errorInfo(true));
 		}
 		
 		return;
+	}
+ 
+	// **************************************************************
+	function ngg_getonlyimages($p_event, &$p_header)	{
+		$info = pathinfo($p_header['filename']);
+		// check for extension
+		$ext = array("jpeg", "jpg", "png", "gif"); 
+		if (in_array( strtolower($info['extension']), $ext)) {
+			// For MAC skip the ".image" files
+			if ($info['filename']{0} ==  "." ) 
+				return 0;
+			else 
+				return 1;
+		}
+		// ----- all other files are skipped
+		else {
+		  return 0;
+		}
 	}
 
 	// **************************************************************
@@ -468,15 +514,23 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		$temp_zipfile = $_FILES['zipfile']['tmp_name'];
 		$filename = $_FILES['zipfile']['name']; 
-				
+					
 		// check if file is a zip file
-		if (!eregi('zip', $_FILES['zipfile']['type'])) {
-			@unlink($temp_zipfile); // del temp file
-			return '<font color="red">'.__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type'].'</font>'; 
+		if (!eregi('zip', $_FILES['zipfile']['type']))
+			// on whatever reason MAC shows "application/download"
+			if (!eregi('download', $_FILES['zipfile']['type'])) {
+				@unlink($temp_zipfile); // del temp file
+				return '<font color="red">'.__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type'].'</font>'; 
+			}
+			
+		// get foldername if selected
+		$foldername = $_POST['zipgalselect'];
+		if ($foldername == "0") {	
+			//cleanup and take the zipfile name as folder name
+			$foldername = preg_replace ("/(\s+)/", '-', strtolower(strtok ($filename,'.')));					
 		}
-		
-		//cleanup and take the zipfile name as folder name
-		$foldername = preg_replace ("/(\s+)/", '-', strtolower(strtok ($filename,'.')));
+
+		// set complete folder path		
 		$newfolder = WINABSPATH.$defaultpath.$foldername;
 		
 		if (!is_dir($newfolder)) {
@@ -485,10 +539,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			if (!@chmod ($newfolder, NGGFOLDER_PERMISSION)) return ('<font color="red">'.__('Unable to set directory permissions ', 'nggallery').$newfolder.'!</font>');
 			if (!@mkdir ($newfolder.'/thumbs', NGGFOLDER_PERMISSION)) return ('<font color="red">'.__('Unable to create directory ', 'nggallery').$newfolder.'/thumbs !</font>');
 			if (!@chmod ($newfolder.'/thumbs', NGGFOLDER_PERMISSION)) return ('<font color="red">'.__('Unable to set directory permissions ', 'nggallery').$newfolder.'/thumbs !</font>');
-		}
-		else {
-			return '<font color="red">'.__('Directory already exists, please rename zip file', 'nggallery').'!</font>';	
-		}
+		} 
 		
 		// unzip and del temp file		
 		ngg_unzip($newfolder, $temp_zipfile);

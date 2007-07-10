@@ -27,8 +27,8 @@ function nggallery_admin_manage_gallery() {
 			if ($ngg_options[deleteImg]) {
 				if (is_array($imagelist)) {
 					foreach ($imagelist as $filename) {
-						unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
-						unlink(WINABSPATH.$gallerypath.'/'.$filename);
+						@unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
+						 unlink(WINABSPATH.$gallerypath.'/'.$filename);
 					}
 				}
 				// delete folder
@@ -54,8 +54,8 @@ function nggallery_admin_manage_gallery() {
 				$thumb_folder = ngg_get_thumbnail_folder($gallerypath, FALSE);
 				$thumb_prefix = ngg_get_thumbnail_prefix($gallerypath, FALSE);
 				if ($ngg_options[deleteImg]) {
-					unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
-					unlink(WINABSPATH.$gallerypath.'/'.$filename);
+					@unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
+					 unlink(WINABSPATH.$gallerypath.'/'.$filename);
 				}
 			}		
 			$delete_pic = $wpdb->query("DELETE FROM $wpdb->nggpictures WHERE pid = $act_pid");

@@ -3,7 +3,7 @@
 Plugin Name: NextGEN Gallery Widget
 Description: Adds a sidebar widget support to your NextGEN Gallery!
 Author: KeViN
-Version: 1.00
+Version: 1.01
 Author URI: http://www.kev.hu
 Plugin URI: http://www.kev.hu
 
@@ -184,14 +184,12 @@ function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype) {
 	if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'sidebar'", $thumbcode);
 	else $thumbcode = str_replace("%GALLERY_NAME%", "sidebar", $thumbcode);
 
-
 	// Put your HTML code here if you want to personalize the image display!
 	$IMGbefore	= ''; // NOT IN USE!
 	$IMGafter	= ''; // NOT IN USE!
 	
 	$Abefore	= ''; // NOT IN USE!
 	$Aafter		= ''; // NOT IN USE!
-	
 	
 	// [0.99] remember the displayed images
 	$displayedimages = array();
@@ -202,12 +200,8 @@ function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype) {
 	$numberofimages = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures");
 	if (($numberofimages < $number)) $number=$numberofimages;
 
-	//echo $number." <-- total display images";
-	//echo $numberofimages." <-- total images in you galleries";
-
 	for ($i=1; $i<=$number; $i++) {
 
-		
 		// Get a random image from the database
 		if (($imgtype == "random")) {
 
@@ -281,20 +275,16 @@ function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype) {
 /**********************************************************/
 
 function nggDisplayRandomImages($number,$width,$height) {
-			echo "\n".'<div class="ngg-widget">'."\n";
-			nggDisplayImagesWidget("true",$number,$width,$height,"","random");
-			echo '</div>'."\n";
-	
-
+	echo "\n".'<div class="ngg-widget">'."\n";
+	nggDisplayImagesWidget("true",$number,$width,$height,"","random");
+	echo '</div>'."\n";
 }
 
 
 function nggDisplayRecentImages($number,$width,$height) {
-	
-			echo "\n".'<div class="ngg-widget">'."\n";
-			nggDisplayImagesWidget("true",$number,$width,$height,"","recent");
-			echo '</div>'."\n";
-
+	echo "\n".'<div class="ngg-widget">'."\n";
+	nggDisplayImagesWidget("true",$number,$width,$height,"","recent");
+	echo '</div>'."\n";
 }
 
 
@@ -430,7 +420,6 @@ function widget_ngg_recentimage() {
 	
 		echo'<p style="text-align:right;"><label for="nextgen-recenttitle">' . __('Title','nggallery') . ': <input style="width: 150px;" id="nextgen-recenttitle" name="nextgen-recenttitle" type="text" value="'.$title.'" /></label></p>';
 		
-		// [0.95] [new function] -> Thumbnail or Normal Image?
 		echo '<p style="text-align:right;"><label for="nextgen-recentthumb">' . __('Display type','nggallery').':';
 		echo ' <select name="nextgen-recentthumb" size="1">';
 		echo '   <option id="1" ';if (($thumb == "true")) echo 'selected="selected"'; echo ' value="true">' . __('Thumbnail','nggallery') . '</option>';
@@ -458,7 +447,6 @@ function widget_ngg_recentimage() {
 		echo '   <option id="web20" ';if (($mode == "web20")) echo 'selected="selected"'; echo ' value="web20">'. __('web2.0','nggallery').'</option>';
 		echo ' </select></label></p>';
 
-		// [0.80] [new variables] -> category control 
 		echo '<p style="text-align:right;"><label for="nextgen-recentshowinhome">' . __('Show in the main page','nggallery').':';
 		echo ' <select name="nextgen-recentshowinhome" size="1">';
 		echo '   <option id="1" ';if ($showinhome == "yes") echo 'selected="selected"'; echo ' value="yes" >'. __('yes','nggallery').'</option>';
@@ -613,25 +601,20 @@ function widget_ngg_randomimage() {
 			$sizeY = htmlspecialchars($options['sizeY'], ENT_QUOTES);
 			//$mode = htmlspecialchars($options['mode'], ENT_QUOTES);		
 			
-			//  [0.80] [new functiions and newvariables] -> Category controll
 			$showinhome = htmlspecialchars($options['showinhome'], ENT_QUOTES);
 			$showcategory = htmlspecialchars($options['showcategory'], ENT_QUOTES);
 			$categorylist = htmlspecialchars($options['categorylist'], ENT_QUOTES);
 
-			// [0.95] [new variable] -> (random / recent) 
 			$mode = htmlspecialchars($options['imgtype'], ENT_QUOTES);		
 
 		// Here comes the form
-	
 		echo'<p style="text-align:right;"><label for="nextgen-title">' . __('Title','nggallery') . ': <input style="width: 150px;" id="nextgen-title" name="nextgen-title" type="text" value="'.$title.'" /></label></p>';
 		
-		// [0.95] [new function] -> Thumbnail or Normal Image?
 		echo '<p style="text-align:right;"><label for="nextgen-thumb">' . __('Display type','nggallery').':';
 		echo ' <select name="nextgen-thumb" size="1">';
 		echo '   <option id="1" ';if (($thumb == "true")) echo 'selected="selected"'; echo ' value="true">' . __('Thumbnail','nggallery') . '</option>';
 		echo '   <option id="2" ';if (($thumb == "false")) echo 'selected="selected"'; echo ' value="false">' . __('Orginal','nggallery') . '</option>';
 		echo ' </select></label></p>';
-			
 		
 		echo '<p style="text-align:right;"><label for="nextgen-number">' . __('Number of pics','nggallery').':';
 		echo ' <select name="nextgen-number" size="1">';
@@ -654,7 +637,6 @@ function widget_ngg_randomimage() {
 		echo '   <option id="web20" ';if (($mode == "web20")) echo 'selected="selected"'; echo ' value="web20">'. __('web2.0','nggallery').'</option>';
 		echo ' </select></label></p>';
 
-		// [0.80] [new variables] -> category control 
 		echo '<p style="text-align:right;"><label for="nextgen-showinhome">' . __('Show in the main page','nggallery').':';
 		echo ' <select name="nextgen-showinhome" size="1">';
 		echo '   <option id="1" ';if ($showinhome == "yes") echo 'selected="selected"'; echo ' value="yes" >'. __('yes','nggallery').'</option>';

@@ -1,11 +1,11 @@
 <?php  
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
-require_once(ABSPATH . WPINC . '/rss.php');
-require_once(ABSPATH . WPINC . '/class-snoopy.php');
-
 function nggallery_admin_overview()  {	
-global $wpdb;
+	global $wpdb;
+	
+	// get feed_messages
+	require_once(ABSPATH . WPINC . '/rss.php');
 
 ?>
   <div class="wrap">
@@ -158,6 +158,10 @@ function ngg_get_serverinfo() {
 // ***************************************************************	
 function ngg_version_check() {
 	// check for a new version
+	
+	// use snoopy class
+	require_once(ABSPATH . WPINC . '/class-snoopy.php');
+	
 	$check_intervall = get_option( "ngg_next_update" );
 			
 	if ( ($check_intervall < time() ) or (empty($check_intervall)) ) {

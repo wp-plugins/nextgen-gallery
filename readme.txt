@@ -27,7 +27,7 @@ Features:
 
 For support around this plugin please visit http://alexrabe.boelinger.com/forums/
 
-For your language file please visit : http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/
+**For your language file please visit :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/
 
 ** PLEASE NOTE ! This gallery plugin is still in development, it can be contain many bugs ! **
 
@@ -98,9 +98,13 @@ For a single picture : **[singlepic=id,width,height,mode,float]**
 
 Example : http://nextgen.boelinger.com/singlepic/
 
-Read as startup : http://hqcode.com/?page_id=54
+For a image browser : **[imagebrowser=id]**
 
-A further FAQ you can found here: http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/
+Example : http://nextgen.boelinger.com/2007/06/16/new-tag-picture-browser/
 
-And at least request your question here : http://alexrabe.boelinger.com/forums/
+**Read as startup :** http://hqcode.com/?page_id=54
+
+**A further FAQ you can found here :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/
+
+**And at least request your question here :** http://alexrabe.boelinger.com/forums/
 

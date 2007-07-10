@@ -5,15 +5,19 @@ $ngg_db_version = "0.33";
 
 function nggallery_install () {
 	
-   	global $wpdb , $wp_roles;
+   	global $wpdb , $wp_roles, $wp_version;
    	global $ngg_db_version;
 
 	// Check for capability
 	if ( !current_user_can('activate_plugins') ) 
 		return;
 	
-	require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
-
+	// upgrade function changed in WordPress 2.3	
+	if (version_compare($wp_version, '2.3.alpha', '>='))		
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+	else
+		require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+		
    	$nggpictures					= $wpdb->prefix . 'ngg_pictures';
 	$nggallery						= $wpdb->prefix . 'ngg_gallery';
 	$nggalbum						= $wpdb->prefix . 'ngg_album';
@@ -85,8 +89,8 @@ function ngg_default_options() {
 	$ngg_options['thumbfix']			= true;							// Fix the dimension
 	$ngg_options['thumbcrop']			= false;						// Crop square thumbnail
 	$ngg_options['thumbquality']		= 100;  						// Thumb Quality
-	$ngg_options['thumbResampleMode']	= 3;  						// Resample speed value 1 - 5
-	
+	$ngg_options['thumbResampleMode']	= 3;  							// Resample speed value 1 - 5 
+		
 	// Image Settings
 	$ngg_options['imgResize']			= false;						// Activate resize
 	$ngg_options['imgWidth']			= 800;  						// Image Width

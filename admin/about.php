@@ -99,6 +99,7 @@ function ngg_list_support()	{
 	"Mattias Tengblad (Swedish Translation)" => "http://www.eyesx.com/",
 	"Ghettomaster" => "http://www.ghettoworld.de/",
 	"Joe Pharis" => "http://www.southernstylecruisers.com/",
+	"Charlie (Jump Media)" => "",
 	"Gil Yaker (Documentation)" => "http://bamboosoup.com/"		
 	);
 

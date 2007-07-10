@@ -56,15 +56,15 @@ add_action('admin_menu', 'add_nextgen_gallery_menu');
   
   /************************************************************************/
   
-  include (dirname (__FILE__). '/overview.php'); 	// nggallery_admin_overview
-  include (dirname (__FILE__). '/addgallery.php');	// nggallery_admin_add_gallery
-  include (dirname (__FILE__). '/manage.php');		// nggallery_admin_manage_gallery
-  include (dirname (__FILE__). '/album.php');		// nggallery_admin_manage_album
-  include (dirname (__FILE__). '/settings.php');	// nggallery_admin_options
-  include (dirname (__FILE__). '/style.php');		// nggallery_admin_style
-  include (dirname (__FILE__). '/setup.php');		// nggallery_admin_setup
-  include (dirname (__FILE__). '/myimport.php');	// nggallery_admin_import
-  include (dirname (__FILE__). '/about.php');		// nggallery_admin_about
+  include_once (dirname (__FILE__). '/overview.php'); 	// nggallery_admin_overview
+  include_once (dirname (__FILE__). '/addgallery.php');	// nggallery_admin_add_gallery
+  include_once (dirname (__FILE__). '/manage.php');		// nggallery_admin_manage_gallery
+  include_once (dirname (__FILE__). '/album.php');		// nggallery_admin_manage_album
+  include_once (dirname (__FILE__). '/settings.php');	// nggallery_admin_options
+  include_once (dirname (__FILE__). '/style.php');		// nggallery_admin_style
+  include_once (dirname (__FILE__). '/setup.php');		// nggallery_admin_setup
+  include_once (dirname (__FILE__). '/myimport.php');	// nggallery_admin_import
+  include_once (dirname (__FILE__). '/about.php');		// nggallery_admin_about
   
   /**************************************************************************/
   

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NextGEN Gallery\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-06-27 20:06+0100\n"
+"PO-Revision-Date: 2007-07-10 18:21+0100\n"
 "Last-Translator: Alex Rabe\n"
 "Language-Team: Alex Rabe\n"
 "MIME-Version: 1.0\n"
@@ -39,6 +39,7 @@ msgstr ""
 #: ../admin/manage.php:222
 #: ../admin/manage.php:370
 #: ../admin/manage.php:436
+#: ../admin/myimport.php:52
 #: ../admin/style.php:97
 #: ../js/nggadmintab-js.php:167
 msgid "Description"
@@ -57,13 +58,13 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: ../nggallery.php:265
+#: ../nggallery.php:254
 msgid "Sorry, NextGEN Gallery works only under WordPress 2.1 or higher"
 msgstr ""
 
 #: ../nggbutton.php:36
-#: ../admin/addgallery.php:240
-#: ../admin/addgallery.php:291
+#: ../admin/addgallery.php:255
+#: ../admin/addgallery.php:319
 #: ../admin/admin.php:45
 #: ../admin/manage.php:44
 #: ../admin/manage.php:341
@@ -187,19 +188,19 @@ msgstr ""
 msgid "from"
 msgstr ""
 
-#: ../ngginstall.php:101
+#: ../ngginstall.php:105
 msgid "[Show as slideshow]"
 msgstr ""
 
-#: ../ngginstall.php:102
+#: ../ngginstall.php:106
 msgid "[Show picture list]"
 msgstr ""
 
-#: ../ngginstall.php:112
+#: ../ngginstall.php:116
 msgid "Back"
 msgstr ""
 
-#: ../ngginstall.php:113
+#: ../ngginstall.php:117
 msgid "Next"
 msgstr ""
 
@@ -219,108 +220,109 @@ msgstr ""
 msgid "Width:"
 msgstr ""
 
-#: ../nggwidget.php:401
+#: ../nggwidget.php:381
 msgid "NextGEN Recent Image"
 msgstr ""
 
-#: ../nggwidget.php:441
-#: ../nggwidget.php:644
+#: ../nggwidget.php:421
+#: ../nggwidget.php:611
 #: ../admin/album.php:213
 #: ../admin/manage.php:221
 #: ../admin/manage.php:351
+#: ../admin/myimport.php:51
 #: ../js/nggadmintab-js.php:104
 msgid "Title"
 msgstr ""
 
-#: ../nggwidget.php:444
-#: ../nggwidget.php:647
+#: ../nggwidget.php:423
+#: ../nggwidget.php:613
 msgid "Display type"
 msgstr ""
 
-#: ../nggwidget.php:446
-#: ../nggwidget.php:649
+#: ../nggwidget.php:425
+#: ../nggwidget.php:615
 #: ../admin/manage.php:433
 #: ../js/nggadmintab-js.php:101
 msgid "Thumbnail"
 msgstr ""
 
-#: ../nggwidget.php:447
-#: ../nggwidget.php:650
+#: ../nggwidget.php:426
+#: ../nggwidget.php:616
 msgid "Orginal"
 msgstr ""
 
-#: ../nggwidget.php:450
-#: ../nggwidget.php:654
+#: ../nggwidget.php:429
+#: ../nggwidget.php:619
 msgid "Number of pics"
 msgstr ""
 
-#: ../nggwidget.php:461
-#: ../nggwidget.php:665
+#: ../nggwidget.php:440
+#: ../nggwidget.php:630
 msgid "Width (px)"
 msgstr ""
 
-#: ../nggwidget.php:463
-#: ../nggwidget.php:667
+#: ../nggwidget.php:442
+#: ../nggwidget.php:632
 msgid "Height (px)"
 msgstr ""
 
-#: ../nggwidget.php:465
-#: ../nggwidget.php:669
+#: ../nggwidget.php:444
+#: ../nggwidget.php:634
 msgid "Mode"
 msgstr ""
 
-#: ../nggwidget.php:467
-#: ../nggwidget.php:671
+#: ../nggwidget.php:446
+#: ../nggwidget.php:636
 #: ../admin/settings.php:512
 msgid "none"
 msgstr ""
 
-#: ../nggwidget.php:468
-#: ../nggwidget.php:672
+#: ../nggwidget.php:447
+#: ../nggwidget.php:637
 msgid "web2.0"
 msgstr ""
 
-#: ../nggwidget.php:472
-#: ../nggwidget.php:676
+#: ../nggwidget.php:450
+#: ../nggwidget.php:640
 msgid "Show in the main page"
 msgstr ""
 
-#: ../nggwidget.php:474
-#: ../nggwidget.php:678
+#: ../nggwidget.php:452
+#: ../nggwidget.php:642
 msgid "yes"
 msgstr ""
 
-#: ../nggwidget.php:475
-#: ../nggwidget.php:679
+#: ../nggwidget.php:453
+#: ../nggwidget.php:643
 msgid "no"
 msgstr ""
 
-#: ../nggwidget.php:478
-#: ../nggwidget.php:682
+#: ../nggwidget.php:456
+#: ../nggwidget.php:646
 msgid "Show in"
 msgstr ""
 
-#: ../nggwidget.php:480
-#: ../nggwidget.php:684
+#: ../nggwidget.php:458
+#: ../nggwidget.php:648
 msgid "All categories"
 msgstr ""
 
-#: ../nggwidget.php:481
-#: ../nggwidget.php:685
+#: ../nggwidget.php:459
+#: ../nggwidget.php:649
 msgid "Only which are not listed"
 msgstr ""
 
-#: ../nggwidget.php:482
-#: ../nggwidget.php:686
+#: ../nggwidget.php:460
+#: ../nggwidget.php:650
 msgid "Only which are listed"
 msgstr ""
 
-#: ../nggwidget.php:485
-#: ../nggwidget.php:689
+#: ../nggwidget.php:463
+#: ../nggwidget.php:653
 msgid "Categories (id (use , to seperate)"
 msgstr ""
 
-#: ../nggwidget.php:603
+#: ../nggwidget.php:573
 msgid "NextGEN Random Image"
 msgstr ""
 
@@ -469,12 +471,12 @@ msgid "Upload a Zip-File"
 msgstr ""
 
 #: ../admin/addgallery.php:115
-#: ../admin/addgallery.php:156
+#: ../admin/addgallery.php:171
 msgid "Import image folder"
 msgstr ""
 
 #: ../admin/addgallery.php:116
-#: ../admin/addgallery.php:173
+#: ../admin/addgallery.php:188
 msgid "Upload Images"
 msgstr ""
 
@@ -503,186 +505,189 @@ msgid "Upload a zip file with images"
 msgstr ""
 
 #: ../admin/addgallery.php:150
-msgid "Start upload"
-msgstr ""
-
-#: ../admin/addgallery.php:161
-msgid "Import from Server path:"
-msgstr ""
-
-#: ../admin/addgallery.php:163
-msgid "Import a folder with images. Please note :"
-msgstr ""
-
-#: ../admin/addgallery.php:164
-msgid "For save_mode = ON you need to add the subfolder thumbs manually"
-msgstr ""
-
-#: ../admin/addgallery.php:167
-msgid "Import folder"
-msgstr ""
-
-#: ../admin/addgallery.php:178
-msgid "Upload image"
-msgstr ""
-
-#: ../admin/addgallery.php:182
+#: ../admin/addgallery.php:197
 msgid "in to"
 msgstr ""
 
-#: ../admin/addgallery.php:184
-msgid "Choose gallery"
+#: ../admin/addgallery.php:152
+msgid "a new gallery"
 msgstr ""
 
-#: ../admin/addgallery.php:194
+#: ../admin/addgallery.php:162
+#: ../admin/addgallery.php:209
 msgid "Note : The upload limit on your server is "
 msgstr ""
 
-#: ../admin/addgallery.php:197
+#: ../admin/addgallery.php:165
+msgid "Start upload"
+msgstr ""
+
+#: ../admin/addgallery.php:176
+msgid "Import from Server path:"
+msgstr ""
+
+#: ../admin/addgallery.php:178
+msgid "Import a folder with images. Please note :"
+msgstr ""
+
+#: ../admin/addgallery.php:179
+msgid "For save_mode = ON you need to add the subfolder thumbs manually"
+msgstr ""
+
+#: ../admin/addgallery.php:182
+msgid "Import folder"
+msgstr ""
+
+#: ../admin/addgallery.php:193
+msgid "Upload image"
+msgstr ""
+
+#: ../admin/addgallery.php:199
+msgid "Choose gallery"
+msgstr ""
+
+#: ../admin/addgallery.php:212
 msgid "Upload images"
 msgstr ""
 
-#: ../admin/addgallery.php:217
+#: ../admin/addgallery.php:232
 msgid "No valid gallery name!"
 msgstr ""
 
-#: ../admin/addgallery.php:220
-#: ../admin/addgallery.php:225
-#: ../admin/addgallery.php:260
-#: ../admin/addgallery.php:264
+#: ../admin/addgallery.php:235
+#: ../admin/addgallery.php:240
+#: ../admin/addgallery.php:275
+#: ../admin/addgallery.php:279
 msgid "Directory"
 msgstr ""
 
-#: ../admin/addgallery.php:220
+#: ../admin/addgallery.php:235
 msgid "didn't have the permissions "
 msgstr ""
 
-#: ../admin/addgallery.php:225
+#: ../admin/addgallery.php:240
 msgid "already exists!"
 msgstr ""
 
-#: ../admin/addgallery.php:229
-#: ../admin/addgallery.php:231
-#: ../admin/addgallery.php:270
-#: ../admin/addgallery.php:484
-#: ../admin/addgallery.php:486
+#: ../admin/addgallery.php:244
+#: ../admin/addgallery.php:246
+#: ../admin/addgallery.php:285
+#: ../admin/addgallery.php:538
+#: ../admin/addgallery.php:540
 msgid "Unable to create directory "
 msgstr ""
 
-#: ../admin/addgallery.php:230
-#: ../admin/addgallery.php:485
-#: ../admin/addgallery.php:487
+#: ../admin/addgallery.php:245
+#: ../admin/addgallery.php:539
+#: ../admin/addgallery.php:541
 msgid "Unable to set directory permissions "
 msgstr ""
 
-#: ../admin/addgallery.php:232
+#: ../admin/addgallery.php:247
 msgid "Unable to set directory permissions"
 msgstr ""
 
-#: ../admin/addgallery.php:234
+#: ../admin/addgallery.php:249
 msgid "The server Safe-Mode is on !"
 msgstr ""
 
-#: ../admin/addgallery.php:235
+#: ../admin/addgallery.php:250
 msgid "Please create directory"
 msgstr ""
 
-#: ../admin/addgallery.php:236
+#: ../admin/addgallery.php:251
 msgid "and the thumbnails directory"
 msgstr ""
 
-#: ../admin/addgallery.php:236
+#: ../admin/addgallery.php:251
 msgid "with permission 777 manually !"
 msgstr ""
 
-#: ../admin/addgallery.php:240
+#: ../admin/addgallery.php:255
 msgid "already exists"
 msgstr ""
 
-#: ../admin/addgallery.php:243
+#: ../admin/addgallery.php:258
 msgid "Gallery successfully created!"
 msgstr ""
 
-#: ../admin/addgallery.php:260
-#: ../admin/addgallery.php:269
+#: ../admin/addgallery.php:275
+#: ../admin/addgallery.php:284
 msgid "doesn&#96;t exist"
 msgstr ""
 
-#: ../admin/addgallery.php:264
+#: ../admin/addgallery.php:279
 msgid "contains no pictures"
 msgstr ""
 
-#: ../admin/addgallery.php:269
+#: ../admin/addgallery.php:284
 msgid "Thumbnail Directory"
 msgstr ""
 
-#: ../admin/addgallery.php:269
+#: ../admin/addgallery.php:284
 msgid "Please create the folder <i>thumbs</i> in your gallery folder."
 msgstr ""
 
-#: ../admin/addgallery.php:277
+#: ../admin/addgallery.php:297
+#: ../admin/myimport.php:38
 msgid "Database error. Could not add gallery!"
 msgstr ""
 
-#: ../admin/addgallery.php:291
+#: ../admin/addgallery.php:319
 msgid "successfully created!"
 msgstr ""
 
-#: ../admin/addgallery.php:291
+#: ../admin/addgallery.php:319
 msgid " pictures added."
 msgstr ""
 
-#: ../admin/addgallery.php:334
-#: ../admin/addgallery.php:372
+#: ../admin/addgallery.php:362
+#: ../admin/addgallery.php:400
 msgid "Some pictures are not writeable :"
 msgstr ""
 
-#: ../admin/addgallery.php:444
+#: ../admin/addgallery.php:472
 msgid "Follow thumbnails could not created."
 msgstr ""
 
-#: ../admin/addgallery.php:445
+#: ../admin/addgallery.php:473
 msgid "Some thumbnails are not writeable :"
 msgstr ""
 
-#: ../admin/addgallery.php:475
+#: ../admin/addgallery.php:523
 msgid "Uploaded file was no or a faulty zip file ! The server recognize : "
 msgstr ""
 
-#: ../admin/addgallery.php:490
-msgid "Directory already exists, please rename zip file"
-msgstr ""
-
-#: ../admin/addgallery.php:495
+#: ../admin/addgallery.php:546
 msgid "Unable to unlink zip file "
 msgstr ""
 
-#: ../admin/addgallery.php:497
+#: ../admin/addgallery.php:548
 msgid "Zip-File successfully unpacked"
 msgstr ""
 
-#: ../admin/addgallery.php:524
-#: ../admin/addgallery.php:531
+#: ../admin/addgallery.php:575
+#: ../admin/addgallery.php:582
 msgid "Unable to unlink file "
 msgstr ""
 
-#: ../admin/addgallery.php:525
+#: ../admin/addgallery.php:576
 msgid "No gallery selected !"
 msgstr ""
 
-#: ../admin/addgallery.php:532
+#: ../admin/addgallery.php:583
 msgid "Failure in database, no gallery path set !"
 msgstr ""
 
-#: ../admin/addgallery.php:538
+#: ../admin/addgallery.php:589
 msgid "Error, the file could not moved to : "
 msgstr ""
 
-#: ../admin/addgallery.php:539
+#: ../admin/addgallery.php:590
 msgid "Error, the file permissions could not set"
 msgstr ""
 
-#: ../admin/addgallery.php:559
+#: ../admin/addgallery.php:610
 msgid " Images successfully added"
 msgstr ""
 
@@ -710,11 +715,16 @@ msgstr ""
 msgid "Setup"
 msgstr ""
 
-#: ../admin/admin.php:52
+#: ../admin/admin.php:53
+#: ../admin/myimport.php:74
+msgid "Import"
+msgstr ""
+
+#: ../admin/admin.php:54
 msgid "About this Gallery"
 msgstr ""
 
-#: ../admin/admin.php:52
+#: ../admin/admin.php:54
 msgid "About"
 msgstr ""
 
@@ -779,6 +789,7 @@ msgstr ""
 #: ../admin/album.php:211
 #: ../admin/manage.php:219
 #: ../admin/manage.php:430
+#: ../admin/myimport.php:49
 msgid "ID"
 msgstr ""
 
@@ -834,19 +845,23 @@ msgid "Gallery Overview"
 msgstr ""
 
 #: ../admin/manage.php:220
+#: ../admin/myimport.php:50
 msgid "Gallery name"
 msgstr ""
 
 #: ../admin/manage.php:223
+#: ../admin/myimport.php:53
 msgid "Page ID"
 msgstr ""
 
 #: ../admin/manage.php:224
+#: ../admin/myimport.php:54
 msgid "Quantity"
 msgstr ""
 
 #: ../admin/manage.php:225
 #: ../admin/manage.php:442
+#: ../admin/myimport.php:55
 msgid "Action"
 msgstr ""
 
@@ -862,6 +877,7 @@ msgstr ""
 
 #: ../admin/manage.php:250
 #: ../admin/manage.php:482
+#: ../admin/myimport.php:79
 msgid "No entries found"
 msgstr ""
 
@@ -973,6 +989,22 @@ msgstr ""
 
 #: ../admin/manage.php:476
 msgid "View"
+msgstr ""
+
+#: ../admin/myimport.php:35
+msgid "Gallery "
+msgstr ""
+
+#: ../admin/myimport.php:35
+msgid " : Import successfull"
+msgstr ""
+
+#: ../admin/myimport.php:45
+msgid "myGallery Import"
+msgstr ""
+
+#: ../admin/myimport.php:74
+msgid "Import this gallery ?"
 msgstr ""
 
 #: ../admin/overview.php:12

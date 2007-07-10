@@ -240,7 +240,7 @@ function nggShowGallery($galleryID) {
 		$picturefile =  nggallery::remove_umlauts($picture->filename);
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail-box">'."\n\t";
 		$gallerycontent .= '<div class="ngg-gallery-thumbnail">'."\n\t";
-		$gallerycontent .= '<a href="'.$folder_url.$picturefile.'" title="'.$picture->description.'" '.$thumbcode.' >';
+		$gallerycontent .= '<a href="'.$folder_url.$picturefile.'" title="'.stripslashes($picture->description).'" '.$thumbcode.' >';
 		$gallerycontent .= '<img title="'.$picture->alttext.'" alt="'.$picture->alttext.'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
 		$gallerycontent .= '</a>'."\n".'</div>'."\n".'</div>'."\n";
 		}
@@ -487,8 +487,8 @@ function nggSinglePicture($imageID,$width=250,$height=250,$mode="",$float="") {
 		
 	    // get the effect code
 		if ($ngg_options[thumbEffect] != "none") $thumbcode = stripslashes($ngg_options[thumbCode]);
-		if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'".$act_gallery->name."'", $thumbcode);
-		else $thumbcode = str_replace("%GALLERY_NAME%", $act_gallery->name, $thumbcode);
+		if ($ngg_options[thumbEffect] == "highslide") $thumbcode = str_replace("%GALLERY_NAME%", "'singlepic".$imageID."'", $thumbcode);
+		else $thumbcode = str_replace("%GALLERY_NAME%", "singlepic".$imageID , $thumbcode);
 		
 		$link  = '<a href="'.$folder_url.$picture->filename.'" title="'.$picture->description.'" '.$thumbcode.' >';
 	}

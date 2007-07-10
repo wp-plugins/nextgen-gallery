@@ -5,7 +5,7 @@
  * @author 		Ian Selby (ian@gen-x-design.com)
  * @copyright 	Copyright 2006
  * @version 	1.1.1 (PHP4)
- * @modded by   Alex Rabe
+ * @modded      by   Alex Rabe
  * 
  */
 
@@ -165,8 +165,8 @@ class ngg_Thumbnail {
             }
         }
         
-		// Check memory consumption if file exists
 		if($this->error == false) { 
+        // Check memory consumption if file exists
 			$this->checkMemoryForImage($this->fileName);
 		}
 
@@ -184,11 +184,15 @@ class ngg_Thumbnail {
                     $this->oldImage = ImageCreateFromPng($this->fileName);
 					break;
             }
-
-            $size = GetImageSize($this->fileName);
-            $this->currentDimensions = array('width'=>$size[0],'height'=>$size[1]);
-            $this->newImage = $this->oldImage;
-            $this->gatherImageMeta();
+			if (!$this->oldImage) { 
+				$this->errmsg = 'Create Image failed. Check memory limit';
+		        $this->error = true;
+		    } else {
+	            $size = GetImageSize($this->fileName);
+    	        $this->currentDimensions = array('width'=>$size[0],'height'=>$size[1]);
+	            $this->newImage = $this->oldImage;
+	            $this->gatherImageMeta();
+	        }
         }
 
 
@@ -237,7 +241,8 @@ class ngg_Thumbnail {
 			}
 			
 			if ($memoryNeeded > $memory_limit) {
-				$this->errmsg = 'Exceed Memory limit';
+				$memoryNeeded = round ($memoryNeeded / 1024 / 1024, 2);
+				$this->errmsg = 'Exceed Memory limit. Require : '.$memoryNeeded. " MByte" ;
 		        $this->error = true;
 	        }
 		}
