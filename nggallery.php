@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.63
+Version: 0.64
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -45,7 +45,7 @@ global $wpdb, $wp_version;
 if (version_compare($wp_version, '2.1', '>=')) {
 
 // Version and path to check version
-define('NGGVERSION', "0.63");
+define('NGGVERSION', "0.64");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
 // define URL
@@ -155,7 +155,7 @@ function ngg_wp_upload_tabs ($array) {
     3 => total number objects OR array(total, objects per page), 
     4 => add_query_args
 	*/
-	include_once ("nggadmintab.php");
+	include_once (dirname (__FILE__)."nggadmintab.php");
 
 	// Create navigation
 	$total = 1;

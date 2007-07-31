@@ -113,8 +113,8 @@ function ngg_default_options() {
 	// Image Browser
 	$ngg_options['ImgBrHead']			= true;		  					// Show header
 	$ngg_options['ImgBrDesc']			= true;							// Show description
-	$ngg_options['ImgBrTextBack']		= '&#9668; '.__('Back','nggallery'); // Text for Back
-	$ngg_options['ImgBrTextNext']		= __('Next','nggallery').' &#9658;'; // Text for Next	
+	$ngg_options['ImgBrTextBack']		= __('Back','nggallery'); 		// Text for Back
+	$ngg_options['ImgBrTextNext']		= __('Next','nggallery'); 		// Text for Next	
 
 	// Thumbnail Effect
 	$ngg_options['thumbEffect']			= "thickbox";  					// select effect

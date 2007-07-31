@@ -100,7 +100,19 @@ function ngg_list_support()	{
 	"Ghettomaster" => "http://www.ghettoworld.de/",
 	"Joe Pharis" => "http://www.southernstylecruisers.com/",
 	"Charlie (Jump Media)" => "",
-	"Gil Yaker (Documentation)" => "http://bamboosoup.com/"		
+	"Gil Yaker (Documentation)" => "http://bamboosoup.com/",
+	"Simon Paarlberg" => "http://www.paarlberg.dk/",
+	"Morten Johansen (Danish Translation)" => "http://www.fr3ak.dk/",
+	"Clive Loseby" => "http://www.access-bydesign.com/",
+	"Vidar Seland (Norwegian Translation)" => "http://www.viidar.net/",
+	"Emre Guler (Turkish Translation)" => "http://www.emreguler.com/",	
+	"Tonny Kluften" => "http://www.tinnitus-behandling.info/",
+	"Andreas Oeye" => "http://www.andreasoye.com/",
+	"Laurent Momy" => "",
+	"Emilio Lauretti (Italian Translation)" => "",
+	"Jan Angelovic (Czech Translation)" => "http://www.angelovic.cz/",
+	"Patrick Hennessey" => "http://www.digitalvagabonding.com/",
+	"Hans Kiesouw" => "http://www.digitalvagabonding.com/"	
 	);
 
 	

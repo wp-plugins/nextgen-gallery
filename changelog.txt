@@ -1,6 +1,11 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.64 - 31.07.2007
+- Bugfix : Remove arrows in image browser text
+- Bugfix : Include nggadmintab.php with dirname 
+- Bugfix : Zip-Upload under Mac > look for basename
+
 V0.63 - 10.07.2007
 - NEW : You can now upload a zip file into a existing gallery
 - Added : Remove subfolder in Zip-files

@@ -446,11 +446,11 @@ function nggShowImageBrowser($galleryID) {
 			<div class="ngg-imagebrowser-nav">';
 		if 	($back_pid) {
 			$backlink['pid'] = $back_pid;
-			$galleryoutput .='<div class="back"><a href="'.add_query_arg($backlink).'">'.$ngg_options[ImgBrTextBack].'</a></div>';
+			$galleryoutput .='<div class="back"><a href="'.add_query_arg($backlink).'">'.'&#9668; '.$ngg_options['ImgBrTextBack'].'</a></div>';
 		}
 		if 	($next_pid) {
 			$nextlink['pid'] = $next_pid;
-			$galleryoutput .='<div class="next"><a href="'.add_query_arg($nextlink).'">'.$ngg_options[ImgBrTextNext].'</a></div>';
+			$galleryoutput .='<div class="next"><a href="'.add_query_arg($nextlink).'">'.$ngg_options['ImgBrTextNext'].' &#9658;'.'</a></div>';
 		}
 		$galleryoutput .='
 				<div class="counter">'.__('Picture', 'nggallery').' '.($key+1).' '.__('from', 'nggallery').' '.$total.'</div>

@@ -498,7 +498,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		$ext = array("jpeg", "jpg", "png", "gif"); 
 		if (in_array( strtolower($info['extension']), $ext)) {
 			// For MAC skip the ".image" files
-			if ($info['filename']{0} ==  "." ) 
+			if ($info['basename']{0} ==  "." ) 
 				return 0;
 			else 
 				return 1;
