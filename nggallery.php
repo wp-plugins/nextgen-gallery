@@ -155,7 +155,7 @@ function ngg_wp_upload_tabs ($array) {
     3 => total number objects OR array(total, objects per page), 
     4 => add_query_args
 	*/
-	include_once (dirname (__FILE__)."nggadmintab.php");
+	include_once (dirname (__FILE__)."/nggadmintab.php");
 
 	// Create navigation
 	$total = 1;
