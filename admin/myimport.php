@@ -23,7 +23,7 @@ function nggallery_admin_import()  {
 		$gallery = $wpdb->get_row("SELECT * FROM $ngg_mygallery WHERE id = '$gid'");
 		if ($gallery) {
 			$galleryfolder = $mygbasepath . $gallery->name;
-			$result = $wpdb->query("INSERT INTO $wpdb->nggallery (name, path, title, description, pageid) VALUES ('$gallery->name', '$galleryfolder', '$gallery->longname', '$gallery->galdescrip' ,'$gallery->pageid') ");
+			$result = $wpdb->query("INSERT INTO $wpdb->nggallery (name, path, title, galdesc, pageid) VALUES ('$gallery->name', '$galleryfolder', '$gallery->longname', '$gallery->galdescrip' ,'$gallery->pageid') ");
 			if ($result) {
 				$newgid = $wpdb->insert_id;  // get new index_id
 				$pictures = $wpdb->get_results("SELECT * FROM $ngg_mypictures, $ngg_mygprelation WHERE $ngg_mygprelation.gid = '$gid' AND $ngg_mypictures.id = $ngg_mygprelation.pid ORDER BY $ngg_mygprelation.pid");

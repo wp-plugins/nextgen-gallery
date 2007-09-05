@@ -2,7 +2,7 @@
 CSS Name: Shadow Effect
 Description: NextGEN Default Style with a Shadow effect
 Author: Alex Rabe
-Version: 1.11
+Version: 1.20
    
 This is a template stylesheet that can be used with NextGEN Gallery. I tested the
 styles with a default theme Kubrick. Modify it when your theme struggle with it,
@@ -20,7 +20,7 @@ it's only a template design
 }
 
 .ngg-album {
-	height: 130px;
+	/*height: 130px;*/
 	padding: 5px;
 	margin-bottom: 5px;
 	border: 1px solid #cccccc;
@@ -127,6 +127,14 @@ it's only a template design
 .ngg-gallery-thumbnail img:hover {
 	background-color: #A9A9A9;
 } 
+
+.ngg-gallery-thumbnail span {
+	display:none;
+}
+
+.ngg-clear {
+	clear: both;
+}
 
 /* ----------- Gallery navigation -------------*/
 
@@ -235,3 +243,25 @@ it's only a template design
 	margin:0pt 2px 2px 0px; 
 	padding:1px; 
 }
+
+/* ----------- Related images -------------*/
+.ngg-related-gallery {
+	background:#F9F9F9;
+	border:1px solid #E0E0E0;
+	overflow:hidden;
+	margin-bottom:1em;
+	margin-top:1em;
+	padding:5px;
+}
+.ngg-related-gallery img {
+	border: 1px solid #DDDDDD;
+	float: left;
+	margin: 0pt 3px;
+	padding: 2px;
+	height: 50px;
+	width:  50px;
+}
+
+.ngg-related-gallery img:hover {
+	border: 1px solid #000000;
+} 

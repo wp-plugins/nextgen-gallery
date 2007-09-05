@@ -6,6 +6,7 @@ function nggallery_admin_style()  {
 $ngg_options = get_option('ngg_options');
 
 if (isset($_POST['css'])) {
+	check_admin_referer('ngg_style');
 	$act_cssfile = $_POST['css']; 
 	if (isset($_POST['activate'])) {
 		// save option now
@@ -26,6 +27,8 @@ if (isset($_POST['css'])) {
 $real_file = NGGALLERY_ABSPATH."css/".$act_cssfile;
 	
 if (isset($_POST['updatecss'])) {
+	
+	check_admin_referer('ngg_style');
 
 	if ( !current_user_can('edit_themes') )
 	wp_die('<p>'.__('You do not have sufficient permissions to edit templates for this blog.').'</p>');
@@ -58,6 +61,7 @@ if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="up
 ?>		
 <div class="wrap">
 	<form name="cssfiles" method="post">
+	<?php wp_nonce_field('ngg_style') ?>
 	<input type="checkbox" name="activateCSS" value="1" <?php checked('1', $ngg_options[activateCSS]); ?> /> 
 	<?php _e('Activate and use style sheet:','nggallery') ?>
 		<select name="css" id="css" onchange="this.form.submit();">

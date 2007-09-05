@@ -3,7 +3,7 @@ Contributors: Alex Rabe
 Donate link: http://alexrabe.boelinger.com/?page_id=80
 Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets
 Requires at least: 2.1.3
-Tested up to: 2.2
+Tested up to: 2.3
 
 NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option.
 
@@ -22,7 +22,7 @@ Features:
 * Slideshow : Full integrated flash slideshow
 * TinyMCE : Button integration for easy adding the gallery tags
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
-* Language support : Translated in more than 12 languages
+* Language support : Translated in more than 15 languages
 * Upload tab integration : You have access to all pictures via the upload tab
 
 For support around this plugin please visit http://alexrabe.boelinger.com/forums/
@@ -101,6 +101,15 @@ Example : http://nextgen.boelinger.com/singlepic/
 For a image browser : **[imagebrowser=id]**
 
 Example : http://nextgen.boelinger.com/2007/06/16/new-tag-picture-browser/
+
+To show image sorted by tags : **[tags=name,name,name]**
+
+Example : http://nextgen.boelinger.com/2007/08/07/tags/
+
+To show tag albums : **[albumtags=name,name,name]**
+
+Example : http://nextgen.boelinger.com/2007/08/11/albumtags/
+
 
 **Read as startup :** http://hqcode.com/?page_id=54
 

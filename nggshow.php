@@ -12,7 +12,7 @@ $ngg_options=get_option('ngg_options');
 //reference thumbnail class
 include_once('lib/thumbnail.inc.php');
 
-$pictureID = attribute_escape($_GET['pid']);
+$pictureID = (int) attribute_escape($_GET['pid']);
 $mode = attribute_escape($_GET['mode']);
 
 // get the path and filename to the image

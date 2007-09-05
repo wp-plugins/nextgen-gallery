@@ -6,8 +6,11 @@ global $wpdb;
 
 function nggallery_admin_manage_album()  {
 	global $wpdb;
-		
+	
 	if ($_POST['update']){
+		
+		check_admin_referer('ngg_album');
+		
 		if ($_POST['newalbum']){ 
 			$newablum = attribute_escape($_POST['newalbum']);
 			$result = $wpdb->query(" INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newablum','0')");
@@ -35,6 +38,7 @@ function nggallery_admin_manage_album()  {
 	}
 	
 	if ($_POST['delete']){
+		check_admin_referer('ngg_addroles');
 		$act_album = attribute_escape($_POST['act_album']);
 		$result = $wpdb->query("DELETE FROM $wpdb->nggalbum WHERE id = '$act_album' ");
 		if ($result) $messagetext = '<font color="green">'.__('Album deleted','nggallery').'</font>';
@@ -42,18 +46,16 @@ function nggallery_admin_manage_album()  {
 	
 	// message windows
 	if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="updated fade"><p>'.$messagetext.'</p></div>'; }
-		
 ?>
 <style type="text/css" media="all">@import "<?php echo NGGALLERY_URLPATH ?>css/nggallery.css";</style>
 <style type="text/css" media="all">@import "<?php echo NGGALLERY_URLPATH ?>admin/js/portlets.css";</style>
 <script type="text/javascript">
 
+
 jQuery(document).ready(
 	function()
 	{
 		//updating the height of the white backround box, it does not work without this stupid lines
-		//problem: absolute positioning of the minimizing links in item_top does not work :(
-		//position: absolute; right:5px; top:0px; border-bottom: 2px solid #003333; css lines of .groupItem .item_top a
 		var hei = jQuery('.wrap').height();
 		jQuery('.wrap').height(hei);
 		
@@ -67,6 +69,27 @@ jQuery(document).ready(
 		)
 		jQuery('a.min').bind('click', toggleContent);
 		jQuery('.textarea1').Autoexpand([230,400]);
+		
+		// Maximize All Portlets (whole site, no differentiation)
+		jQuery('a#all_max').click(function()
+			{
+				jQuery('div.itemContent:hidden').show();
+				return false;
+			}
+		);
+
+		// Minimize All Portlets (whole site, no differentiation)
+		jQuery('a#all_min').click(function()
+			{
+				jQuery('div.itemContent:visible').hide();
+				return false;
+			}
+		);
+	   // Auto Minimize if more than 4 (whole site, no differentiation)
+	   if(jQuery('a').length > 4)
+	   {
+	   		jQuery('div.itemContent:visible').hide();
+	   }
 	}
 );
 
@@ -92,6 +115,7 @@ function ngg_serialize(s)
 <div class="wrap" id="wrap" >
 	<h3><?php _e('Manage Albums', 'nggallery') ?></h3>
 	<form id="selectalbum" method="POST" onsubmit="ngg_serialize('galleryContainer')" accept-charset="utf-8">
+		<?php wp_nonce_field('ngg_album') ?>
 		<input name="sortorder" type="hidden" />
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr>
@@ -123,7 +147,14 @@ function ngg_serialize(s)
 		</table>
 		
 	</form>
-	<p><?php _e('After you create and select a album, you can drag and drop a gallery into your album below','nggallery'); ?></p>	
+	<p>
+	<div style="float:right;">
+	  <a href="#" id="all_max"><?php _e('[Maximize]', 'nggallery') ?></a>
+	| <a href="#" id="all_min"><?php _e('[Minimize]', 'nggallery') ?></a>
+	</div>
+	<?php _e('After you create and select a album, you can drag and drop a gallery into your album below','nggallery'); ?>
+	</p>
+
 	<br class="clear"/>
 	
 	<div class="container">
@@ -158,7 +189,7 @@ function ngg_serialize(s)
 
 		<div id="galleryContainer" class="groupWrapper">
 		<?php
-			if ($_POST['act_album'] > 0){
+			if ($_POST['act_album'] > 0){			
 				$act_album = $_POST['act_album'];
 				$album = $wpdb->get_row("SELECT * FROM $wpdb->nggalbum WHERE id = '$act_album'");
 				echo '<h3>'.__('Album Page ID', 'nggallery').' '.$album->id.' : '.$album->name.'</h3>'."\n";
@@ -181,9 +212,8 @@ function ngg_serialize(s)
 	</div><!-- /#container -->
 </div><!-- /#wrap -->
 
-<?php		
+<?php
 }
-
 function getgallerycontainer($galleryid = 0) {
 	global $wpdb;
 	
@@ -192,8 +222,8 @@ function getgallerycontainer($galleryid = 0) {
 	if ($gallery) {
 
 		// set image url
-		$act_thumbnail_url 	= get_option ('siteurl')."/".$gallery->path.ngg_get_thumbnail_folder($gallery->path, FALSE);
-		$act_thumb_prefix   = ngg_get_thumbnail_prefix($gallery->path, FALSE);
+		$act_thumbnail_url 	= get_option ('siteurl')."/".$gallery->path.nggallery::get_thumbnail_folder($gallery->path, FALSE);
+		$act_thumb_prefix   = nggallery::get_thumbnail_prefix($gallery->path, FALSE);
 		
 		$post= get_post($gallery->pageid); 	
 		$pagename = $post->post_title;	

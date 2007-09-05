@@ -28,8 +28,8 @@ function ngg_upload_tab_content() {
 				if ($ngg_options[deleteImg]) {
 					$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$picture->galleryid' ");
 					if ($gallerypath) {
-						$thumb_folder = ngg_get_thumbnail_folder($gallerypath, FALSE);
-						$thumb_prefix = ngg_get_thumbnail_prefix($gallerypath, FALSE);
+						$thumb_folder = nggallery::get_thumbnail_folder($gallerypath, FALSE);
+						$thumb_prefix = nggallery::get_thumbnail_prefix($gallerypath, FALSE);
 						unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$picture->filename);
 						unlink(WINABSPATH.$gallerypath.'/'.$picture->filename);	
 					}
@@ -84,8 +84,8 @@ function ngg_upload_tab_content() {
 		foreach ($picarray as $picid) {
 			
 			$picture = $wpdb->get_row("SELECT * FROM $wpdb->nggpictures WHERE pid = '$picid'");
-			$imagesrc = ngg_get_image_url($picid);
-			$thumbsrc = ngg_get_thumbnail_url($picid);
+			$imagesrc = nggallery::get_image_url($picid);
+			$thumbsrc = nggallery::get_thumbnail_url($picid);
 			$href = add_query_arg( array('action' => $style == 'inline' ? 'view' : 'edit', 'ID' => $picid, 'select_gal' => $galleryID));
 				
 			echo '<li id="file-'.$picid.'" class="alignleft">';
@@ -114,8 +114,8 @@ function ngg_image_edit() {
 	global $ID, $wpdb, $post_id, $tab, $style;
 	
 	$picture = $wpdb->get_row("SELECT * FROM $wpdb->nggpictures WHERE pid = '$ID'");
-	$image_src = ngg_get_image_url($ID);
-	$thumb_src = ngg_get_thumbnail_url($ID);
+	$image_src = nggallery::get_image_url($ID);
+	$thumb_src = nggallery::get_thumbnail_url($ID);
 
 	?>
 	<script type="text/javascript"> var tb_pathToImage = '<?php echo NGGALLERY_URLPATH ?>thickbox/loadingAnimationv3.gif';</script>
@@ -168,8 +168,8 @@ function ngg_admintab_insert_pic($picid) {
 	<?php
 	//TODO: Image data can be served by a class function
 	$picture = $wpdb->get_row("SELECT * FROM $wpdb->nggpictures WHERE pid = '$picid'");
-	$imagesrc = ngg_get_image_url($picid);
-	$thumbsrc = ngg_get_thumbnail_url($picid);
+	$imagesrc = nggallery::get_image_url($picid);
+	$thumbsrc = nggallery::get_thumbnail_url($picid);
 	
 	echo '
 		<div class="upload-file-data">

@@ -2,7 +2,7 @@
 
 /*
 +----------------------------------------------------------------+
-+	imageRotartor-XML V1.00
++	imageRotartor-XML V1.10
 +	by Alex Rabe
 +   	required for NextGEN Gallery
 +----------------------------------------------------------------+
@@ -20,12 +20,15 @@ global $wpdb;
 $ngg_options = get_option('ngg_options');
 
 // get the gallery id
-$galleryID = attribute_escape($_GET['gid']);
+$galleryID = (int) attribute_escape($_GET['gid']);
 
-// get gallery values
-$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
-$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");
-
+// get the pictures
+if ($galleryID == 0) {
+	$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");	
+} else {
+	$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
+	$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");
+}
 // set gallery url
 $folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
 

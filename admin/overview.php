@@ -6,6 +6,12 @@ function nggallery_admin_overview()  {
 	
 	// get feed_messages
 	require_once(ABSPATH . WPINC . '/rss.php');
+	
+	// init PluginChecker
+	$nggCheck 			= new CheckPlugin();	
+	$nggCheck->URL 		= NGGURL;
+	$nggCheck->version 	= NGGVERSION;
+	$nggCheck->name 	= "ngg";
 
 ?>
   <div class="wrap">
@@ -21,10 +27,10 @@ function nggallery_admin_overview()  {
             '<strong>'.$wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggallery").'</strong>',
             '<strong>'.$wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggalbum").'</strong>'
            );              
-          vprintf(__('There are totally %1$s pictures in %2$s gallerys, which are spread across %3$s albums.', 'nggallery'), $replace);
+          vprintf(__('There are totally %1$s pictures in %2$s galleries, which are spread across %3$s albums.', 'nggallery'), $replace);
         ?>
-       </p> 
-	  <?php if (ngg_version_check()) { ?>
+       </p>
+	  <?php if ($nggCheck->startCheck()) { ?>
 	   <h3><font color="red"><?php _e('New Version available', 'nggallery') ?></font></h3>
 	   <p><?php _e('The server reports that a new NextGEN Gallery Version is now available. Please visit the plugin homepage for more information.', 'nggallery') ?></p>
 	  <?php } ?>		
@@ -45,10 +51,10 @@ function nggallery_admin_overview()  {
     </p>
     
     <ul>
-      <?php if(current_user_can('manage_options')): ?><li><a href="admin.php?page=nggallery-add-gallery"><?php _e('Add a new gallery or import pictures', 'nggallery') ?></a></li><?php endif; ?>
-      <li><a href="admin.php?page=nggallery-manage-gallery"><?php _e('Manage galleries and images', 'nggallery') ?></a></li>
-      <?php if(current_user_can('manage_options')): ?><li><a href="admin.php?page=nggallery-manage-album"><?php _e('Create and manage albums', 'nggallery') ?></a></li><?php endif; ?>
-      <?php if(current_user_can('manage_options')): ?><li><a href="admin.php?page=nggallery-options"><?php _e('Change the settings of NextGEN Gallery', 'nggallery') ?></a></li><?php endif; ?>
+      <?php if(current_user_can('NextGEN Upload images')): ?><li><a href="admin.php?page=nggallery-add-gallery"><?php _e('Add a new gallery or import pictures', 'nggallery') ?></a></li><?php endif; ?>
+      <?php if(current_user_can('NextGEN Manage gallery')): ?><li><a href="admin.php?page=nggallery-manage-gallery"><?php _e('Manage galleries and images', 'nggallery') ?></a></li><?php endif; ?>
+      <?php if(current_user_can('NextGEN Edit album')): ?><li><a href="admin.php?page=nggallery-manage-album"><?php _e('Create and manage albums', 'nggallery') ?></a></li><?php endif; ?>
+      <?php if(current_user_can('NextGEN Change options')): ?><li><a href="admin.php?page=nggallery-options"><?php _e('Change the settings of NextGEN Gallery', 'nggallery') ?></a></li><?php endif; ?>
     </ul>
     <div id="devnews">
     <h3><?php _e('Latest News', 'nggallery') ?></h3>
@@ -156,34 +162,82 @@ function ngg_get_serverinfo() {
 }
 
 // ***************************************************************	
-function ngg_version_check() {
-	// check for a new version
+
+/**
+ * WordPress PHP class to check for a new version.
+ * @author Alex Rabe & Joern Kretzschmar
+ * @orginal from Per Søderlind
+ *
+ // Dashboard update notification example
+	function myPlugin_update_dashboard() {
+	  $Check = new CheckPlugin();	
+	  $Check->URL 	= "YOUR URL";
+	  $Check->version = "1.00";
+	  $Check->name 	= "myPlugin";
+	  if ($Check->startCheck()) {
+ 	    echo '<h3>Update Information</h3>';
+	    echo '<p>A new version is available</p>';
+	  } 
+	}
 	
-	// use snoopy class
-	require_once(ABSPATH . WPINC . '/class-snoopy.php');
-	
-	$check_intervall = get_option( "ngg_next_update" );
+	add_action('activity_box_end', 'myPlugin_update_dashboard', '0');
+ *
+ */
+if ( !class_exists( "CheckPlugin" ) ) {  
+	class CheckPlugin {
+		/**
+		 * URL with the version of the plugin
+		 * @var string
+		 */
+		var $URL = 'myURL';
+		/**
+		 * Version of thsi programm or plugin
+		 * @var string
+		 */
+		var $version = '1.00';
+		/**
+		 * Name of the plugin (will be used in the options table)
+		 * @var string
+		 */
+		var $name = 'myPlugin';
+		/**
+		 * Waiting period until the next check in seconds
+		 * @var int
+		 */
+		var $period = 86400;					
+					
+		function startCheck() {
+			/**
+			 * check for a new version, returns true if a version is avaiable
+			 */
 			
-	if ( ($check_intervall < time() ) or (empty($check_intervall)) ) {
-		if (class_exists(snoopy)) {
-			$client = new Snoopy();
-			$client->_fp_timeout = 10;
-			if (@$client->fetch(NGGURL) === false) {
-				return false;
+			// use wordpress snoopy class
+			require_once(ABSPATH . WPINC . '/class-snoopy.php');
+			
+			$check_intervall = get_option( $this->name."_next_update" );
+
+			if ( ($check_intervall < time() ) or (empty($check_intervall)) ) {
+				if (class_exists(snoopy)) {
+					$client = new Snoopy();
+					$client->_fp_timeout = 10;
+					if (@$client->fetch($this->URL) === false) {
+						return false;
+					}
+					
+				   	$remote = $client->results;
+				   	
+					$server_version = unserialize($remote);
+					if (is_array($server_version)) {
+						if ( version_compare($server_version[$this->name], $this->version, '>') )
+						 	return true;
+					} 
+					
+					$check_intervall = time() + $this->period;
+					update_option( $this->name."_next_update", $check_intervall );
+					return false;
+				}				
 			}
-			
-		   	$remote = $client->results;
-		   	
-			$server_version = unserialize($remote);
-			if (is_array($server_version)) {
-				if ( version_compare($server_version[0], NGGVERSION, '>') )
-				 	return true;
-			} 
-			// come back in 24 hours :-)
-			$check_intervall = time() + 86400;
-			update_option( "ngg_next_update", $check_intervall );
-			return false;
-		}				
+		}
 	}
 }
 

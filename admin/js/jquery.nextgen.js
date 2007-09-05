@@ -8,6 +8,7 @@
  * Built on top of the jQuery library
  *   http://jquery.com
  *
+ *  version 1.01 : Bugfix for title/alt name
  */
 
 (function($) {
@@ -157,9 +158,9 @@
 					// create a new image
 					var idx = offset + i;
 					if (idx < this.options.imgarray.length ) {
-						var imglink = $.A().attr({ href: this.options.galleryurl + this.options.imgarray[idx][0], title: this.options.imgarray[idx][0], rel: this.options.name });
+						var imglink = $.A().attr({ href: this.options.galleryurl + this.options.imgarray[idx][0], title: this.options.imgarray[idx][2], rel: this.options.name });
 						$(imglink).addClass("thickbox");
-						var image = $.IMG().attr({ src: this.thumbpath + this.options.imgarray[idx][0], alt: this.options.imgarray[idx][0] , title: this.options.imgarray[idx][0] }); 
+						var image = $.IMG().attr({ src: this.thumbpath + this.options.imgarray[idx][0], alt: this.options.imgarray[idx][1] , title: this.options.imgarray[idx][1] }); 
 						$(imglink).append(image);
 						// add the new image to the div container
 						$(imagecontainer).append(imglink);

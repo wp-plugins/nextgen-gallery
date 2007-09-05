@@ -1,6 +1,35 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.70
+- NEW : Add role manager page and capabilities
+- NEW : Show gallery with [tags=list of tags]
+- NEW : Show album with [albumtags=list of tags]
+- NEW : Tag system for all images
+- NEW : Option for append related images
+- NEW : Option to show description below thumbnail
+- NEW : Option to show ImageBrowser instead JS effect
+- Added : Add Full size link to thickbox
+- Added  : Check for page/postid in tag processing
+- Added  : Sildeshow widget can now contain all images
+- Added  : Minimize/Maximize option for albums 
+- Added  : Deregister jQuery V1.1.2 for WP2.2 (to use V1.1.3.1)
+- Added  : Integrate wp_nonce_field at all admin pages
+- Changed : Update to Thickbox 3.1 + mods for NextGEN gallery
+- Changed : Moved "clear:both" into class "ngg-clear" (THX to Gero)
+- Changed : Switched from jQuery Interface to jQuery Tabs from Klaus Hartl 
+- Remove : Remove option for singlepic link
+- Remove : Remove options for imagebrowser
+- Bugfix : Most Recent image in Widget are wrong
+- Bugfix : More XHTML valid , htmlspecialchars() after add_query_arg()
+- Bugfix : Sanitize file name before upload
+- Bugfix : Sanitize folder name (THX to Tom Fowler)
+- Bugfix : Show title/alt in jQuery plugin (THX to Gregory Green)
+- Bugfix : i18n support for Gallery tab
+- Bugfix : Reduce memory-needs for plugin
+- Bugfix : Typo/spelling correction
+- Bugfix : Removed myGallery author from contribute list
+
 V0.64 - 31.07.2007
 - Bugfix : Remove arrows in image browser text
 - Bugfix : Include nggadmintab.php with dirname 

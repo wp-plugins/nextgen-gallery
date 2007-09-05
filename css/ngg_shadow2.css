@@ -1,6 +1,6 @@
 /*
-CSS Name: K2 Theme
-Description: NextGEN Style for K2 Theme
+CSS Name: Shadow Effect with Description text
+Description: NextGEN Default Style with a Shadow effect and description text below the thumbnail
 Author: Alex Rabe
 Version: 1.20
    
@@ -13,7 +13,7 @@ it's only a template design
 /* ----------- Album Styles Extend -------------*/
 
 .ngg-albumoverview {
-	margin: 10px 0px 0px 0px !important;
+	margin-top: 10px;
 	width: 100%;
 	clear:both; 
 	display:block !important;
@@ -21,33 +21,29 @@ it's only a template design
 
 .ngg-album {
 	/*height: 130px;*/
-	overflow:hidden;
-	margin: 0px 0px 5px !important;
 	padding: 5px;
+	margin-bottom: 5px;
 	border: 1px solid #cccccc;
 }
 
 .ngg-albumtitle {
 	text-align: left;
  	font-weight: bold;
+	margin:0px;
 	padding:0px;
 	font-size: 1.4em;
-	margin: 0px 0px 10px 0px !important;
-}
-
-.ngg-albumcontent {
-	margin: 0px !important;
+	margin-bottom: 10px;
 }
 
 .ngg-thumbnail {
-	margin:0px 12px 0px 0px !important;
 	float: left;
+	margin-right: 12px;
 }
 
 .ngg-thumbnail img {
 	background-color:#FFFFFF;
 	border:1px solid #A9A9A9;
-	margin:4px 0px 4px 5px !important;
+	margin:4px 0px 4px 5px;
 	padding:4px;
 	position:relative;
 }
@@ -79,9 +75,6 @@ it's only a template design
 	width:120px;
 }
 
-.ngg-album-link {
-	margin:0px !important;
-}
 
 .ngg-album-compactbox .Thumb {
 	border:1px solid #000000;
@@ -92,10 +85,9 @@ it's only a template design
 .ngg-album-compact h4 {
 	font-size:15px;
 	font-weight:bold;
-	margin-bottom:0px !important;
-	margin-top:0px !important;
+	margin-bottom:0px;
+	margin-top:0px;
 	width:110px;
-	padding:0px !important;
 }
 
 .ngg-album-compact p {
@@ -113,7 +105,6 @@ it's only a template design
 }
 
 .ngg-gallery-thumbnail-box {
-	margin:0px !important;
 	float: left;
 }
 
@@ -122,10 +113,15 @@ it's only a template design
 	background: url(shadowAlpha.png) no-repeat bottom right !important;
 	background: url(shadow.gif) no-repeat bottom right;
 	margin: 10px 0 0 10px !important;
+	/* Changes to show description */
+	padding:10px 00px 10px 15px;
+	border-color:#EEEEEE;
+	border-style:solid none none solid;
+	border-width:1px medium medium 1px;
 }
 
 .ngg-gallery-thumbnail img {
-	margin: -6px 6px 6px -6px !important;
+	margin: -6px 6px 6px -6px;
 	background-color:#FFFFFF;
 	border:1px solid #A9A9A9;
 	display:block; 
@@ -135,14 +131,15 @@ it's only a template design
 
 .ngg-gallery-thumbnail img:hover {
 	background-color: #A9A9A9;
-}
+} 
 
 .ngg-gallery-thumbnail span {
-	/* Images description */
+	margin: -6px 6px 6px -6px;
+	text-align:center;
 	font-size:90%;
-	padding-left:5px;
+	color:#808080;
 	display:block;
-} 
+}
 
 .ngg-clear {
 	clear: both;
@@ -173,8 +170,8 @@ it's only a template design
 .ngg-navigation a.page-numbers:hover, a.next:hover, a.prev:hover, 
 				span.page-numbers:hover, span.next:hover, span.prev:hover {
 	background-color: #0066CC;
-	color: #FFFFFF;
-	text-decoration: none;
+	color: #FFFFFF !important;
+	text-decoration: none !important;
 }
 
 /* ----------- Image browser style -------------*/
@@ -242,6 +239,7 @@ it's only a template design
 }
 
 /* ----------- Sidebar widget -------------*/
+
 .ngg-widget,
 .ngg-widget-slideshow {
 	overflow: hidden;
@@ -267,7 +265,7 @@ it's only a template design
 .ngg-related-gallery img {
 	border: 1px solid #DDDDDD;
 	float: left;
-	margin: 0pt 2px;
+	margin: 0pt 3px;
 	padding: 2px;
 	height: 50px;
 	width:  50px;
