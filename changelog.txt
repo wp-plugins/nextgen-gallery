@@ -1,7 +1,15 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
-V0.70
+V0.71 - 07.09.2007
+- Added  : Add defer="defer" to Slideshow to avoid IE crash (THX to Simbo)
+- Bugfix : Bugfix for slideshow to show all pictures
+- Bugfix : Wrong check_admin_referer in albums (THX to Christopher)
+- Bugfix : No exclude check in counter and widgets (THX to Christopher)
+- Bugfix : Check for existing role (THX to Lost in Network)
+- Bugfix : Label in roles are wrong (THX to Joern)
+
+V0.70 - 06.09.2007
 - NEW : Add role manager page and capabilities
 - NEW : Show gallery with [tags=list of tags]
 - NEW : Show album with [albumtags=list of tags]

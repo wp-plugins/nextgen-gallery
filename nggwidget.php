@@ -69,7 +69,7 @@ function nggSlideshowWidget($galleryID,$irWidth,$irHeight) {
 	
 	$replace .= "\n".'<div class="ngg-widget-slideshow" id="ngg_widget_slideshow'.$galleryID.'">';
 	$replace .= '<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.</div>';
-    $replace .= "\n\t".'<script type="text/javascript">';
+    $replace .= "\n\t".'<script type="text/javascript" defer="defer">';
     $replace .= "\n\t".'<!--';
 	$replace .= "\n\t".'//<![CDATA[';
 	$replace .= "\n\t\t".'var so = new SWFObject("'.NGGALLERY_URLPATH.'imagerotator.swf", "ngg_slideshow'.$galleryID.'", "'.$irWidth.'", "'.$irHeight.'", "7", "#'.$ngg_options[irBackcolor].'");';
@@ -187,14 +187,14 @@ function nggDisplayImagesWidget($thumb,$number,$sizeX,$sizeY,$mode,$imgtype) {
 	// get the effect code
 	$thumbcode = nggallery::get_thumbcode("sidebar_".$imgtype);
 
-	$count = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures");
+	$count = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE exclude != 1 ");
 	if ($count < $number) 
 		$number = $count;
 
 	if ($imgtype == "random") 
-		$imageList = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures ORDER by rand() limit $number");
+		$imageList = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE exclude != 1 ORDER by rand() limit $number");
 	else
-		$imageList = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures ORDER by pid DESC limit 0,$number");
+		$imageList = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE exclude != 1 ORDER by pid DESC limit 0,$number");
 
 	if (is_array($imageList)){
 		foreach($imageList as $image) {

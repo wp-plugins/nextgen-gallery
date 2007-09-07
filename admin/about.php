@@ -41,6 +41,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<input type="hidden" name="item_name" value="WordPress Plugins www.alexrabe.boelinger.com"/>
 				<input type="hidden" name="no_shipping" value="1"/><input type="hidden" name="return" value="http://alexrabe.boelinger.com/" />
 				<input type="hidden" name="cancel_return" value="http://alexrabe.boelinger.com/"/>
+				<input type="hidden" name="lc" value="US" /> 
 				<input type="hidden" name="currency_code" value="USD"/>
 				<input type="hidden" name="tax" value="0"/>
 				<input type="hidden" name="bn" value="PP-DonationsBF"/>
@@ -95,7 +96,7 @@ function ngg_list_support()	{
 	"Claudia (German documentation)" => "http://www.blog-werkstatt.de/",
 	"Robert (German documentation)" => "http://www.curlyrob.de/",
 	"Pierpaolo Mannone (Italian Translation)" => "http://www.interscambiocasa.com/",
-	"Mattias Tengblad (Swedish Translation)" => "http://www.eyesx.com/",
+	"Mattias Tengblad (Swedish Translation)" => "http://wp-support.se/",
 	"M&uuml;fit Kiper (Swedish Translation)" => "http://www.kiper.se/",
 	"Ghettomaster" => "http://www.ghettoworld.de/",
 	"Joe Pharis" => "http://www.southernstylecruisers.com/",
@@ -115,7 +116,8 @@ function ngg_list_support()	{
 	"Hans Kiesouw" => "http://www.digitalvagabonding.com/",
 	"Laki (Slovak Translation)" => "http://www.laki.sk/",
 	"Thomas Bradley" => "http://www.tobeon.co.uk/wordpress/",
-	"Frederic Deghetto" => ""
+	"Frederic Deghetto" => "",
+	"Christopher Weddell" => ""
 	);
 
 	

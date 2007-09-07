@@ -135,7 +135,7 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 
 	$replace  = "\n".'<div class="slideshow" id="ngg_slideshow'.$galleryID.'">';
 	$replace .= '<p>The <a href="http://www.macromedia.com/go/getflashplayer">Flash Player</a> and <a href="http://www.mozilla.com/firefox/">a browser with Javascript support</a> are needed..</p></div>';
-    $replace .= "\n\t".'<script type="text/javascript">';
+    $replace .= "\n\t".'<script type="text/javascript" defer="defer">';
 	if ($ngg_options['irXHTMLvalid']) $replace .= "\n\t".'<!--';
 	if ($ngg_options['irXHTMLvalid']) $replace .= "\n\t".'//<![CDATA[';
 	$replace .= "\n\t\t".'var so = new SWFObject("'.NGGALLERY_URLPATH.'imagerotator.swf", "ngg_slideshow'.$galleryID.'", "'.$irWidth.'", "'.$irHeight.'", "7", "#'.$ngg_options[irBackcolor].'");';
@@ -415,7 +415,7 @@ function nggCreateAlbum($galleryID,$mode = "extend",$albumID = 0) {
 	}
 	
 	if ($gallerycontent) {
-		$counter = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID'");
+		$counter = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1");
  		if ($mode == "compact") {
 			if ($gallerycontent->previewpic != 0)
 				$insertpic = '<img class="Thumb" width="91" height="68" alt="'.$gallerycontent->title.'" src="'.nggallery::get_thumbnail_url($gallerycontent->previewpic).'"/>';

@@ -2,7 +2,7 @@
 
 /*
 +----------------------------------------------------------------+
-+	imageRotartor-XML V1.10
++	imageRotartor-XML V1.20
 +	by Alex Rabe
 +   	required for NextGEN Gallery
 +----------------------------------------------------------------+
@@ -17,26 +17,25 @@ function get_out_now() { exit; }
 add_action('shutdown', 'get_out_now', -1);
 
 global $wpdb;
-$ngg_options = get_option('ngg_options');
+
+$ngg_options = get_option ('ngg_options');
+$siteurl	 = get_option ('siteurl');
 
 // get the gallery id
 $galleryID = (int) attribute_escape($_GET['gid']);
 
 // get the pictures
 if ($galleryID == 0) {
-	$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");	
+	$thepictures = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 ORDER BY tt.$ngg_options[galSort] $ngg_options[galSortDir] ");
 } else {
-	$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
-	$thepictures = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");
+	$thepictures = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE t.gid = '$galleryID' AND tt.exclude != 1 ORDER BY tt.$ngg_options[galSort] $ngg_options[galSortDir] ");
 }
-// set gallery url
-$folder_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
 
 // Create XML output
 header("content-type:text/xml;charset=utf-8");
 
 echo "<playlist version='1' xmlns='http://xspf.org/ns/0/'>\n";
-echo "	<title>".$act_gallery->name."</title>\n";
+echo "	<title>".$thepictures[0]->name."</title>\n";
 echo "	<trackList>\n";
 
 if (is_array ($thepictures)){
@@ -48,7 +47,7 @@ if (is_array ($thepictures)){
 		echo "			<title>".$picture->alttext."</title>\n";
 		else 
 		echo "			<title>".$picture->filename."</title>\n";
-		echo "			<location>".$folder_url.$picture->filename."</location>\n";
+		echo "			<location>".$siteurl."/".$picture->path."/".$picture->filename."</location>\n";
 		echo "		</track>\n";
 	}
 }

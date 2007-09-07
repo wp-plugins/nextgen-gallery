@@ -31,7 +31,7 @@ if ( isset($_POST['update_cap']) ) {
 			<table class="optiontable"> 
 			<tr valign="top"> 
 				<th scope="row"><?php _e('Main NextGEN Gallery overview', 'nggallery') ;?>:</th> 
-				<td><label for="tinymce"><select name="general" id="general"><?php wp_dropdown_roles( ngg_get_role('NextGEN Gallery overview') ); ?></select></label></td>
+				<td><label for="general"><select name="general" id="general"><?php wp_dropdown_roles( ngg_get_role('NextGEN Gallery overview') ); ?></select></label></td>
 			</tr>
 			<tr valign="top"> 
 				<th scope="row"><?php _e('Use TinyMCE Button / Upload tab', 'nggallery') ;?>:</th> 
@@ -96,6 +96,11 @@ function ngg_set_capability($lowest_role, $capability){
 			$add_capability = true;
 			
 		$the_role = get_role($role);
+		
+		// If you rename the roles, the please use the role manager plugin
+		if ( empty($the_role) )
+			continue;
+			
 		$add_capability ? $the_role->add_cap($capability) : $the_role->remove_cap($capability) ;
 	}
 	
