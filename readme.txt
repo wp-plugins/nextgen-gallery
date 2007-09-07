@@ -24,7 +24,7 @@ Features:
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
 * Language support : Translated in more than 15 languages
 * Upload tab integration : You have access to all pictures via the upload tab
-* Tag support for images : Append related images to your post
+* Tag support for images : Append related images to your post 
 
 For support around this plugin please visit http://alexrabe.boelinger.com/forums/
 
