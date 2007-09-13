@@ -1,6 +1,15 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.72 - 13.09.2007
+- Added : Missing overflow:hidden in ngg-album.css
+- Added : New experimental stylesheet hovereffect.css
+- Changed : Better check for memory limit in zip-files
+- Bugfix : Missing stripslashes for alttext (THX to Lawrence)
+- Bugfix : Navigation didn't highlight page 1 (THX to Brot)
+- Bugfix : Albums automatic minimize if more than 4 galleries
+- Bugfix : Missing check_admin_referer in style (THX again to Christopher)
+
 V0.71 - 07.09.2007
 - Added  : Add defer="defer" to Slideshow to avoid IE crash (THX to Simbo)
 - Bugfix : Bugfix for slideshow to show all pictures

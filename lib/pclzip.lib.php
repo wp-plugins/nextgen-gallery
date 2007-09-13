@@ -103,6 +103,8 @@
   define( 'PCLZIP_ERR_UNSUPPORTED_ENCRYPTION', -19 );
   define( 'PCLZIP_ERR_INVALID_ATTRIBUTE_VALUE', -20 );
   define( 'PCLZIP_ERR_DIRECTORY_RESTRICTION', -21 );
+  // alex.rabe : new for too large zipfiles
+  define( 'PCLZIP_ERR_MEMORY_LIMIT', -22 );
 
   // ----- Options values
   define( 'PCLZIP_OPT_PATH', 77001 );
@@ -791,8 +793,10 @@
     $p_list = array();
     $v_result = $this->privExtractByRule($p_list, $v_path, $v_remove_path,
 	                                     $v_remove_all_path, $v_options);
+                                 
     if ($v_result < 1) {
       unset($p_list);
+      $this->error_code = $v_result;
       //--(MAGIC-PclTrace)--//PclTraceFctEnd(__FILE__, __LINE__, 0, PclZip::errorInfo());
       return(0);
     }
@@ -1322,9 +1326,11 @@
                       PCLZIP_ERR_MISSING_OPTION_VALUE => 'PCLZIP_ERR_MISSING_OPTION_VALUE',
                       PCLZIP_ERR_INVALID_OPTION_VALUE => 'PCLZIP_ERR_INVALID_OPTION_VALUE',
                       PCLZIP_ERR_UNSUPPORTED_COMPRESSION => 'PCLZIP_ERR_UNSUPPORTED_COMPRESSION',
-                      PCLZIP_ERR_UNSUPPORTED_ENCRYPTION => 'PCLZIP_ERR_UNSUPPORTED_ENCRYPTION'
-                      ,PCLZIP_ERR_INVALID_ATTRIBUTE_VALUE => 'PCLZIP_ERR_INVALID_ATTRIBUTE_VALUE'
-                      ,PCLZIP_ERR_DIRECTORY_RESTRICTION => 'PCLZIP_ERR_DIRECTORY_RESTRICTION'
+                      PCLZIP_ERR_UNSUPPORTED_ENCRYPTION => 'PCLZIP_ERR_UNSUPPORTED_ENCRYPTION',
+                      PCLZIP_ERR_INVALID_ATTRIBUTE_VALUE => 'PCLZIP_ERR_INVALID_ATTRIBUTE_VALUE',
+                      PCLZIP_ERR_DIRECTORY_RESTRICTION => 'PCLZIP_ERR_DIRECTORY_RESTRICTION',
+                      // added by alex.rabe
+                      PCLZIP_ERR_MEMORY_LIMIT => 'PCLZIP_ERR_MEMORY_LIMIT'
                     );
 
     if (isset($v_name[$this->error_code])) {
@@ -3357,7 +3363,7 @@
 
           $v_extract = false;
       }
-      
+ 
       // ----- Look for real extraction
       if ($v_extract)
       {
@@ -3449,24 +3455,23 @@
 		                                      $p_path, $p_remove_path,
 											  $p_remove_all_path,
 											  $p_options);
+							  
           if ($v_result1 < 1) {
             $this->privCloseFd();
             $this->privSwapBackMagicQuotes();
             //--(MAGIC-PclTrace)--//PclTraceFctEnd(__FILE__, __LINE__, $v_result1);
+
             return $v_result1;
           }
-
           // ----- Get the only interesting attributes
           if (($v_result = $this->privConvertHeader2FileInfo($v_header, $p_file_list[$v_nb_extracted++])) != 1)
           {
             // ----- Close the zip file
             $this->privCloseFd();
             $this->privSwapBackMagicQuotes();
-
             //--(MAGIC-PclTrace)--//PclTraceFctEnd(__FILE__, __LINE__, $v_result);
             return $v_result;
           }
-
           // ----- Look for user callback abort
           if ($v_result1 == 2) {
           	break;
@@ -3730,7 +3735,6 @@
 
     // ----- Look if extraction should be done
     if ($p_entry['status'] == 'ok') {
-
       // ----- Do the extraction (if not a folder)
       if (!(($p_entry['external']&0x00000010)==0x00000010))
       {
@@ -3777,6 +3781,7 @@
 
         }
         else {
+        	
           //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 2, "Extracting a compressed file (Compression method ".$p_entry['compression'].")");
           // ----- TBC
           // Need to be finished
@@ -3800,15 +3805,37 @@
           else {
               //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 5, "Read '".$p_entry['compressed_size']."' compressed bytes");
               // ----- Read the compressed file in a buffer (one shot)
-              $v_buffer = @fread($this->zip_fd, $p_entry['compressed_size']);
+              
+              // alex.rabe : CHECK for memory limit !!!
+              if ( (function_exists('memory_get_usage')) && (ini_get('memory_limit')) ) {
+              	// get memory limit
+				$memory_limit = ini_get('memory_limit');
+				if ($memory_limit != '') {
+					$memory_limit = substr($memory_limit, 0, -1) * 1024 * 1024;
+					$memoryNeeded = memory_get_usage() + $p_entry['compressed_size'];
+					if ($memory_limit < $memoryNeeded) {
+						$v_result = PCLZIP_ERR_MEMORY_LIMIT;
+						return $v_result;
+					}
+				}
+			  }
+			  
+			  $v_buffer = fread($this->zip_fd, $p_entry['compressed_size']);
           }
-          
-          // ----- Decompress the file
-          $v_file_content = @gzinflate($v_buffer);
+         
+          // ----- Decompress the file 
+		  // alex.rabe : check again for the memory limit
+          if ( (function_exists('memory_get_usage')) && (ini_get('memory_limit')) ) {
+          		// take a overhead of 300000 byte (tested with XAMPP)
+	          	$maxMemory = $memory_limit - memory_get_usage() - 300000;
+	          	$v_file_content = gzinflate($v_buffer,$maxMemory);
+	      } else {
+				$v_file_content = @gzinflate($v_buffer);
+		  }
           unset($v_buffer);
           if ($v_file_content === FALSE) {
             //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 2, "Unable to inflate compressed file");
-
+			$v_result = PCLZIP_ERR_MEMORY_LIMIT;
             // ----- Change the file status
             // TBC
             $p_entry['status'] = "error";

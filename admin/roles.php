@@ -98,6 +98,7 @@ function ngg_set_capability($lowest_role, $capability){
 		$the_role = get_role($role);
 		
 		// If you rename the roles, the please use the role manager plugin
+		
 		if ( empty($the_role) )
 			continue;
 			

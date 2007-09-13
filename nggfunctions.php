@@ -251,8 +251,11 @@ function nggCreateGallery($picturelist,$galleryID = false) {
 	 	if ( $_GET['page'] == get_the_ID() ) {
 			if ( isset( $_GET['nggpage'] ) )	
 				$page = (int) $_GET['nggpage'];
+			else
+				 $page = 1;
 		}
-		else $page = 1; 
+		else $page = 1;
+		 
 	 	$start = $offset = ( $page - 1 ) * $maxElement;
 	 	
 	 	$total = count($picturelist);
@@ -295,12 +298,12 @@ function nggCreateGallery($picturelist,$galleryID = false) {
 		$out .= '<div class="ngg-gallery-thumbnail-box">'."\n\t";
 		$out .= '<div class="ngg-gallery-thumbnail" '.$setwidth.' >'."\n\t";
 		$out .= '<a href="'.$link.'" title="'.stripslashes($picture->description).'" '.$thumbcode.' >';
-		$out .= '<img title="'.$picture->alttext.'" alt="'.$picture->alttext.'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
+		$out .= '<img title="'.stripslashes($picture->alttext).'" alt="'.stripslashes($picture->alttext).'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
 		$out .= '</a>'."\n";
 		if ($ngg_options['galShowDesc'] == "alttext")
-			$out .= '<span>'.$picture->alttext.'</span>'."\n";
+			$out .= '<span>'.stripslashes($picture->alttext).'</span>'."\n";
 		if ($ngg_options['galShowDesc'] == "desc")
-			$out .= '<span>'.$picture->description.'</span>'."\n";
+			$out .= '<span>'.stripslashes($picture->description).'</span>'."\n";
 		$out .= '</div>'."\n".'</div>'."\n";
 		}
 	$out .= '</div>'."\n";
@@ -338,7 +341,7 @@ function nggShowJSGallery($galleryID) {
 		$gallerycontent .= 'var nggal'. $galleryID .'=new Array()'."\n";
 		foreach ($picturelist as $picture) {
 			$picturefile =  nggallery::remove_umlauts($picture->filename);
-			$gallerycontent .= 'nggal'. $galleryID .'['.$i++.']=["'.$picture->filename.'", "'.$picture->alttext.'", "'.strip_tags(nggallery::ngg_nl2br($picture->description)).'"]'."\n";	
+			$gallerycontent .= 'nggal'. $galleryID .'['.$i++.']=["'.$picture->filename.'", "'.stripslashes($picture->alttext).'", "'.strip_tags(nggallery::ngg_nl2br($picture->description)).'"]'."\n";	
 		}
 		$gallerycontent .=	'jQuery(document).ready(function() {'."\n";
 		$gallerycontent .=  '  jQuery("#nggal'. $galleryID .'").nggallery({'."\n";
@@ -505,7 +508,7 @@ function nggCreateImageBrowser($picarray) {
 	if ($picture) {
 		$galleryoutput = '
 		<div class="ngg-imagebrowser" >
-			<h3>'.$picture->alttext.'</h3>
+			<h3>'.stripslashes($picture->alttext).'</h3>
 			<div class="pic">'.$picture->get_href_link().'</div>
 			<div class="ngg-imagebrowser-nav">';
 		if 	($back_pid) {
@@ -564,7 +567,7 @@ function nggSinglePicture($imageID,$width=250,$height=250,$mode="",$float="") {
 
 	// add fullsize picture as link
 	$content  = '<a href="'.$picture->imagePath.'" title="'.stripslashes($picture->description).'" '.$picture->get_thumbcode("singlepic".$imageID).' >';
-	$content .= '<img class="ngg-singlepic" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.$picture->alttext.'" title="'.$picture->alttext.'"'.$float.' />';
+	$content .= '<img class="ngg-singlepic" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.stripslashes($picture->alttext).'" title="'.stripslashes($picture->alttext).'"'.$float.' />';
 	$content .= '</a>';
 	
 	return $content;
@@ -640,7 +643,7 @@ function nggShowRelatedGallery($taglist, $maxImages = 0) {
 
 		$picturefile =  nggallery::remove_umlauts($picture->filename);
 		$content .= '<a href="'.$folder_url.$picturefile.'" title="'.stripslashes($picture->description).'" '.$thumbcode.' >';
-		$content .= '<img title="'.$picture->alttext.'" alt="'.$picture->alttext.'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
+		$content .= '<img title="'.stripslashes($picture->alttext).'" alt="'.stripslashes($picture->alttext).'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
 		$content .= '</a>'."\n";
 	}
 

@@ -31,10 +31,11 @@ function nggallery_admin_overview()  {
         ?>
        </p>
 	  <?php if ($nggCheck->startCheck()) { ?>
-	   <h3><font color="red"><?php _e('New Version available', 'nggallery') ?></font></h3>
-	   <p><?php _e('The server reports that a new NextGEN Gallery Version is now available. Please visit the plugin homepage for more information.', 'nggallery') ?></p>
+		<h3><font color="red"><?php _e('New Version available', 'nggallery') ?></font></h3>
+	   	<p><?php _e('The server reports that a new NextGEN Gallery Version is now available. Please visit the plugin homepage for more information.', 'nggallery') ?></p>
+		<p><a href="http://wordpress.org/extend/plugins/nextgen-gallery/download/" target="_blank"><?php _e('Download here', 'nggallery') ?></a></p>
 	  <?php } ?>		
-       <h3><?php _e('Server Settings', 'nggallery') ?></h3>
+        <h3><?php _e('Server Settings', 'nggallery') ?></h3>
       <ul>
       	<?php ngg_get_serverinfo(); ?>
 	   </ul>
@@ -219,6 +220,7 @@ if ( !class_exists( "CheckPlugin" ) ) {
 			if ( ($check_intervall < time() ) or (empty($check_intervall)) ) {
 				if (class_exists(snoopy)) {
 					$client = new Snoopy();
+					$client->agent = 'NextGEN Gallery Version Checker (+http://www.nextgen.boelinger.com/)';
 					$client->_fp_timeout = 10;
 					if (@$client->fetch($this->URL) === false) {
 						return false;

@@ -117,7 +117,9 @@ function ngg_list_support()	{
 	"Laki (Slovak Translation)" => "http://www.laki.sk/",
 	"Thomas Bradley" => "http://www.tobeon.co.uk/wordpress/",
 	"Frederic Deghetto" => "",
-	"Christopher Weddell" => ""
+	"Christopher Weddell" => "",
+	"Non Eric" => "http://www.lunatec.de/",
+	"Rowan Crane (WPMU support)" => "http://blog.rowancrane.com/"
 	);
 
 	

@@ -106,6 +106,7 @@ if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="up
 	if (!$error) {
 	?>
 	<form name="template" id="template" method="post">
+		 <?php wp_nonce_field('ngg_style') ?>
 		 <div><textarea cols="70" rows="25" name="newcontent" id="newcontent" tabindex="1"><?php echo $content ?></textarea>
 		 <input type="hidden" name="updatecss" value="updatecss" />
 		 <input type="hidden" name="file" value="<?php echo $file_show ?>" />

@@ -463,15 +463,19 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	// thx to Gregor at http://blog.scoutpress.de/forum/topic/45
 		
 		require_once(NGGALLERY_ABSPATH.'/lib/pclzip.lib.php');
-		
+				
 		$archive = new PclZip($file);
-	
+
 		// extract all files in one folder
 		if ($archive->extract(PCLZIP_OPT_PATH, $dir, PCLZIP_OPT_REMOVE_ALL_PATH, PCLZIP_CB_PRE_EXTRACT, 'ngg_getonlyimages') == 0) {
-			die("Error : ".$archive->errorInfo(true));
+			if ($archive->error_code == -22)
+				nggallery::show_error(__('The Zip-file is too large. Exceed Memory limit !','nggallery'));
+			else
+				nggallery::show_error("Error : ".$archive->errorInfo(true));
+			return false;
 		}
-		
-		return;
+
+		return true;
 	}
  
 	// **************************************************************
@@ -527,15 +531,18 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		} 
 		
 		// unzip and del temp file		
-		ngg_unzip($newfolder, $temp_zipfile);
+		$result = ngg_unzip($newfolder, $temp_zipfile);
 		@unlink($temp_zipfile) or die ('<div class="updated"><p><strong>'.__('Unable to unlink zip file ', 'nggallery').$temp_zipfile.'!</strong></p></div>');		
-		
-		$messagetext = __('Zip-File successfully unpacked','nggallery').'<br />';		
-		
-		// parse now the folder and add to database
-		$messagetext .= ngg_import_gallery($defaultpath.$foldername);
 
-		nggallery::show_message($messagetext);
+		if ($result) {
+			$messagetext = __('Zip-File successfully unpacked','nggallery').'<br />';		
+		
+			// parse now the folder and add to database
+			$messagetext .= ngg_import_gallery($defaultpath.$foldername);
+	
+			nggallery::show_message($messagetext);
+		}
+		
 		return;
 	}
 

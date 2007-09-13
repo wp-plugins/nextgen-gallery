@@ -86,8 +86,9 @@ jQuery(document).ready(
 			}
 		);
 	   // Auto Minimize if more than 4 (whole site, no differentiation)
-	   if(jQuery('a').length > 4)
+	   if(jQuery('a.min').length > 4)
 	   {
+	   		jQuery('a.min').html('[+]');
 	   		jQuery('div.itemContent:visible').hide();
 	   }
 	}

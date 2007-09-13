@@ -569,7 +569,7 @@ if($picturelist) {
 			<?php } ?>
 			<?php if (!$showTags) { ?>
 			<td><textarea name="description[<?php echo $pid ?>]" class="textarea1" cols="30" rows="3" ><?php echo stripslashes($picture->description) ?></textarea></td>
-			<td><input name="alttext[<?php echo $pid ?>]" type="text" size="20"   value="<?php echo $picture->alttext ?>" /></td>
+			<td><input name="alttext[<?php echo $pid ?>]" type="text" size="20"   value="<?php echo stripslashes($picture->alttext) ?>" /></td>
 			<td><input name="exclude[<?php echo $pid ?>]" type="checkbox" value="1" <?php echo $exclude ?> /></td>
 			<?php } else {?>
 			<td ><input name="tags[<?php echo $pid ?>]" type="text" style="width:95%" value="<?php echo $nggTags->get_tags_from_image($pid); ?>" /></td>

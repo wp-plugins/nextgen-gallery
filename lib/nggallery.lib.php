@@ -223,11 +223,13 @@ class nggallery {
 		//required for myGallery import :-)
 		
 		if (!$include_Abspath) $gallerypath = WINABSPATH.$gallerypath;
+		if (!file_exists($gallerypath))
+			return FALSE;
 		if (is_dir($gallerypath."/thumbs")) return "/thumbs/";
 		if (is_dir($gallerypath."/tumbs")) return "/tumbs/";
 		if (!SAFE_MODE) {
 			if (!is_dir($gallerypath."/thumbs")) {
-				mkdir($gallerypath."/thumbs");
+				@mkdir($gallerypath."/thumbs");
 				return "/thumbs/";
 			}
 		}
@@ -483,6 +485,7 @@ class ngg_Tags {
 		if (is_array($picids)){
 			// now get all pictures
 			$piclist = "'" . implode("', '", $picids) . "'";
+			//TODO:Use thumbnail sort order ?
 			$picarray = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggpictures AS t INNER JOIN $wpdb->nggallery AS tt ON t.galleryid = tt.gid WHERE t.pid IN ($piclist) ORDER BY t.pid ASC ");
 		}
 		
