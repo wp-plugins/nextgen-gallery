@@ -7,6 +7,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 	// get the options
 	$ngg_options=get_option('ngg_options');	
+	
+	// same as $_SERVER['REQUEST_URI'], but should work under IIS 6.0
+	$filepath    = get_option('siteurl'). '/wp-admin/admin.php?page='.$_GET['page'];
 
 	if ( isset($_POST['updateoption']) ) {	
 		check_admin_referer('ngg_settings');
@@ -57,6 +60,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			    break;
 			  case "highslide":
 			    effectcode = 'class="highslide" onclick="return hs.expand(this, { slideshowGroup: %GALLERY_NAME% })"';
+			    jQuery('#tbImage').hide("slow");
+			    break;
+			  case "shutter":
+			    effectcode = 'class="shutterset"';
 			    jQuery('#tbImage').hide("slow");
 			    break;
 			  default:
@@ -140,7 +147,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		<div id="thumbnails">
 			<h2><?php _e('Thumbnail settings','nggallery'); ?></h2>
-			<form name="thumbnailsettings" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#thumbnails'; ?>" >
+			<form name="thumbnailsettings" method="POST" action="<?php echo $filepath.'#thumbnails'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
 			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbfix,thumbcrop,thumbquality,thumbResampleMode" />
 			<fieldset class="options"> 
@@ -180,7 +187,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		<div id="images">
 			<h2><?php _e('Image settings','nggallery'); ?></h2>
-			<form name="imagesettings" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#images'; ?>" >
+			<form name="imagesettings" method="POST" action="<?php echo $filepath.'#images'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
 			<input type="hidden" name="page_options" value="imgResize,imgWidth,imgHeight,imgQuality,imgResampleMode" />
 			<fieldset class="options"> 
@@ -213,7 +220,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		<div id="gallery">
 			<h2><?php _e('Gallery settings','nggallery'); ?></h2>
-			<form name="galleryform" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#gallery'; ?>" >
+			<form name="galleryform" method="POST" action="<?php echo $filepath.'#gallery'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
 			<input type="hidden" name="page_options" value="galUsejQuery,galNoPages,galImages,galShowSlide,galTextSlide,galTextGallery,galShowOrder,galShowDesc,galImgBrowser,galSort,galSortDir" />
 			<fieldset class="options"> 
@@ -288,7 +295,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		
 		<div id="effects">
 			<h2><?php _e('Effects','nggallery'); ?></h2>
-			<form name="effectsform" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#effects'; ?>" >
+			<form name="effectsform" method="POST" action="<?php echo $filepath.'#effects'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
 			<input type="hidden" name="page_options" value="thumbEffect,thumbCode,thickboxImage" />
 			<p><?php _e('Here you can select the thumbnail effect, NextGEN Gallery will integrate the required HTML code in the images. Please note that only the Thickbox effect will automatic added to your theme.','nggallery'); ?>
@@ -303,6 +310,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 							<option value="thickbox" <?php selected('thickbox', $ngg_options[thumbEffect]); ?> ><?php _e('Thickbox', 'nggallery') ;?></option>
 							<option value="lightbox" <?php selected('lightbox', $ngg_options[thumbEffect]); ?> ><?php _e('Lightbox', 'nggallery') ;?></option>
 							<option value="highslide" <?php selected('highslide', $ngg_options[thumbEffect]); ?> ><?php _e('Highslide', 'nggallery') ;?></option>
+							<option value="shutter" <?php selected('shutter', $ngg_options[thumbEffect]); ?> ><?php _e('Shutter', 'nggallery') ;?></option>
 							<option value="custom" <?php selected('custom', $ngg_options[thumbEffect]); ?> ><?php _e('Custom', 'nggallery') ;?></option>
 						</select>
 						</td>
@@ -341,7 +349,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<div id="watermark">
 			<h2><?php _e('Watermark','nggallery'); ?></h2>
 			<p><?php _e('Please note : You can only activate the watermark under -> Manage Gallery . This action cannot be undone.', 'nggallery') ?></p>
-			<form name="watermarkform" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#watermark'; ?>" >
+			<form name="watermarkform" method="POST" action="<?php echo $filepath.'#watermark'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
 			<input type="hidden" name="page_options" value="wmPos,wmXpos,wmYpos,wmType,wmPath,wmFont,wmSize,wmColor,wmText,wmOpaque" />
 			<div id="zeitgeist">
@@ -442,7 +450,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- Slideshow settings -->
 		
 		<div id="slideshow">
-		<form name="player_options" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#slideshow-slider'; ?>" >
+		<form name="player_options" method="POST" action="<?php echo $filepath.'#slideshow'; ?>" >
 		<?php wp_nonce_field('ngg_settings') ?>
 		<input type="hidden" name="page_options" value="irWidth,irHeight,irShuffle,irLinkfromdisplay,irShownavigation,irShowicons,irWatermark,irOverstretch,irRotatetime,irTransition,irKenburns,irBackcolor,irFrontcolor,irLightcolor,irAudio,irXHTMLvalid" />
 		<h2><?php _e('Slideshow','nggallery'); ?></h2>
@@ -503,6 +511,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 							<option value="bubbles" <?php selected('bubbles', $ngg_options[irTransition]); ?> ><?php _e('bubbles', 'nggallery') ;?></option>
 							<option value="blocks" <?php selected('blocks', $ngg_options[irTransition]); ?> ><?php _e('blocks', 'nggallery') ;?></option>
 							<option value="fluids" <?php selected('fluids', $ngg_options[irTransition]); ?> ><?php _e('fluids', 'nggallery') ;?></option>
+							<option value="flash" <?php selected('flash', $ngg_options[irTransition]); ?> ><?php _e('flash', 'nggallery') ;?></option>
 							<option value="lines" <?php selected('lines', $ngg_options[irTransition]); ?> ><?php _e('lines', 'nggallery') ;?></option>
 							<option value="random" <?php selected('random', $ngg_options[irTransition]); ?> ><?php _e('random', 'nggallery') ;?></option>
 						</select>

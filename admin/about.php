@@ -12,6 +12,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<p><?php _e('This plugin is a team work of a virtual developer team around the world. Follow persons take part at the development till now :', 'nggallery') ;?></p>
 		<ul>
 		<li><a href="http://alexrabe.boelinger.com" target="_blank">Alex Rabe</a> <?php _e('(Lead developer)', 'nggallery') ;?></li>
+		<li><a href="http://li.deranter.com" target="_blank">Frederic De Ranter</a> <?php _e('(Core AJAX developer)', 'nggallery') ;?></li>
 		<li><a href="http://blog.arctic-media.de" target="_blank">Christian Arnold</a> <?php _e('(Core developer)', 'nggallery') ;?></li>
 		<li><a href="http://mufuschnu.mu.funpic.de" target="_blank">Thomas Matzke</a> <?php _e('(Core developer)', 'nggallery') ;?></li>
 		<li><a href="http://www.kev.hu" target="_blank">KeViN</a> <?php _e('(Sidebar Widget developer)', 'nggallery') ;?></li>
@@ -118,8 +119,16 @@ function ngg_list_support()	{
 	"Thomas Bradley" => "http://www.tobeon.co.uk/wordpress/",
 	"Frederic Deghetto" => "",
 	"Christopher Weddell" => "",
+	"Martin Scholz" => "",
 	"Non Eric" => "http://www.lunatec.de/",
-	"Rowan Crane (WPMU support)" => "http://blog.rowancrane.com/"
+	"Rowan Crane (WPMU support)" => "http://blog.rowancrane.com/",
+	"Ronen Hirsch" => "http://www.stillcreation.com/",
+	"Kuba Zwolinski (Polish Translation)" => "http://kubazwolinski.com/",
+	"Rina Jiang (Chinese Translation)" => "http://http://mysticecho.net/",
+	"Michael Erhart" => "",
+	"Luc Saint-Elie" => "http://luc.saint-elie.com/",
+	"Matthew Barker" => "",
+	"Anthony (Chinese Translation)" => "http://www.angryouth.com/"
 	);
 
 	

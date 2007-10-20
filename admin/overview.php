@@ -33,7 +33,7 @@ function nggallery_admin_overview()  {
 	  <?php if ($nggCheck->startCheck()) { ?>
 		<h3><font color="red"><?php _e('New Version available', 'nggallery') ?></font></h3>
 	   	<p><?php _e('The server reports that a new NextGEN Gallery Version is now available. Please visit the plugin homepage for more information.', 'nggallery') ?></p>
-		<p><a href="http://wordpress.org/extend/plugins/nextgen-gallery/download/" target="_blank"><?php _e('Download here', 'nggallery') ?></a></p>
+		<p><a href="http://wordpress.org/extend/plugins/nextgen-gallery/download/" target="_blank"> <?php _e('Download here', 'nggallery') ?> </a></p>
 	  <?php } ?>		
         <h3><?php _e('Server Settings', 'nggallery') ?></h3>
       <ul>

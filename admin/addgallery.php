@@ -9,6 +9,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 	global $wpdb;
 	$ngg_options = get_option('ngg_options');
+	
+	// same as $_SERVER['REQUEST_URI'], but should work under IIS 6.0
+	$filepath    = get_option('siteurl'). '/wp-admin/admin.php?page='.$_GET['page'];
 
 	$defaultpath = $ngg_options['gallerypath'];	
 	
@@ -83,7 +86,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- create gallery -->
 		<div id="addgallery">
 		<h2><?php _e('Add new gallery', 'nggallery') ;?></h2>
-			<form name="addgallery" id="addgallery" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" accept-charset="utf-8" >
+			<form name="addgallery" id="addgallery" method="POST" action="<?php echo $filepath; ?>" accept-charset="utf-8" >
 			<?php wp_nonce_field('ngg_addgallery') ?>
 			<fieldset class="options">
 				<table class="optiontable"> 
@@ -101,7 +104,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- zip-file operation -->
 		<div id="zipupload">
 		<h2><?php _e('Upload a Zip-File', 'nggallery') ;?></h2>
-			<form name="zipupload" id="zipupload" method="POST" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#zipupload'; ?>" accept-charset="utf-8" >
+			<form name="zipupload" id="zipupload" method="POST" enctype="multipart/form-data" action="<?php echo $filepath.'#zipupload'; ?>" accept-charset="utf-8" >
 			<?php wp_nonce_field('ngg_addgallery') ?>
 			<fieldset class="options">
 				<table class="optiontable"> 
@@ -133,7 +136,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- import folder -->
 		<div id="importfolder">
 		<h2><?php _e('Import image folder', 'nggallery') ;?></h2>
-			<form name="importfolder" id="importfolder" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#importfolder'; ?>" accept-charset="utf-8" >
+			<form name="importfolder" id="importfolder" method="POST" action="<?php echo $filepath.'#importfolder'; ?>" accept-charset="utf-8" >
 			<?php wp_nonce_field('ngg_addgallery') ?>
 			<fieldset class="options">
 				<table class="optiontable"> 
@@ -151,7 +154,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<!-- upload images -->
 		<div id="uploadimage">
 		<h2><?php _e('Upload Images', 'nggallery') ;?></h2>
-			<form name="uploadimage" id="uploadimage" method="POST" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']).'#uploadimage'; ?>" accept-charset="utf-8" >
+			<form name="uploadimage" id="uploadimage" method="POST" enctype="multipart/form-data" action="<?php echo $filepath.'#uploadimage'; ?>" accept-charset="utf-8" >
 			<?php wp_nonce_field('ngg_addgallery') ?>
 			<fieldset class="options">
 				<table class="optiontable"> 

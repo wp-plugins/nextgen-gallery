@@ -27,10 +27,10 @@ function ngg_add_admin_js() {
 			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2');
 		break;
 		case "nggallery-options" :
-			wp_enqueue_script('tabs', NGGALLERY_URLPATH .'admin/js/jquery.tabs.pack.js', array('jquery'), '2.7');
+			wp_enqueue_script('tabs', NGGALLERY_URLPATH .'admin/js/jquery.tabs.pack.js', array('jquery'), '2.7.4');
 		break;		
 		case "nggallery-add-gallery" :
-			wp_enqueue_script('tabs', NGGALLERY_URLPATH .'admin/js/jquery.tabs.pack.js', array('jquery'), '2.7');
+			wp_enqueue_script('tabs', NGGALLERY_URLPATH .'admin/js/jquery.tabs.pack.js', array('jquery'), '2.7.4');
 			wp_enqueue_script('mutlifile', NGGALLERY_URLPATH .'admin/js/jquery.MultiFile.js', array('jquery'), '1.1.1');
 		break;
 	}

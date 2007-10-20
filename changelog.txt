@@ -1,6 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.73 - 20.10.2007
+- Added : Support for Shutter Reloaded
+- Update to jQuery Tabs 2.7.4
+- Changed : Remove $_SERVER['REQUEST_URI'] for IIS compatibility
+- Bugfix : Option Sildeshow didn't jump to overview
+
 V0.72 - 13.09.2007
 - Added : Missing overflow:hidden in ngg-album.css
 - Added : New experimental stylesheet hovereffect.css
