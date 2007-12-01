@@ -1,6 +1,9 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.74 - 01.12.2007
+- NEW : Added meta reader class, first step to integrated meta data import
+
 V0.73 - 20.10.2007
 - Added : Support for Shutter Reloaded
 - Update to jQuery Tabs 2.7.4

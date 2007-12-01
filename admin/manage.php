@@ -543,7 +543,7 @@ function getNumChecked(form)
 		<?php } else {?>
 		<th scope="col" style="width:70%"><?php _e('Tags (comma separated list)', 'nggallery') ?></th>
 		<?php } ?>
-		<th scope="col" colspan="2" style="text-align: center"><?php _e('Action') ?></th>
+		<th scope="col" colspan="3" style="text-align: center"><?php _e('Action') ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -575,6 +575,7 @@ if($picturelist) {
 			<td ><input name="tags[<?php echo $pid ?>]" type="text" style="width:95%" value="<?php echo $nggTags->get_tags_from_image($pid); ?>" /></td>
 			<?php } ?>
 			<td><a href="<?php echo $act_gallery_url.$picture->filename ?>" class="thickbox" title="<?php echo $picture->alttext ?>" ><?php _e('View') ?></a></td>
+			<td><a href="<?php echo NGGALLERY_URLPATH."admin/showmeta.php?id=".$pid ?>" class="thickbox" title="<?php _e("Show Meta data",'nggallery')?>" ><?php _e('Meta') ?></a></td>
 			<td><a href="<?php echo wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=delpic&amp;gid=".$act_gid."&amp;pid=".$pid, 'ngg_delpicture')?>" class="delete" onclick="javascript:check=confirm( '<?php _e("Delete this file ?",'nggallery')?>');if(check==false) return false;" ><?php _e('Delete') ?></a></td>
 		</tr>
 		<?php
