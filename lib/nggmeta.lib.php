@@ -31,7 +31,7 @@ class nggMeta{
 			return false;
 
  		$size = getimagesize ( $this->imagePath, $metadata );
- 		
+
 		if ($size && is_array($metadata)) {
 
 			// get exif - data
@@ -68,17 +68,17 @@ class nggMeta{
 		// taken from WP core
 		$exif = $this->exif_data['EXIF'];
 		if (!empty($exif['FNumber']))
-			$meta['aperture'] = round( $this->exif_frac2dec( $exif['FNumber'] ), 2 );
+			$meta['aperture'] = "F " . round( $this->exif_frac2dec( $exif['FNumber'] ), 2 );
 		if (!empty($exif['Model']))
 			$meta['camera'] = trim( $exif['Model'] );
 		if (!empty($exif['DateTimeDigitized']))
 			$meta['created_timestamp'] = date_i18n(get_option('date_format').' '.get_option('time_format'), $this->exif_date2ts($exif['DateTimeDigitized']));
 		if (!empty($exif['FocalLength']))
-			$meta['focal_length'] = $this->exif_frac2dec( $exif['FocalLength'] );
+			$meta['focal_length'] = $this->exif_frac2dec( $exif['FocalLength'] ) . __(' mm','nggallery');
 		if (!empty($exif['ISOSpeedRatings']))
 			$meta['iso'] = $exif['ISOSpeedRatings'];
 		if (!empty($exif['ExposureTime']))
-			$meta['shutter_speed'] = $this->exif_frac2dec( $exif['ExposureTime'] );
+			$meta['shutter_speed'] = $exif['ExposureTime'] . __(' sec','nggallery');
 
 		// additional information
 		$exif = $this->exif_data['IFD0'];
@@ -312,7 +312,7 @@ class nggMeta{
 		'focal_length' 		=> __('Focal length','nggallery'),
 		'iso' 				=> __('ISO','nggallery'),
 		'shutter_speed' 	=> __('Shutter speed','nggallery'),
-		'title' 			=> __('Title','nggallery'),
+		'title' 			=> __('Titel','nggallery'),
 		'author' 			=> __('Author','nggallery'),
 		'tags' 				=> __('Tags','nggallery'),
 		'subject' 			=> __('Subject','nggallery'),
