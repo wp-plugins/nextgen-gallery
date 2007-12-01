@@ -312,7 +312,7 @@ class nggMeta{
 		'focal_length' 		=> __('Focal length','nggallery'),
 		'iso' 				=> __('ISO','nggallery'),
 		'shutter_speed' 	=> __('Shutter speed','nggallery'),
-		'title' 			=> __('Titel','nggallery'),
+		'title' 			=> __('Title','nggallery'),
 		'author' 			=> __('Author','nggallery'),
 		'tags' 				=> __('Tags','nggallery'),
 		'subject' 			=> __('Subject','nggallery'),
