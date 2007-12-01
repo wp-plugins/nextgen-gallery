@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NextGEN Gallery\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-10-20 10:32+0100\n"
+"PO-Revision-Date: 2007-12-01 13:11+0100\n"
 "Last-Translator: Alex Rabe\n"
 "Language-Team: Alex Rabe\n"
 "MIME-Version: 1.0\n"
@@ -41,8 +41,6 @@ msgstr ""
 #: ../admin/manage.php:540
 #: ../admin/myimport.php:52
 #: ../admin/style.php:101
-#: ../admin/__manage.php:209
-#: ../admin/__manage.php:1024
 #: ../js/nggadmintab-js.php:167
 msgid "Description"
 msgstr ""
@@ -69,8 +67,6 @@ msgstr ""
 #: ../admin/manage.php:64
 #: ../admin/manage.php:436
 #: ../admin/settings.php:86
-#: ../admin/__manage.php:182
-#: ../admin/__manage.php:991
 msgid "Gallery"
 msgstr ""
 
@@ -173,7 +169,7 @@ msgid "Right"
 msgstr ""
 
 #: ../nggbutton.php:147
-#: ../admin/manage.php:608
+#: ../admin/manage.php:609
 msgid "Cancel"
 msgstr ""
 
@@ -247,8 +243,6 @@ msgstr ""
 #: ../admin/manage.php:290
 #: ../admin/manage.php:448
 #: ../admin/myimport.php:51
-#: ../admin/__manage.php:208
-#: ../admin/__manage.php:1005
 #: ../js/nggadmintab-js.php:104
 msgid "Title"
 msgstr ""
@@ -793,8 +787,7 @@ msgstr ""
 
 #: ../admin/album.php:143
 #: ../admin/manage.php:314
-#: ../admin/manage.php:578
-#: ../admin/__manage.php:232
+#: ../admin/manage.php:579
 msgid "Delete"
 msgstr ""
 
@@ -841,7 +834,6 @@ msgstr ""
 #: ../admin/manage.php:288
 #: ../admin/manage.php:534
 #: ../admin/myimport.php:49
-#: ../admin/__manage.php:206
 msgid "ID"
 msgstr ""
 
@@ -855,7 +847,6 @@ msgstr ""
 
 #: ../admin/manage.php:64
 #: ../admin/manage.php:85
-#: ../admin/__manage.php:182
 msgid "deleted successfully"
 msgstr ""
 
@@ -896,107 +887,87 @@ msgid "created"
 msgstr ""
 
 #: ../admin/manage.php:284
-#: ../admin/__manage.php:202
 msgid "Gallery Overview"
 msgstr ""
 
 #: ../admin/manage.php:289
 #: ../admin/myimport.php:50
-#: ../admin/__manage.php:207
 msgid "Gallery name"
 msgstr ""
 
 #: ../admin/manage.php:292
 #: ../admin/myimport.php:53
-#: ../admin/__manage.php:210
 msgid "Page ID"
 msgstr ""
 
 #: ../admin/manage.php:293
 #: ../admin/myimport.php:54
-#: ../admin/__manage.php:211
 msgid "Quantity"
 msgstr ""
 
 #: ../admin/manage.php:294
 #: ../admin/manage.php:546
 #: ../admin/myimport.php:55
-#: ../admin/__manage.php:212
 msgid "Action"
 msgstr ""
 
 #: ../admin/manage.php:313
-#: ../admin/__manage.php:231
 #: ../js/nggadmintab-js.php:88
 msgid "Edit"
 msgstr ""
 
 #: ../admin/manage.php:314
-#: ../admin/__manage.php:232
 msgid "Delete this gallery ?"
 msgstr ""
 
 #: ../admin/manage.php:319
-#: ../admin/manage.php:583
+#: ../admin/manage.php:584
 #: ../admin/myimport.php:79
-#: ../admin/__manage.php:237
-#: ../admin/__manage.php:1155
 msgid "No entries found"
 msgstr ""
 
 #: ../admin/manage.php:445
-#: ../admin/__manage.php:1001
 msgid "Main settings"
 msgstr ""
 
 #: ../admin/manage.php:450
-#: ../admin/__manage.php:1007
 msgid "Page Link to"
 msgstr ""
 
 #: ../admin/manage.php:453
-#: ../admin/__manage.php:1010
 msgid "Not linked"
 msgstr ""
 
 #: ../admin/manage.php:469
-#: ../admin/__manage.php:1026
 msgid "Preview image"
 msgstr ""
 
 #: ../admin/manage.php:472
-#: ../admin/__manage.php:1029
 msgid "No Picture"
 msgstr ""
 
 #: ../admin/manage.php:487
-#: ../admin/__manage.php:1043
 msgid "Path"
 msgstr ""
 
 #: ../admin/manage.php:490
-#: ../admin/__manage.php:1045
 msgid "Create new page"
 msgstr ""
 
 #: ../admin/manage.php:493
-#: ../admin/__manage.php:1048
 msgid "Main page (No parent)"
 msgstr ""
 
 #: ../admin/manage.php:496
-#: ../admin/__manage.php:1051
 msgid "Add page"
 msgstr ""
 
 #: ../admin/manage.php:502
-#: ../admin/__manage.php:1057
 msgid "Scan Folder for new images"
 msgstr ""
 
 #: ../admin/manage.php:503
-#: ../admin/manage.php:590
-#: ../admin/__manage.php:1058
+#: ../admin/manage.php:591
 msgid "Save Changes"
 msgstr ""
 
@@ -1034,17 +1005,17 @@ msgstr ""
 
 #: ../admin/manage.php:521
 #: ../admin/manage.php:522
-#: ../admin/manage.php:608
+#: ../admin/manage.php:609
 msgid "OK"
 msgstr ""
 
 #: ../admin/manage.php:521
-#: ../admin/manage.php:608
+#: ../admin/manage.php:609
 msgid "No images selected"
 msgstr ""
 
 #: ../admin/manage.php:521
-#: ../admin/manage.php:608
+#: ../admin/manage.php:609
 #, php-format
 msgid ""
 "You are about to start the bulk edit for %s images \n"
@@ -1086,10 +1057,18 @@ msgid "View"
 msgstr ""
 
 #: ../admin/manage.php:578
+msgid "Show Meta data"
+msgstr ""
+
+#: ../admin/manage.php:578
+msgid "Meta"
+msgstr ""
+
+#: ../admin/manage.php:579
 msgid "Delete this file ?"
 msgstr ""
 
-#: ../admin/manage.php:605
+#: ../admin/manage.php:606
 msgid "Enter the tags"
 msgstr ""
 
@@ -1379,6 +1358,7 @@ msgid "Categories"
 msgstr ""
 
 #: ../admin/settings.php:131
+#: ../lib/nggmeta.lib.php:317
 msgid "Tags"
 msgstr ""
 
@@ -1847,6 +1827,39 @@ msgid ""
 "Choose [Cancel] to Stop, [OK] to Uninstall.\\n"
 msgstr ""
 
+#: ../admin/showmeta.php:7
+#: ../admin/showmeta.php:10
+msgid "Cheatin&#8217; uh?"
+msgstr ""
+
+#: ../admin/showmeta.php:42
+msgid "EXIF Data"
+msgstr ""
+
+#: ../admin/showmeta.php:47
+#: ../admin/showmeta.php:71
+#: ../admin/showmeta.php:95
+msgid "Tag"
+msgstr ""
+
+#: ../admin/showmeta.php:48
+#: ../admin/showmeta.php:72
+#: ../admin/showmeta.php:96
+msgid "Value"
+msgstr ""
+
+#: ../admin/showmeta.php:61
+msgid "No exif data"
+msgstr ""
+
+#: ../admin/showmeta.php:67
+msgid "IPTC Data"
+msgstr ""
+
+#: ../admin/showmeta.php:91
+msgid "XMP Data"
+msgstr ""
+
 #: ../admin/style.php:34
 msgid "You do not have sufficient permissions to edit templates for this blog."
 msgstr ""
@@ -1874,6 +1887,7 @@ msgid "Browsing <strong>%s</strong>"
 msgstr ""
 
 #: ../admin/style.php:99
+#: ../lib/nggmeta.lib.php:316
 msgid "Author"
 msgstr ""
 
@@ -1941,5 +1955,126 @@ msgstr ""
 msgid ""
 "Are you sure you want to delete the file '%s'?\n"
 "Click ok to delete or cancel to go back."
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:306
+msgid "Aperture"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:307
+#: ../lib/nggmeta.lib.php:332
+msgid "Credit"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:308
+msgid "Camera"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:309
+msgid "Caption"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:310
+msgid "Date/Time"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:311
+msgid "Copyright"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:312
+msgid "Focal length"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:313
+msgid "ISO"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:314
+msgid "Shutter speed"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:315
+msgid "Titel"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:318
+msgid "Subject"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:319
+msgid "Make"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:320
+msgid "Edit Status"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:321
+msgid "Category"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:322
+msgid "Keywords"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:323
+msgid "Date Created"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:324
+msgid "Time Created"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:325
+msgid "Author Position"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:326
+msgid "City"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:327
+msgid "Location"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:328
+msgid "Province/State"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:329
+msgid "Country code"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:330
+msgid "Country"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:331
+msgid "Headline"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:333
+msgid "Source"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:334
+msgid "Copyright Notice"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:335
+msgid "Contact"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:336
+msgid "Last modified"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:337
+msgid "Program tool"
+msgstr ""
+
+#: ../lib/nggmeta.lib.php:338
+msgid "Format"
 msgstr ""
 
