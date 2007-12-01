@@ -17,6 +17,7 @@ class nggImage{
     var $error			=	FALSE; 		// Error state
     var $imagePath		=	"";			// URL Path to the image
     var $thumbPath		=	"";			// URL Path to the thumbnail
+    var $absPath		=	"";			// Server Path to the image
     var $thumbPrefix	=	"";			// FolderPrefix to the thumbnail
     var $thumbFolder	=	"";			// Foldername to the thumbnail
     var $href			=	"";			// A href link code
@@ -61,6 +62,7 @@ class nggImage{
 			$this->get_thumbnail_folder($this->path, FALSE);
 			$this->imagePath 	= get_option ('siteurl')."/".$this->path."/".$this->filename;
 			$this->thumbPath 	= get_option ('siteurl')."/".$this->path.$this->thumbFolder.$this->thumbPrefix.$this->filename;
+			$this->absPath 		= WINABSPATH.$this->path."/".$this->filename;
  		}
  	}
 	
