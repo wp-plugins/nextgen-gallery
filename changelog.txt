@@ -1,7 +1,7 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
-V0.80 - soon
+V0.80 - 02.02.2008
 - NEW : SWFUpload integrated : Show upload progress and select multiple files in the file browser dialog. 
 - NEW : Progress bar for resize, watermark and thumbnail operation
 - NEW : Import Meta data from images
