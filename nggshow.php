@@ -25,18 +25,19 @@ $thumb = new ngg_Thumbnail($filepath);
 if ( isset($_GET['height']) and isset($_GET['width']))
 	$thumb->resize($_GET['width'],$_GET['height']);
 if ($mode == 'watermark') {
-	if ($ngg_options[wmType] == 'image') {
-		$thumb->watermarkImgPath = $ngg_options[wmPath];
-		$thumb->watermarkImage($ngg_options[wmPos], $ngg_options[wmXpos], $ngg_options[wmYpos]); 
+	if ($ngg_options['wmType'] == 'image') {
+		$thumb->watermarkImgPath = $ngg_options['wmPath'];
+		$thumb->watermarkImage($ngg_options['wmPos'], $ngg_options['wmXpos'], $ngg_options['wmYpos']); 
 	}
-	if ($ngg_options[wmType] == 'text') {
-		$thumb->watermarkText = $ngg_options[wmText];
-		$thumb->watermarkCreateText($ngg_options[wmColor], $ngg_options[wmFont], $ngg_options[wmSize], $ngg_options[wmOpaque]);
-		$thumb->watermarkImage($ngg_options[wmPos], $ngg_options[wmXpos], $ngg_options[wmYpos]);  
+	if ($ngg_options['wmType'] == 'text') {
+		$thumb->watermarkText = $ngg_options['wmText'];
+		$thumb->watermarkCreateText($ngg_options['wmColor'], $ngg_options['wmFont'], $ngg_options['wmSize'], $ngg_options['wmOpaque']);
+		$thumb->watermarkImage($ngg_options['wmPos'], $ngg_options['wmXpos'], $ngg_options['wmYpos']);  
 	}
 }
 if ($mode == 'web20')
 	$thumb->createReflection(40,40,50,false,'#a4a4a4');
+	
 $thumb->show();
 $thumb->destruct();
 

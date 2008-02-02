@@ -1,6 +1,6 @@
 <?php
 
-$wpconfig = realpath("../../../wp-config.php");
+$wpconfig = realpath("../../../../wp-config.php");
 
 if (!file_exists($wpconfig))  {
 	echo "Could not found wp-config.php. Error in path :\n\n".$wpconfig ;	
@@ -14,18 +14,17 @@ require_once(ABSPATH.'/wp-admin/admin.php');
 if(!current_user_can('edit_posts')) die;
 
 global $wpdb;
-$ngg_options = get_option('ngg_options');
 
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>NextGEN Gallery</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
 	<script language="javascript" type="text/javascript" src="<?php echo get_option('siteurl') ?>/wp-includes/js/tinymce/tiny_mce_popup.js"></script>
 	<script language="javascript" type="text/javascript" src="<?php echo get_option('siteurl') ?>/wp-includes/js/tinymce/utils/mctabs.js"></script>
 	<script language="javascript" type="text/javascript" src="<?php echo get_option('siteurl') ?>/wp-includes/js/tinymce/utils/form_utils.js"></script>
-	<script language="javascript" type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>js/tinymce.js"></script>
+	<script language="javascript" type="text/javascript" src="<?php echo NGGALLERY_URLPATH ?>tinymce/tinymce.js"></script>
 	<base target="_self" />
 </head>
 <body id="link" onload="tinyMCEPopup.executeOnLoad('init();');document.body.style.display='';document.getElementById('gallerytag').focus();" style="display: none">

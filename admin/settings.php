@@ -28,15 +28,31 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		update_option('ngg_options', $ngg_options);
 	 	$messagetext = '<font color="green">'.__('Update successfully','nggallery').'</font>';
 	}		
+	
+	if ( isset($_POST['clearcache']) ) {
 		
+		$path = WINABSPATH . $ngg_options['gallerypath'] . "cache/";
+		
+		if (is_dir($path))
+	    	if ($handle = opendir($path)) {
+				while (false !== ($file = readdir($handle))) {
+			    	if ($file != '.' && $file != '..') {
+			          @unlink($path."/".$file);
+	          		}
+	        	}
+	      		closedir($handle);
+			}
+		
+		$messagetext = '<font color="green">'.__('Cache cleared','nggallery').'</font>';
+	}
 	// message windows
 	if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="updated fade"><p>'.$messagetext.'</p></div>'; }
 	
 	?>
-	<link rel="stylesheet" href="<?php echo NGGALLERY_URLPATH ?>admin/js/jquery.tabs.css" type="text/css" media="print, projection, screen"/>
+	<link rel="stylesheet" href="<?php echo NGGALLERY_URLPATH ?>admin/css/jquery.tabs.css" type="text/css" media="print, projection, screen"/>
     <!-- Additional IE/Win specific style sheet (Conditional Comments) -->
     <!--[if lte IE 7]>
-    <link rel="stylesheet" href="<?php echo NGGALLERY_URLPATH ?>admin/js/jquery.tabs-ie.css" type="text/css" media="projection, screen"/>
+    <link rel="stylesheet" href="<?php echo NGGALLERY_URLPATH ?>admin/css/jquery.tabs-ie.css" type="text/css" media="projection, screen"/>
     <![endif]-->
 	<script type="text/javascript">
 		jQuery(function() {
@@ -95,12 +111,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<h2><?php _e('General Options','nggallery'); ?></h2>
 			<form name="generaloptions" method="post">
 			<?php wp_nonce_field('ngg_settings') ?>
-			<input type="hidden" name="page_options" value="gallerypath,scanfolder,deleteImg,activateTags,appendType,maxImages" />
+			<input type="hidden" name="page_options" value="gallerypath,scanfolder,deleteImg,swfUpload,usePermalinks,activateTags,appendType,maxImages" />
 			<fieldset class="options"> 
 				<table class="optiontable editform">
 					<tr valign="top">
 						<th align="left"><?php _e('Gallery path','nggallery') ?></th>
-						<td><input type="text" size="35" name="gallerypath" value="<?php echo $ngg_options[gallerypath]; ?>" title="TEST" /><br />
+						<td><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="text" size="35" name="gallerypath" value="<?php echo $ngg_options['gallerypath']; ?>" title="TEST" /><br />
 						<?php _e('This is the default path for all galleries','nggallery') ?></td>
 					</tr>
 					<!--TODO:  Later... -->
@@ -113,27 +129,37 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					-->
 					<tr valign="top">
 						<th align="left"><?php _e('Delete image files','nggallery') ?></th>
-						<td><input type="checkbox" name="deleteImg" value="1" <?php checked('1', $ngg_options[deleteImg]); ?> /><br />
+						<td><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="checkbox" name="deleteImg" value="1" <?php checked('1', $ngg_options['deleteImg']); ?> /><br />
 						<?php _e('Delete files, when removing a gallery in the database','nggallery') ?></td>
+					</tr>
+					<tr valign="top">
+						<th align="left"><?php _e('Activate batch upload','nggallery') ?></th>
+						<td><input type="checkbox" name="swfUpload" value="1" <?php checked('1', $ngg_options['swfUpload']); ?> /><br />
+						<?php _e('The batch upload requires Adobe Flash 9, disable it if you have problems','nggallery') ?></td>
+					</tr>
+					<tr valign="top">
+						<th align="left"><?php _e('Activate permalinks','nggallery') ?></th>
+						<td><input type="checkbox" name="usePermalinks" value="1" <?php checked('1', $ngg_options['usePermalinks']); ?> /><br />
+						<?php _e('When you activate this option, you need to update your permalink structure one time.','nggallery') ?></td>
 					</tr>
 				</table>
 			<legend><?php _e('Tags / Categories','nggallery') ?></legend>
 				<table class="optiontable">
 					<tr>
 						<th valign="top"><?php _e('Activate related images','nggallery') ?>:</th>
-						<td><input name="activateTags" type="checkbox" value="1" <?php checked('1', $ngg_options[activateTags]); ?> />
+						<td><input name="activateTags" type="checkbox" value="1" <?php checked('1', $ngg_options['activateTags']); ?> />
 						<?php _e('This option will append related images to every post','nggallery') ?>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Match with','nggallery') ?>:</th>
-						<td><label><input name="appendType" type="radio" value="category" <?php checked('category', $ngg_options[appendType]); ?> /> <?php _e('Categories', 'nggallery') ;?></label><br />
-						<label><input name="appendType" type="radio" value="tags" <?php checked('tags', $ngg_options[appendType]); ?> /> <?php _e('Tags', 'nggallery') ;?><?php if (version_compare($wp_version, '2.3.alpha', '<')) _e(' (require WordPress 2.3 or higher)', 'nggallery'); ?></label>
+						<td><label><input name="appendType" type="radio" value="category" <?php checked('category', $ngg_options['appendType']); ?> /> <?php _e('Categories', 'nggallery') ;?></label><br />
+						<label><input name="appendType" type="radio" value="tags" <?php checked('tags', $ngg_options['appendType']); ?> /> <?php _e('Tags', 'nggallery') ;?><?php if (version_compare($wp_version, '2.3.alpha', '<')) _e(' (require WordPress 2.3 or higher)', 'nggallery'); ?></label>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Max. number of images','nggallery') ?>:</th>
-						<td><input type="text" name="maxImages" value="<?php echo $ngg_options[maxImages] ?>" size="3" maxlength="3" /><br />
+						<td><input type="text" name="maxImages" value="<?php echo $ngg_options['maxImages'] ?>" size="3" maxlength="3" /><br />
 						<?php _e('0 will show all images','nggallery') ?>
 						</td>
 					</tr>
@@ -155,26 +181,26 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<table class="optiontable editform">
 					<tr valign="top">
 						<th align="left"><?php _e('Width x height (in pixel)','nggallery') ?></th>
-						<td><input type="text" size="4" maxlength="4" name="thumbwidth" value="<?php echo $ngg_options[thumbwidth]; ?>" /> x <input type="text" size="4" maxlength="4" name="thumbheight" value="<?php echo $ngg_options[thumbheight]; ?>" /><br />
+						<td><input type="text" size="4" maxlength="4" name="thumbwidth" value="<?php echo $ngg_options['thumbwidth']; ?>" /> x <input type="text" size="4" maxlength="4" name="thumbheight" value="<?php echo $ngg_options['thumbheight']; ?>" /><br />
 						<?php _e('These values are maximum values ','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Set fix dimension','nggallery') ?></th>
-						<td><input type="checkbox" name="thumbfix" value="1" <?php checked('1', $ngg_options[thumbfix]); ?> /><br />
+						<td><input type="checkbox" name="thumbfix" value="1" <?php checked('1', $ngg_options['thumbfix']); ?> /><br />
 						<?php _e('Ignore the aspect ratio, no portrait thumbnails','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Crop square thumbnail from image','nggallery') ?></th>
-						<td><input type="checkbox" name="thumbcrop" value="1" <?php checked('1', $ngg_options[thumbcrop]); ?> /><br />
-						<?php _e('Create square thumbnails, use only the width setting :','nggallery') ?> <?php echo $ngg_options[thumbwidth]; ?> x <?php echo $ngg_options[thumbwidth]; ?></td>
+						<td><input type="checkbox" name="thumbcrop" value="1" <?php checked('1', $ngg_options['thumbcrop']); ?> /><br />
+						<?php _e('Create square thumbnails, use only the width setting :','nggallery') ?> <?php echo $ngg_options['thumbwidth']; ?> x <?php echo $ngg_options['thumbwidth']; ?></td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Thumbnail quality','nggallery') ?></th>
-						<td><input type="text" size="3" maxlength="3" name="thumbquality" value="<?php echo $ngg_options[thumbquality]; ?>" /> %</td>
+						<td><input type="text" size="3" maxlength="3" name="thumbquality" value="<?php echo $ngg_options['thumbquality']; ?>" /> %</td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Resample Mode','nggallery') ?></th>
-						<td><input type="text" size="1" maxlength="1" name="thumbResampleMode" value="<?php echo $ngg_options[thumbResampleMode]; ?>" /><br />
+						<td><input type="text" size="1" maxlength="1" name="thumbResampleMode" value="<?php echo $ngg_options['thumbResampleMode']; ?>" /><br />
 						<?php _e('Value between 1-5 (higher value, more CPU load)','nggallery') ?></td>
 					</tr>
 				</table>
@@ -189,26 +215,40 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<h2><?php _e('Image settings','nggallery'); ?></h2>
 			<form name="imagesettings" method="POST" action="<?php echo $filepath.'#images'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
-			<input type="hidden" name="page_options" value="imgResize,imgWidth,imgHeight,imgQuality,imgResampleMode" />
+			<input type="hidden" name="page_options" value="imgResize,imgWidth,imgHeight,imgQuality,imgResampleMode,imgCacheSinglePic" />
 			<fieldset class="options"> 
 				<table class="optiontable">
 					<tr valign="top">
 						<th scope="row"><label for="fixratio"><?php _e('Resize Images','nggallery') ?></label></th>
 						<!--TODO: checkbox fixratio can be used later -->
-						<td><input type="hidden" name="imgResize" value="1" <?php checked('1', $ngg_options[imgResize]); ?> /> </td>
-						<td><input type="text" size="5" name="imgWidth" value="<?php echo $ngg_options[imgWidth]; ?>" /> x <input type="text" size="5" name="imgHeight" value="<?php echo $ngg_options[imgHeight]; ?>" /><br />
+						<td><input type="hidden" name="imgResize" value="1" <?php checked('1', $ngg_options['imgResize']); ?> /> </td>
+						<td><input type="text" size="5" name="imgWidth" value="<?php echo $ngg_options['imgWidth']; ?>" /> x <input type="text" size="5" name="imgHeight" value="<?php echo $ngg_options['imgHeight']; ?>" /><br />
 						<?php _e('Width x height (in pixel). NextGEN Gallery will keep ratio size','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Image quality','nggallery') ?></th>
 						<td></td>
-						<td><input type="text" size="3" maxlength="3" name="imgQuality" value="<?php echo $ngg_options[imgQuality]; ?>" /> %</td>
+						<td><input type="text" size="3" maxlength="3" name="imgQuality" value="<?php echo $ngg_options['imgQuality']; ?>" /> %</td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Resample Mode','nggallery') ?></th>
 						<td></td>
-						<td><input type="text" size="1" maxlength="1" name="imgResampleMode" value="<?php echo $ngg_options[imgResampleMode]; ?>" /><br />
+						<td><input type="text" size="1" maxlength="1" name="imgResampleMode" value="<?php echo $ngg_options['imgResampleMode']; ?>" /><br />
 						<?php _e('Value between 1-5 (higher value, more CPU load)','nggallery') ?></td>
+					</tr>
+				</table>
+				<legend><?php _e('Single picture','nggallery') ?></legend>
+				<table class="optiontable">
+					<tr valign="top">
+						<th align="left"><?php _e('Cache single pictures','nggallery') ?></th>
+						<td></td>
+						<td><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="checkbox" name="imgCacheSinglePic" value="1" <?php checked('1', $ngg_options['imgCacheSinglePic']); ?> />
+						<?php _e('Creates a file for each singlepic settings. Reduce the CPU load','nggallery') ?></td>
+					</tr>
+					<tr valign="top">
+						<th align="left"><?php _e('Clear cache folder','nggallery') ?></th>
+						<td></td>
+						<td><input type="submit" name="clearcache" value="<?php _e('Proceed now','nggallery') ;?> &raquo;"/></td>
 					</tr>
 				</table>
 			<div class="submit"><input type="submit" name="updateoption" value="<?php _e('Update') ;?> &raquo;"/></div>
@@ -227,45 +267,45 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<table class="optiontable">
 					<tr>
 						<th valign="top"><?php _e('Activate jQuery navigation','nggallery') ?>:</th>
-						<td><input name="galUsejQuery" type="checkbox" value="1" <?php checked('1', $ngg_options[galUsejQuery]); ?> />
+						<td><input name="galUsejQuery" type="checkbox" value="1" <?php checked('1', $ngg_options['galUsejQuery']); ?> />
 						<?php _e('Please note : This is still experimental. Requires the Thickbox effect','nggallery') ?>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Deactivate gallery page link','nggallery') ?>:</th>
-						<td><input name="galNoPages" type="checkbox" value="1" <?php checked('1', $ngg_options[galNoPages]); ?> />
+						<td><input name="galNoPages" type="checkbox" value="1" <?php checked('1', $ngg_options['galNoPages']); ?> />
 						<?php _e('The album will not link to a gallery subpage. The gallery is shown on the same page.','nggallery') ?>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Number of images per page','nggallery') ?>:</th>
-						<td><input type="text" name="galImages" value="<?php echo $ngg_options[galImages] ?>" size="3" maxlength="3" /><br />
+						<td><input type="text" name="galImages" value="<?php echo $ngg_options['galImages'] ?>" size="3" maxlength="3" /><br />
 						<?php _e('0 will disable pagination, all images on one page','nggallery') ?>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Integrate slideshow','nggallery') ?>:</th>
-						<td><input name="galShowSlide" type="checkbox" value="1" <?php checked('1', $ngg_options[galShowSlide]); ?> />
-							<input type="text" name="galTextSlide" value="<?php echo $ngg_options[galTextSlide] ?>" size="20" />
-							<input type="text" name="galTextGallery" value="<?php echo $ngg_options[galTextGallery] ?>" size="20" />
+						<td><input name="galShowSlide" type="checkbox" value="1" <?php checked('1', $ngg_options['galShowSlide']); ?> />
+							<input type="text" name="galTextSlide" value="<?php echo $ngg_options['galTextSlide'] ?>" size="20" />
+							<input type="text" name="galTextGallery" value="<?php echo $ngg_options['galTextGallery'] ?>" size="20" />
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Show first','nggallery') ?>:</th>
-						<td><label><input name="galShowOrder" type="radio" value="gallery" <?php checked('gallery', $ngg_options[galShowOrder]); ?> /> <?php _e('Thumbnails', 'nggallery') ;?></label><br />
-						<label><input name="galShowOrder" type="radio" value="slide" <?php checked('slide', $ngg_options[galShowOrder]); ?> /> <?php _e('Slideshow', 'nggallery') ;?></label>
+						<td><label><input name="galShowOrder" type="radio" value="gallery" <?php checked('gallery', $ngg_options['galShowOrder']); ?> /> <?php _e('Thumbnails', 'nggallery') ;?></label><br />
+						<label><input name="galShowOrder" type="radio" value="slide" <?php checked('slide', $ngg_options['galShowOrder']); ?> /> <?php _e('Slideshow', 'nggallery') ;?></label>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Show thumbnail description','nggallery') ?>:</th>
-						<td><label><input name="galShowDesc" type="radio" value="none" <?php checked('none', $ngg_options[galShowDesc]); ?> /> <?php _e('None', 'nggallery') ;?></label><br />
-						<label><input name="galShowDesc" type="radio" value="desc" <?php checked('desc', $ngg_options[galShowDesc]); ?> /> <?php _e('Description text', 'nggallery') ;?></label><br />
-						<label><input name="galShowDesc" type="radio" value="alttext" <?php checked('alttext', $ngg_options[galShowDesc]); ?> /> <?php _e('Alt / Title text', 'nggallery') ;?></label>
+						<td><label><input name="galShowDesc" type="radio" value="none" <?php checked('none', $ngg_options['galShowDesc']); ?> /> <?php _e('None', 'nggallery') ;?></label><br />
+						<label><input name="galShowDesc" type="radio" value="desc" <?php checked('desc', $ngg_options['galShowDesc']); ?> /> <?php _e('Description text', 'nggallery') ;?></label><br />
+						<label><input name="galShowDesc" type="radio" value="alttext" <?php checked('alttext', $ngg_options['galShowDesc']); ?> /> <?php _e('Alt / Title text', 'nggallery') ;?></label>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Show ImageBrowser','nggallery') ?>:</th>
-						<td><input name="galImgBrowser" type="checkbox" value="1" <?php checked('1', $ngg_options[galImgBrowser]); ?> />
+						<td><input name="galImgBrowser" type="checkbox" value="1" <?php checked('1', $ngg_options['galImgBrowser']); ?> />
 						<?php _e('The gallery will open the ImageBrowser instead the effect.','nggallery') ?>
 						</td>
 					</tr>
@@ -274,15 +314,15 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<table class="optiontable">
 					<tr>
 						<th valign="top"><?php _e('Sort thumbnails','nggallery') ?>:</th>
-						<td><label><input name="galSort" type="radio" value="pid" <?php checked('pid', $ngg_options[galSort]); ?> /> <?php _e('Image ID', 'nggallery') ;?></label><br />
-						<label><input name="galSort" type="radio" value="filename" <?php checked('filename', $ngg_options[galSort]); ?> /> <?php _e('File name', 'nggallery') ;?></label><br />
-						<label><input name="galSort" type="radio" value="alttext" <?php checked('alttext', $ngg_options[galSort]); ?> /> <?php _e('Alt / Title text', 'nggallery') ;?></label>
+						<td><label><input name="galSort" type="radio" value="pid" <?php checked('pid', $ngg_options['galSort']); ?> /> <?php _e('Image ID', 'nggallery') ;?></label><br />
+						<label><input name="galSort" type="radio" value="filename" <?php checked('filename', $ngg_options['galSort']); ?> /> <?php _e('File name', 'nggallery') ;?></label><br />
+						<label><input name="galSort" type="radio" value="alttext" <?php checked('alttext', $ngg_options['galSort']); ?> /> <?php _e('Alt / Title text', 'nggallery') ;?></label>
 						</td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Sort direction','nggallery') ?>:</th>
-						<td><label><input name="galSortDir" type="radio" value="ASC" <?php checked('ASC', $ngg_options[galSortDir]); ?> /> <?php _e('Ascending', 'nggallery') ;?></label><br />
-						<label><input name="galSortDir" type="radio" value="DESC" <?php checked('DESC', $ngg_options[galSortDir]); ?> /> <?php _e('Descending', 'nggallery') ;?></label>
+						<td><label><input name="galSortDir" type="radio" value="ASC" <?php checked('ASC', $ngg_options['galSortDir']); ?> /> <?php _e('Ascending', 'nggallery') ;?></label><br />
+						<label><input name="galSortDir" type="radio" value="DESC" <?php checked('DESC', $ngg_options['galSortDir']); ?> /> <?php _e('Descending', 'nggallery') ;?></label>
 						</td>
 					</tr>
 				</table>
@@ -306,28 +346,28 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<th><?php _e('JavaScript Thumbnail effect','nggallery') ?>:</th>
 						<td>
 						<select size="1" id="thumbEffect" name="thumbEffect" onchange="insertcode(this.value)">
-							<option value="none" <?php selected('none', $ngg_options[thumbEffect]); ?> ><?php _e('None', 'nggallery') ;?></option>
-							<option value="thickbox" <?php selected('thickbox', $ngg_options[thumbEffect]); ?> ><?php _e('Thickbox', 'nggallery') ;?></option>
-							<option value="lightbox" <?php selected('lightbox', $ngg_options[thumbEffect]); ?> ><?php _e('Lightbox', 'nggallery') ;?></option>
-							<option value="highslide" <?php selected('highslide', $ngg_options[thumbEffect]); ?> ><?php _e('Highslide', 'nggallery') ;?></option>
-							<option value="shutter" <?php selected('shutter', $ngg_options[thumbEffect]); ?> ><?php _e('Shutter', 'nggallery') ;?></option>
-							<option value="custom" <?php selected('custom', $ngg_options[thumbEffect]); ?> ><?php _e('Custom', 'nggallery') ;?></option>
+							<option value="none" <?php selected('none', $ngg_options['thumbEffect']); ?> ><?php _e('None', 'nggallery') ;?></option>
+							<option value="thickbox" <?php selected('thickbox', $ngg_options['thumbEffect']); ?> ><?php _e('Thickbox', 'nggallery') ;?></option>
+							<option value="lightbox" <?php selected('lightbox', $ngg_options['thumbEffect']); ?> ><?php _e('Lightbox', 'nggallery') ;?></option>
+							<option value="highslide" <?php selected('highslide', $ngg_options['thumbEffect']); ?> ><?php _e('Highslide', 'nggallery') ;?></option>
+							<option value="shutter" <?php selected('shutter', $ngg_options['thumbEffect']); ?> ><?php _e('Shutter', 'nggallery') ;?></option>
+							<option value="custom" <?php selected('custom', $ngg_options['thumbEffect']); ?> ><?php _e('Custom', 'nggallery') ;?></option>
 						</select>
 						</td>
 					</tr>
 					<tr valign="top">
 						<th><?php _e('Link Code line','nggallery') ?> :</th>
-						<td><textarea id="thumbCode" name="thumbCode" cols="50" rows="5"><?php echo htmlspecialchars(stripslashes($ngg_options[thumbCode])); ?></textarea></td>
+						<td><textarea id="thumbCode" name="thumbCode" cols="50" rows="5"><?php echo htmlspecialchars(stripslashes($ngg_options['thumbCode'])); ?></textarea></td>
 					</tr>
 				</table>
 				
-				<div id="tbImage" <?php if ($ngg_options[thumbEffect] != 'thickbox') echo 'style="display:none"'?> >
+				<div id="tbImage" <?php if ($ngg_options['thumbEffect'] != 'thickbox') echo 'style="display:none"'?> >
 				<table class="optiontable">
 					<tr valign="top">
 						<th><?php _e('Select loading image','nggallery') ?> :</th>
 						<td>
-						<label><input name="thickboxImage" id="v2" type="radio" title="Version 2" value="loadingAnimationv2.gif" <?php checked('loadingAnimationv2.gif', $ngg_options[thickboxImage]); ?> /></label> <img src="<?php echo NGGALLERY_URLPATH.'thickbox/loadingAnimationv2.gif' ?>" alt="Version 2" />
-						<label><input name="thickboxImage" id="v3" type="radio" title="Version 3" value="loadingAnimationv3.gif" <?php checked('loadingAnimationv3.gif', $ngg_options[thickboxImage]); ?> /></label> <img src="<?php echo NGGALLERY_URLPATH.'thickbox/loadingAnimationv3.gif' ?>" alt="Version 3" />
+						<label><input name="thickboxImage" id="v2" type="radio" title="Version 2" value="loadingAnimationv2.gif" <?php checked('loadingAnimationv2.gif', $ngg_options['thickboxImage']); ?> /></label> <img src="<?php echo NGGALLERY_URLPATH.'thickbox/loadingAnimationv2.gif' ?>" alt="Version 2" />
+						<label><input name="thickboxImage" id="v3" type="radio" title="Version 3" value="loadingAnimationv3.gif" <?php checked('loadingAnimationv3.gif', $ngg_options['thickboxImage']); ?> /></label> <img src="<?php echo NGGALLERY_URLPATH.'thickbox/loadingAnimationv3.gif' ?>" alt="Version 3" />
 						</td>
 					</tr>
 				</table>
@@ -362,19 +402,19 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<strong><?php _e('Position','nggallery') ?></strong><br />
 						<table border="1">
 						<tr>
-							<td><input type="radio" name="wmPos" value="topLeft" <?php checked('topLeft', $ngg_options[wmPos]); ?> /></td>
-							<td><input type="radio" name="wmPos" value="topCenter" <?php checked('topCenter', $ngg_options[wmPos]); ?> /></td>
-							<td><input type="radio" name="wmPos" value="topRight" <?php checked('topRight', $ngg_options[wmPos]); ?> /></td>
+							<td><input type="radio" name="wmPos" value="topLeft" <?php checked('topLeft', $ngg_options['wmPos']); ?> /></td>
+							<td><input type="radio" name="wmPos" value="topCenter" <?php checked('topCenter', $ngg_options['wmPos']); ?> /></td>
+							<td><input type="radio" name="wmPos" value="topRight" <?php checked('topRight', $ngg_options['wmPos']); ?> /></td>
 						</tr>
 						<tr>
-							<td><input type="radio" name="wmPos" value="midLeft" <?php checked('midLeft', $ngg_options[wmPos]); ?> /></td>
-							<td><input type="radio" name="wmPos" value="midCenter" <?php checked('midCenter', $ngg_options[wmPos]); ?> /></td>
-							<td><input type="radio" name="wmPos" value="midRight" <?php checked('midRight', $ngg_options[wmPos]); ?> /></td>
+							<td><input type="radio" name="wmPos" value="midLeft" <?php checked('midLeft', $ngg_options['wmPos']); ?> /></td>
+							<td><input type="radio" name="wmPos" value="midCenter" <?php checked('midCenter', $ngg_options['wmPos']); ?> /></td>
+							<td><input type="radio" name="wmPos" value="midRight" <?php checked('midRight', $ngg_options['wmPos']); ?> /></td>
 						</tr>
 						<tr>
-							<td><input type="radio" name="wmPos" value="botLeft" <?php checked('botLeft', $ngg_options[wmPos]); ?> /></td>
-							<td><input type="radio" name="wmPos" value="botCenter" <?php checked('botCenter', $ngg_options[wmPos]); ?> /></td>
-							<td><input type="radio" name="wmPos" value="botRight" <?php checked('botRight', $ngg_options[wmPos]); ?> /></td>
+							<td><input type="radio" name="wmPos" value="botLeft" <?php checked('botLeft', $ngg_options['wmPos']); ?> /></td>
+							<td><input type="radio" name="wmPos" value="botCenter" <?php checked('botCenter', $ngg_options['wmPos']); ?> /></td>
+							<td><input type="radio" name="wmPos" value="botRight" <?php checked('botRight', $ngg_options['wmPos']); ?> /></td>
 						</tr>
 						</table>
 					</td>
@@ -383,11 +423,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<table border="0">
 							<tr>
 								<td>x</td>
-								<td><input type="text" name="wmXpos" value="<?php echo $ngg_options[wmXpos] ?>" size="4" /> px</td>
+								<td><input type="text" name="wmXpos" value="<?php echo $ngg_options['wmXpos'] ?>" size="4" /> px</td>
 							</tr>
 							<tr>
 								<td>y</td>
-								<td><input type="text" name="wmYpos" value="<?php echo $ngg_options[wmYpos] ?>" size="4" /> px</td>
+								<td><input type="text" name="wmYpos" value="<?php echo $ngg_options['wmYpos'] ?>" size="4" /> px</td>
 							</tr>
 						</table>
 					</td>
@@ -397,54 +437,56 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<fieldset class="options">
 				<table class="optiontable" border="0">
 					<tr>
-						<td align="left" colspan="2"><label><input type="radio" name="wmType" value="image" <?php checked('image', $ngg_options[wmType]); ?> /> <?php _e('Use image as watermark','nggallery') ?></label></td>
+						<td align="left" colspan="2"><label><input type="radio" name="wmType" value="image" <?php checked('image', $ngg_options['wmType']); ?> /> <?php _e('Use image as watermark','nggallery') ?></label></td>
 					</tr>
 					<tr>
 						<th><?php _e('URL to file','nggallery') ?> :</th>
-						<td><input type="text" size="40" name="wmPath" value="<?php echo $ngg_options[wmPath]; ?>" /><br />
+						<td><input type="text" size="40" name="wmPath" value="<?php echo $ngg_options['wmPath']; ?>" /><br />
 						<?php if(!ini_get('allow_url_fopen')) _e('The accessing of URL files is disabled at your server (allow_url_fopen)','nggallery') ?> </td>
 					</tr>
 					<tr>
 						<td colspan="2"><hr /></td>
 					</tr>
 					<tr>
-						<td align="left" colspan="2"><label><input type="radio" name="wmType" value="text" <?php checked('text', $ngg_options[wmType]); ?> /> <?php _e('Use text as watermark','nggallery') ?></label></td>
+						<td align="left" colspan="2"><label><input type="radio" name="wmType" value="text" <?php checked('text', $ngg_options['wmType']); ?> /> <?php _e('Use text as watermark','nggallery') ?></label></td>
 					</tr>
 					<tr>
 						<th><?php _e('Font','nggallery') ?>:</th>
 						<td><select name="wmFont" size="1">	<?php 
 								$fontlist = ngg_get_TTFfont();
 								foreach ( $fontlist as $fontfile ) {
-									echo "\n".'<option value="'.$fontfile.'" '.ngg_input_selected($fontfile, $ngg_options[wmFont]).' >'.$fontfile.'</option>';
+									echo "\n".'<option value="'.$fontfile.'" '.ngg_input_selected($fontfile, $ngg_options['wmFont']).' >'.$fontfile.'</option>';
 								}
 								?>
 							</select><br />
-							<?php _e('You can upload more fonts in the folder <strong>nggallery/fonts</strong>','nggallery') ?>
+							<?php if ( !function_exists(ImageTTFBBox) ) 
+									_e('This function will not work, cause you need the FreeType library','nggallery');
+								  else 
+								  	_e('You can upload more fonts in the folder <strong>nggallery/fonts</strong>','nggallery'); ?>
 						</td>
 					</tr>
 					<tr>
 						<th><?php _e('Size','nggallery') ?>:</th>
-						<td><input type="text" name="wmSize" value="<?php echo $ngg_options[wmSize] ?>" size="4" maxlength="2" /> px</td>
+						<td><input type="text" name="wmSize" value="<?php echo $ngg_options['wmSize'] ?>" size="4" maxlength="2" /> px</td>
 					</tr>
 					<tr>
 						<th><?php _e('Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="wmColor" name="wmColor" onchange="setcolor('#previewText', this.value)" value="<?php echo $ngg_options[wmColor] ?>" />
-						<input type="text" size="1" readonly="readonly" id="previewText" style="background-color: #<?php echo $ngg_options[wmColor] ?>" /> <?php _e('(hex w/o #)','nggallery') ?></td>
+						<td><input type="text" size="6" maxlength="6" id="wmColor" name="wmColor" onchange="setcolor('#previewText', this.value)" value="<?php echo $ngg_options['wmColor'] ?>" />
+						<input type="text" size="1" readonly="readonly" id="previewText" style="background-color: #<?php echo $ngg_options['wmColor'] ?>" /> <?php _e('(hex w/o #)','nggallery') ?></td>
 					</tr>
 					<tr>
 						<th valign="top"><?php _e('Text','nggallery') ?>:</th>
-						<td><textarea name="wmText" cols="40" rows="4"><?php echo $ngg_options[wmText] ?></textarea></td>
+						<td><textarea name="wmText" cols="40" rows="4"><?php echo $ngg_options['wmText'] ?></textarea></td>
 					</tr>
 					<tr>
 						<th><?php _e('Opaque','nggallery') ?>:</th>
-						<td><input type="text" name="wmOpaque" value="<?php echo $ngg_options[wmOpaque] ?>" size="3" maxlength="3" /> % </td>
+						<td><input type="text" name="wmOpaque" value="<?php echo $ngg_options['wmOpaque'] ?>" size="3" maxlength="3" /> % </td>
 					</tr>
 				</table>
 			</fieldset>
 			<div class="clear"> &nbsp; </div>
 			<div class="submit"><input type="submit" name="updateoption" value="<?php _e('Update') ;?> &raquo;"/></div>
 			</form>	
-			<center>Based on Marekki's Watermark plugin</center>
 		</div>
 		
 		<!-- Slideshow settings -->
@@ -452,96 +494,101 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<div id="slideshow">
 		<form name="player_options" method="POST" action="<?php echo $filepath.'#slideshow'; ?>" >
 		<?php wp_nonce_field('ngg_settings') ?>
-		<input type="hidden" name="page_options" value="irWidth,irHeight,irShuffle,irLinkfromdisplay,irShownavigation,irShowicons,irWatermark,irOverstretch,irRotatetime,irTransition,irKenburns,irBackcolor,irFrontcolor,irLightcolor,irAudio,irXHTMLvalid" />
+		<input type="hidden" name="page_options" value="irWidth,irHeight,irShuffle,irLinkfromdisplay,irShownavigation,irShowicons,irWatermark,irOverstretch,irRotatetime,irTransition,irKenburns,irBackcolor,irFrontcolor,irLightcolor,irScreencolor,irAudio,irXHTMLvalid" />
 		<h2><?php _e('Slideshow','nggallery'); ?></h2>
 		<fieldset class="options">
 		<?php if (!NGGALLERY_IREXIST) { ?><p><div id="message" class="error fade"><p><?php _e('The imagerotator.swf is not in the nggallery folder, the slideshow will not work.','nggallery') ?></p></div></p><?php }?>
-		<p><?php _e('The settings are used in the JW Image Rotator Version 3.9 .', 'nggallery') ?> 
+		<p><?php _e('The settings are used in the JW Image Rotator Version 3.13 .', 'nggallery') ?> 
 		   <?php _e('See more information for the Flash Player on the web page', 'nggallery') ?> <a href="http://www.jeroenwijering.com/?item=JW_Image_Rotator" target="_blank">JW Image Rotator from Jeroen Wijering</a>.</p>
 				<table class="optiontable" border="0" >
 					<tr>
 						<th><?php _e('Default size (W x H)','nggallery') ?>:</th>
-						<td><input type="text" size="3" maxlength="4" name="irWidth" value="<?php echo $ngg_options[irWidth] ?>" /> x
-						<input type="text" size="3" maxlength="4" name="irHeight" value="<?php echo $ngg_options[irHeight] ?>" /></td>
+						<td><input type="text" size="3" maxlength="4" name="irWidth" value="<?php echo $ngg_options['irWidth'] ?>" /> x
+						<input type="text" size="3" maxlength="4" name="irHeight" value="<?php echo $ngg_options['irHeight'] ?>" /></td>
 					</tr>					
 					<tr>
 						<th><?php _e('Shuffle mode','nggallery') ?>:</th>
-						<td><input name="irShuffle" type="checkbox" value="1" <?php checked('1', $ngg_options[irShuffle]); ?> /></td>
+						<td><input name="irShuffle" type="checkbox" value="1" <?php checked('1', $ngg_options['irShuffle']); ?> /></td>
 					</tr>
 					<tr>
 						<th><?php _e('Show next image on click','nggallery') ?>:</th>
-						<td><input name="irLinkfromdisplay" type="checkbox" value="1" <?php checked('1', $ngg_options[irLinkfromdisplay]); ?> /></td>
+						<td><input name="irLinkfromdisplay" type="checkbox" value="1" <?php checked('1', $ngg_options['irLinkfromdisplay']); ?> /></td>
 					</tr>					
 					<tr>
 						<th><?php _e('Show navigation bar','nggallery') ?>:</th>
-						<td><input name="irShownavigation" type="checkbox" value="1" <?php checked('1', $ngg_options[irShownavigation]); ?> /></td>
+						<td><input name="irShownavigation" type="checkbox" value="1" <?php checked('1', $ngg_options['irShownavigation']); ?> /></td>
 					</tr>
 					<tr>
 						<th><?php _e('Show loading icon','nggallery') ?>:</th>
-						<td><input name="irShowicons" type="checkbox" value="1" <?php checked('1', $ngg_options[irShowicons]); ?> /></td>
+						<td><input name="irShowicons" type="checkbox" value="1" <?php checked('1', $ngg_options['irShowicons']); ?> /></td>
 					</tr>
 					<tr>
 						<th><?php _e('Use watermark logo','nggallery') ?>:</th>
-						<td><input name="irWatermark" type="checkbox" value="1" <?php checked('1', $ngg_options[irWatermark]); ?> />
+						<td><input name="irWatermark" type="checkbox" value="1" <?php checked('1', $ngg_options['irWatermark']); ?> />
 						<?php _e('You can change the logo at the watermark settings','nggallery') ?></td>
 					</tr>
 					<tr>
 						<th><?php _e('Stretch image','nggallery') ?>:</th>
 						<td>
 						<select size="1" name="irOverstretch">
-							<option value="true" <?php selected('true', $ngg_options[irOverstretch]); ?> ><?php _e('true', 'nggallery') ;?></option>
-							<option value="false" <?php selected('false', $ngg_options[irOverstretch]); ?> ><?php _e('false', 'nggallery') ;?></option>
-							<option value="fit" <?php selected('fit', $ngg_options[irOverstretch]); ?> ><?php _e('fit', 'nggallery') ;?></option>
-							<option value="none" <?php selected('none', $ngg_options[irOverstretch]); ?> ><?php _e('none', 'nggallery') ;?></option>
+							<option value="true" <?php selected('true', $ngg_options['irOverstretch']); ?> ><?php _e('true', 'nggallery') ;?></option>
+							<option value="false" <?php selected('false', $ngg_options['irOverstretch']); ?> ><?php _e('false', 'nggallery') ;?></option>
+							<option value="fit" <?php selected('fit', $ngg_options['irOverstretch']); ?> ><?php _e('fit', 'nggallery') ;?></option>
+							<option value="none" <?php selected('none', $ngg_options['irOverstretch']); ?> ><?php _e('none', 'nggallery') ;?></option>
 						</select>
 						</td>
 					</tr>
 					<tr>					
 						<th><?php _e('Duration time','nggallery') ?>:</th>
-						<td><input type="text" size="3" maxlength="3" name="irRotatetime" value="<?php echo $ngg_options[irRotatetime] ?>" /> <?php _e('sec.', 'nggallery') ;?></td>
+						<td><input type="text" size="3" maxlength="3" name="irRotatetime" value="<?php echo $ngg_options['irRotatetime'] ?>" /> <?php _e('sec.', 'nggallery') ;?></td>
 					</tr>					
 					<tr>					
 						<th><?php _e('Transition / Fade effect','nggallery') ?>:</th>
 						<td>
 						<select size="1" name="irTransition">
-							<option value="fade" <?php selected('fade', $ngg_options[irTransition]); ?> ><?php _e('fade', 'nggallery') ;?></option>
-							<option value="bgfade" <?php selected('bgfade', $ngg_options[irTransition]); ?> ><?php _e('bgfade', 'nggallery') ;?></option>
-							<option value="slowfade" <?php selected('slowfade', $ngg_options[irTransition]); ?> ><?php _e('slowfade', 'nggallery') ;?></option>
-							<option value="circles" <?php selected('circles', $ngg_options[irTransition]); ?> ><?php _e('circles', 'nggallery') ;?></option>
-							<option value="bubbles" <?php selected('bubbles', $ngg_options[irTransition]); ?> ><?php _e('bubbles', 'nggallery') ;?></option>
-							<option value="blocks" <?php selected('blocks', $ngg_options[irTransition]); ?> ><?php _e('blocks', 'nggallery') ;?></option>
-							<option value="fluids" <?php selected('fluids', $ngg_options[irTransition]); ?> ><?php _e('fluids', 'nggallery') ;?></option>
-							<option value="flash" <?php selected('flash', $ngg_options[irTransition]); ?> ><?php _e('flash', 'nggallery') ;?></option>
-							<option value="lines" <?php selected('lines', $ngg_options[irTransition]); ?> ><?php _e('lines', 'nggallery') ;?></option>
-							<option value="random" <?php selected('random', $ngg_options[irTransition]); ?> ><?php _e('random', 'nggallery') ;?></option>
+							<option value="fade" <?php selected('fade', $ngg_options['irTransition']); ?> ><?php _e('fade', 'nggallery') ;?></option>
+							<option value="bgfade" <?php selected('bgfade', $ngg_options['irTransition']); ?> ><?php _e('bgfade', 'nggallery') ;?></option>
+							<option value="slowfade" <?php selected('slowfade', $ngg_options['irTransition']); ?> ><?php _e('slowfade', 'nggallery') ;?></option>
+							<option value="circles" <?php selected('circles', $ngg_options['irTransition']); ?> ><?php _e('circles', 'nggallery') ;?></option>
+							<option value="bubbles" <?php selected('bubbles', $ngg_options['irTransition']); ?> ><?php _e('bubbles', 'nggallery') ;?></option>
+							<option value="blocks" <?php selected('blocks', $ngg_options['irTransition']); ?> ><?php _e('blocks', 'nggallery') ;?></option>
+							<option value="fluids" <?php selected('fluids', $ngg_options['irTransition']); ?> ><?php _e('fluids', 'nggallery') ;?></option>
+							<option value="flash" <?php selected('flash', $ngg_options['irTransition']); ?> ><?php _e('flash', 'nggallery') ;?></option>
+							<option value="lines" <?php selected('lines', $ngg_options['irTransition']); ?> ><?php _e('lines', 'nggallery') ;?></option>
+							<option value="random" <?php selected('random', $ngg_options['irTransition']); ?> ><?php _e('random', 'nggallery') ;?></option>
 						</select>
 					</tr>
 					<tr>
 						<th><?php _e('Use slow zooming effect','nggallery') ?>:</th>
-						<td><input name="irKenburns" type="checkbox" value="1" <?php checked('1', $ngg_options[irKenburns]); ?> /></td>
+						<td><input name="irKenburns" type="checkbox" value="1" <?php checked('1', $ngg_options['irKenburns']); ?> /></td>
 					</tr>
 					<tr>
 						<th><?php _e('Background Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="irBackcolor" name="irBackcolor" onchange="setcolor('#previewBack', this.value)" value="<?php echo $ngg_options[irBackcolor] ?>" />
-						<input type="text" size="1" readonly="readonly" id="previewBack" style="background-color: #<?php echo $ngg_options[irBackcolor] ?>" /></td>
+						<td><input type="text" size="6" maxlength="6" id="irBackcolor" name="irBackcolor" onchange="setcolor('#previewBack', this.value)" value="<?php echo $ngg_options['irBackcolor'] ?>" />
+						<input type="text" size="1" readonly="readonly" id="previewBack" style="background-color: #<?php echo $ngg_options['irBackcolor'] ?>" /></td>
 					</tr>
 					<tr>					
 						<th><?php _e('Texts / Buttons Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="irFrontcolor" name="irFrontcolor" onchange="setcolor('#previewFront', this.value)" value="<?php echo $ngg_options[irFrontcolor] ?>" />
-						<input type="text" size="1" readonly="readonly" id="previewFront" style="background-color: #<?php echo $ngg_options[irFrontcolor] ?>" /></td>
+						<td><input type="text" size="6" maxlength="6" id="irFrontcolor" name="irFrontcolor" onchange="setcolor('#previewFront', this.value)" value="<?php echo $ngg_options['irFrontcolor'] ?>" />
+						<input type="text" size="1" readonly="readonly" id="previewFront" style="background-color: #<?php echo $ngg_options['irFrontcolor'] ?>" /></td>
 					</tr>
 					<tr>					
 						<th><?php _e('Rollover / Active Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="irLightcolor" name="irLightcolor" onchange="setcolor('#previewLight', this.value)" value="<?php echo $ngg_options[irLightcolor] ?>" />
-						<input type="text" size="1" readonly="readonly" id="previewLight" style="background-color: #<?php echo $ngg_options[irLightcolor] ?>" /></td>
+						<td><input type="text" size="6" maxlength="6" id="irLightcolor" name="irLightcolor" onchange="setcolor('#previewLight', this.value)" value="<?php echo $ngg_options['irLightcolor'] ?>" />
+						<input type="text" size="1" readonly="readonly" id="previewLight" style="background-color: #<?php echo $ngg_options['irLightcolor'] ?>" /></td>
+					</tr>
+					<tr>					
+						<th><?php _e('Screen Color','nggallery') ?>:</th>
+						<td><input type="text" size="6" maxlength="6" id="irScreencolor" name="irScreencolor" onchange="setcolor('#previewScreen', this.value)" value="<?php echo $ngg_options['irScreencolor'] ?>" />
+						<input type="text" size="1" readonly="readonly" id="previewScreen" style="background-color: #<?php echo $ngg_options['irScreencolor'] ?>" /></td>
 					</tr>
 					<tr>					
 						<th><?php _e('Background music (URL)','nggallery') ?>:</th>
-						<td><input type="text" size="50" id="irAudio" name="irAudio" value="<?php echo $ngg_options[irAudio] ?>" /></td>
+						<td><input type="text" size="50" id="irAudio" name="irAudio" value="<?php echo $ngg_options['irAudio'] ?>" /></td>
 					</tr>
 					<tr>
 						<th><?php _e('Try XHTML validation (with CDATA)','nggallery') ?>:</th>
-						<td><input name="irXHTMLvalid" type="checkbox" value="1" <?php checked('1', $ngg_options[irXHTMLvalid]); ?> />
+						<td><input name="irXHTMLvalid" type="checkbox" value="1" <?php checked('1', $ngg_options['irXHTMLvalid']); ?> />
 						<?php _e('Important : Could causes problem at some browser. Please recheck your page.','nggallery') ?></td>
 					</tr>
 					</table>

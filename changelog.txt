@@ -1,6 +1,46 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.80 - soon
+- NEW : SWFUpload integrated : Show upload progress and select multiple files in the file browser dialog. 
+- NEW : Progress bar for resize, watermark and thumbnail operation
+- NEW : Import Meta data from images
+- NEW : Show Meta data information
+- NEW : Cache option for SinglePic
+- NEW : Permalink support
+- NEW : Custom fields support - Change the settings for each post/page
+- Changed : Up to 10 Widgets, exclude galleries from random/recent images. 
+- Changed : Refactor permission check for Safe-Mode Check and mkdir/chmod
+- Changed : Admin CSS in new folder/file for better structure
+- Changed : Clean up folder structure
+- Changed : Clean up code in manage.php, functions.php
+- Changed : Moved several functions into nggAdmin Class (functions.php)
+- Changed : Update to jQuery V1.1.4 (v1.2.1 causes problems with interface.js)
+- Changed : Hide used galleries in album admin page 
+- Changed : Remove float in singlepic code and added class ngg-left , ngg-right (THX to Nathan Sylvain)
+- Changed : Edit style setting (added new class .desc , THX to Sebastian) 
+- Changed : Check for galleryfolder instead name (THX to Luke Poland)
+- Changed : Delete images per default
+- Changed : Change CSS (ngg-album-compact) , remove width & height setting from code
+- Bugfix : Fixed static front page problem
+- Bugfix : Missing stripslashes & html_entity_decode
+- Bugfix : Change Album CSS (THX to Thomas-DK)
+- Bugfix : Watermark for GIF not correct supported
+- Bugfix : Missing wp_nonce at setup page
+- Bugfix : Add DIV in Slideshow link (for Safari & Opera)
+- Added : Screencolor flashvar for JW Image Rotator 3.13 or higher
+- Added : Set WP-CHARSET / COLLATE during installation
+- Added : Updated to Pclzip.lib.php v2.6
+- Added : CSS ID field for gallery & images
+- WPMU : New site admin page (wpmu.php)
+- WPMU : Integrated quota check
+- WPMU : No update check
+- WPMU : Remove edit style (THX to Kristin)
+- WPMU : Remove uninstall button
+- WPMU : Remove server settings
+- WPMU : Gallery path set to blog.dir
+- Added : Support for WPMU
+
 V0.74 - 01.12.2007
 - NEW : Added meta reader class, first step to integrated meta data import
 

@@ -2,7 +2,7 @@
 CSS Name: Default Styles
 Description: NextGEN Default Gallery Stylesheet
 Author: Alex Rabe
-Version: 1.20
+Version: 1.41
 
 This is a template stylesheet that can be used with NextGEN Gallery. I tested the
 styles with a default theme Kubrick. Modify it when your theme struggle with it,
@@ -81,6 +81,8 @@ it's only a template design
 	border:1px solid #000000;
 	margin:0px !important;
 	padding:0px !important;
+	width:91px; 
+	height:68px;
 }
 
 .ngg-album-compact h4 {
@@ -104,6 +106,12 @@ it's only a template design
 	width: 100%;
 	clear:both; 
 	display:block !important;
+}
+
+.ngg-galleryoverview .desc {
+/* required for description */
+   margin:0px 10px 10px 0px;
+   padding:5px;
 }
 
 .ngg-gallery-thumbnail-box {
@@ -232,6 +240,15 @@ it's only a template design
 	padding:4px;
 	position:relative;
 }
+
+.ngg-left {
+	float: left;
+}
+
+.ngg-right {
+	float: right;
+}
+
 
 /* ----------- Sidebar widget -------------*/
 .ngg-widget,

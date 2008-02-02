@@ -8,8 +8,8 @@ function nggallery_admin_manage_gallery() {
 	//TODO:GID & Mode should the hidden post variables
 
 	// GET variables
-	$act_gid = trim(attribute_escape($_GET['gid']));
-	$act_pid = trim(attribute_escape($_GET['pid']));	
+	$act_gid = (int) trim(attribute_escape($_GET['gid']));
+	$act_pid = (int) trim(attribute_escape($_GET['pid']));	
 	$mode = trim(attribute_escape($_GET['mode']));
 
 	// get the options
@@ -44,7 +44,7 @@ function nggallery_admin_manage_gallery() {
 	
 			// delete pictures
 			$imagelist = $wpdb->get_col("SELECT filename FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ");
-			if ($ngg_options[deleteImg]) {
+			if ($ngg_options['deleteImg']) {
 				if (is_array($imagelist)) {
 					foreach ($imagelist as $filename) {
 						@unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
@@ -74,9 +74,9 @@ function nggallery_admin_manage_gallery() {
 			if ($gallerypath){
 				$thumb_folder = nggallery::get_thumbnail_folder($gallerypath, FALSE);
 				$thumb_prefix = nggallery::get_thumbnail_prefix($gallerypath, FALSE);
-				if ($ngg_options[deleteImg]) {
+				if ($ngg_options['deleteImg']) {
 					@unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
-					 unlink(WINABSPATH.$gallerypath.'/'.$filename);
+					@unlink(WINABSPATH.$gallerypath.'/'.$filename);
 				}
 			}		
 			$delete_pic = $wpdb->query("DELETE FROM $wpdb->nggpictures WHERE pid = $act_pid");
@@ -107,17 +107,17 @@ function nggallery_admin_manage_gallery() {
 				break;
 			case 1:
 			// Set watermark
-				ngg_generateWatermark(WINABSPATH.$gallerypath,$imageslist);
+				nggAdmin::generateWatermark(WINABSPATH.$gallerypath,$imageslist);
 				nggallery::show_message(__('Watermark successfully added',"nggallery"));
 				break;
 			case 2:
 			// Create new thumbnails
-				ngg_generatethumbnail(WINABSPATH.$gallerypath,$imageslist);
+				nggAdmin::generateThumbnail(WINABSPATH.$gallerypath,$imageslist);
 				nggallery::show_message(__('Thumbnails successfully created. Please refresh your browser cache.',"nggallery"));
 				break;
 			case 3:
 			// Resample images
-				ngg_resizeImages(WINABSPATH.$gallerypath,$imageslist);
+				nggAdmin::resizeImages(WINABSPATH.$gallerypath,$imageslist);
 				nggallery::show_message(__('Images successfully resized',"nggallery"));
 				break;
 			case 4:
@@ -128,7 +128,7 @@ function nggallery_admin_manage_gallery() {
 					$thumb_prefix = nggallery::get_thumbnail_prefix($gallerypath, FALSE);
 					foreach ( $_POST['doaction'] as $imageID ) {
 						$filename = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$imageID' ");
-						if ($ngg_options[deleteImg]) {
+						if ($ngg_options['deleteImg']) {
 							unlink(WINABSPATH.$gallerypath.'/'.$thumb_folder.'/'.$thumb_prefix.$filename);
 							unlink(WINABSPATH.$gallerypath.'/'.$filename);	
 						} 
@@ -138,6 +138,11 @@ function nggallery_admin_manage_gallery() {
 				if($delete_pic)
 					nggallery::show_message(__('Pictures deleted successfully ',"nggallery"));
 				}
+				break;
+			case 8:
+			// Import Metadata
+				nggAdmin::import_MetaData($_POST['doaction']);
+				nggallery::show_message(__('Import metadata finished',"nggallery"));
 				break;
 		}
 	}
@@ -195,45 +200,28 @@ function nggallery_admin_manage_gallery() {
 	
 		check_admin_referer('ngg_updategallery');
 		
-		$gallery_title   = attribute_escape($_POST[title]);
-		$gallery_path    = attribute_escape($_POST[path]);
-		$gallery_desc    = attribute_escape($_POST[gallerydesc]);
-		$gallery_pageid  = attribute_escape($_POST[pageid]);
-		$gallery_preview = attribute_escape($_POST[previewpic]);
+		$gallery_title   = attribute_escape($_POST['title']);
+		$gallery_path    = attribute_escape($_POST['path']);
+		$gallery_desc    = attribute_escape($_POST['gallerydesc']);
+		$gallery_pageid  = attribute_escape($_POST['pageid']);
+		$gallery_preview = attribute_escape($_POST['previewpic']);
 		
 		$result = $wpdb->query("UPDATE $wpdb->nggallery SET title= '$gallery_title', path= '$gallery_path', galdesc = '$gallery_desc', pageid = '$gallery_pageid', previewpic = '$gallery_preview' WHERE gid = '$act_gid'");
 		if ($showTags)
-			$result = ngg_update_tags(attribute_escape($_POST[tags]));			
+			$result = ngg_update_tags(attribute_escape($_POST['tags']));			
 		else 
-			$result = ngg_update_pictures(attribute_escape($_POST[description]), attribute_escape($_POST[alttext]), attribute_escape($_POST[exclude]), $act_gid );
+			$result = ngg_update_pictures(attribute_escape($_POST['description']), attribute_escape($_POST['alttext']), attribute_escape($_POST['exclude']), $act_gid );
 
 		nggallery::show_message(__('Update successful',"nggallery"));
 	}
 
 	if (isset ($_POST['scanfolder']))  {
 	// Rescan folder
-	
+		//TODO:Should be combine in import_gallery function !!!
 		check_admin_referer('ngg_updategallery');
 	
 		$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
-		$old_imageslist = $wpdb->get_col("SELECT filename FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ");
-		// if no images are there, create empty array
-		if ($old_imageslist == NULL) $old_imageslist = array();
-		// read list of images in folder
-		$new_imageslist = ngg_scandir(WINABSPATH.$gallerypath);
-		// check difference
-		$imageslist = array_diff($new_imageslist, $old_imageslist);
-		//create thumbnails
-		ngg_generatethumbnail(WINABSPATH.$gallerypath,$imageslist);
-		// add images to database
-		$count_pic = 0;		
-		if (is_array($imageslist)) {
-			foreach($imageslist as $picture) {
-				$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES ('$act_gid', '$picture', '$picture', 0) ");
-				if ($result) $count_pic++;
-			}
-			$messagetext = '<font color="green">'.$count_pic.__(' picture(s) successfully added','nggallery').'</font>';
-		}
+		nggAdmin::import_gallery($gallerypath);
 	}
 
 	if (isset ($_POST['addnewpage']))  {
@@ -241,8 +229,8 @@ function nggallery_admin_manage_gallery() {
 	
 		check_admin_referer('ngg_updategallery');
 		
-		$parent_id      = attribute_escape($_POST[parent_id]);
-		$gallery_title  = attribute_escape($_POST[title]);
+		$parent_id      = attribute_escape($_POST['parent_id']);
+		$gallery_title  = attribute_escape($_POST['title']);
 		$gallery_name   = $wpdb->get_var("SELECT name FROM $wpdb->nggallery WHERE gid = '$act_gid' ");
 		
 		// Create a WP page
@@ -485,7 +473,7 @@ function getNumChecked(form)
 		</tr>
 		<tr>
 			<th align="left"><?php _e('Path', 'nggallery') ?>:</th> 
-			<th align="left"><input type="text" size="50" name="path" value="<?php echo $act_gallery->path; ?>"  /></th>
+			<th align="left"><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="text" size="50" name="path" value="<?php echo $act_gallery->path; ?>"  /></th>
 		
 			<th align="right"><?php _e('Create new page', 'nggallery') ?>:</th>
 			<th align="left"> 
@@ -511,6 +499,7 @@ function getNumChecked(form)
 	<option value="2" ><?php _e("Create new thumbnails",'nggallery')?></option>
 	<option value="3" ><?php _e("Resize images",'nggallery')?></option>
 	<option value="4" ><?php _e("Delete images",'nggallery')?></option>
+	<option value="8" ><?php _e("Import metadata",'nggallery')?></option>
 <?php } else { ?>	
 	<option value="5" ><?php _e("Add tags",'nggallery')?></option>
 	<option value="6" ><?php _e("Delete tags",'nggallery')?></option>

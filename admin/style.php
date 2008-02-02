@@ -86,6 +86,7 @@ if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="up
 	</form>
 </div>
 
+<? if (!IS_WPMU || wpmu_site_admin() ) { ?>
 <div class="wrap"> 
   <?php
 	if ( is_writeable($real_file) ) {
@@ -130,7 +131,9 @@ if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="up
 </div>
 	
 <?php
-}
+	}
+	
+} // END nggallery_admin_style()
 
 /**********************************************************/
 // ### Code from wordpress plugin import

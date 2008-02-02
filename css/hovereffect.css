@@ -93,6 +93,8 @@ This is a template stylesheet which doesn't support description below the thumbn
 	border:1px solid #000000;
 	margin:0px !important;
 	padding:0px !important;
+	width:91px; 
+	height:68px;
 }
 
 .ngg-album-compact h4 {
@@ -284,6 +286,15 @@ This is a template stylesheet which doesn't support description below the thumbn
 	padding:4px;
 	position:relative;
 }
+
+.ngg-left {
+	float: left;
+}
+
+.ngg-right {
+	float: right;
+}
+
 
 /* ----------- Sidebar widget -------------*/
 .ngg-widget,

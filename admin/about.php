@@ -9,14 +9,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<h2><?php _e('Copyright notes / Credits', 'nggallery') ;?></h2>
 		<fieldset class="options">
 		<legend><?php _e("NextGEN DEV Team", 'nggallery'); ?></legend>
-		<p><?php _e('This plugin is a team work of a virtual developer team around the world. Follow persons take part at the development till now :', 'nggallery') ;?></p>
-		<ul>
-		<li><a href="http://alexrabe.boelinger.com" target="_blank">Alex Rabe</a> <?php _e('(Lead developer)', 'nggallery') ;?></li>
-		<li><a href="http://li.deranter.com" target="_blank">Frederic De Ranter</a> <?php _e('(Core AJAX developer)', 'nggallery') ;?></li>
-		<li><a href="http://blog.arctic-media.de" target="_blank">Christian Arnold</a> <?php _e('(Core developer)', 'nggallery') ;?></li>
-		<li><a href="http://mufuschnu.mu.funpic.de" target="_blank">Thomas Matzke</a> <?php _e('(Core developer)', 'nggallery') ;?></li>
-		<li><a href="http://www.kev.hu" target="_blank">KeViN</a> <?php _e('(Sidebar Widget developer)', 'nggallery') ;?></li>
-		</ul>
+		<p><?php _e('This plugin is primarily developed, maintained, supported, documented by', 'nggallery'); ?> <a href="http://alexrabe.boelinger.com" target="_blank">Alex Rabe</a>. <?php _e('There are many other folks who have made contributions to this project :', 'nggallery') ;?></p>
+		<p><?php ngg_list_contributors(); ?></p>
 		<legend><?php _e("Contributors / Tribute to", 'nggallery'); ?></legend>
 		<p><?php _e('If you study the code of this plugin, you will find out that we mixed a lot of good already existing code and ideas together.', 'nggallery') ;?>
 		<?php _e('So, we would like to thank the following people for their pioneer work (without this work it\'s impossible to create such a plugin so fast)', 'nggallery') ;?></p>		
@@ -60,6 +54,64 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<?php
 }
 
+function ngg_list_contributors()	{
+/* The list of my contributors. Thanks to all of them !*/
+	
+	$contributors = array(
+	"Frederic De Ranter (AJAX code contributor)" => "http://li.deranter.com/",
+	"Christian Arnold (Code contributor)" => "http://blog.arctic-media.de/",
+	"Thomas Matzke (Album code contributor)" => "http://mufuschnu.mu.funpic.de/",
+	"KeViN (Sidebar Widget developer)" => "http://www.kev.hu/",
+	"Lazy (German Translation)" => "http://www.lazychris.de/",
+	"Lise (French Translation)" => "http://liseweb.fr/",
+	"Anja (Dutch Translation)" => "http://www.werkgroepen.net/wordpress",
+	"Adrian (Indonesian Translation)" => "http://adrian.web.id/",
+	"Gaspard Tseng / SillyCCSmile (Chinese Translation)" => "",
+	"Mika Pennanen (Finnish Translation)" => "http://kapsi.fi/~penni",
+	"Wojciech Owczarek (Polish Translation)" => "http://www.owczi.net",
+	"Dilip Ramirez (Spanish Translation)" => "http://jmtd.110mb.com/blog",
+	"Oleinikov Vedmak Evgeny (Russian Translation)" => "http://ka-2-03.mirea.org/",
+	"Sebastien MALHERBE	(Logo design)" => "http://www.7vision.com/",
+	"Claudia (German documentation)" => "http://www.blog-werkstatt.de/",
+	"Robert (German documentation)" => "http://www.curlyrob.de/",
+	"Pierpaolo Mannone (Italian Translation)" => "http://www.interscambiocasa.com/",
+	"Mattias Tengblad (Swedish Translation)" => "http://wp-support.se/",
+	"M&uuml;fit Kiper (Swedish Translation)" => "http://www.kiper.se/",
+	"Gil Yaker (Documentation)" => "http://bamboosoup.com/",
+	"Morten Johansen (Danish Translation)" => "http://www.fr3ak.dk/",
+	"Vidar Seland (Norwegian Translation)" => "http://www.viidar.net/",
+	"Emre G&uuml;ler (Turkish Translation)" => "http://www.emreguler.com/",	
+	"Emilio Lauretti (Italian Translation)" => "",
+	"Jan Angelovic (Czech Translation)" => "http://www.angelovic.cz/",
+	"Laki (Slovak Translation)" => "http://www.laki.sk/",
+	"Rowan Crane (WPMU support)" => "http://blog.rowancrane.com/",
+	"Kuba Zwolinski (Polish Translation)" => "http://kubazwolinski.com/",
+	"Rina Jiang (Chinese Translation)" => "http://http://mysticecho.net/",
+	"Anthony (Chinese Translation)" => "http://www.angryouth.com/",
+	"Milan Vasicek (Czech Translation)" => "http://www.NoWorkTeam.cz/",
+	"Joo Gi-young (Korean Translation)" => "http://lombric.linuxstudy.pe.kr/wp/",
+	"Oleg A. Safonov (Russian Translation)" => "http://blog.olart.ru",
+	"AleXander Kirichev (Bulgarian Translation)" => "http://xsakex.art-bg.org/",
+	"Richer Yang (Chinese Translation)" => "http://fantasyworld.idv.tw/"
+	);
+
+	
+	ksort($contributors);
+	$i = count($contributors);
+	foreach ($contributors as $name => $url)
+	{
+		if ($url)
+			echo "<a href=\"$url\">$name</a>";
+		else
+			echo $name;
+		$i--;
+		if ($i == 1)
+			echo " & ";
+		elseif ($i)
+			echo ", ";
+	}	
+}
+
 function ngg_list_support()	{
 /* The list of my supporters. Thanks to all of them !*/
 	
@@ -82,60 +134,45 @@ function ngg_list_support()	{
 	"Mike" => "http://www.mikemuscroft.com/",
 	"Sabine (Haselina)" => "http://www.haselina.de/",
 	"Milemann" => "",
-	"Lazy (German Translation)" => "http://www.lazychris.de/",
-	"Lise (French Translation)" => "http://liseweb.fr/",
-	"Anja (Dutch Translation)" => "http://www.werkgroepen.net/wordpress",
-	"Adrian (Indonesian Translation)" => "http://adrian.web.id/",
 	"Kees de Bruin" => "http://www.kdbruin.net/fotoalbum/",
-	"Gaspard Tseng / SillyCCSmile (Chinese Translation)" => "",
-	"Mika Pennanen (Finnish Translation)" => "http://kapsi.fi/~penni",
-	"Wojciech Owczarek (Polish Translation)" => "http://www.owczi.net",
-	"Dilip Ramirez (Spanish Translation)" => "http://jmtd.110mb.com/blog",
-	"Oleinikov Vedmak Evgeny (Russian Translation)" => "http://ka-2-03.mirea.org/",
 	"Helene D." => "http://supernatural.hellioness.com/imagegallery/",
-	"Sebastien MALHERBE	(Logo design)" => "http://www.7vision.com/",
-	"Claudia (German documentation)" => "http://www.blog-werkstatt.de/",
-	"Robert (German documentation)" => "http://www.curlyrob.de/",
-	"Pierpaolo Mannone (Italian Translation)" => "http://www.interscambiocasa.com/",
-	"Mattias Tengblad (Swedish Translation)" => "http://wp-support.se/",
-	"M&uuml;fit Kiper (Swedish Translation)" => "http://www.kiper.se/",
 	"Ghettomaster" => "http://www.ghettoworld.de/",
 	"Joe Pharis" => "http://www.southernstylecruisers.com/",
 	"Charlie (Jump Media)" => "",
-	"Gil Yaker (Documentation)" => "http://bamboosoup.com/",
 	"Simon Paarlberg" => "http://www.paarlberg.dk/",
-	"Morten Johansen (Danish Translation)" => "http://www.fr3ak.dk/",
 	"Clive Loseby" => "http://www.access-bydesign.com/",
-	"Vidar Seland (Norwegian Translation)" => "http://www.viidar.net/",
-	"Emre Guler (Turkish Translation)" => "http://www.emreguler.com/",	
 	"Tonny Kluften" => "http://www.tinnitus-behandling.info/",
 	"Andreas Oeye" => "http://www.andreasoye.com/",
 	"Laurent Momy" => "",
-	"Emilio Lauretti (Italian Translation)" => "",
-	"Jan Angelovic (Czech Translation)" => "http://www.angelovic.cz/",
 	"Patrick Hennessey" => "http://www.digitalvagabonding.com/",
 	"Hans Kiesouw" => "http://www.digitalvagabonding.com/",
-	"Laki (Slovak Translation)" => "http://www.laki.sk/",
 	"Thomas Bradley" => "http://www.tobeon.co.uk/wordpress/",
 	"Frederic Deghetto" => "",
 	"Christopher Weddell" => "",
 	"Martin Scholz" => "",
 	"Non Eric" => "http://www.lunatec.de/",
-	"Rowan Crane (WPMU support)" => "http://blog.rowancrane.com/",
 	"Ronen Hirsch" => "http://www.stillcreation.com/",
-	"Kuba Zwolinski (Polish Translation)" => "http://kubazwolinski.com/",
-	"Rina Jiang (Chinese Translation)" => "http://http://mysticecho.net/",
 	"Michael Erhart" => "",
 	"Luc Saint-Elie" => "http://luc.saint-elie.com/",
 	"Matthew Barker" => "",
-	"Anthony (Chinese Translation)" => "http://www.angryouth.com/",
-	"Milan Vašícek (Czech Translation)" => "http://www.NoWorkTeam.cz/",
-	"Joo Gi-young (Korean Translation)" => "http://lombric.linuxstudy.pe.kr/wp/",
 	"Emanuel Kluge" => "",
 	"Alba Bentos Pereira" => "",
-	"Oleg A. Safonov (Russian Translation)" => "http://blog.olart.ru",
 	"Bill Babcock" => "http://www.bnj.com",
-	"Jesper Haug Karsrud" => "http://www.beyond-sanity.com"
+	"Jesper Haug Karsrud" => "http://www.beyond-sanity.com",
+	"Marco van de Ven" => "http://www.mvdven.nl",
+	"Peter Krabshuis" => "http://www.dragoneye.nl",
+	"Teresa Lo" => "http://www.invivoanalytics.com",
+	"Jes Carlskov" => "",
+	"John Statler" => "http://www.systemsolver.com",
+	"Joshua Katinger" => "http://www.accessionmedia.com",
+	"iSight Technologies" => "http://www.isighttech.com",
+	"Kay Germer" => "http://highkay.de/",
+	"Ramon Cutanda Lopez" => "",
+	"Luc Dubois" => "http://www.oriste.com/",
+	"Dixie Reid" => "http://www.thereids.co.nz/",
+	"Gareth Bridger" => "",
+	"McGillveray Studios" => "http://www.mcgillveraystudios.ca/",
+	"Paul Rogers" => "http://www.swarfworks.com"
 	);
 
 	

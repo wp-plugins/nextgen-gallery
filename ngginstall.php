@@ -8,13 +8,18 @@ function nggallery_install () {
 	
    	global $wpdb , $wp_roles, $wp_version;
    	global $ngg_db_version;
-
+	
 	// Check for capability
 	if ( !current_user_can('activate_plugins') ) 
 		return;
 	
 	// Set the capabilities for the administrator
 	$role = get_role('administrator');
+	// We need this role, no other chance
+	if ( empty($role) ) {
+		update_option( "ngg_init_check", __('Sorry, NextGEN Gallery works only with a role called administrator',"nggallery") );
+		return;
+	}
 	$role->add_cap('NextGEN Gallery overview');
 	$role->add_cap('NextGEN Use TinyMCE');
 	$role->add_cap('NextGEN Upload images');
@@ -24,10 +29,20 @@ function nggallery_install () {
 	$role->add_cap('NextGEN Change options');
 	
 	// upgrade function changed in WordPress 2.3	
-	if (version_compare($wp_version, '2.3-beta', '>='))		
+	if (version_compare($wp_version, '2.3', '>='))		
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	else
 		require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	
+	// add charset & collate like wp core
+	$charset_collate = '';
+
+	if ( version_compare(mysql_get_server_info(), '4.1.0', '>=') ) {
+		if ( ! empty($wpdb->charset) )
+			$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+		if ( ! empty($wpdb->collate) )
+			$charset_collate .= " COLLATE $wpdb->collate";
+	}
 		
    	$nggpictures					= $wpdb->prefix . 'ngg_pictures';
 	$nggallery						= $wpdb->prefix . 'ngg_gallery';
@@ -45,7 +60,7 @@ function nggallery_install () {
 		alttext MEDIUMTEXT NULL ,
 		exclude TINYINT NULL DEFAULT '0' ,
 		PRIMARY KEY pid (pid)
-		);";
+		) $charset_collate;";
 	
       dbDelta($sql);
  
@@ -64,7 +79,7 @@ function nggallery_install () {
 		pageid BIGINT(20) NULL DEFAULT '0' ,
 		previewpic BIGINT(20) NULL DEFAULT '0' ,
 		PRIMARY KEY gid (gid)
-		);";
+		) $charset_collate;";
 	
       dbDelta($sql);
    }
@@ -76,7 +91,7 @@ function nggallery_install () {
 		name VARCHAR(255) NOT NULL ,
 		sortorder LONGTEXT NOT NULL,
 		PRIMARY KEY id (id)
-		);";
+		) $charset_collate;";
 	
       dbDelta($sql);
     }
@@ -90,7 +105,7 @@ function nggallery_install () {
 		slug VARCHAR(200) NOT NULL,
 		PRIMARY KEY id (id),
 		UNIQUE KEY slug (slug)
-		);";
+		) $charset_collate;";
 	
       dbDelta($sql);
     }
@@ -102,7 +117,7 @@ function nggallery_install () {
 		 tagid BIGINT(20) NOT NULL DEFAULT 0,
 		 PRIMARY KEY  (picid, tagid),
 		 KEY tagid (tagid)
-		);";
+		) $charset_collate;";
 	
       dbDelta($sql);
     }
@@ -123,13 +138,23 @@ function nggallery_install () {
 		update_option( "ngg_db_version", $ngg_db_version );
 	}
 
+	// check one table again, to be sure
+	if($wpdb->get_var("show tables like '$nggpictures'")!= $nggpictures) {
+		update_option( "ngg_init_check", __('NextGEN Gallery : Tables could not created, please check your database settings',"nggallery") );
+		return;
+	}
+
 }
 
 function ngg_default_options() {
+	
+	global $blog_id;
 
 	$ngg_options['gallerypath']			= "wp-content/gallery/";  		// set default path to the gallery
 	$ngg_options['scanfolder']			= false;						// search for new images  (not used)
-	$ngg_options['deleteImg']			= false;						// delete Images
+	$ngg_options['deleteImg']			= true;							// delete Images
+	$ngg_options['swfUpload']			= true;							// activate the batch upload
+	$ngg_options['usePermalinks']		= false;						// use permalinks for parameters
 	
 	// Tags / categories
 	$ngg_options['activateTags']		= false;						// append related images
@@ -150,6 +175,7 @@ function ngg_default_options() {
 	$ngg_options['imgHeight']			= 600;  						// Image height
 	$ngg_options['imgQuality']			= 85;							// Image Quality
 	$ngg_options['imgResampleMode']		= 4;  							// Resample speed value 1 - 5
+	$ngg_options['imgCacheSinglePic']	= false;						// cached the singlepic	
 	
 	// Gallery Settings
 	$ngg_options['galImages']			= "20";		  					// Number Of images per page
@@ -197,11 +223,28 @@ function ngg_default_options() {
 	$ngg_options['irKenburns']			= false;
 	$ngg_options['irBackcolor']			= "000000";
 	$ngg_options['irFrontcolor']		= "FFFFFF";
-	$ngg_options['irLightcolor']		= "CC0000";	
+	$ngg_options['irLightcolor']		= "CC0000";
+	$ngg_options['irScreencolor']		= "000000";		
 
 	// CSS Style
 	$ngg_options['activateCSS']			= true;							// activate the CSS file
 	$ngg_options['CSSfile']				= "nggallery.css";  			// set default css filename
+	
+	// special overrides for WPMU	
+	if (IS_WPMU) {
+		// get the site options
+		$ngg_wpmu_options=get_site_option('ngg_options');
+		
+		// get the default value during installation
+		if (!is_array($ngg_wpmu_options)) {
+			$ngg_wpmu_options['gallerypath'] = "wp-content/blogs.dir/%BLOG_ID%/files/";
+			$ngg_wpmu_options['wpmuCSSfile'] = "nggallery.css";
+		}
+		
+		$ngg_options['gallerypath']  		= str_replace("%BLOG_ID%", $blog_id , $ngg_wpmu_options['gallerypath']);
+		$ngg_options['CSSfile']				= $ngg_wpmu_options['wpmuCSSfile'];
+		$ngg_options['imgCacheSinglePic']	= true; 					// under WPMU this should be enabled
+	} 
 	
 	update_option('ngg_options', $ngg_options);
 

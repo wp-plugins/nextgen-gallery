@@ -1,4 +1,44 @@
 <?php
+
+/**
+ * @title  Add action/filter for the upload tab 
+ * @author Alex Rabe
+ * @copyright 2008
+ */
+
+function ngg_action_upload_Tab() {
+	// execute when click on the tab
+	global $style;
+	if ( 'inline' == $style )
+		wp_enqueue_script('nggadmintab', NGGALLERY_URLPATH .'admin/js/uploadtab.js.php', array('prototype'), '0.6');
+}
+
+function ngg_wp_upload_tabs ($array) {
+	
+	global $wpdb;
+	
+    /* 
+    0 => tab display name, 
+    1 => required cap / role, 
+    2 => function that produces tab content, 
+    3 => total number objects OR array(total, objects per page), 
+    4 => add_query_args
+	*/
+
+	// Create navigation
+	$total = 1;
+	if ($_GET['select_gal']){
+		$galleryID = $_GET['select_gal'];
+		$total = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE galleryid = '$galleryID'");
+	}
+
+	$tab = array(
+            'ngg_gallery' => array(__('Gallery','nggallery'), 'NextGEN Use TinyMCE', 'ngg_upload_tab_content', array($total, 10))
+    );
+
+    return array_merge($array,$tab);
+}
+
 function ngg_upload_tab_content() {
 	// this is the content of the "Gallery" admin tab 
 	global $ID, $wpdb , $style, $action ;
@@ -40,8 +80,8 @@ function ngg_upload_tab_content() {
 		
 		if ( isset($_POST['save']) ) {
 			// Function save desription
-			$img_title   = attribute_escape($_POST[image_title]);
-			$img_desc    = attribute_escape($_POST[image_desc]);
+			$img_title   = attribute_escape($_POST['image_title']);
+			$img_desc    = attribute_escape($_POST['image_desc']);
 			$result = $wpdb->query("UPDATE $wpdb->nggpictures SET alttext= '$img_title', description = '$img_desc' WHERE pid = '$ID'");
 		}
 	}
@@ -185,5 +225,8 @@ function ngg_admintab_insert_pic($picid) {
 		</div>';
 
 }
+
+add_action('upload_files_ngg_gallery', 'ngg_action_upload_Tab');
+add_filter('wp_upload_tabs', 'ngg_wp_upload_tabs');
 
 ?>

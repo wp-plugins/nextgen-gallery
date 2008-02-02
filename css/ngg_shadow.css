@@ -2,7 +2,7 @@
 CSS Name: Shadow Effect
 Description: NextGEN Default Style with a Shadow effect
 Author: Alex Rabe
-Version: 1.20
+Version: 1.30
    
 This is a template stylesheet that can be used with NextGEN Gallery. I tested the
 styles with a default theme Kubrick. Modify it when your theme struggle with it,
@@ -81,6 +81,8 @@ it's only a template design
 	border:1px solid #000000;
 	margin:0px !important;
 	padding:0px !important;
+	width:91px; 
+	height:68px;
 }
 
 .ngg-album-compact h4 {
@@ -229,6 +231,15 @@ it's only a template design
 	padding:4px;
 	position:relative;
 }
+
+.ngg-left {
+	float: left;
+}
+
+.ngg-right {
+	float: right;
+}
+
 
 /* ----------- Sidebar widget -------------*/
 
