@@ -193,7 +193,7 @@ function nggShowGallery($galleryID) {
 	}
 
 	// set $show if slideshow first
-	if ( !empty( $show ) AND ($ngg_options['galShowOrder'] == 'slide')) {
+	if ( empty( $show ) AND ($ngg_options['galShowOrder'] == 'slide')) {
 		if (is_home()) $pageid = get_the_ID();
 		$show = 'slide';
 	}
