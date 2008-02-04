@@ -1,6 +1,15 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.81 - 04.02.2008
+- Changed : Use stristr first to reduce CPU cycles (THX to Alakhnor)
+- Changed : Flush Rewrites rules after option update
+- Changed : Rework for folder check under Safe-Mode 
+- Bugfix : Check for array in get_option() (THX to Alessandro)
+- Bugfix : Add Cookie to SWFUpload, show Error code included
+- Bugfix : galShowOrder = Sildeshow at first didn't work
+- Bugfix : Remove reference from ngg_getOnlyImages 
+
 V0.80 - 02.02.2008
 - NEW : SWFUpload integrated : Show upload progress and select multiple files in the file browser dialog. 
 - NEW : Progress bar for resize, watermark and thumbnail operation

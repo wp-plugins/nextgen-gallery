@@ -86,6 +86,10 @@ function uploadComplete(fileObj) {
 
 // called when all files are uploaded
 function uploadSuccess(fileObj, server_data) {
+	// Show any error message
+	if (server_data != 0){
+		jQuery("#progressbar-wrap").append("<div><strong>ERROR</strong>: " + fileObj.name + " : " + server_data + "</div>");
+	}
 	// Upload the next file until queue is empty
 	if ( ngg_swf_upload.getStats().files_queued > 0) {
 		ngg_swf_upload.startUpload();

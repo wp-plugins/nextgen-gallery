@@ -3,10 +3,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 	function nggallery_admin_options()  {
 	
-	global $wpdb, $wp_version;
+	global $wpdb, $wp_version, $nggRewrite;
 
 	// get the options
-	$ngg_options=get_option('ngg_options');	
+	$ngg_options = get_option('ngg_options');	
+	$old_state = $ngg_options['usePermalinks'];
 	
 	// same as $_SERVER['REQUEST_URI'], but should work under IIS 6.0
 	$filepath    = get_option('siteurl'). '/wp-admin/admin.php?page='.$_GET['page'];
@@ -24,7 +25,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				$ngg_options[$option] = $value;
 			}
 		}
-
+		// Flush ReWrite rules
+		if ( $old_state != $ngg_options['usePermalinks'] )
+			$nggRewrite->flush();
+		// Save options
 		update_option('ngg_options', $ngg_options);
 	 	$messagetext = '<font color="green">'.__('Update successfully','nggallery').'</font>';
 	}		

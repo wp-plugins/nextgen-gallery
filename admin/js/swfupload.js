@@ -945,9 +945,9 @@ SWFUpload.debug = function (message) {
 };
 
 /* Called when an upload occurs during upload.  For HTTP errors 'message' will contain the HTTP STATUS CODE */
-SWFUpload.uploadError = function (file, error_code, message) {
+SWFUpload.uploadError = function (file, error_code, msg) {
 	try {
-		switch (errcode) {
+		switch (error_code) {
 		case SWFUpload.UPLOAD_ERROR.SPECIFIED_FILE_ID_NOT_FOUND:
 			this.debug("Error Code: File ID specified for upload was not found, Message: " + msg);
 			break;

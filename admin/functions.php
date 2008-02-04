@@ -8,13 +8,11 @@ class nggAdmin{
 	function create_gallery($gallerytitle, $defaultpath) {
 		// create a new gallery & folder
 		global $wpdb;
-		
-		$myabspath = str_replace("\\","/",ABSPATH);  // required for windows
 
 		//cleanup pathname
 		$galleryname = apply_filters('ngg_gallery_name', $gallerytitle);
 		$nggpath = $defaultpath.$galleryname;
-		$nggRoot = $myabspath.$defaultpath;
+		$nggRoot = WINABSPATH.$defaultpath;
 		$txt = "";
 		
 		// No gallery name ?
@@ -34,7 +32,6 @@ class nggAdmin{
 		}
 
 		// check for permission settings, Safe mode limitations are not taken into account. 
-		// if ( substr(decoct(@fileperms($myabspath.$defaultpath)),1) != decoct(NGGFOLDER_PERMISSION) ) {
 		if ( !is_writeable($nggRoot ) ) {
 			$txt  = __('Directory', 'nggallery').' <strong>'.$defaultpath.'</strong> '.__('is not writeable !', 'nggallery').'<br />';
 			$txt .= __('Check this link, if you didn\'t know how to set the permission :', 'nggallery').' <a href="http://codex.wordpress.org/Changing_File_Permissions">http://codex.wordpress.org/Changing_File_Permissions</a> ';
@@ -42,29 +39,38 @@ class nggAdmin{
 			return false;
 		}
 		
-		// avoid double creation	
-		if ( is_dir($myabspath.$nggpath) ) {
-			nggallery::show_error(__('Directory ', 'nggallery').' <strong>'.$nggpath.'</strong> '.__('already exists!', 'nggallery'));
-		} else {
-			// create new directories
-				if ( !wp_mkdir_p ($myabspath.$nggpath) ) 
-					$txt  = __('Unable to create directory ', 'nggallery').$nggpath.'!<br />';
-				if ( !is_writeable($nggRoot ) )
-					$txt .= __('Directory', 'nggallery').' <strong>'.$defaultpath.'</strong> '.__('is not writeable !', 'nggallery').'<br />';
-				if ( !wp_mkdir_p ( $myabspath.$nggpath.'/thumbs') ) 
-					$txt .= __('Unable to create directory ', 'nggallery').$nggpath.'/thumbs !<br />';
-			
-				if (SAFE_MODE) {
-					$help  = __('The server setting Safe-Mode is on !', 'nggallery');	
-					$help .= '<br />'.__('If you have problems, please create directory', 'nggallery').' <strong>'.$nggpath.'</strong> ';	
-					$help .= __('and the thumbnails directory', 'nggallery').' <strong>'.$nggpath.'/thumbs</strong> '.__('with permission 777 manually !', 'nggallery');
-					nggallery::show_message($help);
-				}
-					
-			if ( !empty($txt) ) {
-				nggallery::show_error($txt);
-				return false;
+		// 1. Create new gallery folder
+		if ( !is_dir(WINABSPATH.$nggpath) ) {
+			if ( !wp_mkdir_p (WINABSPATH.$nggpath) ) 
+				$txt  = __('Unable to create directory ', 'nggallery').$nggpath.'!<br />';
+		}
+		
+		// 2. Check folder permission
+		if ( !is_writeable(WINABSPATH.$nggpath ) )
+			$txt .= __('Directory', 'nggallery').' <strong>'.$nggpath.'</strong> '.__('is not writeable !', 'nggallery').'<br />';
+
+		// 3. Now create "thumbs" folder inside
+		if ( !is_dir(WINABSPATH.$nggpath.'/thumbs') ) {				
+			if ( !wp_mkdir_p ( WINABSPATH.$nggpath.'/thumbs') ) 
+				$txt .= __('Unable to create directory ', 'nggallery').' <strong>'.$nggpath.'/thumbs !</strong>';
+		}
+		
+		if (SAFE_MODE) {
+			$help  = __('The server setting Safe-Mode is on !', 'nggallery');	
+			$help .= '<br />'.__('If you have problems, please create directory', 'nggallery').' <strong>'.$nggpath.'</strong> ';	
+			$help .= __('and the thumbnails directory', 'nggallery').' <strong>'.$nggpath.'/thumbs</strong> '.__('with permission 777 manually !', 'nggallery');
+			nggallery::show_message($help);
+		}
+		
+		// show a error message			
+		if ( !empty($txt) ) {
+			if (SAFE_MODE) {
+			// for safe_mode , better delete folder, both folder must be created manually
+				@rmdir(WINABSPATH.$nggpath.'/thumbs');
+				@rmdir(WINABSPATH.$nggpath);
 			}
+			nggallery::show_error($txt);
+			return false;
 		}
 		
 		$result=$wpdb->get_var("SELECT name FROM $wpdb->nggallery WHERE name = '$galleryname' ");
@@ -73,7 +79,7 @@ class nggAdmin{
 			return false;			
 		} else { 
 			$result = $wpdb->query("INSERT INTO $wpdb->nggallery (name, path, title) VALUES ('$galleryname', '$nggpath', '$gallerytitle') ");
-			if ($result) nggallery::show_message(__('Gallery', 'nggallery').' <strong>'.$wpdb->insert_id." : ".$galleryname.'</strong> '.__('successfully created!','nggallery')."<br />".__('You can show this gallery with the tag','nggallery').'<strong> [gallery='.$wpdb->insert_id.']</strong>'.$safemode); 
+			if ($result) nggallery::show_message(__('Gallery', 'nggallery').' <strong>'.$wpdb->insert_id." : ".$galleryname.'</strong> '.__('successfully created!','nggallery')."<br />".__('You can show this gallery with the tag','nggallery').'<strong> [gallery='.$wpdb->insert_id.']</strong>'); 
 			return true;;
 		} 
 	}
@@ -457,7 +463,7 @@ class nggAdmin{
 	}
  
 	// **************************************************************
-	function getOnlyImages($p_event, &$p_header)	{
+	function getOnlyImages($p_event, $p_header)	{
 		$info = pathinfo($p_header['filename']);
 		// check for extension
 		$ext = array("jpeg", "jpg", "png", "gif"); 
@@ -716,7 +722,7 @@ class nggAdmin{
 			$folder_uid = fileowner($foldername);
 
 			if ($script_uid != $folder_uid) {
-				$message  = sprintf(__('SAFE MODE Restriction in effect! You need to create the folder <strong>%s</strong> manually','nggallery'), WINABSPATH.$gallerypath);
+				$message  = sprintf(__('SAFE MODE Restriction in effect! You need to create the folder <strong>%s</strong> manually','nggallery'), $foldername);
 				$message .= '<br />' . sprintf(__('When safe_mode is on, PHP checks to see if the owner (%s) of the current script matches the owner (%s) of the file to be operated on by a file function or its directory','nggallery'), $script_uid, $folder_uid );
 				nggallery::show_error($message);
 				return false;
@@ -909,9 +915,9 @@ class wpProgressBar {
 
 // **************************************************************
 //TODO: Cannot be member of a class ? Check PCLZIP later...
-function ngg_getOnlyImages($p_event, &$p_header)	{
+function ngg_getOnlyImages($p_event, $p_header)	{
 	
-	return nggAdmin::getOnlyImages($p_event, &$p_header);
+	return nggAdmin::getOnlyImages($p_event, $p_header);
 	
 }
 

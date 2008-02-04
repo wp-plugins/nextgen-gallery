@@ -397,6 +397,9 @@ class nggallery {
 		$options = get_option($key);
 		// Get all key/value data for the current post. 
 		$meta_array = get_post_custom();
+		// Ensure that this is a array
+		if (!is_array($meta_array))
+			$meta_array = array($meta_array);
 		// assign meta key to db setting key
 		$meta_tags = array(
 			'string' => array(

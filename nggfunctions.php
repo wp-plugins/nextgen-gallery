@@ -9,115 +9,136 @@ function searchnggallerytags($content) {
 	//TODO:Refactor this to a class
 	$ngg_options = nggallery::get_option('ngg_options');
 	
-	$search = "@\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,left|,)\]@i";
-	
-	if	(preg_match_all($search, $content, $matches)) {
+	if ( stristr( $content, '[singlepic' )) {
 		
-		if (is_array($matches)) {
-			foreach ($matches[1] as $key =>$v0) {
-				// check for correct id
-				$result = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$v0' ");
-				if($result){
-					$search = $matches[0][$key];
-					$replace= nggSinglePicture($v0,$matches[2][$key],$matches[3][$key],$matches[4][$key],$matches[5][$key]);
-					$content= str_replace ($search, $replace, $content);
-				}
-			}	
+		$search = "@\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,left|,)\]@i";
+		
+		if	(preg_match_all($search, $content, $matches)) {
+			
+			if (is_array($matches)) {
+				foreach ($matches[1] as $key =>$v0) {
+					// check for correct id
+					$result = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$v0' ");
+					if($result){
+						$search = $matches[0][$key];
+						$replace= nggSinglePicture($v0,$matches[2][$key],$matches[3][$key],$matches[4][$key],$matches[5][$key]);
+						$content= str_replace ($search, $replace, $content);
+					}
+				}	
+			}
 		}
 	}// end singelpic
 
-	$search = "@(?:<p>)*\s*\[album\s*=\s*(\w+|^\+)(|,extend|,compact)\]\s*(?:</p>)*@i";
-	
-	if	(preg_match_all($search, $content, $matches)) {
-		if (is_array($matches)) {
-			foreach ($matches[1] as $key =>$v0) {
-				// check for album id
-				$albumID = $wpdb->get_var("SELECT id FROM $wpdb->nggalbum WHERE id = '$v0' ");
-				if(!$albumID) $albumID = $wpdb->get_var("SELECT id FROM $wpdb->nggalbum WHERE name = '$v0' ");
-				if($albumID) {
-					$search = $matches[0][$key];
-					$replace= nggShowAlbum($albumID,$matches[2][$key]);
-					$content= str_replace ($search, $replace, $content);
-				}
-			}	
+	if ( stristr( $content, '[album' )) {
+		
+		$search = "@(?:<p>)*\s*\[album\s*=\s*(\w+|^\+)(|,extend|,compact)\]\s*(?:</p>)*@i";
+		
+		if	(preg_match_all($search, $content, $matches)) {
+			if (is_array($matches)) {
+				foreach ($matches[1] as $key =>$v0) {
+					// check for album id
+					$albumID = $wpdb->get_var("SELECT id FROM $wpdb->nggalbum WHERE id = '$v0' ");
+					if(!$albumID) $albumID = $wpdb->get_var("SELECT id FROM $wpdb->nggalbum WHERE name = '$v0' ");
+					if($albumID) {
+						$search = $matches[0][$key];
+						$replace= nggShowAlbum($albumID,$matches[2][$key]);
+						$content= str_replace ($search, $replace, $content);
+					}
+				}	
+			}
 		}
 	}// end album
-
-	$search = "@(?:<p>)*\s*\[gallery\s*=\s*(\w+|^\+)\]\s*(?:</p>)*@i";
 	
-	if	(preg_match_all($search, $content, $matches)) {
-		if (is_array($matches)) {
-			foreach ($matches[1] as $key =>$v0) {
-				// check for gallery id
-				$galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$v0' ");
-				if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$v0' ");
-				if($galleryID) {
-					$search = $matches[0][$key];
-					$replace= nggShowGallery($galleryID);
-					$content= str_replace ($search, $replace, $content);
-				}
-			}	
-		}
-	}// end gallery
-
-	$search = "@(?:<p>)*\s*\[imagebrowser\s*=\s*(\w+|^\+)\]\s*(?:</p>)*@i";
+	if ( stristr( $content, '[gallery' )) {
 	
-	if	(preg_match_all($search, $content, $matches)) {
-		if (is_array($matches)) {
-			foreach ($matches[1] as $key =>$v0) {
-				// check for gallery id
-				$galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$v0' ");
-				if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$v0' ");
-				if($galleryID) {
-					$search = $matches[0][$key];
-					$replace= nggShowImageBrowser($galleryID);
-					$content= str_replace ($search, $replace, $content);
-				}
-			}	
+		$search = "@(?:<p>)*\s*\[gallery\s*=\s*(\w+|^\+)\]\s*(?:</p>)*@i";
+		
+		if	(preg_match_all($search, $content, $matches)) {
+			if (is_array($matches)) {
+				foreach ($matches[1] as $key =>$v0) {
+					// check for gallery id
+					$galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$v0' ");
+					if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$v0' ");
+					if($galleryID) {
+						$search = $matches[0][$key];
+						$replace= nggShowGallery($galleryID);
+						$content= str_replace ($search, $replace, $content);
+					}
+				}	
+			}
 		}
 	}// end gallery
 	
-	$search = "@(?:<p>)*\s*\[slideshow\s*=\s*(\w+|^\+)(|,(\d+)|,)(|,(\d+))\]\s*(?:</p>)*@i";
+	if ( stristr( $content, '[imagebrowser' )) {
 
-	if	(preg_match_all($search, $content, $matches)) {
-		if (is_array($matches)) {
-			foreach ($matches[1] as $key =>$v0) {
-				// check for gallery id
-				$galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$v0' ");
-				if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$v0' ");
-				if( $galleryID || $v0 == 0 ) {
-					$search = $matches[0][$key];
-					// get the size if they are set
-			 		$irWidth  =  $matches[3][$key]; 
-					$irHeight =  $matches[5][$key];
-					$replace= nggShowSlideshow($galleryID,$irWidth,$irHeight);
-					$content= str_replace ($search, $replace, $content);
-				}
-			}	
+		$search = "@(?:<p>)*\s*\[imagebrowser\s*=\s*(\w+|^\+)\]\s*(?:</p>)*@i";
+		
+		if	(preg_match_all($search, $content, $matches)) {
+			if (is_array($matches)) {
+				foreach ($matches[1] as $key =>$v0) {
+					// check for gallery id
+					$galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$v0' ");
+					if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$v0' ");
+					if($galleryID) {
+						$search = $matches[0][$key];
+						$replace= nggShowImageBrowser($galleryID);
+						$content= str_replace ($search, $replace, $content);
+					}
+				}	
+			}
+		}
+	}// end gallery
+	
+	if ( stristr( $content, '[slideshow' )) {
+	
+		$search = "@(?:<p>)*\s*\[slideshow\s*=\s*(\w+|^\+)(|,(\d+)|,)(|,(\d+))\]\s*(?:</p>)*@i";
+	
+		if	(preg_match_all($search, $content, $matches)) {
+			if (is_array($matches)) {
+				foreach ($matches[1] as $key =>$v0) {
+					// check for gallery id
+					$galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$v0' ");
+					if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$v0' ");
+					if( $galleryID || $v0 == 0 ) {
+						$search = $matches[0][$key];
+						// get the size if they are set
+				 		$irWidth  =  $matches[3][$key]; 
+						$irHeight =  $matches[5][$key];
+						$replace= nggShowSlideshow($galleryID,$irWidth,$irHeight);
+						$content= str_replace ($search, $replace, $content);
+					}
+				}	
+			}
 		}
 	}// end slideshow
 	
-	$search = "@(?:<p>)*\s*\[tags\s*=\s*(.*?)\s*\]\s*(?:</p>)*@i";
-
-	if	(preg_match_all($search, $content, $matches)) {
-		if (is_array($matches)) {
-			foreach ($matches[1] as $key =>$v0) {
-				$search = $matches[0][$key];
-				$replace= nggShowGalleryTags($v0);
-				$content= str_replace ($search, $replace, $content);
-			}	
+	if ( stristr( $content, '[tags' )) {
+	
+		$search = "@(?:<p>)*\s*\[tags\s*=\s*(.*?)\s*\]\s*(?:</p>)*@i";
+	
+		if	(preg_match_all($search, $content, $matches)) {
+			if (is_array($matches)) {
+				foreach ($matches[1] as $key =>$v0) {
+					$search = $matches[0][$key];
+					$replace= nggShowGalleryTags($v0);
+					$content= str_replace ($search, $replace, $content);
+				}	
+			}
 		}
 	}// end gallery tags 
 
-	$search = "@(?:<p>)*\s*\[albumtags\s*=\s*(.*?)\s*\]\s*(?:</p>)*@i";
+	if ( stristr( $content, '[albumtags' )) {
 
-	if	(preg_match_all($search, $content, $matches)) {
-		if (is_array($matches)) {
-			foreach ($matches[1] as $key =>$v0) {
-				$search = $matches[0][$key];
-				$replace= nggShowAlbumTags($v0);
-				$content= str_replace ($search, $replace, $content);
-			}	
+		$search = "@(?:<p>)*\s*\[albumtags\s*=\s*(.*?)\s*\]\s*(?:</p>)*@i";
+	
+		if	(preg_match_all($search, $content, $matches)) {
+			if (is_array($matches)) {
+				foreach ($matches[1] as $key =>$v0) {
+					$search = $matches[0][$key];
+					$replace= nggShowAlbumTags($v0);
+					$content= str_replace ($search, $replace, $content);
+				}	
+			}
 		}
 	}// end album tags 
 	

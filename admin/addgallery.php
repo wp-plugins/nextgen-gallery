@@ -86,7 +86,6 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
     <![endif]-->
 	
 	<?php if($ngg_options['swfUpload']) { ?>
-	
 	<!-- SWFUpload script -->
 	<script type="text/javascript">
 		var ngg_swf_upload;
@@ -113,14 +112,16 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				upload_complete_handler : uploadComplete,
 				
 				post_params : {
-					galleryselect : "0"
+					"user_cookie" : "<?php echo $_COOKIE[USER_COOKIE]; ?>",
+					"pass_cookie" : "<?php echo $_COOKIE[PASS_COOKIE]; ?>",
+					"galleryselect" : "0"
 				},
 				
 				// i18names
 				custom_settings : {
-					remove : "<?php _e('remove', 'nggallery') ;?>",
-					browse : "<?php _e('Browse...', 'nggallery') ;?>",
-					upload : "<?php _e('Upload images', 'nggallery') ;?>"
+					"remove" : "<?php _e('remove', 'nggallery') ;?>",
+					"browse" : "<?php _e('Browse...', 'nggallery') ;?>",
+					"upload" : "<?php _e('Upload images', 'nggallery') ;?>"
 				},
 
 				// Debug settings
