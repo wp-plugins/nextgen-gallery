@@ -1,6 +1,9 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.82 - 09.02.2008
+- Bugfix : add_filter (searchnggallerytags) not proper included for some other plugins
+
 V0.81 - 04.02.2008
 - Changed : Use stristr first to reduce CPU cycles (THX to Alakhnor)
 - Changed : Flush Rewrites rules after option update

@@ -92,7 +92,8 @@ function ngg_list_contributors()	{
 	"Joo Gi-young (Korean Translation)" => "http://lombric.linuxstudy.pe.kr/wp/",
 	"Oleg A. Safonov (Russian Translation)" => "http://blog.olart.ru",
 	"AleXander Kirichev (Bulgarian Translation)" => "http://xsakex.art-bg.org/",
-	"Richer Yang (Chinese Translation)" => "http://fantasyworld.idv.tw/"
+	"Richer Yang (Chinese Translation)" => "http://fantasyworld.idv.tw/",
+	"Bill Jones (Forums contributor)" => "http://jonesphoto.bluehorizoninternet.com/"
 	);
 
 	
@@ -172,7 +173,9 @@ function ngg_list_support()	{
 	"Dixie Reid" => "http://www.thereids.co.nz/",
 	"Gareth Bridger" => "",
 	"McGillveray Studios" => "http://www.mcgillveraystudios.ca/",
-	"Paul Rogers" => "http://www.swarfworks.com"
+	"Paul Rogers" => "http://www.swarfworks.com",
+	"Steve Lieber" => "http://www.stevelieber.com",
+	"Modo Web Design" => "http://www.modowebdesign.com"
 	);
 
 	
