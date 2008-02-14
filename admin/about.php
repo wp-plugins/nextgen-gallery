@@ -94,7 +94,7 @@ function ngg_list_contributors()	{
 	"AleXander Kirichev (Bulgarian Translation)" => "http://xsakex.art-bg.org/",
 	"Richer Yang (Chinese Translation)" => "http://fantasyworld.idv.tw/",
 	"Bill Jones (Forums contributor)" => "http://jonesphoto.bluehorizoninternet.com/",
-	"TheDonSansone (Forums contributor)" => "http://www.web-asylum.com/",
+	"TheDonSansone (Forums contributor)" => "http://abseiling.200blogs.co.uk/",
 	"Komyshov (Russian Translation)" => "http://kf-web.ru/",
 	"aleX Zhang (Chinese Translation)" => "http://zhangfei.info/",
 	"TheSoloist (Chinese Translation)" => "http://www.soloist-ic.cn/"
