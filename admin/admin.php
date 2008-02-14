@@ -18,18 +18,19 @@ add_action('init', 'ngg_add_admin_js',1);
 function ngg_add_admin_js() {
 	global $wp_version;
 	
-	if ($wp_version < "2.3") {
+	if ($wp_version < "2.5") {
 		wp_deregister_script('jquery'); 
-	    //TODO:jQuery 1.2.1 causes problems in IE7
-		wp_register_script('jquery', NGGALLERY_URLPATH .'admin/js/jquery.js', FALSE, '1.1.4');
+		wp_register_script('jquery', NGGALLERY_URLPATH .'admin/js/jquery.js', FALSE, '1.2.2');
 	} 
 	switch ($_GET['page']) {
 		case "nggallery-manage-gallery" :
-			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2');
+			if ($wp_version < "2.5") wp_deregister_script('interface');
+			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2.1');
 			wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.1.1');
 		break;
 		case "nggallery-manage-album" :
-			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2');
+			if ($wp_version < "2.5") wp_deregister_script('interface');
+			wp_enqueue_script('interface', NGGALLERY_URLPATH .'admin/js/interface.js', array('jquery'), '1.2.1');
 		break;
 		case "nggallery-options" :
 			wp_enqueue_script('tabs', NGGALLERY_URLPATH .'admin/js/jquery.tabs.pack.js', array('jquery'), '2.7.4');

@@ -1,7 +1,6 @@
 <?php
 
 require_once('../../../../wp-config.php');
-require_once(ABSPATH.'/wp-admin/admin.php');
 
 // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
 if ( empty($_COOKIE[USER_COOKIE]) && !empty($_REQUEST['user_cookie']) )
@@ -10,7 +9,11 @@ if ( empty($_COOKIE[USER_COOKIE]) && !empty($_REQUEST['user_cookie']) )
 if ( empty($_COOKIE[PASS_COOKIE]) && !empty($_REQUEST['pass_cookie']) )
 	$_COOKIE[PASS_COOKIE] = $_REQUEST['pass_cookie'];
 
-auth_redirect();
+// don't ask me why, sometime needed, taken from wp core
+unset($current_user);
+
+// admin.php require a proper login cookie
+require_once(ABSPATH . '/wp-admin/admin.php');
 
 header('Content-Type: text/plain');
 

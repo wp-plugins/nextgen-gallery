@@ -1,6 +1,14 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.83 - 14.02.2008
+- Changed : New Interfaces.js from WP Core 2.5, for sortable bug under IE7
+- Changed : Update to jQuery V1.2.2, deregister older version from WP
+- Changed : Add ini_set 128MB for memory-limit
+- Bugfix : SWFUpload Cookie Post_Params are overwritten , no upload possible
+- Bugfix : WPMU options are not saved after installation
+- Bugfix : Remove Flush rewrite rules during install 
+
 V0.82 - 09.02.2008
 - Bugfix : add_filter (searchnggallerytags) not proper included for some other plugins
 

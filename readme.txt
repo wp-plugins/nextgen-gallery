@@ -1,9 +1,9 @@
 === NextGEN Gallery ===
 Contributors: Alex Rabe
-Donate link: http://alexrabe.boelinger.com/?page_id=80
+Donate link: http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/
 Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets, photo, picture
 Requires at least: 2.1.3
-Tested up to: 2.3.2
+Tested up to: 2.3.3
 
 NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option.
 
@@ -64,7 +64,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 4. 	Activate the plugin
 
-5.	Add a gallery and upload some images (the main gallery folder must have permission 777)
+5.	Add a gallery and upload some images (the main gallery folder must have write permission)
 
 6. 	Go to your post/page an enter the tag '[gallery=ID]' or '[slideshow=ID]'.
 	See more tags in the FAQ section

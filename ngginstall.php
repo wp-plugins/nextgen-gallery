@@ -239,6 +239,7 @@ function ngg_default_options() {
 		if (!is_array($ngg_wpmu_options)) {
 			$ngg_wpmu_options['gallerypath'] = "wp-content/blogs.dir/%BLOG_ID%/files/";
 			$ngg_wpmu_options['wpmuCSSfile'] = "nggallery.css";
+			update_site_option('ngg_options', $ngg_wpmu_options);
 		}
 		
 		$ngg_options['gallerypath']  		= str_replace("%BLOG_ID%", $blog_id , $ngg_wpmu_options['gallerypath']);

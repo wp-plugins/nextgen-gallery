@@ -46,7 +46,11 @@ function submitFiles() {
 	// check if a gallery is selected
 	if (jQuery('#galleryselect').val() > "0") {
 		jQuery("#progressbar-wrap").show();
-		ngg_swf_upload.setPostParams({galleryselect:jQuery('#galleryselect').val()});
+		// get old post_params
+		post_params = ngg_swf_upload.getSetting("post_params");
+		// update the selected gallery in the post_params 
+		post_params['galleryselect'] = jQuery('#galleryselect').val();
+		ngg_swf_upload.setPostParams(post_params);
 		ngg_swf_upload.startUpload();
 	} else {
 		jQuery('#uploadimage_form').prepend("<input type=\"hidden\" name=\"swf_callback\" value=\"-1\">");

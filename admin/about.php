@@ -93,9 +93,12 @@ function ngg_list_contributors()	{
 	"Oleg A. Safonov (Russian Translation)" => "http://blog.olart.ru",
 	"AleXander Kirichev (Bulgarian Translation)" => "http://xsakex.art-bg.org/",
 	"Richer Yang (Chinese Translation)" => "http://fantasyworld.idv.tw/",
-	"Bill Jones (Forums contributor)" => "http://jonesphoto.bluehorizoninternet.com/"
+	"Bill Jones (Forums contributor)" => "http://jonesphoto.bluehorizoninternet.com/",
+	"TheDonSansone (Forums contributor)" => "http://www.web-asylum.com/",
+	"Komyshov (Russian Translation)" => "http://kf-web.ru/",
+	"aleX Zhang (Chinese Translation)" => "http://zhangfei.info/",
+	"TheSoloist (Chinese Translation)" => "http://www.soloist-ic.cn/"
 	);
-
 	
 	ksort($contributors);
 	$i = count($contributors);

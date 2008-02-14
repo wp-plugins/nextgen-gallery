@@ -97,7 +97,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				flash_url : "<?php echo NGGALLERY_URLPATH; ?>admin/js/swfupload_f9.swf",
 								
 				// File Upload Settings
-				file_size_limit : <?php echo $max_upl_kbytes;?>,	// 200 kb
+				file_size_limit : "<?php echo $max_upl_kbytes;?> kb", // can use in WP2.5 wp_max_upload_size()
 				file_types : "*.jpg;*.gif;*.png",
 				file_types_description : "<?php _e('Image Files', 'nggallery') ;?>",
 				
