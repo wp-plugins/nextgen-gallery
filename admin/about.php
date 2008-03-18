@@ -20,7 +20,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<li><a href="http://www.gen-x-design.com" target="_blank">Ian Selby</a> <?php _e('for the fantastic PHP Thumbnail Class', 'nggallery') ;?></li>
 		<li><a href="http://www.phpconcept.net" target="_blank">Vincent Blavet</a> <?php _e('for PclZip , a PHP library that manage ZIP archives', 'nggallery') ;?></li>
 		<li><a href="http://www.lesterchan.net/" target="_blank">GaMerZ</a> <?php _e('for a lot of very useful plugins and ideas', 'nggallery') ;?></li>
-		<li><a href="http://www.sargant.com/" target="_blank">Rob Sargant</a> <?php _e('for RS-Discuss, it saved me a lot of time', 'nggallery') ;?></li>
+		<li><a href="http://www.stuff.yellowswordfish.com/" target="_blank">Andy Staines</a> <?php _e('for Simple:Press Forum, it saved me a lot of time', 'nggallery') ;?></li>
 		<li><a href="http://www.jeroenwijering.com/" target="_blank">Jeroen Wijering</a> <?php _e('for the best Media Flash Scripts on earth', 'nggallery') ;?></li>
 		<li><a href="http://watermark.malcherek.com/" target="_blank">Marek Malcherek</a> <?php _e('for the Watermark plugin', 'nggallery') ;?></li>
 		</ul>
@@ -178,7 +178,15 @@ function ngg_list_support()	{
 	"McGillveray Studios" => "http://www.mcgillveraystudios.ca/",
 	"Paul Rogers" => "http://www.swarfworks.com",
 	"Steve Lieber" => "http://www.stevelieber.com",
-	"Modo Web Design" => "http://www.modowebdesign.com"
+	"Modo Web Design" => "http://www.modowebdesign.com",
+	"Matthew Feldman" => "",
+	"Gideon Kiers" => "http://www.gideonkiers.com",
+	"Susan Bates" => "http://www.fineartsmith.com",
+	"ILISA International USA" => "http://www.ilisa.com",
+	"Mark Campbell" => "http://www.layersofcolor.com",
+	"Aaron Snyder" => "http://www.aaronsnyder.net",
+	"Patrick Pirker" => "",
+	"Christoph Wander" => ""
 	);
 
 	

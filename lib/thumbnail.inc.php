@@ -3,8 +3,8 @@
  * thumbnail.inc.php
  * 
  * @author 		Ian Selby (ian@gen-x-design.com)
- * @copyright 	Copyright 2006
- * @version 	1.1.2 (PHP4)
+ * @copyright 	Copyright 2006-2008
+ * @version 	1.1.3 (PHP4)
  * @modded      by Alex Rabe
  * 
  */
@@ -163,6 +163,9 @@ class ngg_Thumbnail {
                 $this->error = true;
             }
         }
+        
+		// increase memory-limit if possible, GD needs this for large images
+		@ini_set('memory_limit', '128M');
         
 		if($this->error == false) { 
         // Check memory consumption if file exists
@@ -916,6 +919,7 @@ class ngg_Thumbnail {
 		} elseif ($quality < 5 && (($dst_w * $quality) < $src_w || ($dst_h * $quality) < $src_h)) {
 			$tmp_w = $dst_w * $quality;
 			$tmp_h = $dst_h * $quality;
+			// on whatever reason PHP 4.4.8 stopped here.
 			$temp = imagecreatetruecolor ($tmp_w + 1, $tmp_h + 1);
 			imagecopyresized ($temp, $src_image, $dst_x * $quality, $dst_y * $quality, $src_x, $src_y, $tmp_w + 1, $tmp_h + 1, $src_w, $src_h);
 			imagecopyresampled ($dst_image, $temp, 0, 0, 0, 0, $dst_w, $dst_h, $tmp_w, $tmp_h);

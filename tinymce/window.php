@@ -131,6 +131,7 @@ global $wpdb;
 				<label><select id="imgfloat" name="imgfloat">
 					<option value=""><?php _e("No float", 'nggallery'); ?></option>
 					<option value="left"><?php _e("Left", 'nggallery'); ?></option>
+					<option value="center"><?php _e("Center", 'nggallery'); ?></option>
 					<option value="right"><?php _e("Right", 'nggallery'); ?></option>
 				</select></label>
 			</td>

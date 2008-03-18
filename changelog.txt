@@ -1,6 +1,27 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.90 - 18.03.2008
+- NEW : Sort order for images
+- NEW : Updated style for Wp 2.5
+- NEW : Media upload tab integration for WP 2.5
+- Added   : Change wp shortcode filter 
+- Added   : TinyMCE V3 Button for WordPress 2.5
+- Added   : Singlepic center class 
+- Changed : New default parameter for ImageRotator 3.15
+- Changed : By default enable metadata import
+- Changed : Moved disable/enable flash setting to add gallery
+- Changed : wpdb->escape gallerytag in nggfunctions
+- Changed : Sort files after scan folder
+- Changed : Check for filename during upload
+- Changed : Remove jQuery plugin for navigation
+- Changed : Remove myGallery import
+- Changed : Resample mode default set to 5, causes problems at PHP 4.4.8 /PHP 5.2.4
+- Bugfix  : nggextractXML missing stripslashes
+- Bugfix  : P tags not closed in manage.php
+- Bugfix  : Remove " from singlepic class
+- Bugfix  : Rewrite rule for ImageBrowser added
+
 V0.83 - 14.02.2008
 - Changed : New Interfaces.js from WP Core 2.5, for sortable bug under IE7
 - Changed : Update to jQuery V1.2.2, deregister older version from WP

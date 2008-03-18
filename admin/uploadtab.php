@@ -65,7 +65,7 @@ function ngg_upload_tab_content() {
 			//TODO: use _wpnonce
 			$picture = $wpdb->get_row("SELECT * FROM $wpdb->nggpictures WHERE pid = '$ID' ");
 			if ($picture) {
-				if ($ngg_options[deleteImg]) {
+				if ($ngg_options['deleteImg']) {
 					$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$picture->galleryid' ");
 					if ($gallerypath) {
 						$thumb_folder = nggallery::get_thumbnail_folder($gallerypath, FALSE);

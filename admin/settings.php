@@ -115,7 +115,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<h2><?php _e('General Options','nggallery'); ?></h2>
 			<form name="generaloptions" method="post">
 			<?php wp_nonce_field('ngg_settings') ?>
-			<input type="hidden" name="page_options" value="gallerypath,scanfolder,deleteImg,swfUpload,usePermalinks,activateTags,appendType,maxImages" />
+			<input type="hidden" name="page_options" value="gallerypath,scanfolder,deleteImg,usePermalinks,activateTags,appendType,maxImages" />
 			<fieldset class="options"> 
 				<table class="optiontable editform">
 					<tr valign="top">
@@ -135,11 +135,6 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<th align="left"><?php _e('Delete image files','nggallery') ?></th>
 						<td><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="checkbox" name="deleteImg" value="1" <?php checked('1', $ngg_options['deleteImg']); ?> /><br />
 						<?php _e('Delete files, when removing a gallery in the database','nggallery') ?></td>
-					</tr>
-					<tr valign="top">
-						<th align="left"><?php _e('Activate batch upload','nggallery') ?></th>
-						<td><input type="checkbox" name="swfUpload" value="1" <?php checked('1', $ngg_options['swfUpload']); ?> /><br />
-						<?php _e('The batch upload requires Adobe Flash 9, disable it if you have problems','nggallery') ?></td>
 					</tr>
 					<tr valign="top">
 						<th align="left"><?php _e('Activate permalinks','nggallery') ?></th>
@@ -269,12 +264,15 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<input type="hidden" name="page_options" value="galUsejQuery,galNoPages,galImages,galShowSlide,galTextSlide,galTextGallery,galShowOrder,galShowDesc,galImgBrowser,galSort,galSortDir" />
 			<fieldset class="options"> 
 				<table class="optiontable">
+					<!--TODO:  Do better... -->
+					<!--
 					<tr>
-						<th valign="top"><?php _e('Activate jQuery navigation','nggallery') ?>:</th>
-						<td><input name="galUsejQuery" type="checkbox" value="1" <?php checked('1', $ngg_options['galUsejQuery']); ?> />
-						<?php _e('Please note : This is still experimental. Requires the Thickbox effect','nggallery') ?>
+						<th valign="top"><?php //_e('Activate jQuery navigation','nggallery') ?>:</th>
+						<td><input name="galUsejQuery" type="checkbox" value="1" <?php // checked('1', $ngg_options['galUsejQuery']); ?> />
+						<?php //_e('Please note : This is still experimental. Requires the Thickbox effect','nggallery') ?>
 						</td>
 					</tr>
+					-->
 					<tr>
 						<th valign="top"><?php _e('Deactivate gallery page link','nggallery') ?>:</th>
 						<td><input name="galNoPages" type="checkbox" value="1" <?php checked('1', $ngg_options['galNoPages']); ?> />
@@ -318,7 +316,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<table class="optiontable">
 					<tr>
 						<th valign="top"><?php _e('Sort thumbnails','nggallery') ?>:</th>
-						<td><label><input name="galSort" type="radio" value="pid" <?php checked('pid', $ngg_options['galSort']); ?> /> <?php _e('Image ID', 'nggallery') ;?></label><br />
+						<td>
+						<label><input name="galSort" type="radio" value="sortorder" <?php checked('sortorder', $ngg_options['galSort']); ?> /> <?php _e('Custom order', 'nggallery') ;?></label><br />
+						<label><input name="galSort" type="radio" value="pid" <?php checked('pid', $ngg_options['galSort']); ?> /> <?php _e('Image ID', 'nggallery') ;?></label><br />
 						<label><input name="galSort" type="radio" value="filename" <?php checked('filename', $ngg_options['galSort']); ?> /> <?php _e('File name', 'nggallery') ;?></label><br />
 						<label><input name="galSort" type="radio" value="alttext" <?php checked('alttext', $ngg_options['galSort']); ?> /> <?php _e('Alt / Title text', 'nggallery') ;?></label>
 						</td>
@@ -502,7 +502,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<h2><?php _e('Slideshow','nggallery'); ?></h2>
 		<fieldset class="options">
 		<?php if (!NGGALLERY_IREXIST) { ?><p><div id="message" class="error fade"><p><?php _e('The imagerotator.swf is not in the nggallery folder, the slideshow will not work.','nggallery') ?></p></div></p><?php }?>
-		<p><?php _e('The settings are used in the JW Image Rotator Version 3.13 .', 'nggallery') ?> 
+		<p><?php _e('The settings are used in the JW Image Rotator Version', 'nggallery') ?> 3.15.  
 		   <?php _e('See more information for the Flash Player on the web page', 'nggallery') ?> <a href="http://www.jeroenwijering.com/?item=JW_Image_Rotator" target="_blank">JW Image Rotator from Jeroen Wijering</a>.</p>
 				<table class="optiontable" border="0" >
 					<tr>

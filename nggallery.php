@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.83
+Version: 0.90
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -43,16 +43,22 @@ global $wpdb, $wp_version, $wpmu_version, $wp_roles;
 
 // Check for WPMU installation
 define('IS_WPMU', version_compare($wpmu_version, '1.3', '>=') );
+// Check for WP2.1 or higher
+define('IS_WP21_COMPATIBLE', version_compare($wp_version, '2.1', '>=') );
+// Check for WP2.5 installation
+define('IS_WP25', version_compare($wp_version, '2.4', '>=') );
 
-//This works only in WP2.2 or higher
-if ((version_compare($wp_version, '2.1', '>=')) or (IS_WPMU)){
+//This works only in WP2.1 or higher
+if ( (IS_WP21_COMPATIBLE == FALSE) and (IS_WPMU != TRUE) ){
+	add_action('admin_notices', create_function('', 'echo \'<div id="message" class="error fade"><p><strong>' . __('Sorry, NextGEN Gallery works only under WordPress 2.1 or higher',"nggallery") . '</strong></p></div>\';'));
+	return;
+}
 
 // Version and path to check version
-define('NGGVERSION', "0.83");
+define('NGGVERSION', "0.90");
+// Minimum required database version
+define('NGG_DBVERSION', "0.84");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
-
-// increase memory-limit if possible, GD needs this for large images
-@ini_set('memory_limit', '128M');
 
 // define URL
 $myabspath = str_replace("\\","/",ABSPATH);  // required for Windows & XAMPP
@@ -94,20 +100,40 @@ function nggallery_init ()
 
 // Load the admin panel
 if (is_admin()) {
+	
 	include_once (dirname (__FILE__)."/ngginstall.php");
-	include_once (dirname (__FILE__)."/admin/admin.php");
+
+	// check for upgrade
+	if( get_option( "ngg_db_version" ) != NGG_DBVERSION ) 
+		ngg_upgrade();
+	
+	if (IS_WP25)
+		include_once (dirname (__FILE__)."/admin/wp25/admin.php");
+	else
+		include_once (dirname (__FILE__)."/admin/admin.php");
+		
 } else {
-// Load the gallery generator
+	
+	// Load the gallery generator
 	include_once (dirname (__FILE__)."/nggfunctions.php");
 	
+	// required in WP 2.5, NextGEN should have higher priority
+	if (IS_WP25) {	
+		remove_filter('the_content', 'do_shortcode');
+		add_filter('the_content', 'do_shortcode', 20);
+	}
+		
 	// Action calls for all functions 
-	add_filter('the_content', 'searchnggallerytags');
-	add_filter('the_excerpt', 'searchnggallerytags');
+	add_filter('the_content', 'searchnggallerytags', 10);
+	add_filter('the_excerpt', 'searchnggallerytags', 10);
 }
 
 // Load tinymce button 
-include_once (dirname (__FILE__)."/tinymce/tinymce.php");
-
+if (IS_WP25)
+	include_once (dirname (__FILE__)."/tinymce3/tinymce.php");
+else
+	include_once (dirname (__FILE__)."/tinymce/tinymce.php");
+	
 // Load gallery class
 require_once (dirname (__FILE__).'/lib/nggallery.lib.php');
 
@@ -132,14 +158,10 @@ function ngg_addjs() {
 	    	if ($wp_version > "2.1.3") wp_deregister_script('jquery'); 
 	    	wp_enqueue_script('jquery', NGGALLERY_URLPATH .'admin/js/jquery.js', FALSE, '1.2.2');
 		} 
-	    	wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.1.1');
-
-    	// add NextGEN jQuery Plugin
-		if ($ngg_options['galUsejQuery'])
-			wp_enqueue_script('nextgen', NGGALLERY_URLPATH .'admin/js/jquery.nextgen.pack.js', array('jquery'), '0.5');
-			//TODO: NEW AJAX Version
-			// wp_enqueue_script('nextgen-ajax', NGGALLERY_URLPATH .'admin/js/jquery.nextgen.ajax.js', array('jquery'), '0.1');
-			// wp_enqueue_script('blockui', NGGALLERY_URLPATH .'admin/js/jquery.blockUI.js', array('jquery'), '0.1');
+			if (IS_WP25)
+	    		wp_enqueue_script('ngg-thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.1.1');
+	    	else
+	    		wp_enqueue_script('thickbox', NGGALLERY_URLPATH .'thickbox/thickbox-pack.js', array('jquery'), '3.1.1');
 	    }
 	    
 	// test for wordTube function
@@ -159,8 +181,7 @@ register_deactivation_hook(NGGFOLDER.'/nggallery.php','ngg_deinstall');
 
 // init tables in wp-database if plugin is activated
 function ngg_install() {
-	global $nggRewrite;
-	// Check for admin role
+	// Check for tables
 	nggallery_install();
 }
 
@@ -172,7 +193,4 @@ function ngg_deinstall() {
 // Content Filters
 add_filter('ngg_gallery_name', 'sanitize_title');
 
-} else {
-	add_action('admin_notices', create_function('', 'echo \'<div id="message" class="error fade"><p><strong>' . __('Sorry, NextGEN Gallery works only under WordPress 2.1 or higher',"nggallery") . '</strong></p></div>\';'));
-}// End Check for WP 2.1
 ?>

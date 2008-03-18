@@ -295,6 +295,10 @@ This is a template stylesheet which doesn't support description below the thumbn
 	float: right;
 }
 
+.ngg-center {
+  	margin-left: auto;
+    margin-right: auto;
+}
 
 /* ----------- Sidebar widget -------------*/
 .ngg-widget,

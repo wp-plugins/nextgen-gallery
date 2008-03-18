@@ -61,6 +61,18 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			$messagetext = nggAdmin::import_gallery($gallerypath);
 		}	
 	}
+
+	if ( isset($_POST['disable_flash']) ){
+		check_admin_referer('ngg_addgallery');
+		$ngg_options['swfUpload'] = false;	
+		update_option('ngg_options', $ngg_options);
+	}
+
+	if ( isset($_POST['enable_flash']) ){
+		check_admin_referer('ngg_addgallery');
+		$ngg_options['swfUpload'] = true;	
+		update_option('ngg_options', $ngg_options);
+	}
 	
 	//get maximum allowable size from php.ini
 	//thx to Whoismanu PhotoQ / M.Flury 
@@ -226,7 +238,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				</tr> 
 				<tr>
 					<th><?php _e('Add Metadata :', 'nggallery') ;?></th>
-					<td><input type="checkbox" name="addmetadata" value="1" />
+					<td><input type="checkbox" name="addmetadata" value="1" checked="checked" />
 					<?php _e('Import EXIF, IPTC or XMP data (if available)', 'nggallery') ;?></td>
 				</tr>
 				</table>
@@ -251,7 +263,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				</tr>
 				<tr>
 					<th><?php _e('Add Metadata :', 'nggallery') ;?></th>
-					<td><input type="checkbox" name="addmetadata" value="1" />
+					<td><input type="checkbox" name="addmetadata" value="1" checked="checked" />
 					<?php _e('Import EXIF, IPTC or XMP data (if available)', 'nggallery') ;?></td>
 				</tr>
 				</table>
@@ -289,11 +301,16 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				</tr> 
 				<tr>
 					<th><?php _e('Add Metadata :', 'nggallery') ;?></th>
-					<td><input type="checkbox" name="addmetadata" value="1" />
+					<td><input type="checkbox" name="addmetadata" value="1" checked="checked" />
 					<?php _e('Import EXIF, IPTC or XMP data (if available)', 'nggallery') ;?></td>
 				</tr>
 				</table>
 				<div class="submit">
+					<?php if ($ngg_options['swfUpload']) { ?>
+					<input type="submit" name="disable_flash" id="disable_flash" title="<?php _e('The batch upload requires Adobe Flash 9, disable it if you have problems','nggallery') ?>" value="<?php _e('Disable flash upload', 'nggallery') ;?>" />
+					<?php } else { ?>
+					<input type="submit" name="enable_flash" id="enable_flash" title="<?php _e('Upload multiple files at once by ctrl/shift-selecting in dialog','nggallery') ?>" value="<?php _e('Enable flash based upload', 'nggallery') ;?>" />
+					<?php } ?>
 					<input type="submit" name="uploadimage" id="uploadimage_btn" value="<?php _e('Upload images', 'nggallery') ;?>" />
 				</div>
 			</fieldset>

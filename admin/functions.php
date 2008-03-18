@@ -109,7 +109,6 @@ class nggAdmin{
 			nggallery::show_message(__('Directory', 'nggallery').' <strong>'.$gallerypath.'</strong> '.__('contains no pictures', 'nggallery'));
 			return;
 		}
-
 		// check & create thumbnail folder
 		if ( !nggallery::get_thumbnail_folder($gallerypath) )
 			return;
@@ -138,7 +137,7 @@ class nggAdmin{
 		$new_images = array_diff($new_imageslist, $old_imageslist);
 		// now create thumbnails
 		nggAdmin::generateThumbnail($gallerypath,$new_images);
-
+		
 		// add images to database		
 		$count_pic = nggAdmin::add_Images($gallery_id, $gallerypath, $new_images);
 				
@@ -158,7 +157,8 @@ class nggAdmin{
 		               $files[] = utf8_encode($file); 
 		   closedir($handle); 
 		} 
-		return($files); 
+		sort($files);
+		return ($files); 
 	} 
 	
 	// **************************************************************
@@ -194,9 +194,11 @@ class nggAdmin{
 				// skip if file is not there
 				if (!$thumb->error) {
 					$thumb->resize($ngg_options['imgWidth'],$ngg_options['imgHeight'],$ngg_options['imgResampleMode']);
-					if ( $thumb->save($gallery_absfolder."/".$picture,$ngg_options['imgQuality']) )
-						$bar->addNote($picture. __(' : Image resized...','nggallery'));
-					else
+					if ( $thumb->save($gallery_absfolder."/".$picture,$ngg_options['imgQuality']) ) {
+						// do not flush the buffer with useless messages
+						if ($elements  < 100)
+							$bar->addNote($picture. __(' : Image resized...','nggallery'));
+					} else
 						$bar->addNote($picture . "  : Error : <strong>".$thumb->errmsg."</strong>");
 					$bar->increase();
 				}
@@ -249,9 +251,11 @@ class nggAdmin{
 					$thumb->watermarkCreateText($ngg_options['wmColor'], $ngg_options['wmFont'], $ngg_options['wmSize'], $ngg_options['wmOpaque']);
 					$thumb->watermarkImage($ngg_options['wmPos'], $ngg_options['wmXpos'], $ngg_options['wmYpos']);  
 				}
-				if ( $thumb->save($gallery_absfolder."/".$picture,$ngg_options['imgQuality']) )
-					$bar->addNote($picture. __(' : Watermark created...','nggallery'));
-				else
+				if ( $thumb->save($gallery_absfolder."/".$picture,$ngg_options['imgQuality']) ) {
+					// do not flush the buffer with useless messages
+					if ($elements  < 100)
+						$bar->addNote($picture. __(' : Watermark created...','nggallery'));
+				 } else
 					$bar->addNote($picture . "  : Error : <strong>".$thumb->errmsg."</strong>");
 				$bar->increase();
 			}
@@ -346,7 +350,9 @@ class nggAdmin{
 					$bar->addNote($picture . "  : Error : <strong>".$thumb->errmsg."</strong>");
 				}
 				$thumb->destruct();
-				$bar->addNote($picture. __(' : Thumbnail created...','nggallery'));
+				// do not flush the buffer with useless messages
+				if ($elements  < 100)
+					$bar->addNote($picture. __(' : Thumbnail created...','nggallery'));
 				$bar->increase();
 			}
 		}
@@ -361,11 +367,9 @@ class nggAdmin{
 	function add_Images($galleryID, $gallerypath, $imageslist) {
 		// add images to database		
 		global $wpdb;
-		
 		$count_pic = 0;
 		if (is_array($imageslist)) {
 			foreach($imageslist as $picture) {
-
 				$result = $wpdb->query("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES ('$galleryID', '$picture', '$picture', 0) ");
 				$pic_id = (int) $wpdb->insert_id;
 				if ($result) $count_pic++;
@@ -548,10 +552,28 @@ class nggAdmin{
 		// WPMU action
 		if (nggAdmin::check_quota())
 			return;
-		
+
 		// Images must be an array
 		$imageslist = array();
-		$i = 1;
+
+		// get selected gallery
+		$galleryID = (int) $_POST['galleryselect'];
+
+		if ($galleryID == 0) {
+			nggallery::show_error(__('No gallery selected !','nggallery'));
+			return;	
+		}
+
+		// get the path to the gallery	
+		$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
+
+		if (!$gallerypath){
+			nggallery::show_error(__('Failure in database, no gallery path set !','nggallery'));
+			return;
+		} 
+				
+		// read list of images
+		$dirlist = nggAdmin::scandir(WINABSPATH.$gallerypath);
 		
 		foreach ($_FILES as $key => $value) {
 			
@@ -561,32 +583,20 @@ class nggAdmin{
 				$filepart = pathinfo ( strtolower($_FILES[$key]['name']) );
 				// required until PHP 5.2.0
 				$filepart['filename'] = substr($filepart["basename"],0 ,strlen($filepart["basename"]) - (strlen($filepart["extension"]) + 1) );
-				$filename = sanitize_title($filepart['filename']).".".$filepart['extension'];
-				// check if this filename already exist
-				if (in_array($filename,$imageslist))
-					$filename = sanitize_title($filepart['filename']) . "_" . $i++ . "." .$filepart['extension'];
-					
-				$galleryID = (int) $_POST['galleryselect'];
 				
-				if ($galleryID == 0) {
-					@unlink($temp_file) or die  ('<div class="updated"><p><strong>'.__('Unable to unlink file ', 'nggallery').$temp_zipfile.'!</strong></p></div>');		
-					nggallery::show_error(__('No gallery selected !','nggallery'));
-					return;	
-				}
-		
-				// get the path to the gallery	
-				$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
-				if (!$gallerypath){
-					@unlink($temp_file)  or die  ('<div class="updated"><p><strong>'.__('Unable to unlink file ', 'nggallery').$temp_zipfile.'!</strong></p></div>');		
-					nggallery::show_error(__('Failure in database, no gallery path set !','nggallery'));
-					return;
-				} 
+				$filename = sanitize_title($filepart['filename']) . "." . $filepart['extension'];
 
 				// check for allowed extension
 				$ext = array("jpeg", "jpg", "png", "gif"); 
 				if (!in_array($filepart['extension'],$ext)){ 
 					nggallery::show_error('<strong>'.$_FILES[$key]['name'].' </strong>'.__('is no valid image file!','nggallery'));
 					continue;
+				}
+
+				// check if this filename already exist in the folder
+				$i = 0;
+				while (in_array($filename,$dirlist)) {
+					$filename = sanitize_title($filepart['filename']) . "_" . $i++ . "." .$filepart['extension'];
 				}
 				
 				$dest_file = WINABSPATH.$gallerypath."/".$filename;
@@ -609,8 +619,9 @@ class nggAdmin{
 					continue;
 				}
 				
-				// add to imagelist
+				// add to imagelist & dirlist
 				$imageslist[] = $filename;
+				$dirlist[] = $filename;
 
 			}
 		}
@@ -640,6 +651,10 @@ class nggAdmin{
 			@unlink($temp_file);		
 			return __('No gallery selected !','nggallery');;
 		}
+
+		// WPMU check for quota
+		if (nggAdmin::check_quota())
+			return;
 
 		// Check the upload
 		if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) {
@@ -885,7 +900,10 @@ class wpProgressBar {
   					document.getElementById("'.$this->domIDProgressNote.'").getElementsByTagName("li")['.$this->ListCount.'].appendChild(note);
 			      </script>';      
 			$this->ListCount++;
-			ob_flush();flush();
+			if ($this->numSteps < 150) {
+				ob_flush();
+				flush();
+			}
 		}
 	}
 

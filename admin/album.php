@@ -7,19 +7,20 @@ global $wpdb;
 function nggallery_admin_manage_album()  {
 	global $wpdb;
 	
+	$albumID = (int) $_POST['act_album'];
+	
 	if ($_POST['update']){
 		
 		check_admin_referer('ngg_album');
 		
 		if ($_POST['newalbum']){ 
-			$newablum = attribute_escape($_POST['newalbum']);
-			$result = $wpdb->query(" INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newablum','0')");
+			$newalbum = attribute_escape($_POST['newalbum']);
+			$result = $wpdb->query(" INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newalbum','0')");
 			if ($result) $messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
 		} 
 		
-		if ($_POST['act_album'] > 0){
-			$albumid = attribute_escape($_POST['act_album']);
-
+		if ($albumID > 0){
+			
 			// get variable galleryContainer 
 			parse_str($_POST['sortorder']); 
 			if (is_array($galleryContainer)){ 
@@ -29,9 +30,9 @@ function nggallery_admin_manage_album()  {
 					$sortorder[] = $gid;
 				}
 				$serial_sort = serialize($sortorder); 
-				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '$serial_sort' WHERE id = $albumid ");
+				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '$serial_sort' WHERE id = $albumID ");
 			} else {
-				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '0' WHERE id = $albumid ");
+				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '0' WHERE id = $albumID ");
 			}
 			$messagetext = '<font color="green">'.__('Update Successfully','nggallery').'</font>';
 		} 
@@ -39,8 +40,8 @@ function nggallery_admin_manage_album()  {
 	
 	if ($_POST['delete']){
 		check_admin_referer('ngg_album');
-		$act_album = attribute_escape($_POST['act_album']);
-		$result = $wpdb->query("DELETE FROM $wpdb->nggalbum WHERE id = '$act_album' ");
+		
+		$result = $wpdb->query("DELETE FROM $wpdb->nggalbum WHERE id = '$albumID' ");
 		if ($result) $messagetext = '<font color="green">'.__('Album deleted','nggallery').'</font>';
 	}
 	

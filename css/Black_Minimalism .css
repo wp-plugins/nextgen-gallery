@@ -246,6 +246,10 @@ it's only a template design
 	float: right;
 }
 
+.ngg-center {
+  	margin-left: auto;
+    margin-right: auto;
+}
 
 /* ----------- Sidebar widget -------------*/
 .ngg-widget,
