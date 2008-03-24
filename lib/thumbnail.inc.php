@@ -228,7 +228,7 @@ class ngg_Thumbnail {
             }
 		    $MB = 1048576;  // number of bytes in 1M
 		    $K64 = 65536;    // number of bytes in 64K
-		    $TWEAKFACTOR = 1.5;  // Or whatever works for you
+		    $TWEAKFACTOR = 1.68;  // Or whatever works for you
 		    $memoryNeeded = round( ( $imageInfo[0] * $imageInfo[1]
 		                                           * $imageInfo['bits']
 		                                           * $CHANNEL / 8
