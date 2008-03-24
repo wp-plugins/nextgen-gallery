@@ -2,6 +2,7 @@ NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
 V0.91 - 24.03.2008
+- Changed : Resample mode back to 3
 - Changed : Add DIV "ngg-singlepic-wrapper" for SingelPic (THX to Travel-Junkie)
 - Changed : Increase Tweakfactor for Memory Check
 - Bugfix : Use admin.css only on NextGEN pages (THX tp Oliver)
