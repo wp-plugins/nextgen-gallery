@@ -298,8 +298,8 @@ This is a template stylesheet which doesn't support description below the thumbn
 }
 
 .ngg-center img {
-  	margin-left: auto;
-    margin-right: auto;
+  	margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 /* ----------- Sidebar widget -------------*/

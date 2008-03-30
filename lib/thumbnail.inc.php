@@ -165,7 +165,7 @@ class ngg_Thumbnail {
         }
         
 		// increase memory-limit if possible, GD needs this for large images
-		@ini_set('memory_limit', '128M');
+		// @ini_set('memory_limit', '128M');
         
 		if($this->error == false) { 
         // Check memory consumption if file exists
@@ -816,8 +816,8 @@ class ngg_Thumbnail {
 		// This function requires both the GD library and the FreeType library. 
 		if ( !function_exists(ImageTTFBBox) )
 			return;
-			
-		$TextSize = ImageTTFBBox($wmSize, 0, $wmFontPath, $this->watermarkText);
+	
+		$TextSize = @ImageTTFBBox($wmSize, 0, $wmFontPath, $this->watermarkText) or die;
 		$TextWidth = abs($TextSize[2]) + abs($TextSize[0]);
 		$TextHeight = abs($TextSize[7]) + abs($TextSize[1]);
 		// Create Image for Text
