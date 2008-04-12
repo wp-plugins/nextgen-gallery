@@ -1,6 +1,16 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.93 - 12.04.2008
+- Added : Select Full-Size or Singlepic in Media Upload
+- Added : Check for minimum 8 MB Memory
+- Changed : Priority from wpautop must be before gallery
+- Bugfix : Added Screencolor to Widgets
+- Bugfix : Clean CSS class in setup.php
+- Bugfix : Change PHP short tag (Thx to Archedition)
+- Bugfix : Remove tab.png from CSS (Thx to Frisco)
+- Bugfix : Remove newline and encode quotes in Media-Upload (THX to Trip Mellinger)
+
 V0.92 - 30.03.2008
 - Changed : Higher priority for filter in WP2.5 final
 - Changed : Do not increase memory_limit with ini_set

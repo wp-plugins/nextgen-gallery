@@ -90,7 +90,7 @@ if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="up
 	</div>
 	<br style="clear: both;"/>
 	
-<? if (!IS_WPMU || wpmu_site_admin() ) { ?>
+<?php if (!IS_WPMU || wpmu_site_admin() ) { ?>
 	<div class="tablenav" style="margin-right: 210px;"> 
 	  <?php
 		if ( is_writeable($real_file) ) {

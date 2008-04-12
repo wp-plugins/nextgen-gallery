@@ -86,7 +86,7 @@ if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="up
 	</form>
 </div>
 
-<? if (!IS_WPMU || wpmu_site_admin() ) { ?>
+<?php if (!IS_WPMU || wpmu_site_admin() ) { ?>
 <div class="wrap"> 
   <?php
 	if ( is_writeable($real_file) ) {

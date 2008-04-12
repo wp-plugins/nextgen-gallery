@@ -2,7 +2,7 @@
 CSS Name: Default Styles
 Description: NextGEN Default Gallery Stylesheet
 Author: Alex Rabe
-Version: 1.42
+Version: 1.43
 
 This is a template stylesheet that can be used with NextGEN Gallery. I tested the
 styles with a default theme Kubrick. Modify it when your theme struggle with it,
@@ -20,7 +20,22 @@ it's only a template design
 }
 
 .ngg-album {
-	/*height: 130px;*/
+    height: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #fff;
+}
+
+/* IE6 will ignore this , again I hate IE6 */
+/* See also http://www.sitepoint.com/article/browser-specific-css-hacks */
+html>body .ngg-album {
+    overflow:hidden;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #fff;
+} 
+
+.ngg-album {
 	overflow: hidden;
 	padding: 5px;
 	margin-bottom: 5px;

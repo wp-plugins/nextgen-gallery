@@ -22,13 +22,20 @@ function media_upload_nextgen() {
 		$keys = array_keys($_POST['send']);
 		$send_id = (int) array_shift($keys);
 		$image = $_POST['image'][$send_id];
-		$alttext = stripslashes($image['alttext']);
-		$description = stripslashes($image['description']);
+		$alttext = stripslashes( htmlspecialchars ($image['alttext'], ENT_QUOTES));
+		$description = stripslashes (htmlspecialchars($image['description'], ENT_QUOTES));
+		// here is no new line allowed
+		$clean_description = preg_replace("/\n|\r\n|\r$/", " ", $description);
 		$thumbcode = nggallery::get_thumbcode("");
 		$class="ngg-singlepic ngg-{$image['align']}";
 		// Build output
-		$html = "<img src='{$image['thumb']}' alt='$alttext' class='$class' />";
-		$html = "<a $thumbcode href='{$image['url']}' title='$description'>$html</a>";
+		if ($image['size'] == "thumbnail") 
+			$html = "<img src='{$image['thumb']}' alt='$alttext' class='$class' />";
+		if ($image['size'] == "full") 
+			$html = "<img src='{$image['url']}' alt='$alttext' class='$class' />";
+		$html = "<a $thumbcode href='{$image['url']}' title='$clean_description'>$html</a>";
+		if ($image['size'] == "singlepic") 
+			$html = "[singlepic=$send_id,320,240,,{$image['align']}]";
 		media_upload_nextgen_save_image();
 		// Return it to TinyMCE
 		return media_send_to_editor($html);
@@ -163,10 +170,10 @@ function media_upload_nextgen_form($errors) {
 			  <img class='pinkynail toggle' alt='<?php echo stripslashes($picture->alttext) ?>' src='<?php echo $picture->thumbPath ?>' />
 			  <a class='toggle describe-toggle-on' href='#'><?php _e('Show',"nggallery") ?></a>
 			  <a class='toggle describe-toggle-off' href='#'><?php _e('Hide',"nggallery") ?></a>
-			  <div class='filename new'><?php echo $picture->filename ?></div>
+			  <div class='filename new'><?php echo ( empty($picture->alttext) ) ? $picture->filename : stripslashes($picture->alttext); ?></div>
 			  <table class='slidetoggle describe startclosed'><tbody>
 				  <tr>
-					<td class='A1B1' rowspan='4'><img class='thumbnail' alt='<?php echo $picture->alttext ?>' src='<?php echo $picture->thumbPath ?>'/></td>
+					<td rowspan='4'><img class='thumbnail' alt='<?php echo $picture->alttext ?>' src='<?php echo $picture->thumbPath ?>'/></td>
 					<td><?php _e('Image ID:',"nggallery") ?><?php echo $picid ?></td>
 				  </tr>
 				  <tr><td><?php echo $picture->filename ?></td></tr>
@@ -180,19 +187,31 @@ function media_upload_nextgen_form($errors) {
 					<td class="label"><label for="image[<?php echo $picid ?>][description]"><?php _e("Description","nggallery") ?></label></td>
 						<td class="field"><textarea name="image[<?php echo $picid ?>][description]" id="image[<?php echo $picid ?>][description]"><?php echo stripslashes($picture->description) ?></textarea></td>
 				  </tr>
-				  <tr class="align">
-					<td class="label"><label for="image[<?php echo $picid ?>][align]"><?php _e("Alignment") ?></label></td>
-					<td class="field">
-						<input name="image[<?php echo $picid ?>][align]" id="image-align-none-<?php echo $picid ?>" value="none" type="radio" />
-						<label for="image-align-none-<?php echo $picid ?>" class="align image-align-none-label"><?php  _e("None") ?></label>
-						<input name="image[<?php echo $picid ?>][align]" id="image-align-left-<?php echo $picid ?>" value="left" type="radio" />
-						<label for="image-align-left-<?php echo $picid ?>" class="align image-align-left-label"><?php  _e("Left") ?></label>
-						<input name="image[<?php echo $picid ?>][align]" id="image-align-center-<?php echo $picid ?>" value="center" type="radio" />
-						<label for="image-align-center-<?php echo $picid ?>" class="align image-align-center-label"><?php  _e("Center") ?></label>
-						<input name="image[<?php echo $picid ?>][align]" id="image-align-right-<?php echo $picid ?>" value="right" type="radio" />
-						<label for="image-align-right-<?php echo $picid ?>" class="align image-align-right-label"><?php  _e("Right") ?></label>
-					</td>
-				   </tr>
+					<tr class="align">
+						<td class="label"><label for="image[<?php echo $picid ?>][align]"><?php _e("Alignment") ?></label></td>
+						<td class="field">
+							<input name="image[<?php echo $picid ?>][align]" id="image-align-none-<?php echo $picid ?>" checked="checked" value="none" type="radio" />
+							<label for="image-align-none-<?php echo $picid ?>" class="align image-align-none-label"><?php  _e("None") ?></label>
+							<input name="image[<?php echo $picid ?>][align]" id="image-align-left-<?php echo $picid ?>" value="left" type="radio" />
+							<label for="image-align-left-<?php echo $picid ?>" class="align image-align-left-label"><?php  _e("Left") ?></label>
+							<input name="image[<?php echo $picid ?>][align]" id="image-align-center-<?php echo $picid ?>" value="center" type="radio" />
+							<label for="image-align-center-<?php echo $picid ?>" class="align image-align-center-label"><?php  _e("Center") ?></label>
+							<input name="image[<?php echo $picid ?>][align]" id="image-align-right-<?php echo $picid ?>" value="right" type="radio" />
+							<label for="image-align-right-<?php echo $picid ?>" class="align image-align-right-label"><?php  _e("Right") ?></label>
+						</td>
+					</tr>
+					<tr class="image-size">
+						<th class="label"><label for="image[<?php echo $picid ?>][size]"><span class="alignleft"><?php _e("Size") ?></span></label>
+						</th>
+						<td class="field">
+							<input name="image[<?php echo $picid ?>][size]" id="image-size-thumb-<?php echo $picid ?>" type="radio" checked="checked" value="thumbnail" />
+							<label for="image-size-thumb-<?php echo $picid ?>"><?php  _e("Thumbnail") ?></label>
+							<input name="image[<?php echo $picid ?>][size]" id="image-size-full-<?php echo $picid ?>" type="radio" value="full" />
+							<label for="image-size-full-<?php echo $picid ?>"><?php  _e("Full size") ?></label>
+							<input name="image[<?php echo $picid ?>][size]" id="image-size-singlepic-<?php echo $picid ?>" type="radio" value="singlepic" />
+							<label for="image-size-singlepic-<?php echo $picid ?>"><?php  _e("Singlepic", "nggallery") ?></label>
+						</td>
+					</tr>
 				   <tr class="submit">
 						<td>
 							<input type="hidden"  name="image[<?php echo $picid ?>][thumb]" value="<?php echo $picture->thumbPath ?>" />

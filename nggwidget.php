@@ -3,7 +3,7 @@
 Plugin Name: NextGEN Gallery Widget
 Description: Adds a sidebar widget support to your NextGEN Gallery
 Author: NextGEN DEV-Team
-Version: 1.21
+Version: 1.22
 Author URI: http://alexrabe.boelinger.com/
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 
@@ -56,6 +56,7 @@ function nggSlideshowWidget($galleryID,$irWidth,$irHeight) {
 	$out .= "\n\t\t".'sbsl.addVariable("backcolor", "0x'.$ngg_options['irBackcolor'].'");';
 	$out .= "\n\t\t".'sbsl.addVariable("frontcolor", "0x'.$ngg_options['irFrontcolor'].'");';
 	$out .= "\n\t\t".'sbsl.addVariable("lightcolor", "0x'.$ngg_options['irLightcolor'].'");';
+	if (!empty($ngg_options['irScreencolor'])) $out .= "\n\t\t".'sbsl.addVariable("screencolor", "0x'.$ngg_options['irScreencolor'].'");';
 	$out .= "\n\t\t".'sbsl.addVariable("rotatetime", "'.$ngg_options['irRotatetime'].'");';
 	$out .= "\n\t\t".'sbsl.addVariable("transition", "'.$ngg_options['irTransition'].'");';
 	$out .= "\n\t\t".'sbsl.addVariable("width", "'.$irWidth.'");';

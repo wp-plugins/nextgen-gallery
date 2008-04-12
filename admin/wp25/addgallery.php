@@ -74,17 +74,6 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		update_option('ngg_options', $ngg_options);
 	}
 	
-	//get maximum allowable size from php.ini
-	//thx to Whoismanu PhotoQ / M.Flury 
-		$max_upl_size = strtolower( ini_get( 'upload_max_filesize' ) );
-		$max_upl_kbytes = 0;
-		if (strpos($max_upl_size, 'k') !== false)
-			$max_upl_kbytes = $max_upl_size;
-		if (strpos($max_upl_size, 'm') !== false)
-			$max_upl_kbytes = $max_upl_size * 1024;
-		if (strpos($max_upl_size, 'g') !== false)
-			$max_upl_kbytes = $max_upl_size * 1024 * 1024;
-			
 	// message windows
 	if(!empty($messagetext)) { echo '<!-- Last Action --><div id="message" class="updated fade"><p>'.$messagetext.'</p></div>'; }
 	?>
