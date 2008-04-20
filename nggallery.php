@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.93
+Version: 0.94
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -62,7 +62,7 @@ if ( ($memory_limit != 0) && ($memory_limit < 12 ) ) {
 }
 
 // Version and path to check version
-define('NGGVERSION', "0.93");
+define('NGGVERSION', "0.94");
 // Minimum required database version
 define('NGG_DBVERSION', "0.84");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
@@ -124,17 +124,16 @@ if (is_admin()) {
 	// Load the gallery generator
 	include_once (dirname (__FILE__)."/nggfunctions.php");
 	
-	// avoid wpautop() in gallery output
-	remove_filter('the_content', 'wpautop');
-	remove_filter('the_excerpt', 'wpautop');
-	add_filter('the_content', 'wpautop',7);
-	add_filter('the_excerpt', 'wpautop',7);
+	// required in WP 2.5, NextGEN should have higher priority than the shortcode
+	// see also http://trac.wordpress.org/ticket/6436 	
+	if (IS_WP25) {	
+		remove_filter('the_content', 'do_shortcode', 9);
+		add_filter('the_content', 'do_shortcode', 11);
+	}
 	
 	// Action calls for all functions 
-	// required in WP 2.5, NextGEN should have higher priority than 9
-	// see also http://trac.wordpress.org/ticket/6436 
-	add_filter('the_content', 'searchnggallerytags', 8);
-	add_filter('the_excerpt', 'searchnggallerytags', 8);
+	add_filter('the_content', 'searchnggallerytags', 10);
+	add_filter('the_excerpt', 'searchnggallerytags', 10);
 }
 
 // Load tinymce button 

@@ -101,7 +101,8 @@ function ngg_list_contributors()	{
 	"David Potter (Documentation and Help)" => "http://dpotter.net/",
 	"Carlale Chen (Chinese Translation)" => "http://0-o-0.cc/",
 	"Nica Luigi Cristian (Romanian Translation)" => "http://www.cristiannica.com/",
-	"Igor Shevkoplyas (Russian Translation)" => "http://www.russian-translation-matters.com"
+	"Igor Shevkoplyas (Russian Translation)" => "http://www.russian-translation-matters.com",
+	"Alexandr Kindras (Code contributor)" => "http://www.fixdev.com"
 	);
 	
 	ksort($contributors);

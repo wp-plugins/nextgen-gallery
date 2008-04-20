@@ -1,6 +1,11 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.94 - 20.04.2008
+- Added : New filter option ngg_create_gallery_link
+- Changed : Reduce amount of DB queries in albums (Big THX to Alexandr Kindras)
+- Changed : Revert wpautop priority change. Doesn't good for other plugins
+
 V0.93 - 12.04.2008
 - Added : Select Full-Size or Singlepic in Media Upload
 - Added : Check for minimum 8 MB Memory

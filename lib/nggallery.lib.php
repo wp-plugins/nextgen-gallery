@@ -238,14 +238,16 @@ class nggallery {
 	// get the thumbnail url to the image
 	//TODO:Combine in one class
 	/**********************************************************/
-	function get_thumbnail_url($imageID){
+	function get_thumbnail_url($imageID, $picturepath = '', $fileName = ''){
 		// get the complete url to the thumbnail
 		global $wpdb;
 		
+		// safety first
+		$imageID = (int) $imageID;
+		
 		// get gallery values
-		$galleryID = $wpdb->get_var("SELECT galleryid FROM $wpdb->nggpictures WHERE pid = '$imageID' ");
-		$fileName = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$imageID' ");
-		$picturepath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
+ 		if (empty($fileName)) list($galleryID, $fileName) = $wpdb->get_row("SELECT galleryid, filename FROM $wpdb->nggpictures WHERE pid = '$imageID' ", ARRAY_N);
+ 		if (empty($picturepath)) $picturepath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
 	
 		// set gallery url
 		$folder_url 	= get_option ('siteurl')."/".$picturepath.nggallery::get_thumbnail_folder($picturepath, FALSE);
@@ -258,14 +260,16 @@ class nggallery {
 	/**********************************************************/
 	// get the complete url to the image
 	/**********************************************************/
-	function get_image_url($imageID){
+	function get_image_url($imageID, $picturepath = '', $fileName = ''){
 		
 		global $wpdb;
+
+		// safety first
+		$imageID = (int) $imageID;
 		
 		// get gallery values
-		$galleryID = $wpdb->get_var("SELECT galleryid FROM $wpdb->nggpictures WHERE pid = '$imageID' ");
-		$fileName = $wpdb->get_var("SELECT filename FROM $wpdb->nggpictures WHERE pid = '$imageID' ");
-		$picturepath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
+ 		if (empty($fileName)) list($galleryID, $fileName) = $wpdb->get_row("SELECT galleryid, filename FROM $wpdb->nggpictures WHERE pid = '$imageID' ", ARRAY_N);
+ 		if (empty($picturepath)) $picturepath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
 	
 		// set gallery url
 		$imageURL 	= get_option ('siteurl')."/".$picturepath."/".$fileName;
