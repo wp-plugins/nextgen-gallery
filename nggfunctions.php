@@ -406,26 +406,28 @@ function nggCreateAlbum( $galleriesID, $mode = "extend", $albumID = 0) {
 	global $wpdb, $nggRewrite;
 	
 	$ngg_options = nggallery::get_option('ngg_options');
+	$sortorder = $galleriesID;
 	
  	foreach ($galleriesID as $i => $value) {
    		$galleriesID[$i] = addslashes($value);
  	}
  	
- 	$galleriesOfAlbum = $wpdb->get_results('SELECT * FROM '.$wpdb->nggallery.' WHERE gid IN (\''.implode('\',\'', $galleriesID).'\')');
- 	$picturesCounter  = $wpdb->get_results('SELECT galleryid, COUNT(*) as counter FROM '.$wpdb->nggpictures.' WHERE galleryid IN (\''.implode('\',\'', $galleriesID).'\') AND exclude != 1 GROUP BY galleryid', OBJECT);
+ 	$galleriesOfAlbum = $wpdb->get_results('SELECT * FROM '.$wpdb->nggallery.' WHERE gid IN (\''.implode('\',\'', $galleriesID).'\')', OBJECT);
+ 	$galleriesOfAlbum  = ngg_emulate_objekt_k($galleriesOfAlbum);
+	$picturesCounter  = $wpdb->get_results('SELECT galleryid, COUNT(*) as counter FROM '.$wpdb->nggpictures.' WHERE galleryid IN (\''.implode('\',\'', $galleriesID).'\') AND exclude != 1 GROUP BY galleryid', OBJECT);
  	$picturesCounter  = ngg_emulate_objekt_k($picturesCounter);
 	$imagesID = array();
  	
+ 	// Add the preview picture
  	foreach ($galleriesOfAlbum as $gallery_row)
  		$imagesID[] = $gallery_row->previewpic;
  	$albumPreview = $wpdb->get_results('SELECT pid, filename FROM '.$wpdb->nggpictures.' WHERE pid IN (\''.implode('\',\'', $imagesID).'\')', OBJECT);
  	$albumPreview  = ngg_emulate_objekt_k($albumPreview);
  	
  	$out = '';
- 	
- 	foreach ($galleriesOfAlbum as $gallery_row) {
- 		$gallerycontent = $gallery_row;
- 		$galleryID = $gallerycontent->gid;
+ 	// Start the output
+ 	foreach ($sortorder as $galleryID) {
+ 		$gallerycontent = $galleriesOfAlbum[$galleryID];
 
 		// choose between variable and page link
 		if ($ngg_options['galNoPages']) {

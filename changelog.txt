@@ -1,6 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.95 - 25.04.2008
+- Bugfix : Correction in media-upload to fit with Wordpress 2.5.1
+- Bugfix : Attribute_escape all objects in media-upload
+- Bugfix : Correct sortorder for albums
+- Bugfix : Typo correction (THX to Momo-I)
+
 V0.94 - 20.04.2008
 - Added : New filter option ngg_create_gallery_link
 - Changed : Reduce amount of DB queries in albums (Big THX to Alexandr Kindras)

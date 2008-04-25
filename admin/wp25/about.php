@@ -28,7 +28,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<p><?php _e('There exist several ways to contribute, help or support us in this work. Non of them are mandatory.', 'nggallery') ;?></p>
 		<ul>
 			<li><strong><?php _e('Send us bugfixes / code changes', 'nggallery') ;?></strong><br /><?php _e('The most motivated support for this plugin are your ideas and brain work', 'nggallery') ;?></li>
-			<li><strong><?php _e('Translate the plugin', 'nggallery') ;?></strong><br /><?php _e('To help people to work with this plugin, I would like to have it in all avaivable languages', 'nggallery') ;?></li>
+			<li><strong><?php _e('Translate the plugin', 'nggallery') ;?></strong><br /><?php _e('To help people to work with this plugin, I would like to have it in all available languages', 'nggallery') ;?></li>
 			<li><strong><?php _e('Donate the work via paypal', 'nggallery') ;?></strong><br />
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" >
 				<input type="hidden" name="cmd" value="_xclick"/><input type="hidden" name="business" value="alterego@boelinger.com"/>
@@ -40,7 +40,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<input type="hidden" name="tax" value="0"/>
 				<input type="hidden" name="bn" value="PP-DonationsBF"/>
 				<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!" style="border: none;"/>
-				</form><?php _e('No doubt a very usefull and easy motivation :-)', 'nggallery') ;?>
+				</form><?php _e('No doubt a very useful and easy motivation :-)', 'nggallery') ;?>
 			</li>
 			<li><strong><?php _e('Place a link to the plugin in your blog/webpage', 'nggallery') ;?></strong><br /><?php _e('Yes, share and trackback is also a good support for this work ', 'nggallery') ;?></li>
 		</ul>

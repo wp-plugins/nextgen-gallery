@@ -3941,7 +3941,7 @@
 				}
 			  }
 			  
-			  $v_buffer = fread($this->zip_fd, $p_entry['compressed_size']);
+			  $v_buffer = @fread($this->zip_fd, $p_entry['compressed_size']);
           }
          
           // ----- Decompress the file 
@@ -3949,7 +3949,7 @@
           if ( (function_exists('memory_get_usage')) && (ini_get('memory_limit')) ) {
           		// take a overhead of 350000 byte (tested with XAMPP)
 	          	$maxMemory = $memory_limit - memory_get_usage() - 350000;
-	          	$v_file_content = gzinflate($v_buffer,$maxMemory);
+	          	$v_file_content = @gzinflate($v_buffer,$maxMemory);
 	      } else {
 				$v_file_content = @gzinflate($v_buffer);
 		  }

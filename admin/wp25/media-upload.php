@@ -105,9 +105,9 @@ function media_upload_nextgen_form($errors) {
 ?>
 
 <form id="filter" action="" method="get">
-<input type="hidden" name="type" value="<?php echo $type; ?>" />
-<input type="hidden" name="tab" value="<?php echo $tab; ?>" />
-<input type="hidden" name="post_id" value="<?php echo $post_id; ?>" />
+<input type="hidden" name="type" value="<?php echo attribute_escape( $GLOBALS['type'] ); ?>" />
+<input type="hidden" name="tab" value="<?php echo attribute_escape( $GLOBALS['tab'] ); ?>" />
+<input type="hidden" name="post_id" value="<?php echo (int) $post_id; ?>" />
 
 <div class="tablenav">
 	<?php
@@ -123,8 +123,8 @@ function media_upload_nextgen_form($errors) {
 	?>
 	
 	<div class="alignleft">
-		<select id="select_gal" name="select_gal">;
-			<option value="0" <?php selected('0', $galleryID); ?> ><?php _e('No gallery',"nggallery"); ?></option>
+		<select id="select_gal" name="select_gal">
+			<option value="0" <?php selected('0', $galleryID); ?> ><?php attribute_escape( _e('No gallery',"nggallery") ); ?></option>
 			<?php
 			// Show gallery selection
 			$gallerylist = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY gid ASC");
@@ -136,7 +136,7 @@ function media_upload_nextgen_form($errors) {
 			}
 			?>
 		</select>
-		<input type="submit" id="show-gallery" value="<?php _e('Select Gallery &#187;','nggallery'); ?>" class="button-secondary" />
+		<input type="submit" id="show-gallery" value="<?php attribute_escape( _e('Select Gallery &#187;','nggallery') ); ?>" class="button-secondary" />
 	</div>
 	<br style="clear:both;" />
 </div>
@@ -167,49 +167,48 @@ function media_upload_nextgen_form($errors) {
 			?>
 			<div id='media-item-<?php echo $picid ?>' class='media-item preloaded'>
 			  <div class='filename'></div>
-			  <img class='pinkynail toggle' alt='<?php echo stripslashes($picture->alttext) ?>' src='<?php echo $picture->thumbPath ?>' />
-			  <a class='toggle describe-toggle-on' href='#'><?php _e('Show',"nggallery") ?></a>
-			  <a class='toggle describe-toggle-off' href='#'><?php _e('Hide',"nggallery") ?></a>
+			  <a class='toggle describe-toggle-on' href='#'><?php attribute_escape( _e('Show',"nggallery") ); ?></a>
+			  <a class='toggle describe-toggle-off' href='#'><?php attribute_escape( _e('Hide',"nggallery") );?></a>
 			  <div class='filename new'><?php echo ( empty($picture->alttext) ) ? $picture->filename : stripslashes($picture->alttext); ?></div>
 			  <table class='slidetoggle describe startclosed'><tbody>
 				  <tr>
-					<td rowspan='4'><img class='thumbnail' alt='<?php echo $picture->alttext ?>' src='<?php echo $picture->thumbPath ?>'/></td>
-					<td><?php _e('Image ID:',"nggallery") ?><?php echo $picid ?></td>
+					<td rowspan='4'><img class='thumbnail' alt='<?php echo attribute_escape( $picture->alttext ); ?>' src='<?php echo attribute_escape( $picture->thumbPath ); ?>'/></td>
+					<td><?php attribute_escape( _e('Image ID:',"nggallery") ); ?><?php echo $picid ?></td>
 				  </tr>
-				  <tr><td><?php echo $picture->filename ?></td></tr>
-				  <tr><td><?php echo stripslashes($picture->alttext) ?></td></tr>
+				  <tr><td><?php echo attribute_escape( $picture->filename ); ?></td></tr>
+				  <tr><td><?php echo attribute_escape( stripslashes($picture->alttext) ); ?></td></tr>
 				  <tr><td>&nbsp;</td></tr>
 				  <tr>
-					<td class="label"><label for="image[<?php echo $picid ?>][alttext]"><?php _e("Alt/Titel text","nggallery") ?></label></td>
-					<td class="field"><input id="image[<?php echo $picid ?>][alttext]" name="image[<?php echo $picid ?>][alttext]" value="<?php echo stripslashes($picture->alttext) ?>" type="text"/></td>
+					<td class="label"><label for="image[<?php echo $picid ?>][alttext]"><?php attribute_escape( _e("Alt/Title text","nggallery") );?></label></td>
+					<td class="field"><input id="image[<?php echo $picid ?>][alttext]" name="image[<?php echo $picid ?>][alttext]" value="<?php echo attribute_escape( stripslashes($picture->alttext) ); ?>" type="text"/></td>
 				  </tr>	
 				  <tr>
-					<td class="label"><label for="image[<?php echo $picid ?>][description]"><?php _e("Description","nggallery") ?></label></td>
-						<td class="field"><textarea name="image[<?php echo $picid ?>][description]" id="image[<?php echo $picid ?>][description]"><?php echo stripslashes($picture->description) ?></textarea></td>
+					<td class="label"><label for="image[<?php echo $picid ?>][description]"><?php attribute_escape( _e("Description","nggallery") ); ?></label></td>
+						<td class="field"><textarea name="image[<?php echo $picid ?>][description]" id="image[<?php echo $picid ?>][description]"><?php echo attribute_escape( stripslashes($picture->description) ); ?></textarea></td>
 				  </tr>
 					<tr class="align">
-						<td class="label"><label for="image[<?php echo $picid ?>][align]"><?php _e("Alignment") ?></label></td>
+						<td class="label"><label for="image[<?php echo $picid ?>][align]"><?php attribute_escape( _e("Alignment") ); ?></label></td>
 						<td class="field">
 							<input name="image[<?php echo $picid ?>][align]" id="image-align-none-<?php echo $picid ?>" checked="checked" value="none" type="radio" />
-							<label for="image-align-none-<?php echo $picid ?>" class="align image-align-none-label"><?php  _e("None") ?></label>
+							<label for="image-align-none-<?php echo $picid ?>" class="align image-align-none-label"><?php attribute_escape( _e("None") );?></label>
 							<input name="image[<?php echo $picid ?>][align]" id="image-align-left-<?php echo $picid ?>" value="left" type="radio" />
-							<label for="image-align-left-<?php echo $picid ?>" class="align image-align-left-label"><?php  _e("Left") ?></label>
+							<label for="image-align-left-<?php echo $picid ?>" class="align image-align-left-label"><?php attribute_escape(  _e("Left") );?></label>
 							<input name="image[<?php echo $picid ?>][align]" id="image-align-center-<?php echo $picid ?>" value="center" type="radio" />
-							<label for="image-align-center-<?php echo $picid ?>" class="align image-align-center-label"><?php  _e("Center") ?></label>
+							<label for="image-align-center-<?php echo $picid ?>" class="align image-align-center-label"><?php attribute_escape( _e("Center") );?></label>
 							<input name="image[<?php echo $picid ?>][align]" id="image-align-right-<?php echo $picid ?>" value="right" type="radio" />
-							<label for="image-align-right-<?php echo $picid ?>" class="align image-align-right-label"><?php  _e("Right") ?></label>
+							<label for="image-align-right-<?php echo $picid ?>" class="align image-align-right-label"><?php attribute_escape( _e("Right") );?></label>
 						</td>
 					</tr>
 					<tr class="image-size">
-						<th class="label"><label for="image[<?php echo $picid ?>][size]"><span class="alignleft"><?php _e("Size") ?></span></label>
+						<th class="label"><label for="image[<?php echo $picid ?>][size]"><span class="alignleft"><?php attribute_escape( _e("Size") ); ?></span></label>
 						</th>
 						<td class="field">
 							<input name="image[<?php echo $picid ?>][size]" id="image-size-thumb-<?php echo $picid ?>" type="radio" checked="checked" value="thumbnail" />
-							<label for="image-size-thumb-<?php echo $picid ?>"><?php  _e("Thumbnail") ?></label>
+							<label for="image-size-thumb-<?php echo $picid ?>"><?php attribute_escape( _e("Thumbnail") ); ?></label>
 							<input name="image[<?php echo $picid ?>][size]" id="image-size-full-<?php echo $picid ?>" type="radio" value="full" />
-							<label for="image-size-full-<?php echo $picid ?>"><?php  _e("Full size") ?></label>
+							<label for="image-size-full-<?php echo $picid ?>"><?php attribute_escape( _e("Full size") ); ?></label>
 							<input name="image[<?php echo $picid ?>][size]" id="image-size-singlepic-<?php echo $picid ?>" type="radio" value="singlepic" />
-							<label for="image-size-singlepic-<?php echo $picid ?>"><?php  _e("Singlepic", "nggallery") ?></label>
+							<label for="image-size-singlepic-<?php echo $picid ?>"><?php attribute_escape( _e("Singlepic", "nggallery") ); ?></label>
 						</td>
 					</tr>
 				   <tr class="submit">
@@ -217,7 +216,7 @@ function media_upload_nextgen_form($errors) {
 							<input type="hidden"  name="image[<?php echo $picid ?>][thumb]" value="<?php echo $picture->thumbPath ?>" />
 							<input type="hidden"  name="image[<?php echo $picid ?>][url]" value="<?php echo $picture->imagePath ?>" />
 						</td>
-						<td class="savesend"><button type="submit" class="button" value="1" name="send[<?php echo $picid ?>]"><?php echo attribute_escape(__('Insert into Post')) ?></button></td>
+						<td class="savesend"><button type="submit" class="button" value="1" name="send[<?php echo $picid ?>]"><?php echo attribute_escape( __('Insert into Post') ); ?></button></td>
 				   </tr>
 			  </tbody></table>
 			</div>
@@ -226,9 +225,9 @@ function media_upload_nextgen_form($errors) {
 	}
 	?>
 	</div>
-	<input type="submit" class="button savebutton" name="save" value="<?php _e('Save all changes','nggallery'); ?>" />
-	<input type="hidden" name="post_id" id="post_id" value="<?php echo $post_id; ?>" />
-	<input type="hidden" name="select_gal" id="select_gal" value="<?php echo $galleryID; ?>" />
+	<input type="submit" class="button savebutton" name="save" value="<?php attribute_escape( _e('Save all changes','nggallery') ); ?>" />
+	<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
+	<input type="hidden" name="select_gal" id="select_gal" value="<?php echo (int) $galleryID; ?>" />
 </form>
 
 <?php
