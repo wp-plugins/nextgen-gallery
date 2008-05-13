@@ -27,12 +27,11 @@ Features:
 * Tag support for images : Append related images to your post
 * Meta data support : Import EXIF, IPTC or XMP meta data 
 * Sort images feature
+* Cool flash addons here : http://wordpress.org/extend/plugins/nextgen-flashviewer/
 
 For support around this plugin please visit http://alexrabe.boelinger.com/forums/
 
 **For your language file please visit :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/
-
-** PLEASE NOTE ! This gallery plugin is still in development, it can be contain many bugs ! **
 
 == Credits ==
 
