@@ -70,7 +70,7 @@ if ( ($memory_limit != 0) && ($memory_limit < 12 ) ) {
 }
 
 // Version and path to check version
-define('NGGVERSION', "0.95");
+define('NGGVERSION', "0.96");
 // Minimum required database version
 define('NGG_DBVERSION', "0.84");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
