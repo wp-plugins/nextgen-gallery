@@ -15,21 +15,9 @@ function nggallery_admin_manage_gallery() {
 	// get the options
 	$ngg_options=get_option('ngg_options');	
 
-	if (isset ($_POST['togglethumbs']))  {
-		check_admin_referer('ngg_updategallery');
-	// Toggle thumnails, forgive me if it's to complicated
-		$hideThumbs = (isset ($_POST['hideThumbs'])) ?  false : true ;
-	} else {
-		$hideThumbs = (isset ($_POST['hideThumbs'])) ?  true : false ;
-	}
-
-	if (isset ($_POST['toggletags']))  {
-		check_admin_referer('ngg_updategallery');
-	// Toggle tag view
-		$showTags = (isset ($_POST['showTags'])) ?  false : true ;
-	} else {
-		$showTags = (isset ($_POST['showTags'])) ?  true : false ;
-	}
+	//TODO: Remove this vars
+	$hideThumbs = ngg_hide_thumb();
+	$showTags = ngg_show_tags();
 
 	if ($mode == 'delete') {
 	// Delete a gallery
@@ -212,6 +200,9 @@ function nggallery_admin_manage_gallery() {
 		else 
 			$result = ngg_update_pictures(attribute_escape($_POST['description']), attribute_escape($_POST['alttext']), attribute_escape($_POST['exclude']), $act_gid );
 
+		//hook for other plugin to update the fields
+		do_action('ngg_update_gallery', $act_gid, $_POST);
+
 		nggallery::show_message(__('Update successful',"nggallery"));
 	}
 
@@ -364,7 +355,7 @@ function nggallery_picturelist($hideThumbs = false,$showTags = false) {
 		jQuery("#TB_tagaction").val(jQuery("#bulkaction").val());
 		jQuery("#TB_imagelist").val(elementlist);
 		// console.log (jQuery("#TB_imagelist").val());
-		jQuery.tb_show("", "#TB_inline?width=640&height=110&inlineId=tags&modal=true", false);
+		jQuery.tb_show("", "#TB_inline?width=640&height=120&inlineId=tags&modal=true", false);
 	}
 </script>
 <script type="text/javascript"> var tb_pathToImage = '<?php echo NGGALLERY_URLPATH ?>thickbox/loadingAnimationv3.gif';</script>
@@ -396,84 +387,96 @@ function getNumChecked(form)
 	}
 	return num;
 }
+
+jQuery(document).ready( function() {
+	// close postboxes that should be closed
+	jQuery('.if-js-closed').removeClass('if-js-closed').addClass('closed');
+	// postboxes
+	add_postbox_toggles('ngg-manage-gallery');
+});
+
 //-->
 </script>
 <div class="wrap">
 <h2><?php _e('Gallery', 'nggallery') ?> : <?php echo $act_gallery->title; ?></h2>
-<p id="ngg-inlinebutton">
-	<input type="submit" class="button-secondary" title="<?php _e('Edit gallery', 'nggallery') ?>" value="<?php _e('Edit gallery', 'nggallery') ?>" onclick="jQuery('#manage-gallery').toggle()" />
-</p>
+
+<br style="clear: both;"/>
 
 <form id="updategallery" method="POST" action="<?php echo 'admin.php?page=nggallery-manage-gallery&amp;mode=edit&amp;gid='.$act_gid ?>" accept-charset="utf-8">
 <?php wp_nonce_field('ngg_updategallery') ?>
 
 <?php if ($showTags) { ?><input type="hidden" name="showTags" value="true" /><?php } ?>
 <?php if ($hideThumbs) { ?><input type="hidden" name="hideThumbs" value="true" /><?php } ?>
-<div id="manage-gallery" style="display:none;">
-	<table class="form-table" >
-		<tr>
-			<th align="left"><?php _e('Title') ?>:</th>
-			<th align="left"><input type="text" size="50" name="title" value="<?php echo $act_gallery->title; ?>"  /></th>
-			<th align="right"><?php _e('Page Link to', 'nggallery') ?>:</th>
-			<th align="left">
-			<select name="pageid" style="width:95%">
-				<option value="0" ><?php _e('Not linked', 'nggallery') ?></option>
-			<?php
-				$pageids = get_all_page_ids();
-				foreach($pageids as $pageid) {
-					$post= get_post($pageid); 				
-					if ($pageid == $act_gallery->pageid) $selected = 'selected="selected" ';
-					else $selected = '';
-					echo '<option value="'.$pageid.'" '.$selected.'>'.$post->post_title.'</option>'."\n";
-				}
-			?>
-			</select>
-			</th>
-		</tr>
-		<tr>
-			<th align="left"><?php _e('Description') ?>:</th> 
-			<th align="left"><textarea name="gallerydesc" cols="30" rows="3" style="width: 95%"  ><?php echo $act_gallery->galdesc; ?></textarea></th>
-			<th align="right"><?php _e('Preview image', 'nggallery') ?>:</th>
-			<th align="left">
-				<select name="previewpic" >
-					<option value="0" ><?php _e('No Picture', 'nggallery') ?></option>
-					<?php
-						$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");
-						if(is_array($picturelist)) {
-							foreach($picturelist as $picture) {
-								if ($picture->pid == $act_gallery->previewpic) $selected = 'selected="selected" ';
-								else $selected = '';
-								echo '<option value="'.$picture->pid.'" '.$selected.'>'.$picture->filename.'</option>'."\n";
-							}
-						}
-					?>
+<div id="poststuff">
+	<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
+	<div id="gallerydiv" class="postbox <?php echo postbox_classes('gallerydiv', 'ngg-manage-gallery'); ?>" >
+		<h3><?php _e('Gallery settings', 'nggallery') ?></h3>
+		<div class="inside">
+		<table class="form-table" >
+			<tr>
+				<th align="left"><?php _e('Title') ?>:</th>
+				<th align="left"><input type="text" size="50" name="title" value="<?php echo $act_gallery->title; ?>"  /></th>
+				<th align="right"><?php _e('Page Link to', 'nggallery') ?>:</th>
+				<th align="left">
+				<select name="pageid" style="width:95%">
+					<option value="0" ><?php _e('Not linked', 'nggallery') ?></option>
+				<?php
+					$pageids = get_all_page_ids();
+					foreach($pageids as $pageid) {
+						$post= get_post($pageid); 				
+						if ($pageid == $act_gallery->pageid) $selected = 'selected="selected" ';
+						else $selected = '';
+						echo '<option value="'.$pageid.'" '.$selected.'>'.$post->post_title.'</option>'."\n";
+					}
+				?>
 				</select>
-			</th>
-		</tr>
-		<tr>
-			<th align="left"><?php _e('Path', 'nggallery') ?>:</th> 
-			<th align="left"><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="text" size="50" name="path" value="<?php echo $act_gallery->path; ?>"  /></th>
-		
-			<th align="right"><?php _e('Create new page', 'nggallery') ?>:</th>
-			<th align="left"> 
-			<select name="parent_id" style="width:95%">
-				<option value="0"><?php _e ('Main page (No parent)', 'nggallery'); ?></option>
-				<?php parent_dropdown ($group->page_id); ?>
-			</select>
-			<input type="submit" name="addnewpage" value="<?php _e ('Add page', 'nggallery'); ?>" id="group"/>
-			</th>
-		</tr>
+				</th>
+			</tr>
+			<tr>
+				<th align="left"><?php _e('Description') ?>:</th> 
+				<th align="left"><textarea name="gallerydesc" cols="30" rows="3" style="width: 95%"  ><?php echo $act_gallery->galdesc; ?></textarea></th>
+				<th align="right"><?php _e('Preview image', 'nggallery') ?>:</th>
+				<th align="left">
+					<select name="previewpic" >
+						<option value="0" ><?php _e('No Picture', 'nggallery') ?></option>
+						<?php
+							$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$act_gid' ORDER BY $ngg_options[galSort] $ngg_options[galSortDir]");
+							if(is_array($picturelist)) {
+								foreach($picturelist as $picture) {
+									if ($picture->pid == $act_gallery->previewpic) $selected = 'selected="selected" ';
+									else $selected = '';
+									echo '<option value="'.$picture->pid.'" '.$selected.'>'.$picture->filename.'</option>'."\n";
+								}
+							}
+						?>
+					</select>
+				</th>
+			</tr>
+			<tr>
+				<th align="left"><?php _e('Path', 'nggallery') ?>:</th> 
+				<th align="left"><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="text" size="50" name="path" value="<?php echo $act_gallery->path; ?>"  /></th>
+			
+				<th align="right"><?php _e('Create new page', 'nggallery') ?>:</th>
+				<th align="left"> 
+				<select name="parent_id" style="width:95%">
+					<option value="0"><?php _e ('Main page (No parent)', 'nggallery'); ?></option>
+					<?php parent_dropdown ($group->page_id); ?>
+				</select>
+				<input type="submit" name="addnewpage" value="<?php _e ('Add page', 'nggallery'); ?>" id="group"/>
+				</th>
+			</tr>
+	
+		</table>
+	
+		<div class="submit">
+			<input type="submit" name="scanfolder" value="<?php _e("Scan Folder for new images",'nggallery')?> " />
+			<input type="submit" name="updatepictures" value="<?php _e("Save Changes",'nggallery')?> &raquo;" />
+		</div>
 
-	</table>
-	
-	<div class="submit">
-		<input type="submit" name="scanfolder" value="<?php _e("Scan Folder for new images",'nggallery')?> " />
-		<input type="submit" name="updatepictures" value="<?php _e("Save Changes",'nggallery')?> &raquo;" />
+		</div>
 	</div>
-	
-</div>
-<br style="clear: both;"/>
-<?php wp_nonce_field('ngg_updategallery') ?>
+</div> <!-- poststuff -->
+
 <div class="tablenav ngg-tablenav">
 	<div style="float: left;">
 	<select id="bulkaction" name="bulkaction">
@@ -507,20 +510,24 @@ function getNumChecked(form)
 <table id="ngg-listimages" class="widefat" >
 	<thead>
 	<tr>
-		<th scope="col" class="check-column" ><input name="checkall" type="checkbox" onclick="checkAll(document.getElementById('updategallery'));" /></th>
-		<th scope="col" style="text-align: center"><?php _e('ID') ?></th>
-		<th scope="col" style="text-align: center"><?php _e('File name', 'nggallery') ?></th>
-		<?php if (!$hideThumbs) { ?>
-		<th scope="col" style="text-align: center"><?php _e('Thumbnail', 'nggallery') ?></th>
+		<?php $gallery_columns = ngg_manage_gallery_columns(); ?>
+		<?php foreach($gallery_columns as $gallery_column_key => $column_display_name) {
+			switch ($gallery_column_key) {
+				case 'cb' :
+					$class = ' class="check-column"';
+				break;
+				case 'tags' :
+					$class = ' style="width:70%"';
+				break;
+				case 'action' :
+					$class = ' colspan="3" style="text-align: center"';
+				break;
+				default : 
+					$class = ' style="text-align: center"';
+			}
+		?>
+			<th scope="col"<?php echo $class; ?>><?php echo $column_display_name; ?></th>
 		<?php } ?>
-		<?php if (!$showTags) { ?>
-		<th scope="col" style="text-align: center"><?php _e('Description', 'nggallery') ?></th>
-		<th scope="col" style="text-align: center"><?php _e('Alt &amp; Title Text', 'nggallery') ?></th>
-		<th scope="col" style="text-align: center"><?php _e('exclude', 'nggallery') ?></th>
-		<?php } else {?>
-		<th scope="col" style="width:70%"><?php _e('Tags (comma separated list)', 'nggallery') ?></th>
-		<?php } ?>
-		<th scope="col" colspan="3" style="text-align: center"><?php _e('Action') ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -538,22 +545,63 @@ if($picturelist) {
 
 		?>
 		<tr id="picture-<?php echo $pid ?>" <?php echo $class ?> style="text-align:center">
-			<td class="check-column"><input name="doaction[]" type="checkbox" value="<?php echo $pid ?>" /></td>
-			<th scope="row" style="text-align: center"><?php echo $pid ?></th>
-			<td class="media-icon" ><?php echo $picture->filename ?></td>
-			<?php if (!$hideThumbs) { ?>
-			<td><img class="thumb" src="<?php echo $act_thumbnail_url.$act_thumb_prefix.$picture->filename ?>" /></td>
+			<?php foreach($gallery_columns as $gallery_column_key => $column_display_name) {
+				switch ($gallery_column_key) {
+					case 'cb' :
+						?> 
+						<td class="check-column" scope="row"><input name="doaction[]" type="checkbox" value="<?php echo $pid ?>" /></td>
+						<?php
+					break;
+					case 'id' :
+						?>
+						<td scope="row" style="text-align: center"><?php echo $pid ?></td>
+						<?php
+					break;
+					case 'filename' :
+						?>
+						<td class="media-icon" ><?php echo $picture->filename ?></td>
+						<?php						
+					break;
+					case 'thumbnail' :
+						?>
+						<td><img class="thumb" src="<?php echo $act_thumbnail_url.$act_thumb_prefix.$picture->filename ?>" /></td>
+						<?php						
+					break;
+					case 'description' :
+						?>
+						<td><textarea name="description[<?php echo $pid ?>]" class="textarea1" cols="30" rows="3" ><?php echo stripslashes($picture->description) ?></textarea></td>
+						<?php						
+					break;
+					case 'alt_title_text' :
+						?>
+						<td><input name="alttext[<?php echo $pid ?>]" type="text" size="20"   value="<?php echo stripslashes($picture->alttext) ?>" /></td>
+						<?php						
+					break;
+					case 'exclude' :
+						?>
+						<td><input name="exclude[<?php echo $pid ?>]" type="checkbox" value="1" <?php echo $exclude ?> /></td>
+						<?php						
+					break;
+					case 'tags' :
+						?>
+						<td><input name="tags[<?php echo $pid ?>]" type="text" style="width:95%" value="<?php echo $nggTags->get_tags_from_image($pid); ?>" /></td>
+						<?php						
+					break;
+					case 'action' :
+						?>
+						<td><a href="<?php echo $act_gallery_url.$picture->filename ?>" class="thickbox" title="<?php echo $picture->alttext ?>" ><?php _e('View') ?></a></td>
+						<td><a href="<?php echo NGGALLERY_URLPATH."admin/showmeta.php?id=".$pid ?>" class="thickbox" title="<?php _e("Show Meta data",'nggallery')?>" ><?php _e('Meta') ?></a></td>
+						<td><a href="<?php echo wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=delpic&amp;gid=".$act_gid."&amp;pid=".$pid, 'ngg_delpicture')?>" class="delete" onclick="javascript:check=confirm( '<?php _e("Delete this file ?",'nggallery')?>');if(check==false) return false;" ><?php _e('Delete') ?></a></td>
+						<?php
+					break;					
+					default : 
+						?>
+						<td><?php do_action('ngg_manage_gallery_custom_column', $gallery_column_key, $pid); ?></td>
+						<?php
+					break;
+				}
+			?>
 			<?php } ?>
-			<?php if (!$showTags) { ?>
-			<td><textarea name="description[<?php echo $pid ?>]" class="textarea1" cols="30" rows="3" ><?php echo stripslashes($picture->description) ?></textarea></td>
-			<td><input name="alttext[<?php echo $pid ?>]" type="text" size="20"   value="<?php echo stripslashes($picture->alttext) ?>" /></td>
-			<td><input name="exclude[<?php echo $pid ?>]" type="checkbox" value="1" <?php echo $exclude ?> /></td>
-			<?php } else {?>
-			<td ><input name="tags[<?php echo $pid ?>]" type="text" style="width:95%" value="<?php echo $nggTags->get_tags_from_image($pid); ?>" /></td>
-			<?php } ?>
-			<td><a href="<?php echo $act_gallery_url.$picture->filename ?>" class="thickbox" title="<?php echo $picture->alttext ?>" ><?php _e('View') ?></a></td>
-			<td><a href="<?php echo NGGALLERY_URLPATH."admin/showmeta.php?id=".$pid ?>" class="thickbox" title="<?php _e("Show Meta data",'nggallery')?>" ><?php _e('Meta') ?></a></td>
-			<td><a href="<?php echo wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=delpic&amp;gid=".$act_gid."&amp;pid=".$pid, 'ngg_delpicture')?>" class="delete" onclick="javascript:check=confirm( '<?php _e("Delete this file ?",'nggallery')?>');if(check==false) return false;" ><?php _e('Delete') ?></a></td>
 		</tr>
 		<?php
 	}
@@ -686,6 +734,52 @@ function ngg_update_tags( $taglist ) {
 	}
 	
 	return;
+}
+
+function ngg_hide_thumb() {
+	if (isset ($_POST['togglethumbs']))  {
+		check_admin_referer('ngg_updategallery');
+	// Toggle thumnails, forgive me if it's to complicated
+		$hideThumbs = (isset ($_POST['hideThumbs'])) ?  false : true ;
+	} else {
+		$hideThumbs = (isset ($_POST['hideThumbs'])) ?  true : false ;
+	}
+	return $hideThumbs;	
+}
+
+function ngg_show_tags() {
+	if (isset ($_POST['toggletags']))  {
+		check_admin_referer('ngg_updategallery');
+	// Toggle tag view
+		$showTags = (isset ($_POST['showTags'])) ?  false : true ;
+	} else {
+		$showTags = (isset ($_POST['showTags'])) ?  true : false ;
+	}
+	return $showTags;	
+}
+
+// define the columns to display, the syntax is 'internal name' => 'display name'
+function ngg_manage_gallery_columns() {
+	$gallery_columns = array();
+	
+	$gallery_columns['cb'] = '<input name="checkall" type="checkbox" onclick="checkAll(document.getElementById(\'updategallery\'));" />';
+	$gallery_columns['id'] = __('ID');
+	$gallery_columns['filename'] = __('File name', 'nggallery');
+	
+	if ( !ngg_hide_thumb() )
+		$gallery_columns['thumbnail'] = __('Thumbnail', 'nggallery');
+	if ( !ngg_show_tags() )	{
+		$gallery_columns['description'] = __('Description', 'nggallery');
+		$gallery_columns['alt_title_text'] = __('Alt &amp; Title Text', 'nggallery');
+		$gallery_columns['exclude'] = __('exclude', 'nggallery');
+	} else {
+		$gallery_columns['tags'] = __('Tags (comma separated list)', 'nggallery');
+	}
+	$gallery_columns['action'] 	= __('Action', 'nggallery');
+	
+	$gallery_columns = apply_filters('ngg_manage_gallery_columns', $gallery_columns);
+
+	return $gallery_columns;
 }
 
 ?>

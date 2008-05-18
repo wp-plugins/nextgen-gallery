@@ -85,7 +85,7 @@ class nggMeta{
 				$meta['iso'] = $exif['ISOSpeedRatings'];
 			if (!empty($exif['ExposureTime'])) {
 				$meta['shutter_speed']  = $this->exif_frac2dec ($exif['ExposureTime']);
-				($meta['shutter_speed'] > 0.0 and $meta['shutter_speed'] < 1.0) ? ("1/" . round(1/$meta['shutter_speed'])) : ($meta['shutter_speed']); 
+				$meta['shutter_speed']  =($meta['shutter_speed'] > 0.0 and $meta['shutter_speed'] < 1.0) ? ("1/" . round(1/$meta['shutter_speed'])) : ($meta['shutter_speed']); 
 				$meta['shutter_speed'] .=  __(' sec','nggallery');
 				}
 	

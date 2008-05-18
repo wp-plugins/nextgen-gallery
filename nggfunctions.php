@@ -11,7 +11,7 @@ function searchnggallerytags($content) {
 	
 	if ( stristr( $content, '[singlepic' )) {
 		
-		$search = "@\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,center|,left|,)\]@i";
+		$search = "@(?:<p>)*\s*\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,center|,left|,)\]\s*(?:</p>)*@i";
 		
 		if	(preg_match_all($search, $content, $matches)) {
 			
@@ -38,7 +38,7 @@ function searchnggallerytags($content) {
 				foreach ($matches[1] as $key =>$v0) {
 					// check for album id
  					list($albumID, $albumSortOrder) = $wpdb->get_row("SELECT id, sortorder FROM $wpdb->nggalbum WHERE id = '$v0' ", ARRAY_N);
- 					if(!$albumID) list($albumID, $albumSortOrder) = $wpdb->get_var("SELECT id, sortorder FROM $wpdb->nggalbum WHERE name = '$v0' ", ARRAY_N);
+ 					if(!$albumID) list($albumID, $albumSortOrder) = $wpdb->get_row("SELECT id, sortorder FROM $wpdb->nggalbum WHERE name = '$v0' ", ARRAY_N);
 
 					if($albumID) {
 						$search = $matches[0][$key];
@@ -351,7 +351,10 @@ function nggCreateGallery($picturelist,$galleryID = false) {
 			$out .= '<span>'.html_entity_decode(stripslashes($picture->alttext)).'</span>'."\n";
 		if ($ngg_options['galShowDesc'] == "desc")
 			$out .= '<span>'.html_entity_decode(stripslashes($picture->description)).'</span>'."\n";
-		$out .= '</div>'."\n".'</div>'."\n";
+		// add filter for the output
+		$out  = apply_filters('ngg_inner_gallery_thumbnail', $out, $picture);		
+		$out .= '</div>'. "\n" .'</div>'."\n";
+		$out  = apply_filters('ngg_after_gallery_thumbnail', $out, $picture);
 		}
 	$out .= '</div>'."\n";
  	$out .= ($maxElement > 0) ? $navigation : '<div class="ngg-clear"></div>'."\n";
@@ -608,9 +611,12 @@ function nggSinglePicture($imageID,$width=250,$height=250,$mode="",$float="") {
 		$out .= '<img class="ngg-singlepic" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.stripslashes($picture->alttext).'" title="'.stripslashes($picture->alttext).'" />';
 	else
 		$out .= '<img class="ngg-singlepic" src="'.$cache_url.'" alt="'.stripslashes($picture->alttext).'" title="'.stripslashes($picture->alttext).'" />';
-	$out .= '</a></div>';
+
+	$out .= '</a>';
+	$out  = apply_filters('ngg_inner_singlepic_content', $out, $picture );		
+	$out .= '</div>';
 	
-	$out = apply_filters('ngg_show_singlepic_content', $out, intval( $imageID ) );
+	$out  = apply_filters('ngg_show_singlepic_content', $out, $picture );
 	
 	return $out;
 }

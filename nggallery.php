@@ -4,11 +4,11 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.95
+Version: 0.96
 
 Author URI: http://alexrabe.boelinger.com/
 
-Copyright 2007 by Alex Rabe & NextGEN DEV-Team
+Copyright 2007-2008 by Alex Rabe & NextGEN DEV-Team
 
 The NextGEN button is taken from the Silk set of FamFamFam. See more at 
 http://www.famfamfam.com/lab/icons/silk/
@@ -26,6 +26,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Please note  :
+
+The JW Image Rotator (Slideshow) is not part of this license and is available
+under a Creative Commons License, which allowing you to use, modify and redistribute 
+them for noncommercial purposes. 
+
+For commercial use please look at the Jeroen's homepage : http://www.jeroenwijering.com/ 
 
 */ 
 

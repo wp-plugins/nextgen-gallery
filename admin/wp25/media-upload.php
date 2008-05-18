@@ -123,7 +123,7 @@ function media_upload_nextgen_form($errors) {
 	?>
 	
 	<div class="alignleft">
-		<select id="select_gal" name="select_gal">
+		<select id="select_gal" name="select_gal" style="width:250px;">
 			<option value="0" <?php selected('0', $galleryID); ?> ><?php attribute_escape( _e('No gallery',"nggallery") ); ?></option>
 			<?php
 			// Show gallery selection

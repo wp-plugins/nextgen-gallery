@@ -1,6 +1,15 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.96 - 18.05.2008
+- Changed : Use postbox for gallery settings 
+- Added : New filter function to add custom columns
+- Bugfix : Fixed width for Thickbox in Manage gallery
+- Bugfix : Fixed width for media upload select box
+- Bugfix : Remove <p> tag in singlepic regex
+- Bugfix : Correct format of shutter speed 
+- Bugfix : Album name in Short code not useable  
+
 V0.95 - 25.04.2008
 - Bugfix : Correction in media-upload to fit with Wordpress 2.5.1
 - Bugfix : Attribute_escape all objects in media-upload

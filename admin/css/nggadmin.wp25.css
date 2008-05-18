@@ -90,6 +90,11 @@ div .ngg-tablenav {
 	padding: 10px 5px 10px;
 }
 
+#poststuff .postbox {
+	margin-left: 10px;
+	margin-right: 0px;
+}
+
 /* SETTINGS FOR PROGRESS BAR */
 
 div .progressborder {
