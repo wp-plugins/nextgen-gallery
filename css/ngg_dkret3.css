@@ -240,7 +240,7 @@ it's only a template design
 	float: right;
 }
 
-.ngg-center img {
+.ngg-center {
   	margin-left: auto;
     margin-right: auto;
 }

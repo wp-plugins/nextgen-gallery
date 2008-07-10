@@ -1,6 +1,17 @@
 <?php
 
-require_once(realpath("../../../../wp-config.php"));
+$root = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+
+if (file_exists($root.'/wp-load.php')) {
+	// WP 2.6
+	require_once($root.'/wp-load.php');
+} else {
+	// Before 2.6
+	if (!file_exists($root.'/wp-config.php'))
+		die; // stop when wp-config is not there
+	require_once($root.'/wp-config.php');
+}
+
 require_once(NGGALLERY_ABSPATH.'/lib/nggmeta.lib.php');
 
 if ( !is_user_logged_in() )

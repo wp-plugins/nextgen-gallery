@@ -11,7 +11,7 @@ function searchnggallerytags($content) {
 	
 	if ( stristr( $content, '[singlepic' )) {
 		
-		$search = "@(?:<p>)*\s*\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,center|,left|,)\]\s*(?:</p>)*@i";
+		$search = "@\[singlepic=(\d+)(|,\d+|,)(|,\d+|,)(|,watermark|,web20|,)(|,right|,center|,left|,)\]@i";
 		
 		if	(preg_match_all($search, $content, $matches)) {
 			
@@ -339,12 +339,12 @@ function nggCreateGallery($picturelist,$galleryID = false) {
 
 		// add filter for the link
 		$link 		= apply_filters('ngg_create_gallery_link', $link, $picture);
-		$thumbcode  = apply_filters('ngg_create_gallery_thumbcode', $thumbcode, $picture);
+		$thumbcode2  = apply_filters('ngg_create_gallery_thumbcode', $thumbcode, $picture);
 		
 		// create output
 		$out .= '<div id="ngg-image-'. $picture->pid .'" class="ngg-gallery-thumbnail-box '. $class_desc .'">'."\n\t";
 		$out .= '<div class="ngg-gallery-thumbnail" '.$setwidth.' >'."\n\t";
-		$out .= '<a href="'.$link.'" title="'.stripslashes($picture->description).'" '.$thumbcode.' >';
+		$out .= '<a id="thumb'.$picture->pid.'" href="'.$link.'" title="'.stripslashes($picture->description).'" '.$thumbcode2.' >';
 		$out .= '<img title="'.stripslashes($picture->alttext).'" alt="'.stripslashes($picture->alttext).'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
 		$out .= '</a>'."\n";
 		if ($ngg_options['galShowDesc'] == "alttext")
@@ -561,7 +561,7 @@ function nggCreateImageBrowser($picarray) {
 }
 
 /**********************************************************/
-function nggSinglePicture($imageID,$width=250,$height=250,$mode="",$float="") {
+function nggSinglePicture($imageID, $width=250, $height=250, $mode="", $float="") {
 	/** 
 	* create a gallery based on the tags
 	* @imageID		db-ID of the image
@@ -606,15 +606,13 @@ function nggSinglePicture($imageID,$width=250,$height=250,$mode="",$float="") {
 		$cache_url = $picture->cached_singlepic_file($width, $height, $mode );
 
 	// add fullsize picture as link
-	$out  = '<div class="ngg-singlepic-wrapper'. $float .'"><a href="'.$picture->imagePath.'" title="'.stripslashes($picture->description).'" '.$picture->get_thumbcode("singlepic".$imageID).' >';
+	$out  = '<a href="'.$picture->imagePath.'" title="'.stripslashes($picture->description).'" '.$picture->get_thumbcode("singlepic".$imageID).' >';
 	if (!$cache_url)
-		$out .= '<img class="ngg-singlepic" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.stripslashes($picture->alttext).'" title="'.stripslashes($picture->alttext).'" />';
+		$out .= '<img class="ngg-singlepic'. $float .'" src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID.'&amp;width='.$width.'&amp;height='.$height.'&amp;mode='.$mode.'" alt="'.stripslashes($picture->alttext).'" title="'.stripslashes($picture->alttext).'" />';
 	else
-		$out .= '<img class="ngg-singlepic" src="'.$cache_url.'" alt="'.stripslashes($picture->alttext).'" title="'.stripslashes($picture->alttext).'" />';
+		$out .= '<img class="ngg-singlepic'. $float .'" src="'.$cache_url.'" alt="'.stripslashes($picture->alttext).'" title="'.stripslashes($picture->alttext).'" />';
 
 	$out .= '</a>';
-	$out  = apply_filters('ngg_inner_singlepic_content', $out, $picture );		
-	$out .= '</div>';
 	
 	$out  = apply_filters('ngg_show_singlepic_content', $out, $picture );
 	
@@ -692,8 +690,11 @@ function nggShowRelatedGallery($taglist, $maxImages = 0) {
 		$folder_url 	= get_option ('siteurl')."/".$picture->path."/";
 		$thumbnailURL 	= get_option ('siteurl')."/".$picture->path.nggallery::get_thumbnail_folder($picture->path, FALSE);
 		$thumb_prefix   = nggallery::get_thumbnail_prefix($picture->path, FALSE);
+		
+		// add filter for the link
+		$thumbcode2  = apply_filters('ngg_create_gallery_thumbcode', $thumbcode, $picture);
 
-		$out .= '<a href="'.$folder_url.$picture->filename.'" title="'.stripslashes($picture->description).'" '.$thumbcode.' >';
+		$out .= '<a href="'.$folder_url.$picture->filename.'" title="'.stripslashes($picture->description).'" '.$thumbcode2.' >';
 		$out .= '<img title="'.stripslashes($picture->alttext).'" alt="'.stripslashes($picture->alttext).'" src="'.$thumbnailURL.$thumb_prefix.$picture->filename.'" '.$thumbsize.' />';
 		$out .= '</a>'."\n";
 	}

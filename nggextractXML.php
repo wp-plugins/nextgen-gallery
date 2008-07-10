@@ -2,16 +2,23 @@
 
 /*
 +----------------------------------------------------------------+
-+	imageRotartor-XML V1.21
++	imageRotartor-XML V1.30
 +	by Alex Rabe
 +   	required for NextGEN Gallery
 +----------------------------------------------------------------+
 */
 
-$wpconfig = realpath("../../../wp-config.php");
-if (!file_exists($wpconfig)) die; // stop when wp-config is not there
+$root = dirname(dirname(dirname(dirname(__FILE__))));
 
-require_once($wpconfig);
+if (file_exists($root.'/wp-load.php')) {
+	// WP 2.6
+	require_once($root.'/wp-load.php');
+} else {
+	// Before 2.6
+	if (!file_exists($root.'/wp-config.php'))
+		die; // stop when wp-config is not there
+	require_once($root.'/wp-config.php');
+}
 
 function get_out_now() { exit; }
 add_action('shutdown', 'get_out_now', -1);

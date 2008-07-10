@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 0.96
+Version: 0.97
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -70,17 +70,24 @@ if ( ($memory_limit != 0) && ($memory_limit < 12 ) ) {
 }
 
 // Version and path to check version
-define('NGGVERSION', "0.96");
+define('NGGVERSION', "0.97");
 // Minimum required database version
 define('NGG_DBVERSION', "0.84");
 define('NGGURL', "http://nextgen.boelinger.com/version.php");
 
-// define URL
-$myabspath = str_replace("\\","/",ABSPATH);  // required for Windows & XAMPP
+// required for Windows & XAMPP
+$myabspath = str_replace("\\","/",ABSPATH);  
 define('WINABSPATH', $myabspath);
-define('NGGFOLDER', dirname(plugin_basename(__FILE__)));
-define('NGGALLERY_ABSPATH', $myabspath.'wp-content/plugins/' . NGGFOLDER .'/');
-define('NGGALLERY_URLPATH', get_option('siteurl').'/wp-content/plugins/' . NGGFOLDER.'/');
+
+// Pre-2.6 compatibility
+if ( !defined('WP_CONTENT_URL') )
+	define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+if ( !defined('WP_CONTENT_DIR') )
+	define( 'WP_CONTENT_DIR', WINABSPATH . 'wp-content' );
+
+define('NGGFOLDER', plugin_basename( dirname(__FILE__)) );
+define('NGGALLERY_ABSPATH', WP_CONTENT_DIR.'/plugins/'.plugin_basename( dirname(__FILE__)).'/' );
+define('NGGALLERY_URLPATH', WP_CONTENT_URL.'/plugins/'.plugin_basename( dirname(__FILE__)).'/' );
 
 // look for imagerotator
 define('NGGALLERY_IREXIST', file_exists(NGGALLERY_ABSPATH.'imagerotator.swf'));
@@ -110,7 +117,14 @@ $wpdb->nggpic2tags					= $wpdb->prefix . 'ngg_pic2tags';
 // Load language
 function nggallery_init ()
 {
-	load_plugin_textdomain('nggallery','wp-content/plugins/' . NGGFOLDER.'/lang');
+	if (function_exists('load_plugin_textdomain')) {
+		if ( !defined('WP_PLUGIN_DIR') ) {
+			load_plugin_textdomain('nggallery','wp-content/plugins/' . NGGFOLDER . '/lang');
+			//load_plugin_textdomain('nggallery', str_replace( ABSPATH, '', dirname(__FILE__) ) . '/lang');
+		} else {
+			load_plugin_textdomain('nggallery', false, dirname(plugin_basename(__FILE__)) . '/lang');
+		}
+	}
 }
 
 // Load the admin panel

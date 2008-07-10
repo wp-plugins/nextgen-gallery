@@ -110,6 +110,8 @@ class nggImage{
 		if ($ngg_options['thumbEffect'] == "highslide") $this->thumbcode = str_replace("%GALLERY_NAME%", "'".$galleryname."'", $this->thumbcode);
 		else $this->thumbcode = str_replace("%GALLERY_NAME%", $galleryname, $this->thumbcode);
 		
+		$this->thumbcode = apply_filters('ngg_create_gallery_thumbcode', $this->thumbcode, $this);
+		
 		return $this->thumbcode;
 	}
 	

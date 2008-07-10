@@ -1,6 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.97 - 10.07.2008
+- Changed : Get new path contstant from WP2.6
+- Changed : Minor updates for WP2.6
+- Changed : Added new filters (THX to Vincent Prat) 
+- Removed : Revert singlepic wrapper, breaks validation
+   
 V0.96 - 18.05.2008
 - Changed : Use postbox for gallery settings 
 - Added : New filter function to add custom columns

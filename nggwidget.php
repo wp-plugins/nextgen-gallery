@@ -397,7 +397,10 @@ class nggWidget {
 		if (is_array($imageList)){
 			foreach($imageList as $image) {
 	
-				$out = '<a href="'.nggallery::get_image_url($image->pid).'" title="'.stripslashes($image->description).'" '.$thumbcode.'>';
+				// add filter for the link
+				$thumbcode2  = apply_filters('ngg_create_gallery_thumbcode', $thumbcode, $image);
+	
+				$out = '<a id="caption-for-widget-thumb'.$image->pid.'" href="'.nggallery::get_image_url($image->pid).'" title="'.stripslashes($image->description).'" '.$thumbcode2.'>';
 				if ( $options[$number]['show'] == "orginal" )
 					$out .= '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$image->pid.'&amp;width='.$options[$number]['width'].'&amp;height='.$options[$number]['height'].'" title="'.$image->alttext.'" alt="'.$image->alttext.'" />';
 				else	

@@ -247,10 +247,6 @@ html>body .ngg-album {
 }
 
 /* ----------- Single picture -------------*/
-.ngg-singlepic-wrapper {
-	padding: 1px;
-}
-
 .ngg-singlepic {
 	background-color:#FFFFFF;
 	border:1px solid #A9A9A9;
@@ -270,7 +266,7 @@ html>body .ngg-album {
 	padding-left:10px;
 }
 
-.ngg-center img {
+.ngg-center {
   	margin-left: auto !important;
     margin-right: auto !important;
 }
