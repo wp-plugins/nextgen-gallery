@@ -164,4 +164,5 @@ add_action('admin_menu', 'add_nextgen_gallery_menu');
 		// if this is not WPMU, enable it !
 		return true;
 	}
+	
 ?>

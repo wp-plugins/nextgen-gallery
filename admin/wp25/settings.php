@@ -629,4 +629,5 @@ function ngg_input_checked( $checked, $current) {
 	if ( $checked == $current)
 		return ' checked="checked"';
 }
+
 ?>

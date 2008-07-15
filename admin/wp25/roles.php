@@ -105,5 +105,4 @@ function ngg_set_capability($lowest_role, $capability){
 	
 }
 
-
 ?>

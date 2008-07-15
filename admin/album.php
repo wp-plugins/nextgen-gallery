@@ -284,4 +284,5 @@ function getallusedgalleries() {
 	}
 	return $used;
 }
+
 ?>

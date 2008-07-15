@@ -221,4 +221,5 @@ function ngg_list_support()	{
 			echo ", ";
 	}	
 }
+
 ?>

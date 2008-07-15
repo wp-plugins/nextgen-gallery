@@ -81,5 +81,4 @@ function ngg_remove_capability($capability){
 	
 }
 
-
 ?>

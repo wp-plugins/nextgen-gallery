@@ -1,6 +1,9 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.98 - 15.07.2008
+- Bugfix : Removed all whitespaces at EOF
+
 V0.97 - 10.07.2008
 - Changed : Get new path contstant from WP2.6
 - Changed : Minor updates for WP2.6
