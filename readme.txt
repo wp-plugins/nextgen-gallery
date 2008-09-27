@@ -89,9 +89,9 @@ That's it ... Have fun
 
 == Frequently Asked Questions ==
 
+**Read as startup :** http://dpotter.net/Technical/index.php/2008/03/04/nextgen-gallery-review-introduction/
 
 When writing a page/post, you can use the follow tags:
-
 
 For a slideshow : **[slideshow=id,width,height]**
 
@@ -120,8 +120,6 @@ Example : http://nextgen.boelinger.com/2007/08/07/tags/
 To show tag albums : **[albumtags=name,name,name]**
 
 Example : http://nextgen.boelinger.com/2007/08/11/albumtags/
-
-**Read as startup :** http://hqcode.com/?page_id=54
 
 **A further FAQ you can found here :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/
 
