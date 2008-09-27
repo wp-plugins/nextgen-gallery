@@ -32,39 +32,44 @@ function nggSlideshowWidget($galleryID,$irWidth,$irHeight) {
 	if ( !function_exists('nggShowSlideshow') )
 		return;	
 	
+	require_once (dirname (__FILE__).'/lib/swfobject.php');
+	
 	global $wpdb;
 	$ngg_options = get_option('ngg_options');
 	
 	if (empty($irWidth) ) $irWidth = $ngg_options['irWidth'];
 	if (empty($irHeight)) $irHeight = $ngg_options['irHeight'];
 	
-	$out .= "\n".'<div class="ngg-widget-slideshow" id="ngg_widget_slideshow'.$galleryID.'">';
-	$out .= '<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.</div>';
-    $out .= "\n\t".'<script type="text/javascript" defer="defer">';
-    $out .= "\n\t".'<!--';
-	$out .= "\n\t".'//<![CDATA[';
-	$out .= "\n\t\t".'var sbsl = new SWFObject("'.NGGALLERY_URLPATH.'imagerotator.swf", "ngg_slideshow'.$galleryID.'", "'.$irWidth.'", "'.$irHeight.'", "7", "#'.$ngg_options['irBackcolor'].'");';
-	$out .= "\n\t\t".'sbsl.addParam("wmode", "opaque");';
-	$out .= "\n\t\t".'sbsl.addVariable("file", "'.NGGALLERY_URLPATH.'nggextractXML.php?gid='.$galleryID.'");';
-	$out .= "\n\t\t".'sbsl.addVariable("linkfromdisplay", "false");';
-	$out .= "\n\t\t".'sbsl.addVariable("shownavigation", "false");';
-	// default value changed in 3.15 : linkfromdisplay, shownavigation, showicons
-	if (!$ngg_options['irShuffle']) $out .= "\n\t\t".'sbsl.addVariable("shuffle", "false");';
-	if (!$ngg_options['irShowicons']) $out .= "\n\t\t".'sbsl.addVariable("showicons", "false");';
-	if ($ngg_options['irShowicons']) $out .= "\n\t\t".'sbsl.addVariable("showicons", "true");';
-	$out .= "\n\t\t".'sbsl.addVariable("overstretch", "'.$ngg_options['irOverstretch'].'");';
-	$out .= "\n\t\t".'sbsl.addVariable("backcolor", "0x'.$ngg_options['irBackcolor'].'");';
-	$out .= "\n\t\t".'sbsl.addVariable("frontcolor", "0x'.$ngg_options['irFrontcolor'].'");';
-	$out .= "\n\t\t".'sbsl.addVariable("lightcolor", "0x'.$ngg_options['irLightcolor'].'");';
-	if (!empty($ngg_options['irScreencolor'])) $out .= "\n\t\t".'sbsl.addVariable("screencolor", "0x'.$ngg_options['irScreencolor'].'");';
-	$out .= "\n\t\t".'sbsl.addVariable("rotatetime", "'.$ngg_options['irRotatetime'].'");';
-	$out .= "\n\t\t".'sbsl.addVariable("transition", "'.$ngg_options['irTransition'].'");';
-	$out .= "\n\t\t".'sbsl.addVariable("width", "'.$irWidth.'");';
-	$out .= "\n\t\t".'sbsl.addVariable("height", "'.$irHeight.'");'; 
-	$out .= "\n\t\t".'sbsl.write("ngg_widget_slideshow'.$galleryID.'");';
-	$out .= "\n\t".'//]]>';
-	$out .= "\n\t".'-->';
-	$out .= "\n\t".'</script>';
+	// init the flash output
+	$swfobject = new swfobject( NGGALLERY_URLPATH . 'imagerotator.swf', 'sbsl' . $galleryID, $irWidth, $irHeight, '7.0.0', 'false');
+
+	$swfobject->classname = 'ngg-widget-slideshow';
+	$swfobject->message =  __('<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.', 'nggallery');
+	$swfobject->add_params('wmode', 'opaque');
+
+	// adding the flash parameter	
+	$swfobject->add_flashvars( 'file', NGGALLERY_URLPATH . 'nggextractXML.php?gid='.$galleryID );
+	$swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'false', 'bool');
+	$swfobject->add_flashvars( 'showicons', $ngg_options['irShowicons'], 'true', 'bool');
+	$swfobject->add_flashvars( 'overstretch', $ngg_options['irOverstretch'], 'false', 'bool');
+	$swfobject->add_flashvars( 'rotatetime', $ngg_options['irRotatetime'], 5, 'int');
+	$swfobject->add_flashvars( 'transition', $ngg_options['irTransition'], 'random', 'string');
+	$swfobject->add_flashvars( 'backcolor', $ngg_options['irBackcolor'], 'FFFFFF', 'string', '0x');
+	$swfobject->add_flashvars( 'frontcolor', $ngg_options['irFrontcolor'], '000000', 'string', '0x');
+	$swfobject->add_flashvars( 'lightcolor', $ngg_options['irLightcolor'], '000000', 'string', '0x');
+	$swfobject->add_flashvars( 'screencolor', $ngg_options['irScreencolor'], '000000', 'string', '0x');
+	$swfobject->add_flashvars( 'width', $irWidth, '260');
+	$swfobject->add_flashvars( 'height', $irHeight, '320');	
+	// create the output
+	$out  = $swfobject->output();
+	// add now the script code
+    $out .= "\n".'<script type="text/javascript" defer="defer">';
+	$out .= "\n".'<!--';
+	$out .= "\n".'//<![CDATA[';
+	$out .= $swfobject->javascript();
+	$out .= "\n".'//]]>';
+	$out .= "\n".'-->';
+	$out .= "\n".'</script>';
 		
 	echo $out;
 }

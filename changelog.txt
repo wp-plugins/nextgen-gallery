@@ -1,6 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.99 - 27.09.2008
+- Changed : Included swfobject version 2.1 
+- Bugfix : Recognize the zip better
+- Bugfix : Limit the length of the title in the media-upload
+- Bugfix : Round instead inval for square thumbnails
+
 V0.98 - 15.07.2008
 - Bugfix : Removed all whitespaces at EOF
 

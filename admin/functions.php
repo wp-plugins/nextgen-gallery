@@ -319,8 +319,8 @@ class nggAdmin{
 						} else {
 							$aspect = (100 * $curheight) / $curwidth;
 						}
-						$width = intval(($width * $aspect) / 100);
-						$height = intval(($height * $aspect) / 100);
+						$width = round(($width * $aspect) / 100);
+						$height = round(($height * $aspect) / 100);
 						$thumb->resize($width,$height,$ngg_options['thumbResampleMode']);
 						$thumb->cropFromCenter($width,$ngg_options['thumbResampleMode']);
 					} 
@@ -494,13 +494,11 @@ class nggAdmin{
 		$filename = $_FILES['zipfile']['name']; 
 					
 		// check if file is a zip file
-		if (!eregi('zip', $_FILES['zipfile']['type']))
-			// on whatever reason MAC shows "application/download"
-			if (!eregi('download', $_FILES['zipfile']['type'])) {
-				@unlink($temp_zipfile); // del temp file
-				nggallery::show_error(__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type']);
-				return; 
-			}
+		if (!eregi('zip|download|octet-stream', $_FILES['zipfile']['type'])) {
+			@unlink($temp_zipfile); // del temp file
+			nggallery::show_error(__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type']);
+			return; 
+		}
 		
 		// get foldername if selected
 		$foldername = $_POST['zipgalselect'];

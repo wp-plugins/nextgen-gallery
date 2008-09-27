@@ -155,48 +155,51 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	
 	global $wpdb;
 	
+	require_once (dirname (__FILE__).'/lib/swfobject.php');
+
 	$ngg_options = nggallery::get_option('ngg_options');
-	
-	//TODO: bad intermediate solution until refactor to class
-	$obj = 'so' . $galleryID . rand(10,1000);
-	
+		
 	if (empty($irWidth) ) $irWidth = (int) $ngg_options['irWidth'];
 	if (empty($irHeight)) $irHeight = (int) $ngg_options['irHeight'];
 
-	$out  = "\n".'<div class="slideshow" id="ngg_slideshow'.$galleryID.'">';
-	$out .= '<p>The <a href="http://www.macromedia.com/go/getflashplayer">Flash Player</a> and <a href="http://www.mozilla.com/firefox/">a browser with Javascript support</a> are needed..</p></div>';
-    $out .= "\n\t".'<script type="text/javascript" defer="defer">';
-	if ($ngg_options['irXHTMLvalid']) $out .= "\n\t".'<!--';
-	if ($ngg_options['irXHTMLvalid']) $out .= "\n\t".'//<![CDATA[';
-	$out .= "\n\t\t".'var '. $obj .' = new SWFObject("'.NGGALLERY_URLPATH.'imagerotator.swf", "ngg_slideshow'.$galleryID.'", "'.$irWidth.'", "'.$irHeight.'", "7", "#'.$ngg_options[irBackcolor].'");';
-	$out .= "\n\t\t".$obj.'.addParam("wmode", "opaque");';
-	$out .= "\n\t\t".$obj.'.addVariable("file", "'.NGGALLERY_URLPATH.'nggextractXML.php?gid='.$galleryID.'");';
-	if (!$ngg_options['irShuffle']) $out .= "\n\t\t".$obj.'.addVariable("shuffle", "false");';
-	// default value changed in 3.15 : linkfromdisplay, shownavigation, showicons
-	if (!$ngg_options['irLinkfromdisplay']) $out .= "\n\t\t".$obj.'.addVariable("linkfromdisplay", "false");';
-	if (!$ngg_options['irShownavigation']) $out .= "\n\t\t".$obj.'.addVariable("shownavigation", "false");';
-	if (!$ngg_options['irShowicons']) $out .= "\n\t\t".$obj.'.addVariable("showicons", "false");';
-	// keep compatible to older version, remove later
-	if ($ngg_options['irLinkfromdisplay']) $out .= "\n\t\t".$obj.'.addVariable("linkfromdisplay", "true");';
-	if ($ngg_options['irShownavigation']) $out .= "\n\t\t".$obj.'.addVariable("shownavigation", "true");';
-	if ($ngg_options['irShowicons']) $out .= "\n\t\t".$obj.'.addVariable("showicons", "true");';
-	// hidden feature since 3.14
-	if ($ngg_options['irKenburns']) $out .= "\n\t\t".$obj.'.addVariable("kenburns", "true");';
-	if ($ngg_options['irWatermark']) $out .= "\n\t\t".$obj.'.addVariable("logo", "'.$ngg_options['wmPath'].'");';
-	if (!empty($ngg_options['irAudio'])) $out .= "\n\t\t".$obj.'.addVariable("audio", "'.$ngg_options['irAudio'].'");';
-	$out .= "\n\t\t".$obj.'.addVariable("overstretch", "'.$ngg_options['irOverstretch'].'");';
-	$out .= "\n\t\t".$obj.'.addVariable("backcolor", "0x'.$ngg_options['irBackcolor'].'");';
-	$out .= "\n\t\t".$obj.'.addVariable("frontcolor", "0x'.$ngg_options['irFrontcolor'].'");';
-	$out .= "\n\t\t".$obj.'.addVariable("lightcolor", "0x'.$ngg_options['irLightcolor'].'");';
-	if (!empty($ngg_options['irScreencolor'])) $out .= "\n\t\t".$obj.'.addVariable("screencolor", "0x'.$ngg_options['irScreencolor'].'");';
-	$out .= "\n\t\t".$obj.'.addVariable("rotatetime", "'.$ngg_options['irRotatetime'].'");';
-	$out .= "\n\t\t".$obj.'.addVariable("transition", "'.$ngg_options['irTransition'].'");';	
-	$out .= "\n\t\t".$obj.'.addVariable("width", "'.$irWidth.'");';
-	$out .= "\n\t\t".$obj.'.addVariable("height", "'.$irHeight.'");'; 
-	$out .= "\n\t\t".$obj.'.write("ngg_slideshow'.$galleryID.'");';
-	if ($ngg_options['irXHTMLvalid']) $out .= "\n\t".'//]]>';
-	if ($ngg_options['irXHTMLvalid']) $out .= "\n\t".'-->';
-	$out .= "\n\t".'</script>';
+	// init the flash output
+	$swfobject = new swfobject( NGGALLERY_URLPATH . 'imagerotator.swf', 'so' . $galleryID, $irWidth, $irHeight, '7.0.0', 'false');
+	
+	$swfobject->classname = 'slideshow';
+	$swfobject->message = '<p>'. __('The <a href="http://www.macromedia.com/go/getflashplayer">Flash Player</a> and <a href="http://www.mozilla.com/firefox/">a browser with Javascript support</a> are needed..', 'nggallery').'</p>';
+	$swfobject->add_params('wmode', 'opaque');
+	$swfobject->add_params('allowfullscreen', 'true');
+
+	// adding the flash parameter	
+	$swfobject->add_flashvars( 'file', NGGALLERY_URLPATH . 'nggextractXML.php?gid='.$galleryID );
+	$swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'false', 'bool');
+	$swfobject->add_flashvars( 'linkfromdisplay', $ngg_options['irLinkfromdisplay'], 'false', 'bool');
+	$swfobject->add_flashvars( 'shownavigation', $ngg_options['irShownavigation'], 'false', 'bool');
+	$swfobject->add_flashvars( 'showicons', $ngg_options['irShowicons'], 'true', 'bool');
+	$swfobject->add_flashvars( 'kenburns', $ngg_options['irKenburns'], 'false', 'bool');
+	$swfobject->add_flashvars( 'overstretch', $ngg_options['irOverstretch'], 'false', 'bool');
+	$swfobject->add_flashvars( 'rotatetime', $ngg_options['irRotatetime'], 5, 'int');
+	$swfobject->add_flashvars( 'transition', $ngg_options['irTransition'], 'random', 'string');
+	$swfobject->add_flashvars( 'backcolor', $ngg_options['irBackcolor'], 'FFFFFF', 'string', '0x');
+	$swfobject->add_flashvars( 'frontcolor', $ngg_options['irFrontcolor'], '000000', 'string', '0x');
+	$swfobject->add_flashvars( 'lightcolor', $ngg_options['irLightcolor'], '000000', 'string', '0x');
+	$swfobject->add_flashvars( 'screencolor', $ngg_options['irScreencolor'], '000000', 'string', '0x');
+	if ($ngg_options['irWatermark'])
+		$swfobject->add_flashvars( 'logo', $ngg_options['wmPath'], '', 'string'); 
+	$swfobject->add_flashvars( 'audio', $ngg_options['irAudio'], '', 'string');
+	$swfobject->add_flashvars( 'width', $irWidth, '260');
+	$swfobject->add_flashvars( 'height', $irHeight, '320');	
+	// create the output
+	$out  = $swfobject->output();
+	// add now the script code
+    $out .= "\n".'<script type="text/javascript" defer="defer">';
+	if ($ngg_options['irXHTMLvalid']) $out .= "\n".'<!--';
+	if ($ngg_options['irXHTMLvalid']) $out .= "\n".'//<![CDATA[';
+	$out .= $swfobject->javascript();
+	if ($ngg_options['irXHTMLvalid']) $out .= "\n".'//]]>';
+	if ($ngg_options['irXHTMLvalid']) $out .= "\n".'-->';
+	$out .= "\n".'</script>';
+
 
 	$out = apply_filters('ngg_show_slideshow_content', $out);		
 	return $out;
