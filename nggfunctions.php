@@ -190,7 +190,7 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	$swfobject->add_flashvars( 'width', $irWidth, '260');
 	$swfobject->add_flashvars( 'height', $irHeight, '320');	
 	// create the output
-	$$out  = '<div class="slideshow">' . $swfobject->output() . '</div>';
+	$out  = '<div class="slideshow">' . $swfobject->output() . '</div>';
 	// add now the script code
     $out .= "\n".'<script type="text/javascript" defer="defer">';
 	if ($ngg_options['irXHTMLvalid']) $out .= "\n".'<!--';
