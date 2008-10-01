@@ -190,7 +190,7 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	$swfobject->add_flashvars( 'width', $irWidth, '260');
 	$swfobject->add_flashvars( 'height', $irHeight, '320');	
 	// create the output
-	$out  = $swfobject->output();
+	$$out  = '<div class="slideshow">' . $swfobject->output() . '</div>';
 	// add now the script code
     $out .= "\n".'<script type="text/javascript" defer="defer">';
 	if ($ngg_options['irXHTMLvalid']) $out .= "\n".'<!--';
@@ -235,8 +235,8 @@ function nggShowGallery($galleryID) {
 		// 2nd look for slideshow
 		if ( $show == 'slide' ) {
 			$args['show'] = "gallery";
-			$out  = '<div class="ngg-galleryoverview">';
-			$out .= '<div class="slideshowlink"><a class="slideshowlink" href="' . $nggRewrite->get_permalink($args) . '">'.$ngg_options['galTextGallery'].'</a></div>';
+			$out  = '<div class="ngg-galleryoverview">'."\n";
+			$out .= '<div class="slideshowlink"><a class="slideshowlink" href="' . $nggRewrite->get_permalink($args) . '">'.$ngg_options['galTextGallery'].'</a></div>'."\n";
 			$out .= nggShowSlideshow($galleryID,$ngg_options['irWidth'],$ngg_options['irHeight']);
 			$out .= '</div>'."\n";
 			$out .= '<div class="ngg-clear"></div>'."\n";
