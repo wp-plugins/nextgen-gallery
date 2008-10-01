@@ -174,7 +174,7 @@ function nggShowSlideshow($galleryID,$irWidth,$irHeight) {
 	$swfobject->add_flashvars( 'file', NGGALLERY_URLPATH . 'nggextractXML.php?gid='.$galleryID );
 	$swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'false', 'bool');
 	$swfobject->add_flashvars( 'linkfromdisplay', $ngg_options['irLinkfromdisplay'], 'false', 'bool');
-	$swfobject->add_flashvars( 'shownavigation', $ngg_options['irShownavigation'], 'false', 'bool');
+	$swfobject->add_flashvars( 'shownavigation', $ngg_options['irShownavigation'], 'true', 'bool');
 	$swfobject->add_flashvars( 'showicons', $ngg_options['irShowicons'], 'true', 'bool');
 	$swfobject->add_flashvars( 'kenburns', $ngg_options['irKenburns'], 'false', 'bool');
 	$swfobject->add_flashvars( 'overstretch', $ngg_options['irOverstretch'], 'false', 'string');

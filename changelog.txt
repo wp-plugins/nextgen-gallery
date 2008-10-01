@@ -1,6 +1,11 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V0.99.1 - 01.10.2008
+- Bugfix : Added div wrapper around slideshow
+- Bugfix : Changed default values for flashvars
+- Bugfix : Updated to imagerotator 3.17
+
 V0.99 - 27.09.2008
 - Changed : Included swfobject version 2.1 
 - Bugfix : Recognize the zip better
