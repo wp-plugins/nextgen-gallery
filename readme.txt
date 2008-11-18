@@ -30,6 +30,18 @@ Features:
 * Sort images feature
 * Cool flash addons here : http://wordpress.org/extend/plugins/nextgen-flashviewer/
 
+= NEW in VERSION 1.0.0 for WordPress 2.7 =
+
+I'm waiting for the release of WordPress 2.7 to finally release the new version. This version contain the follow new features:
+* Templates : You can add custom templates for your theme. See here for some example
+* Media RSS feed : Add the Cooliris Effect to your gallery
+* More role settings : Each gallery has now a author
+* AJAX based thumbnail generator : No more server limitation during the batch process
+* New Shortcodes : You can now insert thumbnails for one or more images (that are not necessarly inside the same gallery).
+* Copy/Move : Now you can copy or move images between galleries 
+
+If you would like to test this new version, go and visit my blog for a first beta version.
+
 For support around this plugin please visit http://alexrabe.boelinger.com/forums/
 
 **For your language file please visit :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/
