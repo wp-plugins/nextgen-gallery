@@ -33,6 +33,7 @@ Features:
 = NEW in VERSION 1.0.0 for WordPress 2.7 =
 
 I'm waiting for the release of WordPress 2.7 to finally release the new version. This version contain the follow new features:
+
 * Templates : You can add custom templates for your theme. See here for some example
 * Media RSS feed : Add the Cooliris Effect to your gallery
 * More role settings : Each gallery has now a author
