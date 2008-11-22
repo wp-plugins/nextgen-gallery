@@ -98,8 +98,10 @@ That's it ... Have fun
 
 1. Screenshot Admin Area 
 2. Screenshot Album Selection
-2. Screenshot Thickbox Effect
-2. Screenshot Watermark function
+3. Screenshot Shutter Effect
+4. Screenshot Watermark function
+5. Screenshot Flexible template layout
+6. Screenshot Show Exif data
 
 == Frequently Asked Questions ==
 
