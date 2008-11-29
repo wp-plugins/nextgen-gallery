@@ -3,7 +3,7 @@ Contributors: Alex Rabe
 Donate link: http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/
 Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets, photo, picture
 Requires at least: 2.1.3
-Tested up to: 2.6.3
+Tested up to: 2.6.5
 Stable tag: trunk
 
 NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option.
@@ -12,23 +12,6 @@ NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a F
 
 My last and hopefully best plugin for WordPress is a new Gallery plugin called NextGEN Gallery . It's named als "NextGeneration" according to the the development of the game consoles . More over it should indicate that I (try) to use all new possibilities of the great JQuery and the so called Web 2.0. 
 Before I start writing the plugin I study all image and gallery plugins for WordPress, I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple galleries.
-
-Features:
-
-* Sortable Albums : Create your own sets of images 
-* Upload a Zip-File with pictures : Upload pictures in a zip-file (Not in Safe-mode) 
-* Watermark function : You can add a watermark image or text 
-* JavaScript Effect : Use any available popular image effect : Thickbox, Lightbox or Highslide
-* Multiple CSS Stylesheet : Use a nice shadow effect for your thumbnails with your own CSS file 
-* Slideshow : Full integrated flash slideshow
-* TinyMCE : Button integration for easy adding the gallery tags
-* Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
-* Language support : Translated in more than 30 languages
-* Upload tab integration : You have access to all pictures via the upload tab
-* Tag support for images : Append related images to your post
-* Meta data support : Import EXIF, IPTC or XMP meta data 
-* Sort images feature
-* Cool flash addons here : http://wordpress.org/extend/plugins/nextgen-flashviewer/
 
 = NEW in VERSION 1.0.0 for WordPress 2.7 =
 
@@ -41,7 +24,22 @@ I'm waiting for the release of WordPress 2.7 to finally release the new version.
 * New Shortcodes : You can now insert thumbnails for one or more images (that are not necessarly inside the same gallery).
 * Copy/Move : Now you can copy or move images between galleries 
 
-If you would like to test this new version, go and visit my blog for a first beta version.
+Other features:
+
+* Sortable Albums : Create your own sets of images 
+* Upload a Zip-File with pictures : Upload pictures in a zip-file (Not in Safe-mode) 
+* Watermark function : You can add a watermark image or text 
+* JavaScript Effect : Use any available popular image effect : Shutter, Thickbox, Lightbox or Highslide
+* Multiple CSS Stylesheet : Use a nice shadow effect for your thumbnails with your own CSS file 
+* Slideshow : Full integrated flash slideshow
+* TinyMCE : Button integration for easy adding the gallery tags
+* Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
+* Language support : Translated in more than 30 languages
+* Upload tab integration : You have access to all pictures via the upload tab
+* Tag support for images : Append related images to your post
+* Meta data support : Import EXIF, IPTC or XMP meta data 
+* Sort images feature
+* Cool flash addons here : http://wordpress.org/extend/plugins/nextgen-flashviewer/
 
 For support around this plugin please visit http://alexrabe.boelinger.com/forums/
 
