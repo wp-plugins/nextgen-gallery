@@ -32,7 +32,7 @@ function nggallery_admin_overview()  {
        </p>
 	  <?php if ( $nggCheck->startCheck() && (!IS_WPMU) ) { ?>
 		<h3><font color="red"><?php _e('New Version available', 'nggallery') ?></font></h3>
-	   	<p><?php _e('The server reports that a new NextGEN Gallery Version is now available. Please visit the plugin homepage for more information.', 'nggallery') ?></p>
+	   	<p><?php _e('NextGEN Gallery V1.00 is now available. This version is only compatible with WordPress 2.7. Please visit the plugin homepage for more information.', 'nggallery') ?></p>
 		<p><a href="http://wordpress.org/extend/plugins/nextgen-gallery/download/" target="_blank"> <?php _e('Download here', 'nggallery') ?> </a></p>
 	  <?php } ?>
 	  <?php if (IS_WPMU) {
