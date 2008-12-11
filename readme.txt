@@ -2,8 +2,8 @@
 Contributors: Alex Rabe
 Donate link: http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/
 Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets, photo, picture
-Requires at least: 2.1.3
-Tested up to: 2.6.5
+Requires at least: 2.7.0
+Tested up to: 2.7.0
 Stable tag: trunk
 
 NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option.
@@ -14,8 +14,6 @@ My last and hopefully best plugin for WordPress is a new Gallery plugin called N
 Before I start writing the plugin I study all image and gallery plugins for WordPress, I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple galleries.
 
 = NEW in VERSION 1.0.0 for WordPress 2.7 =
-
-I'm waiting for the release of WordPress 2.7 to finally release the new version. This version contain the follow new features:
 
 * Templates : You can add custom templates for your theme. See here for some example
 * Media RSS feed : Add the Cooliris Effect to your gallery
@@ -77,17 +75,17 @@ For commercial use please look at the Jeroen's homepage : http://www.jeroenwijer
 
 == Installation ==
 
-1. 	Upload the files to wp-content/plugins/nggallery
+1. 	Upload the files to wp-content/plugins/nextgen-gallery
 
 2.  Go to the web page http://www.jeroenwijering.com/ and download the JW Image Rotator and unpack the conent
 	
-3.	Upload the file imagerotator.swf to the nggallery folder
+3.	Upload the file imagerotator.swf to the nextgen-gallery folder
 
 4. 	Activate the plugin
 
 5.	Add a gallery and upload some images (the main gallery folder must have write permission)
 
-6. 	Go to your post/page an enter the tag '[gallery=ID]' or '[slideshow=ID]'.
+6. 	Go to your post/page an enter the tag '[nggallery id=x]' or '[slideshow id=x]'.
 	See more tags in the FAQ section
 
 That's it ... Have fun
@@ -107,33 +105,33 @@ That's it ... Have fun
 
 When writing a page/post, you can use the follow tags:
 
-For a slideshow : **[slideshow=id,width,height]**
+For a slideshow : **[slideshow id=x w=width h=height]**
 
 Example : http://nextgen.boelinger.com/slideshow/
 
-For a album : **[album=id,extend]** or **[album=id,compact]**
+For a album : **[album id=x template=extend]** or **[album id=x template=compact]**
 
 Example : http://nextgen.boelinger.com/album/
 
-For a gallery : **[gallery=id]**
+For a gallery : **[nggallery id=x]**
 
 Example : http://nextgen.boelinger.com/gallery-page/
 
-For a single picture : **[singlepic=id,width,height,mode,float]**
+For a single picture : **[singlepic id=x w=width h=height mode=web20|watermark float=left|right]**
 
 Example : http://nextgen.boelinger.com/singlepic/
 
-For a image browser : **[imagebrowser=id]**
+For a image browser : **[imagebrowser id=x]**
 
-Example : http://nextgen.boelinger.com/2007/06/16/new-tag-picture-browser/
+Example : http://nextgen.boelinger.com/image-browser/
 
-To show image sorted by tags : **[tags=name,name,name]**
+To show image sorted by tags : **[nggtags gallery=mytag,wordpress,... ]**
 
-Example : http://nextgen.boelinger.com/2007/08/07/tags/
+Example : http://nextgen.boelinger.com/gallery-tags/
 
-To show tag albums : **[albumtags=name,name,name]**
+To show tag albums : **[nggtags album=mytag,wordpress,... ]**
 
-Example : http://nextgen.boelinger.com/2007/08/11/albumtags/
+Example : http://nextgen.boelinger.com/albumtags/
 
 **A further FAQ you can found here :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/
 
