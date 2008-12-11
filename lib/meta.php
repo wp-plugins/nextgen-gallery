@@ -21,14 +21,14 @@ class nggMeta{
 	var $iptc_array 	= 	false;	// IPTC data array
 	var $xmp_array  	= 	false;	// XMP data array
 
-  /**
-   * nggMeta::nggMeta()
-   *
-   * @param mixed $image
-   * @return
-   */
-   
- 	function nggMeta($image) {
+ 	/**
+ 	 * nggMeta::nggMeta()
+ 	 * 
+ 	 * @param string $image path to a image
+ 	 * @param bool $onlyEXIF parse only exif if needed
+ 	 * @return
+ 	 */
+ 	function nggMeta($image, $onlyEXIF = false) {
  		$this->imagePath = $image;
  		
  		if ( !file_exists( $this->imagePath ) )
@@ -41,6 +41,10 @@ class nggMeta{
 			// get exif - data
 			if ( is_callable('exif_read_data'))
 			$this->exif_data = @exif_read_data($this->imagePath, 0, true );
+ 			
+ 			// stop here if we didn't need other meta data
+ 			if ($onlyEXIF)
+ 				return true;
  			
  			// get the iptc data - should be in APP13
  			if ( is_callable('iptcparse'))

@@ -1,7 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
-V1.00 - 11.12.2008
+V1.0.1 - 11.12.2008
+- Bugfix : Change upgrade routine, import_date_time could cause a memory problem
+- Bugfix : Help pages will not show up in non-english enviroment
+- Bugfix : Show gallery name if title is empty
+
+V1.0.0 - 11.12.2008
 - NEW : Adding some rewrite rules for the Blog title for a better SEO (Will be continued...)
 - NEW : Added ImageMagick support (currently a bit experimental) (THX to Frederic de Ranter) 
 - NEW : Automatic unistall via register_uninstall_hook()

@@ -13,7 +13,7 @@ NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a F
 My last and hopefully best plugin for WordPress is a new Gallery plugin called NextGEN Gallery . It's named als "NextGeneration" according to the the development of the game consoles . More over it should indicate that I (try) to use all new possibilities of the great JQuery and the so called Web 2.0. 
 Before I start writing the plugin I study all image and gallery plugins for WordPress, I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple galleries.
 
-= NEW in VERSION 1.0.0 for WordPress 2.7 =
+= NEW in VERSION 1.0 for WordPress 2.7 =
 
 * Templates : You can add custom templates for your theme. See here for some example
 * Media RSS feed : Add the Cooliris Effect to your gallery

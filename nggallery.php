@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 1.0.0
+Version: 1.0.1
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -44,7 +44,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.0.0';
+	var $version     = '1.0.1';
 	var $dbversion   = '0.9.7';
 	var $minium_WP   = '2.7';
 	var $minium_WPMU = '2.7';
@@ -73,8 +73,9 @@ class nggLoader {
 		register_deactivation_hook( dirname(__FILE__) . '/nggallery.php', array(&$this, 'deactivate') );	
 
 		// Register a uninstall hook to atumatic remove all tables & option
-		register_uninstall_hook( dirname(__FILE__) . '/nggallery.php', array('nggLoader', 'uninstall') );
-		
+		if ( function_exists('register_uninstall_hook') )
+			register_uninstall_hook( dirname(__FILE__) . '/nggallery.php', array('nggLoader', 'uninstall') );
+
 		// Start this plugin once all other plugins are fully loaded
 		add_action( 'plugins_loaded', array(&$this, 'start_plugin') );
 

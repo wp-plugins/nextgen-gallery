@@ -32,6 +32,7 @@ if($gallerylist) {
 	foreach($gallerylist as $gallery) {
 		$class = ( $class == 'class="alternate"' ) ? '' : 'class="alternate"';
 		$gid = $gallery->gid;
+		$name = (empty($gallery->title) ) ? $gallery->name : $gallery->title;
 		$author_user = get_userdata( (int) $gallery->author );
 		?>
 		<tr id="gallery-<?php echo $gid ?>" <?php echo $class; ?> >
@@ -39,7 +40,7 @@ if($gallerylist) {
 			<td>
 				<?php if(nggAdmin::can_manage_this_gallery($gallery->author)) { ?>
 					<a href="<?php echo wp_nonce_url( $ngg->manage_page->base_page . "&amp;mode=edit&amp;gid=" . $gid, 'ngg_editgallery')?>" class='edit' title="<?php _e('Edit') ?>" >
-						<?php echo $gallery->title; ?>
+						<?php echo $name; ?>
 					</a>
 				<?php } else { ?>
 					<?php echo $gallery->title; ?>

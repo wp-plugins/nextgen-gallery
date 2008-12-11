@@ -197,7 +197,7 @@ class nggAdminPanel{
 
 		$link = '';
 		// menu title is localized...
-		$i18n = strtolower  ( __('Gallery', 'nggallery') );
+		$i18n = strtolower  ( __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ) );
 
 		switch ($screen) {
 			case 'toplevel_page_' . NGGFOLDER :
