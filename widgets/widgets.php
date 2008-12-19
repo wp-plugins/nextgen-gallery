@@ -53,6 +53,7 @@ class nggSlideshowWidget {
 		$swfobject->classname = 'ngg-widget-slideshow';
 		$swfobject->message =  __('<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.', 'nggallery');
 		$swfobject->add_params('wmode', 'opaque');
+		$swfobject->add_params('bgcolor', $ngg_options['irScreencolor'], '000000', 'string', '#');
 		$swfobject->add_attributes('styleclass', 'slideshow-widget');
 	
 		// adding the flash parameter	
@@ -93,17 +94,11 @@ class nggSlideshowWidget {
     	// Each widget can store its own options. We keep strings here.
 		$options = get_option('widget_nggslideshow');
 		
-		// Get the gallery linked id page permalink. THX to Vince Kruger
-		$pageid = $wpdb->get_results("SELECT pageid FROM $wpdb->nggallery WHERE gid={$options['galleryid']}");
-		$permalink = get_permalink($pageid[0]->pageid);
-		
-		// These lines generate the link if available
-		//TODO: In the case you don't use gallery pages, this is not useable 
-		$the_title = ( !empty($permalink) ) ? "<a href=\"{$permalink}\">" . $options['title'] . "</a>" : $options['title'];		
-
 		// These lines generate our output. 
-		echo $before_widget . $before_title . $the_title . $after_title;
+		echo $before_widget . $before_title . $options['title'] . $after_title;
+
 		$this->render_slideshow($options['galleryid'] , $options['width'] , $options['height']);
+
 		echo $after_widget;
 		
 	}	
@@ -363,19 +358,19 @@ function ngg_widget_control($widget_args = 1) {
 		$exclude_list = '';
 
 		// THX to Kay Germer for the idea & addon code
-		if ( (!empty($list)) && ($exclude != "all") ) {
+		if ( (!empty($list)) && ($exclude != 'all') ) {
 			$list = explode(',',$list);
 			// Prepare for SQL
 			$list = "'" . implode("', '", $list ) . "'";
 			
-			if ($exclude == "denied")	
+			if ($exclude == 'denied')	
 				$exclude_list = "AND NOT t.gid IN ($list)";
 
-			if ($exclude == "allow")	
+			if ($exclude == 'allow')	
 				$exclude_list = "AND t.gid IN ($list)";
 		}
 		
-		if ( $options[$number]['type'] == "random" ) 
+		if ( $options[$number]['type'] == 'random' ) 
 			$imageList = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 $exclude_list ORDER by rand() limit {$items}");
 		else
 			$imageList = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 $exclude_list ORDER by pid DESC limit 0,$items");
@@ -386,14 +381,14 @@ function ngg_widget_control($widget_args = 1) {
 		if (is_array($imageList)){
 			foreach($imageList as $image) {
 				// get the URL constructor
-				$image = new nggImage($image, $image);
+				$image = new nggImage($image);
 
 				// get the effect code
 				$thumbcode = $image->get_thumbcode("sidebar_".$number);
 				
 				//TODO:For mixed portrait/landscape it's better to use only the height setting, if widht is 0 or vice versa
 				$out = '<a href="'.$image->imageURL.'" title="'.stripslashes($image->description).'" '.$thumbcode.'>';
-				if ( $options[$number]['show'] == "orginal" )
+				if ( $options[$number]['show'] == 'orginal' )
 					$out .= '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$image->pid.'&amp;width='.$options[$number]['width'].'&amp;height='.$options[$number]['height']. '" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$image->alttext.'" alt="'.$image->alttext.'" />';
 				else	
 					$out .= '<img src="'.$image->thumbURL.'" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$image->alttext.'" alt="'.$image->alttext.'" />';			

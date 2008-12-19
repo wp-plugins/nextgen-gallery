@@ -77,7 +77,7 @@ For commercial use please look at the Jeroen's homepage : http://www.jeroenwijer
 
 1. 	Upload the files to wp-content/plugins/nextgen-gallery
 
-2.  Go to the web page http://www.jeroenwijering.com/ and download the JW Image Rotator and unpack the conent
+2.  Go to the web page http://www.longtailvideo.com/ and download the JW Image Rotator and unpack the conent
 	
 3.	Upload the file imagerotator.swf to the nextgen-gallery folder
 

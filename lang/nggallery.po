@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NextGEN Gallery\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-11 20:27+0100\n"
-"PO-Revision-Date: 2008-12-11 20:27+0100\n"
+"POT-Creation-Date: 2008-12-15 12:50+0100\n"
+"PO-Revision-Date: 2008-12-15 12:50+0100\n"
 "Last-Translator: Alex Rabe <no@email.com>\n"
 "Language-Team: Alex Rabe\n"
 "MIME-Version: 1.0\n"
@@ -17,27 +17,27 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
-#: ../nggallery.php:151
+#: ../nggallery.php:153
 msgid "Sorry, NextGEN Gallery works only with a Memory Limit of 16 MB higher"
 msgstr ""
 
-#: ../nggallery.php:178
+#: ../nggallery.php:180
 msgid "Picture tag"
 msgstr ""
 
-#: ../nggallery.php:179
+#: ../nggallery.php:181
 msgid "Picture tag: %2$l."
 msgstr ""
 
-#: ../nggallery.php:180
+#: ../nggallery.php:182
 msgid "Separate picture tags with commas."
 msgstr ""
 
-#: ../nggallery.php:274
+#: ../nggallery.php:276
 msgid "L O A D I N G"
 msgstr ""
 
-#: ../nggallery.php:275
+#: ../nggallery.php:277
 msgid "Click to Close"
 msgstr ""
 
@@ -45,24 +45,24 @@ msgstr ""
 msgid "The <a href=\"http://www.macromedia.com/go/getflashplayer\">Flash Player</a> and <a href=\"http://www.mozilla.com/firefox/\">a browser with Javascript support</a> are needed.."
 msgstr ""
 
-#: ../nggfunctions.php:95
-#: ../nggfunctions.php:387
+#: ../nggfunctions.php:96
+#: ../nggfunctions.php:393
 msgid "[Gallery not found]"
 msgstr ""
 
-#: ../nggfunctions.php:274
+#: ../nggfunctions.php:278
 msgid "[Album not found]"
 msgstr ""
 
-#: ../nggfunctions.php:489
+#: ../nggfunctions.php:495
 msgid "[SinglePic not found]"
 msgstr ""
 
-#: ../nggfunctions.php:608
+#: ../nggfunctions.php:614
 msgid "Related images for"
 msgstr ""
 
-#: ../nggfunctions.php:643
+#: ../nggfunctions.php:649
 #: ../admin/admin.php:30
 msgid "Overview"
 msgstr ""
@@ -189,8 +189,8 @@ msgid "Upload failed!"
 msgstr ""
 
 #: ../admin/addgallery.php:55
-#: ../admin/functions.php:548
-#: ../admin/functions.php:638
+#: ../admin/functions.php:550
+#: ../admin/functions.php:640
 msgid "No gallery selected !"
 msgstr ""
 
@@ -520,7 +520,7 @@ msgid "Update"
 msgstr ""
 
 #: ../admin/album.php:147
-#: ../admin/manage-galleries.php:54
+#: ../admin/manage-galleries.php:55
 #: ../admin/manage-images.php:377
 msgid "Delete"
 msgstr ""
@@ -613,7 +613,7 @@ msgstr ""
 
 #: ../admin/functions.php:48
 #: ../admin/functions.php:58
-#: ../admin/functions.php:511
+#: ../admin/functions.php:513
 msgid "Unable to create directory "
 msgstr ""
 
@@ -663,7 +663,7 @@ msgid "successfully created!"
 msgstr ""
 
 #: ../admin/functions.php:161
-#: ../admin/functions.php:620
+#: ../admin/functions.php:622
 #: ../admin/manage-images.php:207
 #: ../admin/manage.php:136
 msgid "Create new thumbnails"
@@ -692,104 +692,104 @@ msgstr ""
 msgid "Uploaded file was no or a faulty zip file ! The server recognize : "
 msgstr ""
 
-#: ../admin/functions.php:496
-msgid "Could not get a vaild foldername"
+#: ../admin/functions.php:497
+msgid "Could not get a valid foldername"
 msgstr ""
 
-#: ../admin/functions.php:506
+#: ../admin/functions.php:508
 #, php-format
 msgid "Unable to create directory %s. Is its parent directory writable by the server?"
 msgstr ""
 
-#: ../admin/functions.php:521
+#: ../admin/functions.php:523
 msgid "Zip-File successfully unpacked"
 msgstr ""
 
-#: ../admin/functions.php:556
-#: ../admin/functions.php:665
+#: ../admin/functions.php:558
+#: ../admin/functions.php:667
 msgid "Failure in database, no gallery path set !"
 msgstr ""
 
-#: ../admin/functions.php:577
-#: ../admin/functions.php:659
+#: ../admin/functions.php:579
+#: ../admin/functions.php:661
 msgid "is no valid image file!"
 msgstr ""
 
-#: ../admin/functions.php:591
-#: ../admin/functions.php:767
-#: ../admin/functions.php:835
+#: ../admin/functions.php:593
+#: ../admin/functions.php:769
+#: ../admin/functions.php:837
 #, php-format
 msgid "Unable to write to directory %s. Is this directory writable by the server?"
 msgstr ""
 
-#: ../admin/functions.php:598
-#: ../admin/functions.php:682
+#: ../admin/functions.php:600
+#: ../admin/functions.php:684
 msgid "Error, the file could not moved to : "
 msgstr ""
 
-#: ../admin/functions.php:603
-#: ../admin/functions.php:686
+#: ../admin/functions.php:605
+#: ../admin/functions.php:688
 msgid "Error, the file permissions could not set"
 msgstr ""
 
-#: ../admin/functions.php:624
+#: ../admin/functions.php:626
 msgid " Image(s) successfully added"
 msgstr ""
 
-#: ../admin/functions.php:647
+#: ../admin/functions.php:649
 msgid "Invalid upload. Error Code : "
 msgstr ""
 
-#: ../admin/functions.php:696
+#: ../admin/functions.php:698
 msgid "Sorry, you have used your space allocation. Please delete some files to upload more files."
 msgstr ""
 
-#: ../admin/functions.php:723
+#: ../admin/functions.php:725
 #, php-format
 msgid "SAFE MODE Restriction in effect! You need to create the folder <strong>%s</strong> manually"
 msgstr ""
 
-#: ../admin/functions.php:724
+#: ../admin/functions.php:726
 #, php-format
 msgid "When safe_mode is on, PHP checks to see if the owner (%s) of the current script matches the owner (%s) of the file to be operated on by a file function or its directory"
 msgstr ""
 
-#: ../admin/functions.php:761
-#: ../admin/functions.php:829
+#: ../admin/functions.php:763
+#: ../admin/functions.php:831
 msgid "The destination gallery does not exist"
 msgstr ""
 
-#: ../admin/functions.php:792
+#: ../admin/functions.php:794
 #, php-format
 msgid "Failed to move image %1$s to %2$s"
 msgstr ""
 
-#: ../admin/functions.php:810
+#: ../admin/functions.php:812
 #, php-format
 msgid "Moved %1$s picture(s) to gallery : %2$s ."
 msgstr ""
 
-#: ../admin/functions.php:862
+#: ../admin/functions.php:864
 #, php-format
 msgid "Failed to copy image %1$s to %2$s"
 msgstr ""
 
-#: ../admin/functions.php:874
+#: ../admin/functions.php:876
 #, php-format
 msgid "Failed to copy database row for picture %s"
 msgstr ""
 
-#: ../admin/functions.php:882
+#: ../admin/functions.php:884
 #, php-format
 msgid "Image %1$s (%2$s) copied as image %3$s (%4$s) &raquo; The file already existed in the destination gallery."
 msgstr ""
 
-#: ../admin/functions.php:885
+#: ../admin/functions.php:887
 #, php-format
 msgid "Image %1$s (%2$s) copied as image %3$s (%4$s)"
 msgstr ""
 
-#: ../admin/functions.php:894
+#: ../admin/functions.php:896
 #, php-format
 msgid "Copied %1$s picture(s) to gallery: %2$s ."
 msgstr ""
@@ -802,11 +802,11 @@ msgstr ""
 msgid "NextGEN Gallery : Tables could not created, please check your database settings"
 msgstr ""
 
-#: ../admin/install.php:156
+#: ../admin/install.php:158
 msgid "[Show as slideshow]"
 msgstr ""
 
-#: ../admin/install.php:157
+#: ../admin/install.php:159
 msgid "[Show picture list]"
 msgstr ""
 
@@ -838,15 +838,15 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: ../admin/manage-galleries.php:41
+#: ../admin/manage-galleries.php:42
 msgid "Edit"
 msgstr ""
 
-#: ../admin/manage-galleries.php:54
+#: ../admin/manage-galleries.php:55
 msgid "Delete this gallery ?"
 msgstr ""
 
-#: ../admin/manage-galleries.php:61
+#: ../admin/manage-galleries.php:62
 #: ../admin/manage-images.php:392
 msgid "No entries found"
 msgstr ""
@@ -1158,7 +1158,7 @@ msgid "Alignment"
 msgstr ""
 
 #: ../admin/media-upload.php:198
-#: ../admin/settings.php:320
+#: ../admin/settings.php:325
 msgid "None"
 msgstr ""
 
@@ -1178,7 +1178,7 @@ msgid "Right"
 msgstr ""
 
 #: ../admin/media-upload.php:208
-#: ../admin/settings.php:423
+#: ../admin/settings.php:428
 msgid "Size"
 msgstr ""
 
@@ -1436,7 +1436,7 @@ msgid "General Options"
 msgstr ""
 
 #: ../admin/settings.php:102
-#: ../admin/settings.php:272
+#: ../admin/settings.php:277
 msgid "Thumbnails"
 msgstr ""
 
@@ -1445,19 +1445,19 @@ msgid "Images"
 msgstr ""
 
 #: ../admin/settings.php:105
-#: ../admin/settings.php:309
+#: ../admin/settings.php:314
 msgid "Effects"
 msgstr ""
 
 #: ../admin/settings.php:106
-#: ../admin/settings.php:347
+#: ../admin/settings.php:352
 #: ../admin/tinymce/window.php:118
 msgid "Watermark"
 msgstr ""
 
 #: ../admin/settings.php:107
-#: ../admin/settings.php:273
-#: ../admin/settings.php:451
+#: ../admin/settings.php:278
+#: ../admin/settings.php:456
 #: ../admin/tinymce/window.php:57
 msgid "Slideshow"
 msgstr ""
@@ -1500,411 +1500,419 @@ msgid "ImageMagick (Experimental). Path to the library :"
 msgstr ""
 
 #: ../admin/settings.php:141
-msgid "Activate PicLens/CoolIris support"
+msgid "Activate Media RSS feed"
 msgstr ""
 
 #: ../admin/settings.php:143
-msgid "When you activate this option, some javascript is added to your site footer. Make sure that wp_footer is called in your theme."
+msgid "A RSS feed will be added to you blog header. Usefull for CoolIris/PicLens"
 msgstr ""
 
 #: ../admin/settings.php:146
-msgid "Tags / Categories"
+msgid "Activate PicLens/CoolIris support"
 msgstr ""
 
-#: ../admin/settings.php:149
-msgid "Activate related images"
+#: ../admin/settings.php:148
+msgid "When you activate this option, some javascript is added to your site footer. Make sure that wp_footer is called in your theme."
 msgstr ""
 
 #: ../admin/settings.php:151
-msgid "This option will append related images to every post"
+msgid "Tags / Categories"
 msgstr ""
 
-#: ../admin/settings.php:155
-msgid "Match with"
+#: ../admin/settings.php:154
+msgid "Activate related images"
 msgstr ""
 
 #: ../admin/settings.php:156
-msgid "Categories"
+msgid "This option will append related images to every post"
+msgstr ""
+
+#: ../admin/settings.php:160
+msgid "Match with"
 msgstr ""
 
 #: ../admin/settings.php:161
+msgid "Categories"
+msgstr ""
+
+#: ../admin/settings.php:166
 msgid "Max. number of images"
 msgstr ""
 
-#: ../admin/settings.php:163
+#: ../admin/settings.php:168
 msgid "0 will show all images"
 msgstr ""
 
-#: ../admin/settings.php:174
+#: ../admin/settings.php:179
 msgid "Thumbnail settings"
 msgstr ""
 
-#: ../admin/settings.php:178
+#: ../admin/settings.php:183
 msgid "Please note : If you change the settings, you need to recreate the thumbnails under -> Manage Gallery ."
 msgstr ""
 
-#: ../admin/settings.php:181
+#: ../admin/settings.php:186
 msgid "Width x height (in pixel)"
 msgstr ""
 
-#: ../admin/settings.php:183
+#: ../admin/settings.php:188
 msgid "These values are maximum values "
 msgstr ""
 
-#: ../admin/settings.php:186
+#: ../admin/settings.php:191
 msgid "Set fix dimension"
 msgstr ""
 
-#: ../admin/settings.php:188
+#: ../admin/settings.php:193
 msgid "Ignore the aspect ratio, no portrait thumbnails"
 msgstr ""
 
-#: ../admin/settings.php:191
+#: ../admin/settings.php:196
 msgid "Crop square thumbnail from image"
 msgstr ""
 
-#: ../admin/settings.php:193
+#: ../admin/settings.php:198
 msgid "Create square thumbnails, use only the width setting :"
 msgstr ""
 
-#: ../admin/settings.php:196
+#: ../admin/settings.php:201
 msgid "Thumbnail quality"
 msgstr ""
 
-#: ../admin/settings.php:207
+#: ../admin/settings.php:212
 msgid "Image settings"
 msgstr ""
 
-#: ../admin/settings.php:213
+#: ../admin/settings.php:218
 msgid "Resize Images"
 msgstr ""
 
-#: ../admin/settings.php:217
+#: ../admin/settings.php:222
 msgid "Width x height (in pixel). NextGEN Gallery will keep ratio size"
 msgstr ""
 
-#: ../admin/settings.php:220
+#: ../admin/settings.php:225
 msgid "Image quality"
 msgstr ""
 
-#: ../admin/settings.php:225
+#: ../admin/settings.php:230
 msgid "Single picture"
 msgstr ""
 
-#: ../admin/settings.php:228
+#: ../admin/settings.php:233
 msgid "Cache single pictures"
 msgstr ""
 
-#: ../admin/settings.php:231
+#: ../admin/settings.php:236
 msgid "Creates a file for each singlepic settings. Reduce the CPU load"
 msgstr ""
 
-#: ../admin/settings.php:234
+#: ../admin/settings.php:239
 msgid "Clear cache folder"
 msgstr ""
 
-#: ../admin/settings.php:236
+#: ../admin/settings.php:241
 msgid "Proceed now"
 msgstr ""
 
-#: ../admin/settings.php:252
+#: ../admin/settings.php:257
 msgid "Deactivate gallery page link"
 msgstr ""
 
-#: ../admin/settings.php:254
+#: ../admin/settings.php:259
 msgid "The album will not link to a gallery subpage. The gallery is shown on the same page."
 msgstr ""
 
-#: ../admin/settings.php:258
+#: ../admin/settings.php:263
 msgid "Number of images per page"
 msgstr ""
 
-#: ../admin/settings.php:260
+#: ../admin/settings.php:265
 msgid "0 will disable pagination, all images on one page"
 msgstr ""
 
-#: ../admin/settings.php:264
+#: ../admin/settings.php:269
 msgid "Integrate slideshow"
 msgstr ""
 
-#: ../admin/settings.php:271
+#: ../admin/settings.php:276
 msgid "Show first"
 msgstr ""
 
-#: ../admin/settings.php:277
+#: ../admin/settings.php:282
 msgid "Show ImageBrowser"
 msgstr ""
 
-#: ../admin/settings.php:279
+#: ../admin/settings.php:284
 msgid "The gallery will open the ImageBrowser instead the effect."
 msgstr ""
 
-#: ../admin/settings.php:283
+#: ../admin/settings.php:288
 msgid "Sort options"
 msgstr ""
 
-#: ../admin/settings.php:286
+#: ../admin/settings.php:291
 msgid "Sort thumbnails"
 msgstr ""
 
-#: ../admin/settings.php:288
+#: ../admin/settings.php:293
 msgid "Custom order"
 msgstr ""
 
-#: ../admin/settings.php:291
+#: ../admin/settings.php:296
 msgid "Alt / Title text"
 msgstr ""
 
-#: ../admin/settings.php:292
+#: ../admin/settings.php:297
 msgid "Date / Time"
 msgstr ""
 
-#: ../admin/settings.php:296
+#: ../admin/settings.php:301
 msgid "Sort direction"
 msgstr ""
 
-#: ../admin/settings.php:313
+#: ../admin/settings.php:318
 msgid "Here you can select the thumbnail effect, NextGEN Gallery will integrate the required HTML code in the images. Please note that only the Thickbox effect will automatic added to your theme."
 msgstr ""
 
-#: ../admin/settings.php:314
+#: ../admin/settings.php:319
 msgid "With the placeholder"
 msgstr ""
 
-#: ../admin/settings.php:314
+#: ../admin/settings.php:319
 msgid "you can activate a navigation through the images (depend on the effect). Change the code line only , when you use a different thumbnail effect or you know what you do."
 msgstr ""
 
-#: ../admin/settings.php:317
+#: ../admin/settings.php:322
 msgid "JavaScript Thumbnail effect"
 msgstr ""
 
-#: ../admin/settings.php:321
+#: ../admin/settings.php:326
 msgid "Thickbox"
 msgstr ""
 
-#: ../admin/settings.php:322
+#: ../admin/settings.php:327
 msgid "Lightbox"
 msgstr ""
 
-#: ../admin/settings.php:323
+#: ../admin/settings.php:328
 msgid "Highslide"
 msgstr ""
 
-#: ../admin/settings.php:324
+#: ../admin/settings.php:329
 msgid "Shutter"
 msgstr ""
 
-#: ../admin/settings.php:325
+#: ../admin/settings.php:330
 msgid "Custom"
 msgstr ""
 
-#: ../admin/settings.php:330
+#: ../admin/settings.php:335
 msgid "Link Code line"
 msgstr ""
 
-#: ../admin/settings.php:348
+#: ../admin/settings.php:353
 msgid "Please note : You can only activate the watermark under -> Manage Gallery . This action cannot be undone."
 msgstr ""
 
-#: ../admin/settings.php:353
+#: ../admin/settings.php:358
 msgid "Preview"
 msgstr ""
 
-#: ../admin/settings.php:355
 #: ../admin/settings.php:360
+#: ../admin/settings.php:365
 msgid "Position"
 msgstr ""
 
-#: ../admin/settings.php:380
+#: ../admin/settings.php:385
 msgid "Offset"
 msgstr ""
 
-#: ../admin/settings.php:396
+#: ../admin/settings.php:401
 msgid "Use image as watermark"
 msgstr ""
 
-#: ../admin/settings.php:399
+#: ../admin/settings.php:404
 msgid "URL to file"
 msgstr ""
 
-#: ../admin/settings.php:401
+#: ../admin/settings.php:406
 msgid "The accessing of URL files is disabled at your server (allow_url_fopen)"
 msgstr ""
 
-#: ../admin/settings.php:404
+#: ../admin/settings.php:409
 msgid "Use text as watermark"
 msgstr ""
 
-#: ../admin/settings.php:407
+#: ../admin/settings.php:412
 msgid "Font"
 msgstr ""
 
-#: ../admin/settings.php:416
+#: ../admin/settings.php:421
 msgid "This function will not work, cause you need the FreeType library"
 msgstr ""
 
-#: ../admin/settings.php:418
+#: ../admin/settings.php:423
 msgid "You can upload more fonts in the folder <strong>nggallery/fonts</strong>"
 msgstr ""
 
-#: ../admin/settings.php:427
+#: ../admin/settings.php:432
 msgid "Color"
 msgstr ""
 
-#: ../admin/settings.php:429
+#: ../admin/settings.php:434
 msgid "(hex w/o #)"
 msgstr ""
 
-#: ../admin/settings.php:432
+#: ../admin/settings.php:437
 msgid "Text"
 msgstr ""
 
-#: ../admin/settings.php:436
+#: ../admin/settings.php:441
 msgid "Opaque"
 msgstr ""
 
-#: ../admin/settings.php:452
+#: ../admin/settings.php:457
 msgid "The imagerotator.swf is not in the nggallery folder, the slideshow will not work."
 msgstr ""
 
-#: ../admin/settings.php:453
+#: ../admin/settings.php:458
 msgid "The settings are used in the JW Image Rotator Version"
 msgstr ""
 
-#: ../admin/settings.php:454
+#: ../admin/settings.php:459
 msgid "See more information for the Flash Player on the web page"
 msgstr ""
 
-#: ../admin/settings.php:458
+#: ../admin/settings.php:463
 msgid "Default size (W x H)"
 msgstr ""
 
-#: ../admin/settings.php:463
+#: ../admin/settings.php:468
 msgid "Shuffle mode"
 msgstr ""
 
-#: ../admin/settings.php:467
+#: ../admin/settings.php:472
 msgid "Show next image on click"
 msgstr ""
 
-#: ../admin/settings.php:471
+#: ../admin/settings.php:476
 msgid "Show navigation bar"
 msgstr ""
 
-#: ../admin/settings.php:475
+#: ../admin/settings.php:480
 msgid "Show loading icon"
 msgstr ""
 
-#: ../admin/settings.php:479
+#: ../admin/settings.php:484
 msgid "Use watermark logo"
 msgstr ""
 
-#: ../admin/settings.php:481
+#: ../admin/settings.php:486
 msgid "You can change the logo at the watermark settings"
 msgstr ""
 
-#: ../admin/settings.php:484
+#: ../admin/settings.php:489
 msgid "Stretch image"
 msgstr ""
 
-#: ../admin/settings.php:487
+#: ../admin/settings.php:492
 msgid "true"
 msgstr ""
 
-#: ../admin/settings.php:488
+#: ../admin/settings.php:493
 msgid "false"
 msgstr ""
 
-#: ../admin/settings.php:489
+#: ../admin/settings.php:494
 msgid "fit"
 msgstr ""
 
-#: ../admin/settings.php:490
+#: ../admin/settings.php:495
 msgid "none"
 msgstr ""
 
-#: ../admin/settings.php:495
+#: ../admin/settings.php:500
 msgid "Duration time"
 msgstr ""
 
-#: ../admin/settings.php:496
+#: ../admin/settings.php:501
 msgid "sec."
 msgstr ""
 
-#: ../admin/settings.php:499
+#: ../admin/settings.php:504
 msgid "Transition / Fade effect"
 msgstr ""
 
-#: ../admin/settings.php:502
+#: ../admin/settings.php:507
 msgid "fade"
 msgstr ""
 
-#: ../admin/settings.php:503
+#: ../admin/settings.php:508
 msgid "bgfade"
 msgstr ""
 
-#: ../admin/settings.php:504
+#: ../admin/settings.php:509
 msgid "slowfade"
 msgstr ""
 
-#: ../admin/settings.php:505
+#: ../admin/settings.php:510
 msgid "circles"
 msgstr ""
 
-#: ../admin/settings.php:506
+#: ../admin/settings.php:511
 msgid "bubbles"
 msgstr ""
 
-#: ../admin/settings.php:507
+#: ../admin/settings.php:512
 msgid "blocks"
 msgstr ""
 
-#: ../admin/settings.php:508
+#: ../admin/settings.php:513
 msgid "fluids"
 msgstr ""
 
-#: ../admin/settings.php:509
+#: ../admin/settings.php:514
 msgid "flash"
 msgstr ""
 
-#: ../admin/settings.php:510
+#: ../admin/settings.php:515
 msgid "lines"
 msgstr ""
 
-#: ../admin/settings.php:511
+#: ../admin/settings.php:516
 msgid "random"
 msgstr ""
 
-#: ../admin/settings.php:515
+#: ../admin/settings.php:520
 msgid "Use slow zooming effect"
 msgstr ""
 
-#: ../admin/settings.php:519
+#: ../admin/settings.php:524
 msgid "Background Color"
 msgstr ""
 
-#: ../admin/settings.php:524
+#: ../admin/settings.php:529
 msgid "Texts / Buttons Color"
 msgstr ""
 
-#: ../admin/settings.php:529
+#: ../admin/settings.php:534
 msgid "Rollover / Active Color"
 msgstr ""
 
-#: ../admin/settings.php:534
+#: ../admin/settings.php:539
 msgid "Screen Color"
 msgstr ""
 
-#: ../admin/settings.php:539
+#: ../admin/settings.php:544
 msgid "Background music (URL)"
 msgstr ""
 
-#: ../admin/settings.php:543
+#: ../admin/settings.php:548
 msgid "Try XHTML validation (with CDATA)"
 msgstr ""
 
-#: ../admin/settings.php:545
+#: ../admin/settings.php:550
 msgid "Important : Could causes problem at some browser. Please recheck your page."
 msgstr ""
 
@@ -2473,7 +2481,7 @@ msgstr ""
 msgid "Album overview"
 msgstr ""
 
-#: ../lib/shortcodes.php:268
+#: ../lib/shortcodes.php:272
 msgid "[Pictures not found]"
 msgstr ""
 
@@ -2602,7 +2610,7 @@ msgid "Link to the main image feed"
 msgstr ""
 
 #: ../widgets/media-rss-widget.php:153
-#: ../widgets/widgets.php:134
+#: ../widgets/widgets.php:135
 msgid "Title:"
 msgstr ""
 
@@ -2635,71 +2643,71 @@ msgstr ""
 msgid "<a href=\"http://www.macromedia.com/go/getflashplayer\">Get the Flash Player</a> to see the slideshow."
 msgstr ""
 
-#: ../widgets/widgets.php:136
+#: ../widgets/widgets.php:137
 msgid "Select Gallery:"
 msgstr ""
 
-#: ../widgets/widgets.php:138
+#: ../widgets/widgets.php:139
 msgid "All images"
 msgstr ""
 
-#: ../widgets/widgets.php:151
+#: ../widgets/widgets.php:152
 msgid "Height:"
 msgstr ""
 
-#: ../widgets/widgets.php:152
+#: ../widgets/widgets.php:153
 msgid "Width:"
 msgstr ""
 
-#: ../widgets/widgets.php:185
+#: ../widgets/widgets.php:186
 msgid "Add recent or random images from the galleries"
 msgstr ""
 
-#: ../widgets/widgets.php:187
+#: ../widgets/widgets.php:188
 msgid "NextGEN Widget"
 msgstr ""
 
-#: ../widgets/widgets.php:285
+#: ../widgets/widgets.php:286
 msgid "Title :"
 msgstr ""
 
-#: ../widgets/widgets.php:291
+#: ../widgets/widgets.php:292
 msgid "Show :"
 msgstr ""
 
-#: ../widgets/widgets.php:297
+#: ../widgets/widgets.php:298
 msgid "Orginal images"
 msgstr ""
 
-#: ../widgets/widgets.php:305
+#: ../widgets/widgets.php:306
 msgid "recent added "
 msgstr ""
 
-#: ../widgets/widgets.php:310
+#: ../widgets/widgets.php:311
 msgid "Width x Height :"
 msgstr ""
 
-#: ../widgets/widgets.php:317
+#: ../widgets/widgets.php:318
 msgid "Select :"
 msgstr ""
 
-#: ../widgets/widgets.php:319
+#: ../widgets/widgets.php:320
 msgid "All galleries"
 msgstr ""
 
-#: ../widgets/widgets.php:320
+#: ../widgets/widgets.php:321
 msgid "Only which are not listed"
 msgstr ""
 
-#: ../widgets/widgets.php:321
+#: ../widgets/widgets.php:322
 msgid "Only which are listed"
 msgstr ""
 
-#: ../widgets/widgets.php:327
+#: ../widgets/widgets.php:328
 msgid "Gallery ID :"
 msgstr ""
 
-#: ../widgets/widgets.php:329
+#: ../widgets/widgets.php:330
 msgid "Gallery IDs, separated by commas."
 msgstr ""
 

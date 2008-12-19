@@ -110,7 +110,7 @@ class nggAdmin{
 		
 		// remove trailing slash at the end, if somebody use it
 		if (substr($galleryfolder, -1) == '/') $galleryfolder = substr($galleryfolder, 0, -1);
-		$gallerypath = WINABSPATH.$galleryfolder;
+		$gallerypath = WINABSPATH . $galleryfolder;
 		
 		if (!is_dir($gallerypath)) {
 			nggGallery::show_error(__('Directory', 'nggallery').' <strong>'.$gallerypath.'</strong> '.__('doesn&#96;t exist!', 'nggallery'));
@@ -487,19 +487,21 @@ class nggAdmin{
 		if ( $galleryID == '0' ) {	
 			//cleanup and take the zipfile name as folder name
 			$foldername = sanitize_title(strtok ($filename, '.'));
+			$foldername = $defaultpath . $foldername;
 		} else {
 			// get foldername if selected
 			$foldername = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
 		}
 
 		if ( empty($foldername) ) {
-			nggGallery::show_error( __('Could not get a vaild foldername', 'nggallery') );
+			nggGallery::show_error( __('Could not get a valid foldername', 'nggallery') );
 			return false;
 		}
 
 		// set complete folder path
-		$newfolder = WINABSPATH . $defaultpath . $foldername;
+		$newfolder = WINABSPATH . $foldername;
 
+		// check first if the traget folder exist
 		if (!is_dir($newfolder)) {
 			// create new directories
 			if (!wp_mkdir_p ($newfolder)) {
@@ -521,7 +523,7 @@ class nggAdmin{
 			$message = __('Zip-File successfully unpacked','nggallery').'<br />';		
 
 			// parse now the folder and add to database
-			$message .= nggAdmin::import_gallery( $defaultpath . $foldername);
+			$message .= nggAdmin::import_gallery( $foldername);
 			nggGallery::show_message($message);
 		}
 		

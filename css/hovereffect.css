@@ -283,7 +283,8 @@ This is a template stylesheet which doesn't support description below the thumbn
 .slideshow {
 	margin-left: auto; 
 	margin-right: auto;
-	text-align:center;	
+	text-align:center;
+	outline: none;	
 }
 
 .slideshowlink {

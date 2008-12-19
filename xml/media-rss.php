@@ -37,13 +37,13 @@ $rss = '';
 if ($mode=='last_pictures') {
 	
 	// Get additional parameters
-	$page = (int) $_GET["page"];	
+	$page = (int) $_GET["page"];
 	if (!isset($page) || $page == '') {
 		$page = 0;
 	}
 	
 	$show = (int) $_GET["show"];	
-	if (!isset($show) || $show == '' || $show==0) {
+	if (!isset($show) || $show == '' || $show == 0) {
 		$show = 10;
 	}
 	

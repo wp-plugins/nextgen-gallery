@@ -130,6 +130,8 @@ function ngg_default_options() {
 	$ngg_options['usePermalinks']		= false;						// use permalinks for parameters
 	$ngg_options['graphicLibrary']		= 'gd';							// default graphic library
 	$ngg_options['imageMagickDir']		= '/usr/local/bin/';			// default path to ImageMagick
+	$ngg_options['useMediaRSS']			= true;							// activate the global Media RSS file
+	$ngg_options['usePicLens']			= true;							// activate the PicLens Link for galleries
 	
 	// Tags / categories
 	$ngg_options['activateTags']		= false;						// append related images

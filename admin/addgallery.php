@@ -2,7 +2,7 @@
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 	
 	// sometimes a error feedback is better than a white screen
-	ini_set('error_reporting', E_ALL ^ E_NOTICE);
+	@ini_set('error_reporting', E_ALL ^ E_NOTICE);
 
 	function nggallery_admin_add_gallery()  {
 
@@ -91,7 +91,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				
 				// Button Settings
 				button_placeholder_id : "spanButtonPlaceholder",
-				button_width: 272,
+				button_width: 300,
 				button_height: 27,
 				button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
 				button_cursor: SWFUpload.CURSOR.HAND,
@@ -209,8 +209,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<td><select name="zipgalselect">
 					<option value="0" ><?php _e('a new gallery', 'nggallery') ?></option>
 					<?php
-						foreach($gallerylist as $gallery)
-							echo '<option value="' . $gallery->gid . '" >' . $gallery->title . '</option>' . "\n";
+						foreach($gallerylist as $gallery) {
+							$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
+							echo '<option value="' . $gallery->gid . '" >' . $name . '</option>' . "\n";
+						}
 					?>
 					</select>
 					<br /><?php echo _e('Note : The upload limit on your server is ','nggallery') . "<strong>" . ini_get('upload_max_filesize') . "Byte</strong>\n"; ?>
@@ -254,9 +256,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<td><select name="galleryselect" id="galleryselect">
 					<option value="0" ><?php _e('Choose gallery', 'nggallery') ?></option>
 					<?php
-						foreach($gallerylist as $gallery)
-							echo '<option value="' . $gallery->gid . '" >' . $gallery->title . '</option>' ."\n";
-					?>
+						foreach($gallerylist as $gallery) {
+							$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
+							echo '<option value="' . $gallery->gid . '" >' . $name . '</option>' . "\n";
+						}					?>
 					</select>
 					<br /><?php echo _e('Note : The upload limit on your server is ','nggallery') . "<strong>" . ini_get('upload_max_filesize') . "Byte</strong>\n"; ?>
 					<br /><?php if ((IS_WPMU) && wpmu_enable_function('wpmuQuotaCheck')) display_space_usage(); ?></td> 

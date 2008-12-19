@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the WEB2.0(beta).
 Author: NextGEN DEV-Team
-Version: 1.0.1
+Version: 1.0.2
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -44,7 +44,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.0.1';
+	var $version     = '1.0.2';
 	var $dbversion   = '0.9.7';
 	var $minium_WP   = '2.7';
 	var $minium_WPMU = '2.7';
@@ -98,7 +98,8 @@ class nggLoader {
 		} else {			
 			
 			// Add MRSS to wp_head
-			add_action('wp_head', array('nggMediaRss', 'add_mrss_alternate_link'));
+			if ( $this->options['useMediaRSS'] )
+				add_action('wp_head', array('nggMediaRss', 'add_mrss_alternate_link'));
 			
 			// If activated, add PicLens/Cooliris javascript to footer
 			if ( $this->options['usePicLens'] )
@@ -261,7 +262,7 @@ class nggLoader {
 		echo "<meta name='NextGEN' content='" . $this->version . "' />\n";
 		
 		//	activate Thickbox
-		if ($this->options['thumbEffect'] == "thickbox") {
+		if ($this->options['thumbEffect'] == 'thickbox') {
 			wp_enqueue_script( 'thickbox' );
 			// Load the thickbox images after all other scripts
 			add_action( 'wp_head', array(&$this, 'load_thickbox_images'), 11 );
@@ -280,7 +281,7 @@ class nggLoader {
 	    }
 		
 		// required for the slideshow
-		if ( $this->options['galShowSlide'] ) 
+		if ( NGGALLERY_IREXIST == true ) 
 			wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.1');
 
 	}

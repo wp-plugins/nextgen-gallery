@@ -25,6 +25,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		// the path should always end with a slash	
 		$ngg->options['gallerypath']    = trailingslashit($ngg->options['gallerypath']);
 		$ngg->options['imageMagickDir'] = trailingslashit($ngg->options['imageMagickDir']);
+		// the custom sortorder must be ascending
+		$ngg->options['galSortDir'] = ($ngg->options['galSort'] == 'sortorder') ? 'ASC' : $ngg->options['galSortDir'];
 		}
 		// Save options
 		update_option('ngg_options', $ngg->options);
@@ -113,7 +115,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<h2><?php _e('General Options','nggallery'); ?></h2>
 			<form name="generaloptions" method="post">
 			<?php wp_nonce_field('ngg_settings') ?>
-			<input type="hidden" name="page_options" value="gallerypath,deleteImg,usePicLens,usePermalinks,graphicLibrary,imageMagickDir,activateTags,appendType,maxImages" />
+			<input type="hidden" name="page_options" value="gallerypath,deleteImg,useMediaRSS,usePicLens,usePermalinks,graphicLibrary,imageMagickDir,activateTags,appendType,maxImages" />
 				<table class="form-table ngg-options">
 					<tr valign="top">
 						<th align="left"><?php _e('Gallery path','nggallery') ?></th>
@@ -136,6 +138,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<label><input name="graphicLibrary" type="radio" value="im" <?php checked('im', $ngg->options['graphicLibrary']); ?> /> <?php _e('ImageMagick (Experimental). Path to the library :', 'nggallery') ;?>&nbsp;
 						<input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="text" size="35" name="imageMagickDir" value="<?php echo $ngg->options['imageMagickDir']; ?>" /></label>
 						</td>
+					</tr>
+					<tr>
+						<th align="left"><?php _e('Activate Media RSS feed','nggallery') ?></th>
+						<td><input type="checkbox" name="useMediaRSS" value="1" <?php checked('1', $ngg->options['useMediaRSS']); ?> />
+						<span class="setting-description"><?php _e('A RSS feed will be added to you blog header. Usefull for CoolIris/PicLens','nggallery') ?></span></td>
 					</tr>
 					<tr>
 						<th align="left"><?php _e('Activate PicLens/CoolIris support','nggallery') ?> (<a href="http://www.cooliris.com">CoolIris</a>)</th>
@@ -451,7 +458,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<h2><?php _e('Slideshow','nggallery'); ?></h2>
 		<?php if (!NGGALLERY_IREXIST) { ?><p><div id="message" class="error fade"><p><?php _e('The imagerotator.swf is not in the nggallery folder, the slideshow will not work.','nggallery') ?></p></div></p><?php }?>
 		<p><?php _e('The settings are used in the JW Image Rotator Version', 'nggallery') ?> 3.17 .
-		   <?php _e('See more information for the Flash Player on the web page', 'nggallery') ?> <a href="http://www.jeroenwijering.com/?item=JW_Image_Rotator" target="_blank" >JW Image Rotator from Jeroen Wijering</a>.
+		   <?php _e('See more information for the Flash Player on the web page', 'nggallery') ?> <a href="http://www.longtailvideo.com/players/jw-image-rotator/" target="_blank" >JW Image Rotator from Jeroen Wijering</a>.
 		</p>
 				<table class="form-table ngg-options">
 					<tr>

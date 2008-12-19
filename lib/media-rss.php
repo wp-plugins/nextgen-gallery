@@ -34,21 +34,21 @@ class nggMediaRss {
 	 * Get the URL of a gallery media RSS
 	 */
 	function get_gallery_mrss_url($gid, $prev_next = false) {		
-		return nggMediaRss::get_mrss_url() . '?' . ('gid=' . $gid . ($prev_next ? '&amp;prev_next=true' : '') . '&amp;mode=gallery');
+		return nggMediaRss::get_mrss_url() . '?' . ('gid=' . $gid . ($prev_next ? '&prev_next=true' : '') . '&mode=gallery');
 	}
 	
 	/**
 	 * Get the URL of an album media RSS
 	 */
 	function get_album_mrss_url($aid) {		
-		return nggMediaRss::get_mrss_url() . '?' . ('aid=' . $aid . '&amp;mode=album');
+		return nggMediaRss::get_mrss_url() . '?' . ('aid=' . $aid . '&mode=album');
 	}
 	
 	/**
 	 * Get the URL of the media RSS for last pictures
 	 */
 	function get_last_pictures_mrss_url($page = 0, $show = 30) {		
-		return nggMediaRss::get_mrss_url() . "?" . ("show=" . $show . "&amp;page=" . $page . "&amp;mode=last_pictures");
+		return nggMediaRss::get_mrss_url() . '?' . ('show=' . $show . '&page=' . $page . '&mode=last_pictures');
 	}
 	
 	/**
@@ -78,12 +78,17 @@ class nggMediaRss {
 	 */
 	function get_gallery_mrss($gallery, $prev_gallery = null, $next_gallery = null) {
 		
+		$ngg_options = nggGallery::get_option('ngg_options');
+		//Set sort order value, if not used (upgrade issue)
+		$ngg_options['galSort'] = ($ngg_options['galSort']) ? $ngg_options['galSort'] : 'pid';
+		$ngg_options['galSortDir'] = ($ngg_options['galSortDir'] == 'DESC') ? 'DESC' : 'ASC';
+	
 		$title = stripslashes($gallery->title);
 		$description = stripslashes($gallery->galdesc);
 		$link = nggMediaRss::get_permalink($gallery->pageid);
 		$prev_link = ( $prev_gallery != null) ? nggMediaRss::get_gallery_mrss_url($prev_gallery->gid, true) : '';
 		$next_link = ( $next_gallery != null) ? nggMediaRss::get_gallery_mrss_url($next_gallery->gid, true) : '';
-		$images = nggdb::get_gallery($gallery->gid);
+		$images = nggdb::get_gallery($gallery->gid, $ngg_options['galSort'], $ngg_options['galSortDir']);
 
 		return nggMediaRss::get_mrss_root_node($title, $description, $link, $prev_link, $next_link, $images);
 	}

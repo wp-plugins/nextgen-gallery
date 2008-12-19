@@ -1,6 +1,21 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V1.0.2 - 19.12.2008
+- Added : Option to enable/disable the MediaRSS Feed
+- Added : For flash under FF3/WIN we should use outline: none; 
+- Added : Use sort order also for Media RSS
+- Changed : Descending order for TinyMCE Editor
+- Changed : Added screencolor flashvar as bgcolor for the flash slideshow
+- Changed : Remove link to gallery in sidebar widget
+- Bugfix : Check for empty gallery title and show name instead
+- Bugfix : Album id=all / Album id=0 didn't show content
+- Bugfix : Check for a empty description and alttext
+- Bugfix : Remove HTML tags from slideshow 
+- Bugfix : Load SWFobject always when the imagerotator exist
+- Bugfix : Zip-Upload in existing gallery failed
+- Bugifx : Typo in functions.php (THX to David Horat)
+
 V1.0.1 - 11.12.2008
 - Bugfix : Change upgrade routine, import_date_time could cause a memory problem
 - Bugfix : Help pages will not show up in non-english enviroment

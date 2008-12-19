@@ -16,7 +16,7 @@ function initSWFUpload() {
 		jQuery("#swfupload_btn").click( function() { submitFiles(); } );
 		jQuery("#imagefiles")
 			.after("<div id='uploadQueue'></div>")
-			.after("<input id='imagefiles' type='button' class='uploadform' value='" + ngg_swf_upload.customSettings.browse + "' />")
+			.after("<input id='imagefiles' type='button' class='button-secondary uploadform' value='" + ngg_swf_upload.customSettings.browse + "' />")
 			.after("<input type='text' id='txtFileName' readonly='readonly' />")				
 			.remove();
 		jQuery("#imagefiles").click( function() { fileBrowse(); } );

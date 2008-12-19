@@ -32,6 +32,7 @@ function nggShowSlideshow($galleryID, $width, $height) {
 	$swfobject->message = '<p>'. __('The <a href="http://www.macromedia.com/go/getflashplayer">Flash Player</a> and <a href="http://www.mozilla.com/firefox/">a browser with Javascript support</a> are needed..', 'nggallery').'</p>';
 	$swfobject->add_params('wmode', 'opaque');
 	$swfobject->add_params('allowfullscreen', 'true');
+	$swfobject->add_params('bgcolor', $ngg_options['irScreencolor'], '000000', 'string', '#');
 	$swfobject->add_attributes('styleclass', 'slideshow');
 	$swfobject->add_attributes('name', 'so' . $galleryID);
 
@@ -180,7 +181,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 		
 		if ($ngg_options['usePicLens']) {
 			$gallery->show_piclens = true;
-			$gallery->piclens_link = "javascript:PicLensLite.start({feedUrl:'" . nggMediaRss::get_gallery_mrss_url($gallery->ID) . "'});";
+			$gallery->piclens_link = "javascript:PicLensLite.start({feedUrl:'" . htmlspecialchars( nggMediaRss::get_gallery_mrss_url($gallery->ID) ) . "'});";
 		}
 	}
 	
@@ -224,8 +225,8 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 		$picturelist[$key]->thumbnailURL = $picture->thumbURL;
 		$picturelist[$key]->size = $thumbsize;
 		$picturelist[$key]->thumbcode = $thumbcode;
-		$picturelist[$key]->description = stripslashes($picture->description);
-		$picturelist[$key]->alttext = stripslashes($picture->alttext);
+		$picturelist[$key]->description = ( empty($picture->description) ) ? ' ' : stripslashes($picture->description);
+		$picturelist[$key]->alttext = ( empty($picture->alttext) ) ?  ' ' : stripslashes($picture->alttext);
 	}
 
 	// look for gallery-$template.php or pure gallery.php
@@ -244,7 +245,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
  * nggShowAlbum() - return a album based on the id
  * 
  * @access public 
- * @param int $albumID
+ * @param int | string $albumID
  * @param string (optional) $template
  * @return the content
  */
@@ -253,11 +254,14 @@ function nggShowAlbum($albumID, $template = 'extend') {
 	// $_GET from wp_query
 	$gallery  = get_query_var('gallery');
 	$album    = get_query_var('album');
+	
+	// in the case somebody uses the 'all' keyword, it should be '0' to show all galleries
+	$albumID  = ($albumID == 'all') ? 0 : $albumID;
 
 	// first look for gallery variable 
 	if (!empty( $gallery ))  {
 		
-		if ( $albumID != $album ) 
+		if ( ($albumID != $album) && ($albumID != 0) ) 
 			return;
 			
 		// if gallery is is submit , then show the gallery instead 
@@ -313,8 +317,10 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 
 	// get the counter values 	
 	$picturesCounter = $wpdb->get_results('SELECT galleryid, COUNT(*) as counter FROM '.$wpdb->nggpictures.' WHERE galleryid IN (\''.implode('\',\'', $galleriesID).'\') AND exclude != 1 GROUP BY galleryid', OBJECT_K);
+	if ( is_array($picturesCounter) ) {
 	foreach ($picturesCounter as $key => $value)
 		$unsort_galleries[$key]->counter = $value->counter;
+	}
 	
 	// get the id's of the preview images
  	$imagesID = array();
