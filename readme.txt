@@ -10,8 +10,16 @@ NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a F
 
 == Description ==
 
-My last and hopefully best plugin for WordPress is a new Gallery plugin called NextGEN Gallery . It's named als "NextGeneration" according to the the development of the game consoles . More over it should indicate that I (try) to use all new possibilities of the great JQuery and the so called Web 2.0. 
-Before I start writing the plugin I study all image and gallery plugins for WordPress, I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple galleries.
+NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option. Before I start writing the plugin I study all image and gallery plugins for WordPress,
+I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple galleries and albums.
+
+Important Links:
+
+* <a href="http://nextgen.boelinger.com/" title="Demonstration page">Demonstration</a>
+* <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/" title="Translation and Language files">Language files</a>
+* <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/changelog/" title="NextGEN Gallery Changelog">Changelog</a>
+* <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/" title="NextGEN Gallery FAQ">NextGEN Gallery FAQ</a>
+* <a href="http://wordpress.org/tags/nextgen-gallery" title="Wordpress Support Forum">Support Forum</a>
 
 = NEW in VERSION 1.0 for WordPress 2.7 =
 
@@ -39,16 +47,11 @@ Other features:
 * Sort images feature
 * Cool flash addons here : http://wordpress.org/extend/plugins/nextgen-flashviewer/
 
-For support around this plugin please visit http://alexrabe.boelinger.com/forums/
-
-**For your language file please visit :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/
-
 == Credits ==
 
-Copyright 2007-2008 Alex Rabe & NextGEN DEV-Team
+Copyright 2007-2009 Alex Rabe & NextGEN DEV-Team
 
-The NextGEN button is taken from the Silk set of FamFamFam. See more at 
-http://www.famfamfam.com/lab/icons/silk/
+The NextGEN button is taken from the Fugue Icons of http://www.pinvoke.com/.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,16 +73,16 @@ The JW Image Rotator (Slideshow) is not part of this license and is available
 under a Creative Commons License, which allowing you to use, modify and redistribute 
 them for noncommercial purposes. 
 
-For commercial use please look at the Jeroen's homepage : http://www.jeroenwijering.com/ 
+For commercial use please look at the Jeroen's homepage : http://www.longtailvideo.com/
 
 
 == Installation ==
 
 1. 	Upload the files to wp-content/plugins/nextgen-gallery
 
-2.  Go to the web page http://www.longtailvideo.com/ and download the JW Image Rotator and unpack the conent
+2.  If you would like to use a Flash slideshow, go to <a href="http://www.longtailvideo.com/" title="JW Image Rotator">Longtail Video</a>, download the JW Image Rotator and unpack the conent
 	
-3.	Upload the file imagerotator.swf to the nextgen-gallery folder
+3.	Upload the file imagerotator.swf to the NextGEN-gallery folder
 
 4. 	Activate the plugin
 
