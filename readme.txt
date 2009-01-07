@@ -80,9 +80,9 @@ For commercial use please look at the Jeroen's homepage : http://www.longtailvid
 
 1. 	Upload the files to wp-content/plugins/nextgen-gallery
 
-2.  If you would like to use a Flash slideshow, go to <a href="http://www.longtailvideo.com/" title="JW Image Rotator">Longtail Video</a>, download the JW Image Rotator and unpack the conent
+2.  If you would like to use a Flash slideshow, go to <a href="http://www.longtailvideo.com/players/jw-image-rotator/" title="JW Image Rotator">Longtail Video</a>, download the JW Image Rotator and unpack the conent
 	
-3.	Upload the file imagerotator.swf to the NextGEN-gallery folder
+3.	Upload the file imagerotator.swf to the NextGEN-Gallery folder
 
 4. 	Activate the plugin
 
