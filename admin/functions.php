@@ -84,7 +84,7 @@ class nggAdmin{
 			$result = $wpdb->query("INSERT INTO $wpdb->nggallery (name, path, title, author) VALUES ('$galleryname', '$nggpath', '$gallerytitle' , '$user_ID') ");
 			if ($result) {
 				$message  = __('Gallery %1$s successfully created.<br/>You can show this gallery with the tag %2$s.<br/>','nggallery');
-				$message  = sprintf($message, $galleryname, '[gallery=' . $wpdb->insert_id . ']');
+				$message  = sprintf($message, $galleryname, '[gallery id=' . $wpdb->insert_id . ']');
 				$message .= '<a href="' . admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=' . $wpdb->insert_id . '" >';
 				$message .= __('Edit gallery','nggallery');
 				$message .= '</a>';
@@ -365,7 +365,11 @@ class nggAdmin{
 
 				// add the metadata
 				nggAdmin::import_MetaData($pic_id);
-					
+				
+				// action hook for post process after the image is added to the database
+				$image = array( 'id' => $pic_id, 'filename' => $picture, 'galleryID' => $galleryID);
+				do_action('ngg_added_new_image', $image);
+									
 			} 
 		} // is_array
 		
@@ -653,7 +657,7 @@ class nggAdmin{
 		$filepart = pathinfo ( strtolower($_FILES['Filedata']['name']) );
 		// required until PHP 5.2.0
 		$filepart['filename'] = substr($filepart['basename'],0 ,strlen($filepart['basename']) - (strlen($filepart["extension"]) + 1) );
-		$filename = sanitize_title($filepart['filename']).".".$filepart['extension'];
+		$filename = sanitize_title($filepart['filename']) . '.' . $filepart['extension'];
 
 		// check for allowed extension
 		$ext = array('jpeg', 'jpg', 'png', 'gif'); 
@@ -673,7 +677,7 @@ class nggAdmin{
 		// check if this filename already exist
 		$i = 0;
 		while (in_array($filename,$imageslist)) {
-			$filename = sanitize_title($filepart['filename']) . '_' . $i++ . '.' .$filepart['extension'];
+			$filename = sanitize_title($filepart['filename']) . '_' . $i++ . '.' . $filepart['extension'];
 		}
 		
 		$dest_file = WINABSPATH . $gallerypath . '/' . $filename;
@@ -687,7 +691,7 @@ class nggAdmin{
 		if ( !nggAdmin::chmod($dest_file) )
 			return __('Error, the file permissions could not set','nggallery');
 		
-		return "0";
+		return '0';
 	}	
 	
 	// **************************************************************

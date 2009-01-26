@@ -136,6 +136,7 @@ html>body .ngg-album {
 .ngg-gallery-thumbnail {
 	float: left;
 	margin-right: 5px;
+	text-align: center;
 }
 
 .ngg-gallery-thumbnail img {

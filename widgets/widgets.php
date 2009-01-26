@@ -48,7 +48,7 @@ class nggSlideshowWidget {
 		if (empty($irHeight)) $irHeight = (int) $ngg_options['irHeight'];
 	
 		// init the flash output
-		$swfobject = new swfobject( NGGALLERY_URLPATH.'imagerotator.swf', 'sbsl' . $galleryID, $irWidth, $irHeight, '7.0.0', 'false');
+		$swfobject = new swfobject( $ngg_options['irURL'], 'sbsl' . $galleryID, $irWidth, $irHeight, '7.0.0', 'false');
 		
 		$swfobject->classname = 'ngg-widget-slideshow';
 		$swfobject->message =  __('<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.', 'nggallery');
@@ -87,8 +87,12 @@ class nggSlideshowWidget {
 	// Slidehow widget control
 	function widget_output($args) {
 
-		global $wpdb;	 
-
+		global $wpdb;
+		
+		// If the Imagerotator didn't exist, skip the output
+		if ( NGGALLERY_IREXIST == false ) 	 
+			return;
+			
 	    extract($args);
   
     	// Each widget can store its own options. We keep strings here.
@@ -289,7 +293,7 @@ function ngg_widget_control($widget_args = 1) {
 			</select>
 			<select id="ngg_images-show-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][show]" >
 				<option <?php selected("thumbnail" , $show); ?> value="thumbnail"><?php _e('Thumbnails','nggallery'); ?></option>
-				<option <?php selected("orginal" , $show); ?> value="orginal"><?php _e('Orginal images','nggallery'); ?></option>
+				<option <?php selected("original" , $show); ?> value="orginal"><?php _e('Original images','nggallery'); ?></option>
 			</select>
 			</label>
 		</p>
@@ -388,7 +392,10 @@ function ngg_widget_control($widget_args = 1) {
 				
 				//TODO:For mixed portrait/landscape it's better to use only the height setting, if widht is 0 or vice versa
 				$out = '<a href="'.$image->imageURL.'" title="'.stripslashes($image->description).'" '.$thumbcode.'>';
-				if ( $options[$number]['show'] == 'orginal' )
+				// Typo fix for the next updates (happend until 1.0.2)
+				$options[$number]['show'] = ( $options[$number]['show'] == 'orginal' ) ? 'original' : $options[$number]['show'];
+				
+				if ( $options[$number]['show'] == 'original' )
 					$out .= '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$image->pid.'&amp;width='.$options[$number]['width'].'&amp;height='.$options[$number]['height']. '" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$image->alttext.'" alt="'.$image->alttext.'" />';
 				else	
 					$out .= '<img src="'.$image->thumbURL.'" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$image->alttext.'" alt="'.$image->alttext.'" />';			

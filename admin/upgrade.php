@@ -11,38 +11,42 @@ function ngg_upgrade() {
 	
 	global $wpdb, $user_ID;
 
-	$nggpictures					= $wpdb->prefix . 'ngg_pictures';
-	$nggallery						= $wpdb->prefix . 'ngg_gallery';
 	// get the current user ID
 	get_currentuserinfo();
 
 	// Be sure that the tables exist
-	if($wpdb->get_var("show tables like '$nggpictures'") == $nggpictures) {
+	if($wpdb->get_var("show tables like '$wpdb->nggpictures'") == $wpdb->prefix . 'ngg_pictures') {
 
 		echo __('Upgrade database structure...', 'nggallery');
+		$wpdb->show_errors();
 
 		$installed_ver = get_option( "ngg_db_version" );
+		
+		// 0.9.7 is smaller that 0.97, my fault :-)
+		if ( $installed_ver == '0.9.7' ) $installed_ver = '0.97';
+
 		// v0.33 -> v.071
 		if (version_compare($installed_ver, '0.71', '<')) {
-			$wpdb->query("ALTER TABLE ".$nggpictures." CHANGE pid pid BIGINT(20) NOT NULL AUTO_INCREMENT ");
-			$wpdb->query("ALTER TABLE ".$nggpictures." CHANGE galleryid galleryid BIGINT(20) NOT NULL ");
-			$wpdb->query("ALTER TABLE ".$nggallery." CHANGE gid gid BIGINT(20) NOT NULL AUTO_INCREMENT ");
-			$wpdb->query("ALTER TABLE ".$nggallery." CHANGE pageid pageid BIGINT(20) NULL DEFAULT '0'");
-			$wpdb->query("ALTER TABLE ".$nggallery." CHANGE previewpic previewpic BIGINT(20) NULL DEFAULT '0'");
-			$wpdb->query("ALTER TABLE ".$nggallery." CHANGE gid gid BIGINT(20) NOT NULL AUTO_INCREMENT ");
-			$wpdb->query("ALTER TABLE ".$nggallery." CHANGE description galdesc MEDIUMTEXT NULL");
+			$wpdb->query("ALTER TABLE $wpdb->nggpictures CHANGE pid pid BIGINT(20) NOT NULL AUTO_INCREMENT ");
+			$wpdb->query("ALTER TABLE $wpdb->nggpictures CHANGE galleryid galleryid BIGINT(20) NOT NULL ");
+			$wpdb->query("ALTER TABLE $wpdb->nggallery CHANGE gid gid BIGINT(20) NOT NULL AUTO_INCREMENT ");
+			$wpdb->query("ALTER TABLE $wpdb->nggallery CHANGE pageid pageid BIGINT(20) NULL DEFAULT '0'");
+			$wpdb->query("ALTER TABLE $wpdb->nggallery CHANGE previewpic previewpic BIGINT(20) NULL DEFAULT '0'");
+			$wpdb->query("ALTER TABLE $wpdb->nggallery CHANGE gid gid BIGINT(20) NOT NULL AUTO_INCREMENT ");
+			$wpdb->query("ALTER TABLE $wpdb->nggallery CHANGE description galdesc MEDIUMTEXT NULL");
 		}
+		
 		// v0.71 -> v0.84
 		if (version_compare($installed_ver, '0.84', '<')) {
-			$wpdb->query("ALTER TABLE ".$nggpictures." ADD sortorder BIGINT(20) DEFAULT '0' NOT NULL AFTER exclude");
+			ngg_maybe_add_column( $wpdb->nggallery, 'sortorder', "BIGINT(20) DEFAULT '0' NOT NULL AFTER exclude");
 		}
 
 		// v0.84 -> v0.95
 		if (version_compare($installed_ver, '0.95', '<')) {
 			// first add the author field and set it to the current administrator
-			$wpdb->query("ALTER TABLE ".$nggallery." ADD author BIGINT(20) NOT NULL DEFAULT '$user_ID' AFTER previewpic");
+			ngg_maybe_add_column( $wpdb->nggallery, 'author', "BIGINT(20) NOT NULL DEFAULT '$user_ID' AFTER previewpic");
 			// switch back to zero
-			$wpdb->query("ALTER TABLE ".$nggallery." CHANGE author author BIGINT(20) NOT NULL DEFAULT '0'");
+			$wpdb->query("ALTER TABLE $wpdb->nggallery CHANGE author author BIGINT(20) NOT NULL DEFAULT '0'");
 		}
 
 		// v0.95 -> v0.97 
@@ -50,8 +54,8 @@ function ngg_upgrade() {
 			// Convert into WordPress Core taxonomy scheme
 			ngg_convert_tags();
 			// Drop tables, we don't need them anymore
-			$wpdb->query("DROP TABLE " . $wpdb->prefix . "ngg_tags");
-			$wpdb->query("DROP TABLE " . $wpdb->prefix . "ngg_pic2tags");
+			$wpdb->query("DROP TABLE IF EXISTS " . $wpdb->prefix . "ngg_tags");
+			$wpdb->query("DROP TABLE IF EXISTS " . $wpdb->prefix . "ngg_pic2tags");
 			
 			// New capability for administrator role
 			$role = get_role('administrator');
@@ -66,12 +70,16 @@ function ngg_upgrade() {
 		
 		// v0.97 -> v1.00
 		if (version_compare($installed_ver, '0.97', '<')) {
-			$wpdb->query("ALTER TABLE ".$nggpictures." ADD imagedate DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER alttext");
+			ngg_maybe_add_column( $wpdb->nggpictures, 'imagedate', "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER alttext");
 		}
 		
 		// update now the database
 		update_option( "ngg_db_version", NGG_DBVERSION );
 		echo __('finished', 'nggallery') . "<br />\n";
+		$wpdb->hide_errors();
+		
+		// *** From here we start file operation which could failed sometimes,
+		// *** ensure that the DB changes are not performed two times...
 		
 		// Change all thumbnail folders to "thumbs"
 		if (version_compare($installed_ver, '0.96', '<')) {
@@ -87,6 +95,16 @@ function ngg_upgrade() {
 			echo __('finished', 'nggallery') . "<br />\n";
 		}		
 
+		// Move imagerotator outside the plugin folder
+		if (version_compare($installed_ver, '1.1.0', '<')) {
+			$ngg_options = get_option('ngg_options');
+			echo __('Move imagerotator to new location...', 'nggallery');
+			$ngg_options['irURL'] = ngg_move_imagerotator();
+			$ngg_options['galPagedGalleries'] = 0;
+			$ngg_options['galColumns'] = 0;
+			update_option('ngg_options', $ngg_options);
+			echo __('finished', 'nggallery') . "<br />\n";				
+		}
 		return;
 	}
 }
@@ -133,28 +151,54 @@ function ngg_convert_filestructure() {
 			$gallerypath = WINABSPATH.$gallery->path;
 
 			// old mygallery check, convert the wrong folder/ file name now
-			if (@is_dir($gallerypath."/tumbs")) {
-				if ( !rename($gallerypath."/tumbs", $gallerypath."/thumbs") )
-					$errors[] = $gallery->path . "/thumbs";
+			if (@is_dir($gallerypath .'/tumbs')) {
+				if ( !@rename($gallerypath . '/tumbs' , $gallerypath .'/thumbs') )
+					$errors[] = $gallery->path . '/thumbs';
 				// read list of images
-				$imageslist = nggAdmin::scandir($gallerypath."/thumbs");
+				$imageslist = nggAdmin::scandir($gallerypath . '/thumbs');
 				if ( !empty($imageslist)) {
 					foreach($imageslist as $image) {
 						$purename = substr($image, 4);
-						if ( !rename($gallerypath."/thumbs/".$image, $gallerypath."/thumbs/"."thumbs_".$purename ))
-							$errors[] = $gallery->path . "/thumbs/"."thumbs_".$purename ;
+						if ( !@rename($gallerypath . '/thumbs/' . $image, $gallerypath . '/thumbs/thumbs_' . $purename ))
+							$errors[] = $gallery->path . '/thumbs/thumbs_' . $purename ;
 					}
 				}
 			}
 		}
+		
 		if (!empty($errors)) {
 			echo "<div class='error_inline'><p>". __('Some folders/files could not renamed, please recheck the permission and rescan the folder in the manage gallery section.', 'nggallery') ."</p>";
 			foreach($errors as $value) {
-				echo __('Rename failed', 'nggallery') . " : <strong>" . $value . "</strong><br />\n";
+				echo __('Rename failed', 'nggallery') . ' : <strong>' . $value . "</strong><br />\n";
 			}
-			echo "</div>";
+			echo '</div>';
 		}
 	}
+}
+
+/**
+ * Move the imagerotator outside the plugin folder, as we remove it from the REPO with the next update
+ * 
+ * @return string $path URL to the imagerotator
+ */
+function ngg_move_imagerotator() {
+	
+	$upload = wp_upload_dir();
+	
+	// look first at the old place and move it
+	if ( file_exists( NGGALLERY_ABSPATH . 'imagerotator.swf' ) )
+		@rename(NGGALLERY_ABSPATH . 'imagerotator.swf', $upload['basedir'] . '/imagerotator.swf');
+		
+	// If it's successfull then we return the new path
+	if ( file_exists( $upload['basedir'] . '/imagerotator.swf' ) )
+		return $upload['baseurl'] . '/imagerotator.swf';
+
+	//In some worse case it's still at the old place
+	if ( file_exists( NGGALLERY_ABSPATH . 'imagerotator.swf' ) )
+		return NGGALLERY_URLPATH . 'imagerotator.swf';
+	
+	// if something failed, we must return a empty string
+	return '';	
 }
 
 /**
@@ -177,12 +221,42 @@ function ngg_import_date_time() {
 }
 
 /**
+ * Adding a new column if needed
+ * Example : ngg_maybe_add_column( $wpdb->nggpictures, 'imagedate', "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER alttext");
+ * 
+ * @param string $table_name Database table name.
+ * @param string $column_name Database column name to create.
+ * @param string $create_ddl SQL statement to create column
+ * @return bool True, when done with execution.
+ */
+function ngg_maybe_add_column($table_name, $column_name, $create_ddl) {
+	global $wpdb;
+	
+	foreach ($wpdb->get_col("SHOW COLUMNS FROM $table_name") as $column ) {
+		if ($column == $column_name)
+			return true;
+	}
+	
+	//didn't find it try to create it.
+	$wpdb->query("ALTER TABLE $table_name ADD $column_name " . $create_ddl);
+	
+	// we cannot directly tell that whether this succeeded!
+	foreach ($wpdb->get_col("SHOW COLUMNS FROM $table_name") as $column ) {
+		if ($column == $column_name)
+			return true;
+	}
+	
+	echo("Could not add column $column_name in table $table_name<br />\n");
+	return false;
+}
+
+/**
  * nggallery_upgrade_page() - This page showsup , when the database version doesn't fir to the script NGG_DBVERSION constant.
  * 
  * @return Upgrade Message
  */
 function nggallery_upgrade_page()  {	
-	$filepath    = admin_url() . 'admin.php?page='.$_GET['page'];
+	$filepath    = admin_url() . 'admin.php?page=' . $_GET['page'];
 	
 	if ($_GET['upgrade'] == 'now') {
 		nggallery_start_upgrade($filepath);

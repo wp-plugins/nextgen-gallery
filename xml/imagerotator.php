@@ -11,9 +11,6 @@
 // look up for the path
 require_once( dirname(__FILE__) . '/../ngg-config.php');
 
-function get_out_now() { exit; }
-add_action('shutdown', 'get_out_now', -1);
-
 global $wpdb;
 
 $ngg_options = get_option ('ngg_options');

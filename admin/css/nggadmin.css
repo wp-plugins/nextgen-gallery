@@ -98,13 +98,44 @@ p#ngg-inlinebutton {
 	top:-25pt;
 }
 
-div .ngg-tablenav {
-	overflow:hidden;
+.ngg-tablenav .button-secondary {
+	padding:2px 8px;
+	vertical-align: top;
 }
 
 #ngg-listimages td, #ngg-listimages th {
-	vertical-align: middle;
+
 }
+
+.fixed tbody th.column-cb {
+	padding:7px 0 22px;
+}
+.fixed .column-cb {
+	padding:0;
+	width:2.2em;
+}
+
+.fixed .column-thumbnail{
+	width:80px;
+}
+
+.fixed .column-thumbnail img{
+	max-height:60px;
+	max-width:80px;
+}
+
+.fixed .column-id {
+	width: 2em;
+}
+
+.fixed .column-alt_title_desc {
+	
+}
+
+.fixed .column-exclude, .fixed .column-action, .fixed .column-delete {
+	width: 10%;
+}
+
 
 /* SETTINGS FOR PROGRESS BAR */
 

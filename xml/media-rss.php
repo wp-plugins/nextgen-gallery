@@ -51,7 +51,7 @@ if ($mode=='last_pictures') {
 } else if ( $mode=='gallery' ) {
 		
 	// Get all galleries
-	$galleries = nggdb::find_all_galleries();
+	$galleries = $nggdb->find_all_galleries();
 
 	if ( count($galleries) == 0 ) {
 		header('content-type:text/plain;charset=utf-8');

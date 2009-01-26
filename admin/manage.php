@@ -7,8 +7,6 @@ class nggManageGallery {
 	var $mode = 'main';
 	var $gid = false;
 	var $pid = false;
-	var $hideThumbs = false;
-	var $showTags = false;
 	var $base_page = 'admin.php?page=nggallery-manage-gallery';
 	
 	// initiate the manage page
@@ -19,10 +17,6 @@ class nggManageGallery {
 		$this->pid  = (int) $_GET['pid'];	
 		$this->mode = trim ($_GET['mode']);
 	
-		//TODO: Remove this vars
-		$this->hide_thumb();
-		$this->show_tags();
-
 		//Look for POST process
 		if ( !empty($_POST) || !empty($_GET) )
 			$this->processor();
@@ -96,7 +90,7 @@ class nggManageGallery {
 				if ($gallerypath){
 					$thumb_folder = nggGallery::get_thumbnail_folder($gallerypath, FALSE);
 					if ($ngg->options['deleteImg']) {
-						@unlink(WINABSPATH . $gallerypath. '/thumbs/thumbs_' .$filename);
+						@unlink(WINABSPATH . $gallerypath . '/thumbs/thumbs_' .$filename);
 						@unlink(WINABSPATH . $gallerypath . '/' . $filename);
 					}
 				}		
@@ -176,7 +170,7 @@ class nggManageGallery {
 			
 			check_admin_referer('ngg_thickbox_form');
 			
-			$pic_ids  = explode(",", $_POST['TB_imagelist']);
+			$pic_ids  = explode(',', $_POST['TB_imagelist']);
 			$dest_gid = (int) $_POST['dest_gid'];
 			
 			switch ($_POST['TB_bulkaction']) {
@@ -197,8 +191,8 @@ class nggManageGallery {
 			check_admin_referer('ngg_thickbox_form');
 	
 			// get the images list		
-			$pic_ids = explode(",", $_POST['TB_imagelist']);
-			$taglist = explode(",", $_POST['taglist']);
+			$pic_ids = explode(',', $_POST['TB_imagelist']);
+			$taglist = explode(',', $_POST['taglist']);
 			$taglist = array_map('trim', $taglist);
 			
 			if (is_array($pic_ids)) {
@@ -218,7 +212,7 @@ class nggManageGallery {
 						// Add / append tags
 							wp_set_object_terms($pic_id, $taglist, 'ngg_tag', TRUE);
 							break;
-						case 'delte_tags':
+						case 'delete_tags':
 						// Delete tags
 							$oldtags = wp_get_object_terms($pic_id, 'ngg_tag', 'fields=names');
 							// get the slugs, to vaoid  case sensitive problems
@@ -231,7 +225,7 @@ class nggManageGallery {
 					}
 				}
 		
-				nggGallery::show_message(__('Tags changed',"nggallery"));
+				nggGallery::show_message( __('Tags changed',"nggallery") );
 			}
 		}
 	
@@ -239,7 +233,7 @@ class nggManageGallery {
 		// Update pictures	
 		
 			check_admin_referer('ngg_updategallery');
-			
+		
 			$gallery_title   = attribute_escape($_POST['title']);
 			$gallery_path    = attribute_escape($_POST['path']);
 			$gallery_desc    = attribute_escape($_POST['gallerydesc']);
@@ -253,10 +247,7 @@ class nggManageGallery {
 				$wpdb->query("UPDATE $wpdb->nggallery SET author = '$gallery_author' WHERE gid = '$this->gid'");
 			}
 	
-			if ($this->showTags)
-				$this->update_tags();			
-			else 
-				$this->update_pictures();
+			$this->update_pictures();
 	
 			//hook for other plugin to update the fields
 			do_action('ngg_update_gallery', $this->gid, $_POST);
@@ -308,34 +299,35 @@ class nggManageGallery {
 	}
 	
 	function update_pictures() {
-		//TODO: Message when update failed
 		global $wpdb;
+
+		//TODO:Error message when update failed
+		//TODO:Combine update in one query per image
 		
-		$nggdescription = attribute_escape( $_POST['description'] );
-		$nggalttext = attribute_escape( $_POST['alttext'] );
-		$nggexclude = attribute_escape( $_POST['exclude'] );
-		
-		if ( is_array($nggdescription) ) {
-			foreach( $nggdescription as $key=>$value ) {
+		$description = 	$_POST['description'];
+		$alttext = 		$_POST['alttext'];
+		$exclude = 		$_POST['exclude'];
+		$taglist = 		$_POST['tags'];
+
+		if ( is_array($description) ) {
+			foreach( $description as $key=>$value ) {
 				$desc = $wpdb->escape($value);
-				$result=$wpdb->query( "UPDATE $wpdb->nggpictures SET description = '$desc' WHERE pid = $key");
-				if($result) $update_ok = $result;
+				$wpdb->query( "UPDATE $wpdb->nggpictures SET description = '$desc' WHERE pid = $key");
 			}
 		}
-		if ( is_array($nggalttext) ){
-			foreach( $nggalttext as $key=>$value ) {
+		if ( is_array($alttext) ){
+			foreach( $alttext as $key=>$value ) {
 				$alttext = $wpdb->escape($value);
-				$result=$wpdb->query( "UPDATE $wpdb->nggpictures SET alttext = '$alttext' WHERE pid = $key");
-				if($result) $update_ok = $result;
+				$wpdb->query( "UPDATE $wpdb->nggpictures SET alttext = '$alttext' WHERE pid = $key");
 			}
 		}
 		
-		$nggpictures = $wpdb->get_results("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$this->gid'");
+		$pictures = $wpdb->get_results("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$this->gid'");
 	
-		if ( is_array($nggpictures) ){
-			foreach($nggpictures as $picture){
-				if (is_array($nggexclude)){
-					if ( array_key_exists($picture->pid, $nggexclude) )
+		if ( is_array($pictures) ){
+			foreach($pictures as $picture){
+				if (is_array($exclude)){
+					if ( array_key_exists($picture->pid, $exclude) )
 						$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 1 WHERE pid = '$picture->pid'");
 					else 
 						$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 0 WHERE pid = '$picture->pid'");
@@ -344,24 +336,17 @@ class nggManageGallery {
 				}
 			}
 		}
+
+		if ( is_array($taglist) ){
+			foreach($taglist as $key=>$value) {
+				$tags = explode(',', $value);
+				wp_set_object_terms($key, $tags, 'ngg_tag');
+			}
+		}
 		
 		return;
 	}
 
-	function update_tags() {
-		
-		$taglist = attribute_escape($_POST['tags']);
-	
-		if (is_array($taglist)){
-			foreach($taglist as $key=>$value) {
-				$tags = explode(",", $value);
-				wp_set_object_terms($key, $tags, 'ngg_tag');
-			}
-		}
-	
-		return;
-	}
-	
 	// Check if user can select a author
 	function get_editable_user_ids( $user_id, $exclude_zeros = true ) {
 		global $wpdb;
@@ -382,31 +367,5 @@ class nggManageGallery {
 	
 		return $wpdb->get_col( $query );
 	}
-	
-	function hide_thumb() {
-		
-		if (isset ($_POST['togglethumbs']))  {
-			check_admin_referer('ngg_updategallery');
-		// Toggle thumnails, forgive me if it's to complicated
-			$this->hideThumbs = (isset ($_POST['hideThumbs'])) ?  false : true ;
-		} else {
-			$this->hideThumbs = (isset ($_POST['hideThumbs'])) ?  true : false ;
-		}
-		return;	
-	}
-	
-	function show_tags() {
-		
-		if (isset ($_POST['toggletags']))  {
-			check_admin_referer('ngg_updategallery');
-		// Toggle tag view
-			$this->showTags = (isset ($_POST['showTags'])) ?  false : true ;
-		} else {
-			$this->showTags  = (isset ($_POST['showTags'])) ?  true : false ;
-		}
-		
-		return;	
-	}	
-		
 }
 ?>

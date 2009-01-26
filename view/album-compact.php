@@ -6,7 +6,7 @@ Follow variables are useable :
 
 	$album     	 : Contain information about the album
 	$galleries   : Contain all galleries inside this album
-	$mode        : Contain the selected mode (extended or compact)
+	$pagination  : Contain the pagination content
 
  You can check the content when you insert the tag <?php var_dump($variable) ?>
  If you would like to show the timestamp of the image ,you can use <?php echo $exif['created_timestamp'] ?>
@@ -32,8 +32,10 @@ Follow variables are useable :
 	</div>
 
  	<?php endforeach; ?>
+ 	
+	<!-- Pagination -->
+ 	<?php echo $pagination ?>
 
 </div>
-<div class="ngg-clear"></div>
 
 <?php endif; ?>

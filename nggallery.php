@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.0.2
+Version: 1.1.0
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -44,11 +44,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.0.2';
-	var $dbversion   = '0.9.7';
+	var $version     = '1.1.0';
+	var $dbversion   = '1.1.0';
 	var $minium_WP   = '2.7';
 	var $minium_WPMU = '2.7';
 	var $updateURL   = 'http://nextgen.boelinger.com/version.php';
+	var $donators    = 'http://nextgen.boelinger.com/donators.php';
 	var $options     = '';
 	var $manage_page;
 	
@@ -62,11 +63,12 @@ class nggLoader {
 			return;
 			
 		// Get some constants first
+		$this->load_options();
 		$this->define_constant();
 		$this->define_tables();
 		$this->register_taxonomy();
-		$this->load_options();
 		$this->load_dependencies();
+		$this->start_rewrite_module();
 		
 		// Init options & tables during activation & deregister init option
 		register_activation_hook( dirname(__FILE__) . '/nggallery.php', array(&$this, 'activate') );
@@ -207,7 +209,7 @@ class nggLoader {
 		define('NGGALLERY_URLPATH', WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) . '/' );
 		
 		// look for imagerotator
-		define('NGGALLERY_IREXIST', file_exists( NGGALLERY_ABSPATH . 'imagerotator.swf' ));
+		define('NGGALLERY_IREXIST', !empty( $this->options['irURL'] ));
 
 		// get value for safe mode
 		if ( (gettype( ini_get('safe_mode') ) == 'string') ) {
@@ -220,6 +222,7 @@ class nggLoader {
 	}
 	
 	function load_dependencies() {
+		global $nggdb;
 	
 		// Load global libraries												// average memory usage (in bytes)
 		require_once (dirname (__FILE__) . '/lib/core.php');					//  94.840
@@ -314,6 +317,16 @@ class nggLoader {
 		$this->options = get_option('ngg_options');
 	}
 	
+	// Add rewrite rules
+	function start_rewrite_module() {
+	
+	global $nggRewrite;	
+		
+	if ( class_exists(nggRewrite) )
+		$nggRewrite = new nggRewrite();	
+					
+	}
+		
 	function activate() {
 		include_once (dirname (__FILE__) . '/admin/install.php');
 		// check for tables
@@ -337,10 +350,8 @@ class nggLoader {
 	
 }
 	// Let's start the holy plugin
-	global $ngg, $nggRewrite;
+	global $ngg;
 	$ngg = new nggLoader();
-	// Add rewrite rules
-	if ( class_exists(nggRewrite) )
-		$nggRewrite = new nggRewrite();	
+
 }
 ?>

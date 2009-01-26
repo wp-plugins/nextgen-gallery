@@ -6,7 +6,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 	function nggallery_admin_add_gallery()  {
 
-	global $wpdb, $ngg;
+	global $wpdb, $nggdb, $ngg;
 	
 	// same as $_SERVER['REQUEST_URI'], but should work under IIS 6.0
 	$filepath    = admin_url() . 'admin.php?page=' . $_GET['page'];
@@ -74,7 +74,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	}
 
 	//get all galleries (after we added new ones)
-	$gallerylist = nggdb::find_all_galleries();
+	$gallerylist = $nggdb->find_all_galleries();
 
 	?>
 	

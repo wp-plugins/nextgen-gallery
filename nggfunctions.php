@@ -22,12 +22,16 @@ function nggShowSlideshow($galleryID, $width, $height) {
 		$out = '[' . $ngg_options['galTextSlide'] . ']'; 
 		return $out;
 	}
-
+	
+	// If the Imagerotator didn't exist, skip the output
+	if ( NGGALLERY_IREXIST == false ) 
+		return;	
+		
 	if (empty($width) ) $width  = (int) $ngg_options['irWidth'];
 	if (empty($height)) $height = (int) $ngg_options['irHeight'];
 
 	// init the flash output
-	$swfobject = new swfobject( NGGALLERY_URLPATH.'imagerotator.swf', 'so' . $galleryID, $width, $height, '7.0.0', 'false');
+	$swfobject = new swfobject( $ngg_options['irURL'] , 'so' . $galleryID, $width, $height, '7.0.0', 'false');
 
 	$swfobject->message = '<p>'. __('The <a href="http://www.macromedia.com/go/getflashplayer">Flash Player</a> and <a href="http://www.mozilla.com/firefox/">a browser with Javascript support</a> are needed..', 'nggallery').'</p>';
 	$swfobject->add_params('wmode', 'opaque');
@@ -158,13 +162,24 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
     if ( !is_array($picturelist) )
 		$picturelist = array($picturelist);
 	
+	// Populate galleries values from the first image			
+	$first_image = current($picturelist);
 	$gallery = new stdclass;
 	$gallery->ID = (int) $galleryID;
 	$gallery->show_slideshow = false;
-	
+	$gallery->name = stripslashes ( $first_image->name  );
+	$gallery->title = stripslashes( $first_image->title );
+	$gallery->description = html_entity_decode(stripslashes( $first_image->galdesc));
+	$gallery->pageid = $first_image->pageid;
+	reset($picturelist);
+
 	$maxElement  = $ngg_options['galImages'];
 	$thumbwidth  = $ngg_options['thumbwidth'];
 	$thumbheight = $ngg_options['thumbheight'];		
+	
+	// fixed width if needed
+	$gallery->columns    = intval($ngg_options['galColumns']);
+	$gallery->imagewidth = ($gallery->columns > 0) ? 'style="width:'. floor(100/$gallery->columns) .'%;"' : '';
 	
 	// set thumb size 
 	$thumbsize = '';
@@ -188,10 +203,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
  	// check for page navigation
  	if ($maxElement > 0) {
 	 	if ( !is_home() || $pageid == get_the_ID() ) {
-			if ( !empty( $nggpage ) )	
-				$page = (int) $nggpage;
-			else
-				 $page = 1;
+	 		$page = ( !empty( $nggpage ) ) ? (int) $nggpage : 1;
 		}
 		else $page = 1;
 		 
@@ -225,8 +237,9 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 		$picturelist[$key]->thumbnailURL = $picture->thumbURL;
 		$picturelist[$key]->size = $thumbsize;
 		$picturelist[$key]->thumbcode = $thumbcode;
-		$picturelist[$key]->description = ( empty($picture->description) ) ? ' ' : stripslashes($picture->description);
-		$picturelist[$key]->alttext = ( empty($picture->alttext) ) ?  ' ' : stripslashes($picture->alttext);
+		$picturelist[$key]->description = ( empty($picture->description) ) ? ' ' : htmlspecialchars ( stripslashes($picture->description) );
+		$picturelist[$key]->alttext = ( empty($picture->alttext) ) ?  ' ' : htmlspecialchars ( stripslashes($picture->alttext) );
+		$picturelist[$key]->caption = ( empty($picture->description) ) ? '&nbsp;' : html_entity_decode( stripslashes($picture->description) );
 	}
 
 	// look for gallery-$template.php or pure gallery.php
@@ -254,14 +267,14 @@ function nggShowAlbum($albumID, $template = 'extend') {
 	// $_GET from wp_query
 	$gallery  = get_query_var('gallery');
 	$album    = get_query_var('album');
-	
-	// in the case somebody uses the 'all' keyword, it should be '0' to show all galleries
-	$albumID  = ($albumID == 'all') ? 0 : $albumID;
+
+	// in the case somebody uses the '0', it should be 'all' to show all galleries
+	$albumID  = ($albumID == 0) ? 'all' : $albumID;
 
 	// first look for gallery variable 
 	if (!empty( $gallery ))  {
 		
-		if ( ($albumID != $album) && ($albumID != 0) ) 
+		if ( ($albumID != $album) && ($albumID != 'all') ) 
 			return;
 			
 		// if gallery is is submit , then show the gallery instead 
@@ -282,7 +295,7 @@ function nggShowAlbum($albumID, $template = 'extend') {
  	if ( is_array($album->gallery_ids) )
  		$out = nggCreateAlbum( $album->gallery_ids, $template, $album );
 	
-	$out = apply_filters( 'ngg_show_album_content', $out, intval( $album->id ) );
+	$out = apply_filters( 'ngg_show_album_content', $out, $album->id );
 
 	return $out;
 }
@@ -301,8 +314,14 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 	
 	global $wpdb, $nggRewrite;
 	
+    // $_GET from wp_query
+	$nggpage  = get_query_var('nggpage');	
+	
 	$ngg_options = nggGallery::get_option('ngg_options');
 	
+	//this option can currently only set via the custom fields
+	$maxElement  = (int) $ngg_options['galPagedGalleries'];
+
 	$sortorder = $galleriesID;
 	$galleries = array();
 	
@@ -347,7 +366,9 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 		if ($ngg_options['galNoPages']) {
 			$args['album'] = $album->id; 
 			$args['gallery'] = $key;
+			$args['nggpage'] = false;
 			$galleries[$key]->pagelink = $nggRewrite->get_permalink($args);
+			
 		} else {
 			$galleries[$key]->pagelink = get_permalink( $galleries[$key]->pageid );
 		}
@@ -356,11 +377,33 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 		$galleries[$key]->galdesc = html_entity_decode ( stripslashes($galleries[$key]->galdesc) ) ;
 	}
 
+ 	// check for page navigation
+ 	if ($maxElement > 0) {
+	 	if ( !is_home() || $pageid == get_the_ID() ) {
+	 		$page = ( !empty( $nggpage ) ) ? (int) $nggpage : 1;
+		}
+		else $page = 1;
+		 
+	 	$start = $offset = ( $page - 1 ) * $maxElement;
+	 	
+	 	$total = count($galleries);
+	 	
+		// remove the element if we didn't start at the beginning
+		if ($start > 0 ) array_splice($galleries, 0, $start);
+		
+		// return the list of images we need
+		array_splice($galleries, $maxElement);
+	
+		$navigation = nggGallery::create_navigation($page, $total, $maxElement);
+	} else {
+		$navigation = '<div class="ngg-clear">&nbsp;</div>';
+	}
+
 	// if sombody didn't enter any template , take the extend version
 	$filename = ( empty($template) ) ? 'album-extend' : 'album-' . $template ;
 
 	// create the output
-	$out = nggGallery::capture ( $filename, array ('album' => $album, 'galleries' => $galleries, 'mode' => $mode) );
+	$out = nggGallery::capture ( $filename, array ('album' => $album, 'galleries' => $galleries, 'pagination' => $navigation) );
 
 	return $out;
  	
@@ -450,6 +493,7 @@ function nggCreateImageBrowser($picarray, $template = '') {
 	$picture->next_image_link  = $nggRewrite->get_permalink(array ('pid' => $next_pid));
 	$picture->number = $key + 1;
 	$picture->total = $total;
+	$picture->linktitle = htmlentities(stripslashes($picture->description));
 	$picture->alttext = html_entity_decode(stripslashes($picture->alttext));
 	$picture->description = html_entity_decode(stripslashes($picture->description));
 	
@@ -495,23 +539,28 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
 		return __('[SinglePic not found]','nggallery');
 			
 	// add float to img
-	if (!empty($float)) {
-		switch ($float) {
+	switch ($float) {
 		
-		case 'left': $float=' ngg-left';
+		case 'left': 
+			$float =' ngg-left';
 		break;
 		
-		case 'right': $float=' ngg-right';
+		case 'right': 
+			$float =' ngg-right';
 		break;
 
-		case 'center': $float=' ngg-center';
+		case 'center': 
+			$float =' ngg-center';
 		break;
 		
-		default: $float='';
+		default: 
+			$float ='';
 		break;
-		}
 	}
 	
+	// clean mode if needed 
+	$mode = ( eregi('web20|watermark', $mode) ) ? $mode : '';
+
 	// check fo cached picture
 	if ( ($ngg_options['imgCacheSinglePic']) && ($post->post_status == 'publish') )
 		$picture->thumbnailURL = $picture->cached_singlepic_file($width, $height, $mode );
@@ -522,6 +571,7 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
 	$picture->href_link = $picture->get_href_link();
 	$picture->alttext = html_entity_decode(stripslashes($picture->alttext));
 	$picture->description = html_entity_decode(stripslashes($picture->description));
+	$picture->linktitle = htmlentities(stripslashes($picture->description));
 	$picture->classname = 'ngg-singlepic'. $float;
 	$picture->thumbcode = $picture->get_thumbcode( 'singlepic' . $imageID);
 	$picture->height = (int) $height;
@@ -668,10 +718,13 @@ function nggShowAlbumTags($taglist) {
 		$picturelist[$key]->counter     = $picture->count;
 		$picturelist[$key]->title     	= $picture->name;
 		$picturelist[$key]->pagelink    = $nggRewrite->get_permalink( array('gallerytag'=>$picture->slug) );
-	}	
-
+	}
+		
+	//TODO: Add pagination later
+	$navigation = '<div class="ngg-clear">&nbsp;</div>';
+	
 	// create the output
-	$out = nggGallery::capture ('album-compact', array ('album' => 0, 'galleries' => $picturelist, 'mode' => 'compact') );
+	$out = nggGallery::capture ('album-compact', array ('album' => 0, 'galleries' => $picturelist, 'pagination' => $navigation) );
 	
 	$out = apply_filters('ngg_show_album_tags_content', $out, $taglist);
 	
