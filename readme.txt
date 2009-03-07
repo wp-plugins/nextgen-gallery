@@ -9,8 +9,8 @@ NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a F
 
 == Description ==
 
-NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option. Before I start writing the plugin I study all image and gallery plugins for WordPress,
-I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple galleries and albums.
+NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option. Before I start writing the plugin I study all photo and picture plugins for WordPress,
+I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple photos, galleries and albums.
 
 Important Links:
 
