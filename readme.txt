@@ -1,7 +1,7 @@
 === NextGEN Gallery ===
 Contributors: Alex Rabe
 Donate link: http://alexrabe.boelinger.com/donation/
-Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets, photo, picture
+Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets, photo, picture, image
 Requires at least: 2.7
 Stable tag: trunk
 
