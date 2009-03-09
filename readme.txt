@@ -20,7 +20,7 @@ Important Links:
 * <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/" title="NextGEN Gallery FAQ">NextGEN Gallery FAQ</a>
 * <a href="http://wordpress.org/tags/nextgen-gallery" title="Wordpress Support Forum">Support Forum</a>
 
-= NFeatures =
+= Features =
 
 * Templates : You can add custom templates for your theme.
 * Media RSS feed : Add the Cooliris Effect to your gallery
