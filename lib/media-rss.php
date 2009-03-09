@@ -83,8 +83,8 @@ class nggMediaRss {
 		$ngg_options['galSort'] = ($ngg_options['galSort']) ? $ngg_options['galSort'] : 'pid';
 		$ngg_options['galSortDir'] = ($ngg_options['galSortDir'] == 'DESC') ? 'DESC' : 'ASC';
 	
-		$title = stripslashes($gallery->title);
-		$description = stripslashes($gallery->galdesc);
+		$title = stripslashes(nggGallery::i18n($gallery->title));
+		$description = stripslashes(nggGallery::i18n($gallery->galdesc));
 		$link = nggMediaRss::get_permalink($gallery->pageid);
 		$prev_link = ( $prev_gallery != null) ? nggMediaRss::get_gallery_mrss_url($prev_gallery->gid, true) : '';
 		$next_link = ( $next_gallery != null) ? nggMediaRss::get_gallery_mrss_url($next_gallery->gid, true) : '';
@@ -100,7 +100,7 @@ class nggMediaRss {
 	 */
 	function get_album_mrss($album) {
 
-		$title = stripslashes($album->name);
+		$title = stripslashes(nggGallery::i18n($album->name));
 		$description = '';
 		$link = nggMediaRss::get_permalink(0);
 		$prev_link = '';
@@ -207,14 +207,14 @@ class nggMediaRss {
 		$thumbheight = ($ngg_options['thumbfix'] ? $ngg_options['thumbheight'] : $thumbwidth); 	
 		
 		$out  = $indent . "<item>\n";
-		$out .= $indent . "\t<title><![CDATA[" . $title . "]]></title>\n";
-		$out .= $indent . "\t<description><![CDATA[" . $desc . "]]></description>\n";
+		$out .= $indent . "\t<title><![CDATA[" . nggGallery::i18n($title) . "]]></title>\n";
+		$out .= $indent . "\t<description><![CDATA[" . nggGallery::i18n($desc) . "]]></description>\n";
 		$out .= $indent . "\t<link><![CDATA[" . $image->get_permalink() . "]]></link>\n";		
 		$out .= $indent . "\t<media:content url='" . $image->imageURL . "' medium='image' />\n";
-		$out .= $indent . "\t<media:title><![CDATA[" . $title . "]]></media:title>\n";
-		$out .= $indent . "\t<media:description><![CDATA[" . $desc . "]]></media:description>\n";
+		$out .= $indent . "\t<media:title><![CDATA[" . nggGallery::i18n($title) . "]]></media:title>\n";
+		$out .= $indent . "\t<media:description><![CDATA[" . nggGallery::i18n($desc) . "]]></media:description>\n";
 		$out .= $indent . "\t<media:thumbnail url='" . $image->thumbURL . "' width='" . $thumbwidth . "' height='" . $thumbheight . "' />\n";
-		$out .= $indent . "\t<media:keywords><![CDATA[" . $tag_names . "]]></media:keywords>\n";
+		$out .= $indent . "\t<media:keywords><![CDATA[" . nggGallery::i18n($tag_names) . "]]></media:keywords>\n";
 		$out .= $indent . "\t<media:copyright><![CDATA[Copyright (c) " . get_option("blogname") . " (" . get_option("siteurl") . ")]]></media:copyright>\n";
 		$out .= $indent . "</item>\n";
 

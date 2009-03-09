@@ -4,7 +4,7 @@
  * 
  * @package NextGEN Gallery
  * @author Alex Rabe
- * @copyright 2008
+ * @copyright 2008-2009
  * @since 1.0.0
  */
 class nggAdminPanel{
@@ -225,6 +225,8 @@ class nggAdminPanel{
 				$link .= ' | <a href="http://nextgen.boelinger.com/gallery-page/" target="_blank">' . __('Gallery example', 'nggallery') . '</a>';
 			break;
 			case "{$i18n}_page_nggallery-manage-gallery" :
+			case "nggallery-manage-gallery":
+			case "nggallery-manage-images":
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Gallery management</a>', 'nggallery');
 				$link .= ' | <a href="http://nextgen.boelinger.com/gallery-tags/" target="_blank">' . __('Gallery tags', 'nggallery') . '</a>';
 			break;

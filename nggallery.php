@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.1.0
+Version: 1.2.0
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -24,7 +24,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Please note  :
 
@@ -44,7 +44,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.1.0';
+	var $version     = '1.2.0';
 	var $dbversion   = '1.1.0';
 	var $minium_WP   = '2.7';
 	var $minium_WPMU = '2.7';
@@ -66,7 +66,6 @@ class nggLoader {
 		$this->load_options();
 		$this->define_constant();
 		$this->define_tables();
-		$this->register_taxonomy();
 		$this->load_dependencies();
 		$this->start_rewrite_module();
 		
@@ -80,7 +79,9 @@ class nggLoader {
 
 		// Start this plugin once all other plugins are fully loaded
 		add_action( 'plugins_loaded', array(&$this, 'start_plugin') );
-
+		
+		// Register_taxonomy must be used during wo init
+		add_action( 'init', array(&$this, 'register_taxonomy') );
 	}
 	
 	function start_plugin() {
@@ -172,25 +173,21 @@ class nggLoader {
 		
 	}
 	
-	function register_taxonomy() {		
+	function register_taxonomy() {
+		global $wp_rewrite;
 
-		// Register the NextGEN taxonomy	
-		register_taxonomy( 
-			'ngg_tag', 
-			'nggallery',
-			array(
+		// Register the NextGEN taxonomy
+		$args = array(
  	            'label' => __('Picture tag', 'nggallery'),
  	            'template' => __('Picture tag: %2$l.', 'nggallery'),
 	            'helps' => __('Separate picture tags with commas.', 'nggallery'),
 	            'sort' => true,
- 	            'args' => array('orderby' => 'term_order'),
-	            'rewrite' => array('slug' => 'picture-tag'),
- 	            'query_var' => 'picture-tag'
-			)
-		);
-		
+ 	            'args' => array('orderby' => 'term_order')
+				);
+					
+		register_taxonomy( 'ngg_tag', 'nggallery', $args );
 	}
-
+	
 	function define_constant() {
 		
 		//TODO:SHOULD BE REMOVED LATER
@@ -319,12 +316,10 @@ class nggLoader {
 	
 	// Add rewrite rules
 	function start_rewrite_module() {
-	
-	global $nggRewrite;	
-		
-	if ( class_exists(nggRewrite) )
-		$nggRewrite = new nggRewrite();	
-					
+		global $nggRewrite;	
+			
+		if ( class_exists(nggRewrite) )
+			$nggRewrite = new nggRewrite();	
 	}
 		
 	function activate() {

@@ -3,12 +3,13 @@
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
 /**
- * nggShowSlideshow()
+ * Return a script for the Imagerotator flash slideshow. Can be used in any tmeplate with <?php echo nggShowSlideshow($galleryID, $width, $height) ?>
+ * Require the script swfobject.js in the header or footer
  * 
  * @access public 
- * @param integer $galleryID
- * @param integer $irWidth
- * @param integer $irHeight
+ * @param integer $galleryID ID of the gallery
+ * @param integer $irWidth Width of the flash container
+ * @param integer $irHeight Height of the flash container
  * @return the content
  */
 function nggShowSlideshow($galleryID, $width, $height) {
@@ -19,7 +20,7 @@ function nggShowSlideshow($galleryID, $width, $height) {
 
 	// remove media file from RSS feed
 	if ( is_feed() ) {
-		$out = '[' . $ngg_options['galTextSlide'] . ']'; 
+		$out = '[' . nggGallery::i18n($ngg_options['galTextSlide']) . ']'; 
 		return $out;
 	}
 	
@@ -125,7 +126,7 @@ function nggShowGallery( $galleryID, $template = '' ) {
 		if ( $show == 'slide' ) {
 			$args['show'] = "gallery";
 			$out  = '<div class="ngg-galleryoverview">';
-			$out .= '<div class="slideshowlink"><a class="slideshowlink" href="' . $nggRewrite->get_permalink($args) . '">'.$ngg_options['galTextGallery'].'</a></div>';
+			$out .= '<div class="slideshowlink"><a class="slideshowlink" href="' . $nggRewrite->get_permalink($args) . '">'.nggGallery::i18n($ngg_options['galTextGallery']).'</a></div>';
 			$out .= nggShowSlideshow($galleryID, $ngg_options['irWidth'], $ngg_options['irHeight']);
 			$out .= '</div>'."\n";
 			$out .= '<div class="ngg-clear"></div>'."\n";
@@ -191,7 +192,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 		if (($ngg_options['galShowSlide']) AND (NGGALLERY_IREXIST)) {
 			$gallery->show_slideshow = true;
 			$gallery->slideshow_link = $nggRewrite->get_permalink(array ('show' => "slide"));
-			$gallery->slideshow_link_text = $ngg_options['galTextSlide'];
+			$gallery->slideshow_link_text = nggGallery::i18n($ngg_options['galTextSlide']);
 		}
 		
 		if ($ngg_options['usePicLens']) {
@@ -237,9 +238,9 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 		$picturelist[$key]->thumbnailURL = $picture->thumbURL;
 		$picturelist[$key]->size = $thumbsize;
 		$picturelist[$key]->thumbcode = $thumbcode;
+		$picturelist[$key]->caption = ( empty($picture->description) ) ? '&nbsp;' : html_entity_decode ( stripslashes($picture->description) );
 		$picturelist[$key]->description = ( empty($picture->description) ) ? ' ' : htmlspecialchars ( stripslashes($picture->description) );
 		$picturelist[$key]->alttext = ( empty($picture->alttext) ) ?  ' ' : htmlspecialchars ( stripslashes($picture->alttext) );
-		$picturelist[$key]->caption = ( empty($picture->description) ) ? '&nbsp;' : html_entity_decode( stripslashes($picture->description) );
 	}
 
 	// look for gallery-$template.php or pure gallery.php
@@ -305,7 +306,7 @@ function nggShowAlbum($albumID, $template = 'extend') {
  * 
  * @access internal
  * @param array $galleriesID
- * @param string (optional) $template
+ * @param string (optional) $template name for a template file, look for album-$template
  * @param object (optional) $album result from the db
  * @return the content
  */
@@ -493,9 +494,9 @@ function nggCreateImageBrowser($picarray, $template = '') {
 	$picture->next_image_link  = $nggRewrite->get_permalink(array ('pid' => $next_pid));
 	$picture->number = $key + 1;
 	$picture->total = $total;
-	$picture->linktitle = htmlentities(stripslashes($picture->description));
-	$picture->alttext = html_entity_decode(stripslashes($picture->alttext));
-	$picture->description = html_entity_decode(stripslashes($picture->description));
+	$picture->linktitle = htmlspecialchars( stripslashes($picture->description) );
+	$picture->alttext = html_entity_decode( stripslashes($picture->alttext) );
+	$picture->description = html_entity_decode( stripslashes($picture->description) );
 	
 	// let's get the meta data
 	$meta = new nggMeta($picture->imagePath);
@@ -569,9 +570,9 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
 
 	// add more variables for render output
 	$picture->href_link = $picture->get_href_link();
-	$picture->alttext = html_entity_decode(stripslashes($picture->alttext));
-	$picture->description = html_entity_decode(stripslashes($picture->description));
-	$picture->linktitle = htmlentities(stripslashes($picture->description));
+	$picture->alttext = html_entity_decode( stripslashes($picture->alttext) );
+	$picture->linktitle = htmlspecialchars( stripslashes($picture->description) );
+	$picture->description = html_entity_decode( stripslashes($picture->description) );
 	$picture->classname = 'ngg-singlepic'. $float;
 	$picture->thumbcode = $picture->get_thumbcode( 'singlepic' . $imageID);
 	$picture->height = (int) $height;
@@ -663,8 +664,8 @@ function nggShowRelatedGallery($taglist, $maxImages = 0) {
 		// get the effect code
 		$thumbcode = $picture->get_thumbcode( __('Related images for', 'nggallery') . ' ' . get_the_title());
 
-		$out .= '<a href="' . $picture->imageURL . '" title="' . stripslashes($picture->description) . '" ' . $thumbcode . ' >';
-		$out .= '<img title="' . stripslashes($picture->alttext) . '" alt="' . stripslashes($picture->alttext) . '" src="' . $picture->thumbURL . '" />';
+		$out .= '<a href="' . $picture->imageURL . '" title="' . stripslashes(nggGallery::i18n($picture->description)) . '" ' . $thumbcode . ' >';
+		$out .= '<img title="' . stripslashes(nggGallery::i18n($picture->alttext)) . '" alt="' . stripslashes(nggGallery::i18n($picture->alttext)) . '" src="' . $picture->thumbURL . '" />';
 		$out .= '</a>' . "\n";
 	}
 	$out .= '</div>' . "\n";
@@ -791,4 +792,91 @@ function the_related_images($type = 'tags', $maxNumbers = 7) {
 	echo nggShowRelatedImages($type, $maxNumbers);
 }
 
+/**
+ * nggShowRandomRecent($type, $maxImages,$template) - return recent or random images
+ * 
+ * @access public
+ * @param string $type 'recent' or 'random'
+ * @param integer $maxImages of images
+ * @param string $template (optional) name for a template file, look for gallery-$template
+ * @return the content
+ */
+function nggShowRandomRecent($type, $maxImages, $template = '') {
+	
+	// $_GET from wp_query
+	$pid  	= get_query_var('pid');
+	$pageid = get_query_var('pageid');
+	
+	// get now the recent or random images
+	if ($type == 'random')
+		$picturelist = nggdb::get_random_images($maxImages);
+	else
+		$picturelist = nggdb::find_last_images(0, $maxImages, true);
+
+	// look for ImageBrowser if we have a $_GET('pid')
+	if ( $pageid == get_the_ID() || !is_home() )  
+		if (!empty( $pid ))  {
+			foreach ($picturelist as $picture) {
+				$picarray[] = $picture->pid;
+			}
+			$out = nggCreateImageBrowser($picarray);
+			return $out;
+		}
+
+	// go on if not empty
+	if ( empty($picturelist) )
+		return;
+	
+	// show gallery
+	if ( is_array($picturelist) )
+		$out = nggCreateGallery($picturelist, false, $template);
+
+	$out = apply_filters('ngg_show_images_content', $out, $taglist);
+	
+	return $out;
+}
+
+/**
+ * nggTagCloud() - return a tag cloud based on the wp core tag cloud system
+ * 
+ * @param array $args
+ * @param string $template (optional) name for a template file, look for gallery-$template
+ * @return the content
+ */
+function nggTagCloud($args ='', $template = '') {
+	global $nggRewrite;
+
+	// $_GET from wp_query
+	$tag     = get_query_var('gallerytag');
+	$pageid  = get_query_var('pageid');
+	
+	// look for gallerytag variable 
+	if ( $pageid == get_the_ID() || !is_home() )  {
+		if (!empty( $tag ))  {
+	
+			$slug =  attribute_escape( $tag );
+			$out  =  nggShowGalleryTags( $slug );
+			return $out;
+		} 
+	}
+	
+	$defaults = array(
+		'smallest' => 8, 'largest' => 22, 'unit' => 'pt', 'number' => 45,
+		'format' => 'flat', 'orderby' => 'name', 'order' => 'ASC',
+		'exclude' => '', 'include' => '', 'link' => 'view', 'taxonomy' => 'ngg_tag'
+	);
+	$args = wp_parse_args( $args, $defaults );
+
+	$tags = get_terms( $args['taxonomy'], array_merge( $args, array( 'orderby' => 'count', 'order' => 'DESC' ) ) ); // Always query top tags
+
+	foreach ($tags as $key => $tag ) {
+
+		$tags[ $key ]->link = $nggRewrite->get_permalink(array ('gallerytag' => $tag->slug));
+		$tags[ $key ]->id = $tag->term_id;
+	}
+	
+	$out = '<div class="ngg-tagcloud">' . wp_generate_tag_cloud( $tags, $args ) . '</div>';
+	
+	return $out;
+}
 ?>

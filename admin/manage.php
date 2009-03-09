@@ -162,7 +162,7 @@ class nggManageGallery {
 		// will be called after a ajax operation
 		if (isset ($_POST['ajax_callback']))  {
 				if ($_POST['ajax_callback'] == 1)
-					nggGallery::show_message(__('Operation successfull. Please clear your browser cache.',"nggallery"));
+					nggGallery::show_message(__('Operation successful. Please clear your browser cache.',"nggallery"));
 			$this->mode = 'edit';		
 		}
 		
@@ -276,11 +276,12 @@ class nggManageGallery {
 			global $user_ID;
 	
 			$page['post_type']    = 'page';
-			$page['post_content'] = '[nggallery id='.$this->gid.']';
+			$page['post_content'] = '[nggallery id=' . $this->gid . ']';
 			$page['post_parent']  = $parent_id;
 			$page['post_author']  = $user_ID;
 			$page['post_status']  = 'publish';
 			$page['post_title']   = $gallery_title == '' ? $gallery_name : $gallery_title;
+			$page = apply_filters('ngg_add_new_page', $page, $this->gid);
 	
 			$gallery_pageid = wp_insert_post ($page);
 			if ($gallery_pageid != 0) {

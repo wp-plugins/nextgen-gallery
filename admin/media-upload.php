@@ -3,7 +3,7 @@
 /**
  * @title  Add action/filter for the upload tab 
  * @author Alex Rabe
- * @copyright 2008
+ * @copyright 2008-2009
  */
 
 function ngg_wp_upload_tabs ($tabs) {
@@ -41,7 +41,7 @@ function media_upload_nextgen() {
 			$html = "<img src='{$image['url']}' alt='$alttext' class='$class' />";
 		
 		if ($image['size'] == "singlepic") 
-			$html = "[singlepic=$send_id,320,240,,{$image['align']}]";
+			$html = "[singlepic id=$send_id w=320 h=240 float={$image['align']}]";
 			
 		media_upload_nextgen_save_image();
 		
@@ -128,7 +128,7 @@ function media_upload_nextgen_form($errors) {
 	?>
 	
 	<div class="alignleft actions">
-		<select id="select_gal" name="select_gal" style="width:250px;">;
+		<select id="select_gal" name="select_gal" style="width:120px;">;
 			<option value="0" <?php selected('0', $galleryID); ?> ><?php attribute_escape( _e('No gallery',"nggallery") ); ?></option>
 			<?php
 			// Show gallery selection
@@ -172,19 +172,19 @@ function media_upload_nextgen_form($errors) {
 			?>
 			<div id='media-item-<?php echo $picid ?>' class='media-item preloaded'>
 			  <div class='filename'></div>
-			  <a class='toggle describe-toggle-on' href='#'><?php attribute_escape( _e('Show',"nggallery") ); ?></a>
-			  <a class='toggle describe-toggle-off' href='#'><?php attribute_escape( _e('Hide',"nggallery") );?></a>
+			  <a class='toggle describe-toggle-on' href='#'><?php attribute_escape( _e('Show', "nggallery") ); ?></a>
+			  <a class='toggle describe-toggle-off' href='#'><?php attribute_escape( _e('Hide', "nggallery") );?></a>
 			  <div class='filename new'><?php echo ( empty($picture->alttext) ) ? wp_html_excerpt($picture->filename,60): stripslashes( wp_html_excerpt($picture->alttext,60) ); ?></div>
 			  <table class='slidetoggle describe startclosed'><tbody>
 				  <tr>
 					<td rowspan='4'><img class='thumbnail' alt='<?php echo attribute_escape( $picture->alttext ); ?>' src='<?php echo attribute_escape( $picture->thumbURL ); ?>'/></td>
-					<td><?php attribute_escape( _e('Image ID:',"nggallery") ); ?><?php echo $picid ?></td>
+					<td><?php attribute_escape( _e('Image ID:', "nggallery") ); ?><?php echo $picid ?></td>
 				  </tr>
 				  <tr><td><?php echo attribute_escape( $picture->filename ); ?></td></tr>
 				  <tr><td><?php echo attribute_escape( stripslashes($picture->alttext) ); ?></td></tr>
 				  <tr><td>&nbsp;</td></tr>
 				  <tr>
-					<td class="label"><label for="image[<?php echo $picid ?>][alttext]"><?php attribute_escape( _e("Alt/Title text","nggallery") );?></label></td>
+					<td class="label"><label for="image[<?php echo $picid ?>][alttext]"><?php attribute_escape( _e('Alt/Title text', "nggallery") );?></label></td>
 					<td class="field"><input id="image[<?php echo $picid ?>][alttext]" name="image[<?php echo $picid ?>][alttext]" value="<?php echo attribute_escape( stripslashes($picture->alttext) ); ?>" type="text"/></td>
 				  </tr>	
 				  <tr>

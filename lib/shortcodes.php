@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Alex Rabe, Vincent Prat 
- * @copyright 2008
+ * @copyright 2008 - 2009
  * @since 1.0.0
  * @description Use WordPress Shortcode API for more features
  * @Docs http://codex.wordpress.org/Shortcode_API
@@ -25,7 +25,10 @@ class NextGEN_shortcodes {
 		add_shortcode( 'imagebrowser', array(&$this, 'show_imagebrowser' ) );
 		add_shortcode( 'slideshow', array(&$this, 'show_slideshow' ) );
 		add_shortcode( 'nggtags', array(&$this, 'show_tags' ) );
-		add_shortcode( 'thumb', array(&$this, 'show_thumbs' ));
+		add_shortcode( 'thumb', array(&$this, 'show_thumbs' ) );
+		add_shortcode( 'random', array(&$this, 'show_random' ) );
+		add_shortcode( 'recent', array(&$this, 'show_recent' ) );
+		add_shortcode( 'tagcloud', array(&$this, 'show_tagcloud' ) );
 	}
 
 	 /**
@@ -130,7 +133,7 @@ class NextGEN_shortcodes {
 		// attach related images based on category or tags
 		if ($ngg_options['activateTags']) 
 			$content .= nggShowRelatedImages();
-	
+		
 		return $content;
 	}
 	
@@ -276,6 +279,60 @@ class NextGEN_shortcodes {
 		// show gallery
 		if ( is_array($picturelist) )
 			$out = nggCreateGallery($picturelist, false, $template);
+		
+		return $out;
+	}
+
+	/**
+	 * Function to show a gallery of random or the most recent images with shortcode of type:
+	 * 
+	 * [random max="7" template="filename" /]
+	 * [recent max="7" template="filename" /]
+	 * where 
+	 * - max is the maximum number of random or recent images to show
+	 * - template is a name for a gallery template, which is located in themefolder/nggallery or plugins/nextgen-gallery/view
+	 * 
+	 * @param array $atts
+	 * @return the_content
+	 */
+	function show_random( $atts ) {
+	
+		extract(shortcode_atts(array(
+			'max'		=> '',
+			'template'	=> ''
+		), $atts));
+		
+		$out = nggShowRandomRecent('random', $max, $template);
+		
+		return $out;
+	}
+
+	function show_recent( $atts ) {
+	
+		extract(shortcode_atts(array(
+			'max'		=> '',
+			'template'	=> ''
+		), $atts));
+		
+		$out = nggShowRandomRecent('recent', $max, $template);
+		
+		return $out;
+	}
+
+	/**
+	 * Shortcode for the Image tag cloud
+	 * Usage : [tagcloud template="filename" /]
+	 * 
+	 * @param array $atts
+	 * @return the content
+	 */
+	function show_tagcloud( $atts ) {
+	
+		extract(shortcode_atts(array(
+			'template'	=> ''
+		), $atts));
+		
+		$out = nggTagCloud( '', $template );
 		
 		return $out;
 	}

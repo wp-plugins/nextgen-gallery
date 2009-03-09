@@ -8,8 +8,6 @@ function nggallery_picturelist() {
 	
 	// GET variables
 	$act_gid    = $ngg->manage_page->gid;
-	$showTags   = $ngg->manage_page->showTags;
-	$hideThumbs = $ngg->manage_page->hideThumbs;
 	
 	// Load the gallery metadata
 	$gallery = $nggdb->find_gallery($act_gid);
@@ -105,7 +103,7 @@ function checkSelected() {
 	var numchecked = getNumChecked(document.getElementById('updategallery'));
 	 
 	if(numchecked < 1) { 
-		alert('<?php echo js_escape(__("No images selected",'nggallery')); ?>');
+		alert('<?php echo js_escape(__("No images selected", 'nggallery')); ?>');
 		return false; 
 	} 
 	
@@ -144,7 +142,7 @@ jQuery(document).ready( function() {
 
 <div class="wrap">
 
-<h2><?php echo __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ); ?> : <?php echo $gallery->title; ?></h2>
+<h2><?php echo __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ); ?> : <?php echo nggGallery::i18n($gallery->title); ?></h2>
 
 <br style="clear: both;" />
 
@@ -316,7 +314,7 @@ if($picturelist) {
 						?>
 						<td <?php echo $attributes ?>>
 							<strong><a href="<?php echo $picture->imageURL; ?>" class="thickbox" title="<?php echo $picture->filename ?>">
-								<?php echo ( empty($picture->alttext) ) ? $picture->filename : stripslashes($picture->alttext); ?>
+								<?php echo ( empty($picture->alttext) ) ? $picture->filename : stripslashes(nggGallery::i18n($picture->alttext)); ?>
 							</a></strong>
 							<br /><?php echo $date?>
 							<p>
@@ -326,6 +324,7 @@ if($picturelist) {
 							//$actions['edit']   = '<a class="editinline" href="#">' . __('Edit') . '</a>';
 							$actions['view']   = '<a class="thickbox" href="' . $picture->imageURL . '" title="' . attribute_escape(sprintf(__('View "%s"'), $picture->filename)) . '">' . __('View', 'nggallery') . '</a>';
 							$actions['meta']   = '<a class="thickbox" href="' . NGGALLERY_URLPATH . 'admin/showmeta.php?id=' . $pid . '" title="' . __('Show Meta data','nggallery') . '">' . __('Meta', 'nggallery') . '</a>';
+							$actions['custom_thumb']   = '<a class="thickbox" href="' . NGGALLERY_URLPATH . 'admin/manage_thumbnail.php?id=' . $pid . '" title="' . __('Customize thumbnail','nggallery') . '">' . __('Edit thumb', 'nggallery') . '</a>';
 							$actions['delete'] = '<a class="submitdelete" href="' . wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=delpic&amp;gid=".$act_gid."&amp;pid=".$pid, 'ngg_delpicture'). '" class="delete column-delete" onclick="javascript:check=confirm( \'' . attribute_escape(sprintf(__('Delete "%s"' , 'nggallery'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete') . '</a>';
 							$action_count = count($actions);
 							$i = 0;
@@ -343,7 +342,7 @@ if($picturelist) {
 					case 'thumbnail' :
 						?>
 						<td <?php echo $attributes ?>><a href="<?php echo $picture->imageURL; ?>" class="thickbox" title="<?php echo $picture->filename ?>">
-								<img class="thumb" src="<?php echo $picture->thumbURL; ?>" <?php echo $thumbsize ?> />
+								<img class="thumb" src="<?php echo $picture->thumbURL; ?>" <?php echo $thumbsize ?> id="thumb<?php echo $pid ?>" />
 							</a>
 						</td>
 						<?php						
@@ -450,7 +449,7 @@ if($picturelist) {
 
 	<script type="text/javascript">
 	/* <![CDATA[ */
-	columns.init('nggallery-manage-images');
+	jQuery(document).ready(function(){columns.init('nggallery-manage-images');});	
 	/* ]]> */
 	</script>
 	<?php

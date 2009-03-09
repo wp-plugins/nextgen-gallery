@@ -20,19 +20,15 @@ Important Links:
 * <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/" title="NextGEN Gallery FAQ">NextGEN Gallery FAQ</a>
 * <a href="http://wordpress.org/tags/nextgen-gallery" title="Wordpress Support Forum">Support Forum</a>
 
-= NEW in VERSION 1.0 for WordPress 2.7 =
+= NFeatures =
 
-* Templates : You can add custom templates for your theme. See here for some example
+* Templates : You can add custom templates for your theme.
 * Media RSS feed : Add the Cooliris Effect to your gallery
-* More role settings : Each gallery has now a author
+* Role settings : Each gallery has a author
 * AJAX based thumbnail generator : No more server limitation during the batch process
-* New Shortcodes : You can now insert thumbnails for one or more images (that are not necessarly inside the same gallery).
-* Copy/Move : Now you can copy or move images between galleries 
-
-Other features:
-
+* Copy/Move : Copy or move images between galleries 
 * Sortable Albums : Create your own sets of images 
-* Upload a Zip-File with pictures : Upload pictures in a zip-file (Not in Safe-mode) 
+* Upload or pictures via a zip-file (Not in Safe-mode)
 * Watermark function : You can add a watermark image or text 
 * JavaScript Effect : Use any available popular image effect : Shutter, Thickbox, Lightbox or Highslide
 * Multiple CSS Stylesheet : Use a nice shadow effect for your thumbnails with your own CSS file 
@@ -41,7 +37,7 @@ Other features:
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
 * Language support : Translated in more than 30 languages
 * Upload tab integration : You have access to all pictures via the upload tab
-* Tag support for images : Append related images to your post
+* Tag support for images : Append related images to your post, create a image tag-cloud
 * Meta data support : Import EXIF, IPTC or XMP meta data 
 * Sort images feature
 * Cool flash addons here : http://wordpress.org/extend/plugins/nextgen-flashviewer/

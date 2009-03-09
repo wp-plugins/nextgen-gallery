@@ -98,7 +98,7 @@ class nggImage{
 	
 	function get_href_link() {
 		// create the a href link from the picture
-		$this->href  = "\n".'<a href="'.$this->imageURL.'" title="'.stripslashes($this->description).'" '.$this->get_thumbcode($this->name).'>'."\n\t";
+		$this->href  = "\n".'<a href="'.$this->imageURL.'" title="'.htmlspecialchars( stripslashes($this->description) ).'" '.$this->get_thumbcode($this->name).'>'."\n\t";
 		$this->href .= '<img alt="'.$this->alttext.'" src="'.$this->imageURL.'"/>'."\n".'</a>'."\n";
 
 		return $this->href;
@@ -106,7 +106,7 @@ class nggImage{
 
 	function get_href_thumb_link() {
 		// create the a href link with the thumbanil
-		$this->href  = "\n".'<a href="'.$this->imageURL.'" title="'.stripslashes($this->description).'" '.$this->get_thumbcode($this->name).'>'."\n\t";
+		$this->href  = "\n".'<a href="'.$this->imageURL.'" title="'.htmlspecialchars( stripslashes($this->description) ).'" '.$this->get_thumbcode($this->name).'>'."\n\t";
 		$this->href .= '<img alt="'.$this->alttext.'" src="'.$this->thumbURL.'"/>'."\n".'</a>'."\n";
 
 		return $this->href;

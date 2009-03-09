@@ -1,6 +1,22 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V1.2.0 - 09.03.2009
+- NEW : Support for image tag cloud with shortcode [tagcloud]
+- NEW : Adding shortcode [recent max="7" template="filename" /] & [random max="7" template="filename" /] to show the most recent/random pictures (THX to Bernhard)
+- NEW : Crop thumbnails manually (THX to Simone Fumagalli)
+- NEW : Support for i18n with polyglot or qtrans plugin (THX to Boris Glumpler)
+- NEW : Canonical meta link support
+- Added : SWFUpload V2.2.0 B5
+- Added : New memory limit check in upload screen
+- Bugfix : Language typo fixes
+- Bugfix : Admin Pagination fix
+- Bugfix : Typo fix in widgets
+- Bugfix : Init column script after document is ready
+- Bugfix : htmlspecialchars() instead htmlentities() for links in the a href title description
+- Bugfix : Upgrade routine didn't add sortorder to correct table (THX to Uwe)
+- Bugfix : Correct shotcode in media upload tab
+
 V1.1.0 - 26.01.2009
 - NEW : Pagination for album page via custom fields ('ngg_paged_Galleries')
 - NEW : Support for fixed number of columns inside the gallery
@@ -419,5 +435,3 @@ V0.33 - 23.04.2007
 - NEW : Overview Page
 - NEW : Core function
 - NEW : Slideshow
-
-

@@ -113,9 +113,8 @@ class nggRewrite {
 			$show_on_front = get_option('show_on_front');
 			$page_on_front = get_option('page_on_front');
 			
-			if (($show_on_front == 'page') && ($page_on_front == get_the_ID())) {
+			if (($show_on_front == 'page') && ($page_on_front == get_the_ID()))
 				$args['page_id'] = get_the_ID();
-			}
 
 			$query = htmlspecialchars(add_query_arg( $args));
 			
@@ -194,11 +193,31 @@ class nggRewrite {
 		if ( !empty($tag) )
 			$new_title .= $tag . $sep;
 		
+		// for all sub pages we add the canonical tag	
+		if ( !empty($new_title) )	
+			add_action('wp_head', array(&$this, 'add_canonical_meta'));	
+		
 		//prepend the data
 		$title = $new_title . $title;
 		
 		return $title;
 	}
+	
+	/**
+	 * Canonical support for a better SEO (Dupilcat content)
+	 * See : http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html
+	 * 
+	 * @return string $meta 
+	 */
+	function add_canonical_meta()
+    {
+            // create the meta link
+ 			$meta  = "\n<link rel='canonical' href='" . get_permalink() ."' />";
+ 			// add a filter for SEO plugins, so they can remove it
+ 			echo apply_filters('ngg_add_canonical_meta', $meta);
+  			
+        return; 
+    }
 		
 	/**
 	* The actual rewrite rules

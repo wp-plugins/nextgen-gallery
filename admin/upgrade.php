@@ -38,7 +38,7 @@ function ngg_upgrade() {
 		
 		// v0.71 -> v0.84
 		if (version_compare($installed_ver, '0.84', '<')) {
-			ngg_maybe_add_column( $wpdb->nggallery, 'sortorder', "BIGINT(20) DEFAULT '0' NOT NULL AFTER exclude");
+			ngg_maybe_add_column( $wpdb->nggpictures, 'sortorder', "BIGINT(20) DEFAULT '0' NOT NULL AFTER exclude");
 		}
 
 		// v0.84 -> v0.95
@@ -189,7 +189,7 @@ function ngg_move_imagerotator() {
 	if ( file_exists( NGGALLERY_ABSPATH . 'imagerotator.swf' ) )
 		@rename(NGGALLERY_ABSPATH . 'imagerotator.swf', $upload['basedir'] . '/imagerotator.swf');
 		
-	// If it's successfull then we return the new path
+	// If it's successful then we return the new path
 	if ( file_exists( $upload['basedir'] . '/imagerotator.swf' ) )
 		return $upload['baseurl'] . '/imagerotator.swf';
 
@@ -286,7 +286,7 @@ function nggallery_start_upgrade($filepath) {
 <div class="wrap">
 	<h2><?php _e('Upgrade NextGEN Gallery', 'nggallery') ;?></h2>
 	<p><?php ngg_upgrade();?></p>
-	<p><?php _e('Upgrade sucessfull', 'nggallery') ;?></p>
+	<p><?php _e('Upgrade sucessful', 'nggallery') ;?></p>
 	<h3><a href="<?php echo $filepath;?>"><?php _e('Continue', 'nggallery'); ?>...</a></h3>
 </div>
 <?php

@@ -247,14 +247,14 @@ function getgallerycontainer($galleryid = 0, $used = false) {
 				<div class="innerhandle">
 					<div class="item_top">
 						<a href="#" class="min" title="close">[-]</a>
-						ID: '.$gallery->gid.' || Title: '.$gallery->title.'
+						ID: '.$gallery->gid.' || Title: '.nggGallery::i18n($gallery->title).'
 					</div>
 					<div class="itemContent">
 						<div class="inlinepicture">'.$img.'</div>
 							<p><strong>'.__('ID', 'nggallery').' : </strong>'.$gallery->gid.'</p>
-							<p><strong>'.__('Name', 'nggallery').' : </strong>'.$gallery->name.'</p>
-							<p><strong>'.__('Title', 'nggallery').' : </strong>'.$gallery->title.'</p>
-							<p><strong>'.__('Page', 'nggallery').' : </strong>'.$pagename.'</p>
+							<p><strong>'.__('Name', 'nggallery').' : </strong>'.nggGallery::i18n($gallery->name).'</p>
+							<p><strong>'.__('Title', 'nggallery').' : </strong>'.nggGallery::i18n($gallery->title).'</p>
+							<p><strong>'.__('Page', 'nggallery').' : </strong>'.nggGallery::i18n($pagename).'</p>
 						</div>
 				</div>
 			   </div>'; 

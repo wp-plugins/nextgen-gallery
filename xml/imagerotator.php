@@ -30,16 +30,16 @@ if ($galleryID == 0) {
 header("content-type:text/xml;charset=utf-8");
 
 echo "<playlist version='1' xmlns='http://xspf.org/ns/0/'>\n";
-echo "	<title>".stripslashes($thepictures[0]->name)."</title>\n";
+echo "	<title>".stripslashes(nggGallery::i18n($thepictures[0]->name))."</title>\n";
 echo "	<trackList>\n";
 
 if (is_array ($thepictures)){
 	foreach ($thepictures as $picture) {
 		echo "		<track>\n";
 		if (!empty($picture->description))	
-		echo "			<title>".strip_tags(stripslashes(html_entity_decode($picture->description)))."</title>\n";
+		echo "			<title>".strip_tags(stripslashes(html_entity_decode(nggGallery::i18n($picture->description))))."</title>\n";
 		else if (!empty($picture->alttext))	
-		echo "			<title>".stripslashes($picture->alttext)."</title>\n";
+		echo "			<title>".stripslashes(nggGallery::i18n($picture->alttext))."</title>\n";
 		else 
 		echo "			<title>".$picture->filename."</title>\n";
 		echo "			<location>".$siteurl."/".$picture->path."/".$picture->filename."</location>\n";

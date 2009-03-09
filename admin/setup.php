@@ -23,7 +23,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 			nggallery_uninstall();
 				 	
-		 	nggGallery::show_message(__('Uninstall sucessfull ! Now delete the plugin and enjoy your life ! Good luck !','nggallery'));
+		 	nggGallery::show_message(__('Uninstall sucessful ! Now delete the plugin and enjoy your life ! Good luck !','nggallery'));
 		}
 	?>
 	<div class="wrap">

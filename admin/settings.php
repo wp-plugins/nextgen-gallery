@@ -46,7 +46,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	
 	if ( isset($_POST['clearcache']) ) {
 		
-		$path = WINABSPATH . $ngg->options['gallerypath'] . "cache/";
+		$path = WINABSPATH . $ngg->options['gallerypath'] . 'cache/';
 		
 		if (is_dir($path))
 	    	if ($handle = opendir($path)) {
@@ -65,7 +65,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	
 	?>
 	<script type="text/javascript">
-		jQuery(function() {
+		jQuery(document).ready(function(){
 			jQuery('#slider > ul').tabs({ fxFade: true, fxSpeed: 'fast' });	
 		});
 	
@@ -148,7 +148,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<tr>
 						<th align="left"><?php _e('Activate Media RSS feed','nggallery') ?></th>
 						<td><input type="checkbox" name="useMediaRSS" value="1" <?php checked('1', $ngg->options['useMediaRSS']); ?> />
-						<span class="setting-description"><?php _e('A RSS feed will be added to you blog header. Usefull for CoolIris/PicLens','nggallery') ?></span></td>
+						<span class="setting-description"><?php _e('A RSS feed will be added to you blog header. Useful for CoolIris/PicLens','nggallery') ?></span></td>
 					</tr>
 					<tr>
 						<th align="left"><?php _e('Activate PicLens/CoolIris support','nggallery') ?> (<a href="http://www.cooliris.com">CoolIris</a>)</th>
@@ -359,7 +359,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<?php
 		$imageID = $wpdb->get_var("SELECT MIN(pid) FROM $wpdb->nggpictures");
 		$imageID = $wpdb->get_row("SELECT * FROM $wpdb->nggpictures WHERE pid = '$imageID'");	
-		if ($imageID) $imageURL = '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID->pid.'&amp;mode=watermark&amp;width=400&amp;height=300" alt="'.$imageID->alttext.'" title="'.$imageID->alttext.'" />';
+		if ($imageID) $imageURL = '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$imageID->pid.'&amp;mode=watermark&amp;width=300&amp;height=250" alt="'.$imageID->alttext.'" title="'.$imageID->alttext.'" />';
 
 		?>
 		<div id="watermark">

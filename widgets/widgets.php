@@ -293,7 +293,7 @@ function ngg_widget_control($widget_args = 1) {
 			</select>
 			<select id="ngg_images-show-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][show]" >
 				<option <?php selected("thumbnail" , $show); ?> value="thumbnail"><?php _e('Thumbnails','nggallery'); ?></option>
-				<option <?php selected("original" , $show); ?> value="orginal"><?php _e('Original images','nggallery'); ?></option>
+				<option <?php selected("original" , $show); ?> value="original"><?php _e('Original images','nggallery'); ?></option>
 			</select>
 			</label>
 		</p>
@@ -368,7 +368,7 @@ function ngg_widget_control($widget_args = 1) {
 			$list = "'" . implode("', '", $list ) . "'";
 			
 			if ($exclude == 'denied')	
-				$exclude_list = "AND NOT t.gid IN ($list)";
+				$exclude_list = "AND NOT (t.gid IN ($list))";
 
 			if ($exclude == 'allow')	
 				$exclude_list = "AND t.gid IN ($list)";
@@ -390,15 +390,19 @@ function ngg_widget_control($widget_args = 1) {
 				// get the effect code
 				$thumbcode = $image->get_thumbcode("sidebar_".$number);
 				
+				// enable i18n support for alttext and description
+				$alttext      =  htmlspecialchars( stripslashes( nggGallery::i18n($image->alttext) ));
+				$description  =  htmlspecialchars( stripslashes( nggGallery::i18n($image->description) ));
+				
 				//TODO:For mixed portrait/landscape it's better to use only the height setting, if widht is 0 or vice versa
-				$out = '<a href="'.$image->imageURL.'" title="'.stripslashes($image->description).'" '.$thumbcode.'>';
+				$out = '<a href="' . $image->imageURL . '" title="' . $description . '" ' . $thumbcode .'>';
 				// Typo fix for the next updates (happend until 1.0.2)
 				$options[$number]['show'] = ( $options[$number]['show'] == 'orginal' ) ? 'original' : $options[$number]['show'];
 				
 				if ( $options[$number]['show'] == 'original' )
-					$out .= '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$image->pid.'&amp;width='.$options[$number]['width'].'&amp;height='.$options[$number]['height']. '" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$image->alttext.'" alt="'.$image->alttext.'" />';
+					$out .= '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$image->pid.'&amp;width='.$options[$number]['width'].'&amp;height='.$options[$number]['height']. '" title="'.$alttext.'" alt="'.$alttext.'" />';
 				else	
-					$out .= '<img src="'.$image->thumbURL.'" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$image->alttext.'" alt="'.$image->alttext.'" />';			
+					$out .= '<img src="'.$image->thumbURL.'" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$alttext.'" alt="'.$alttext.'" />';			
 				
 				echo $out . '</a>'."\n";
 				
