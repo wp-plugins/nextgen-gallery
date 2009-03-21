@@ -44,7 +44,7 @@ Important Links:
 
 == Credits ==
 
-Copyright 2007-2009 Alex Rabe & NextGEN DEV-Team
+Copyright 2007-2009 by Alex Rabe & NextGEN DEV-Team
 
 The NextGEN button is taken from the Fugue Icons of http://www.pinvoke.com/.
 
@@ -60,7 +60,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ** Please note **
 
@@ -75,7 +75,7 @@ For commercial use please look at the Jeroen's homepage : http://www.longtailvid
 
 1. 	Upload the files to wp-content/plugins/nextgen-gallery
 
-2.  If you would like to use a Flash slideshow (only a option), go to <a href="http://www.longtailvideo.com/players/jw-image-rotator/" title="JW Image Rotator">Longtail Video</a>, download the JW Image Rotator and unpack the conent. Upload the file imagerotator.swf to the NextGEN-Gallery folder
+2.  If you would like to use a Flash slideshow (only a option), go to <a href="http://www.longtailvideo.com/players/jw-image-rotator/" title="JW Image Rotator">Longtail Video</a>, download the JW Image Rotator and unpack the conent. Upload the file imagerotator.swf to your WordPress Upload folder
 
 3. 	Activate the plugin
 
