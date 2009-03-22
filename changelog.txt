@@ -1,6 +1,13 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V1.2.1 - 22.03.2009
+- NEW : Support for IE8 Web Slices in widgets
+- NEW : Add filter ngg_image_object
+- Changed : Descending order in add gallery menu
+- Bugfix : Exclude option didnT work for multi pages
+- Bugfix : Check for correct capability in manage gallery
+
 V1.2.0 - 09.03.2009
 - NEW : Support for image tag cloud with shortcode [tagcloud]
 - NEW : Adding shortcode [recent max="7" template="filename" /] & [random max="7" template="filename" /] to show the most recent/random pictures (THX to Bernhard)

@@ -17,6 +17,12 @@ function nggallery_picturelist() {
 		return;
 	}
 	
+	// Check if you have the correct capability
+	if (!nggAdmin::can_manage_this_gallery($gallery->author)) {
+		nggGallery::show_error(__('Sorry, you have no access here', 'nggallery'));
+		return;
+	}	
+	
 	// look for pagination	
 	if ( ! isset( $_GET['paged'] ) || $_GET['paged'] < 1 )
 		$_GET['paged'] = 1;
@@ -307,7 +313,9 @@ if($picturelist) {
 					break;
 					case 'id' :
 						?>
-						<td <?php echo $attributes ?> scope="row" style=""><?php echo $pid ?></td>
+						<td <?php echo $attributes ?> scope="row" style=""><?php echo $pid; ?>
+							<input type="hidden" name="pid[]" value="<?php echo $pid ?>" />
+						</td>
 						<?php
 					break;
 					case 'filename' :

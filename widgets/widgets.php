@@ -253,7 +253,8 @@ function ngg_widget_control($widget_args = 1) {
 				$options[$widget_number]['width']	= (int) $widget_ngg_images['width'];
 				$options[$widget_number]['height']	= (int) $widget_ngg_images['height'];
 				$options[$widget_number]['exclude']	= $widget_ngg_images['exclude'];
-				$options[$widget_number]['list']	= $widget_ngg_images['list'];				
+				$options[$widget_number]['list']	= $widget_ngg_images['list'];
+				$options[$widget_number]['webslice']= (bool) $widget_ngg_images['webslice'];
 
 			}
 
@@ -272,6 +273,7 @@ function ngg_widget_control($widget_args = 1) {
 			$exclude = 'all';
 			$list = '';
 			$number = '%i%';
+			$webslice = true;
 		} else {
 			extract( (array) $options[$number] );
 		}
@@ -302,6 +304,12 @@ function ngg_widget_control($widget_args = 1) {
 			<label for="widget_ngg_images<?php echo $number; ?>">&nbsp;
 			<input name="widget_ngg_images[<?php echo $number; ?>][type]" type="radio" value="random" <?php checked("random" , $type); ?> /> <?php _e('random','nggallery'); ?>
 			<input name="widget_ngg_images[<?php echo $number; ?>][type]" type="radio" value="recent" <?php checked("recent" , $type); ?> /> <?php _e('recent added ','nggallery'); ?>
+			</label>
+		</p>
+
+		<p>
+			<label for="ngg_webslice<?php echo $number; ?>">&nbsp;
+			<input id="ngg_webslice<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][webslice]" type="checkbox" value="1" <?php checked(true , $webslice); ?> /> <?php _e('Enable IE8 Web Slices','nggallery'); ?>
 			</label>
 		</p>
 
@@ -354,6 +362,7 @@ function ngg_widget_control($widget_args = 1) {
 		$items 	= $options[$number]['items'];
 		$exclude = $options[$number]['exclude'];
 		$list = $options[$number]['list'];
+		$webslice = $options[$number]['webslice'];
 
 		$count = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE exclude != 1 ");
 		if ($count < $options[$number]['items']) 
@@ -378,9 +387,16 @@ function ngg_widget_control($widget_args = 1) {
 			$imageList = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 $exclude_list ORDER by rand() limit {$items}");
 		else
 			$imageList = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 $exclude_list ORDER by pid DESC limit 0,$items");
-
+		
+		if ( $webslice ) {
+			//TODO:  If you change the title, it will not show up in widget admin panel
+			$before_title  = "\n" . '<div class="hslice" id="ngg-webslice" >' . "\n";
+			$before_title .= '<h2 class="widgettitle entry-title">';
+			$after_widget  =  '</div>'."\n" . $after_widget;			
+		}	
+		                      
 		echo $before_widget . $before_title . $title . $after_title;
-		echo "\n".'<div class="ngg-widget">'."\n";
+		echo "\n" . '<div class="ngg-widget entry-content">'. "\n";
 	
 		if (is_array($imageList)){
 			foreach($imageList as $image) {

@@ -77,7 +77,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	}
 
 	//get all galleries (after we added new ones)
-	$gallerylist = $nggdb->find_all_galleries();
+	$gallerylist = $nggdb->find_all_galleries('gid', 'DESC');
 
 	?>
 	
@@ -218,7 +218,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<?php
 						foreach($gallerylist as $gallery) {
 							$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
-							echo '<option value="' . $gallery->gid . '" >' . $name . '</option>' . "\n";
+							echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . $name . '</option>' . "\n";
 						}
 					?>
 					</select>
@@ -266,7 +266,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<?php
 						foreach($gallerylist as $gallery) {
 							$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
-							echo '<option value="' . $gallery->gid . '" >' . $name . '</option>' . "\n";
+							echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . $name . '</option>' . "\n";
 						}					?>
 					</select>
 					<br /><?php echo $maxsize; ?>

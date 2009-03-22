@@ -42,7 +42,7 @@ global $wpdb;
             <td><select id="gallerytag" name="gallerytag" style="width: 200px">
                 <option value="0"><?php _e("No gallery", 'nggallery'); ?></option>
 				<?php
-					$gallerylist = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY gid DESC");
+					$gallerylist = $nggdb->find_all_galleries('gid', 'DESC');
 					if(is_array($gallerylist)) {
 						foreach($gallerylist as $gallery) {
 							$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;

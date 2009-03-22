@@ -309,31 +309,31 @@ class nggManageGallery {
 		$alttext = 		$_POST['alttext'];
 		$exclude = 		$_POST['exclude'];
 		$taglist = 		$_POST['tags'];
-
+		$pictures = 	$_POST['pid'];
+		
 		if ( is_array($description) ) {
-			foreach( $description as $key=>$value ) {
+			foreach( $description as $key => $value ) {
 				$desc = $wpdb->escape($value);
 				$wpdb->query( "UPDATE $wpdb->nggpictures SET description = '$desc' WHERE pid = $key");
 			}
 		}
 		if ( is_array($alttext) ){
-			foreach( $alttext as $key=>$value ) {
+			foreach( $alttext as $key => $value ) {
 				$alttext = $wpdb->escape($value);
 				$wpdb->query( "UPDATE $wpdb->nggpictures SET alttext = '$alttext' WHERE pid = $key");
 			}
 		}
-		
-		$pictures = $wpdb->get_results("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$this->gid'");
-	
+
 		if ( is_array($pictures) ){
-			foreach($pictures as $picture){
+			foreach( $pictures as $pid ){
+				$pid = (int) $pid;
 				if (is_array($exclude)){
-					if ( array_key_exists($picture->pid, $exclude) )
-						$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 1 WHERE pid = '$picture->pid'");
+					if ( array_key_exists($pid, $exclude) )
+						$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 1 WHERE pid = '$pid'");
 					else 
-						$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 0 WHERE pid = '$picture->pid'");
+						$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 0 WHERE pid = '$pid'");
 				} else {
-					$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 0 WHERE pid = '$picture->pid'");
+					$wpdb->query("UPDATE $wpdb->nggpictures SET exclude = 0 WHERE pid = '$pid'");
 				}
 			}
 		}

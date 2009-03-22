@@ -238,9 +238,11 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 		$picturelist[$key]->thumbnailURL = $picture->thumbURL;
 		$picturelist[$key]->size = $thumbsize;
 		$picturelist[$key]->thumbcode = $thumbcode;
-		$picturelist[$key]->caption = ( empty($picture->description) ) ? '&nbsp;' : html_entity_decode ( stripslashes($picture->description) );
-		$picturelist[$key]->description = ( empty($picture->description) ) ? ' ' : htmlspecialchars ( stripslashes($picture->description) );
-		$picturelist[$key]->alttext = ( empty($picture->alttext) ) ?  ' ' : htmlspecialchars ( stripslashes($picture->alttext) );
+		$picturelist[$key]->caption = ( empty($picture->description) ) ? '&nbsp;' : html_entity_decode ( stripslashes(nggGallery::i18n($picture->description)) );
+		$picturelist[$key]->description = ( empty($picture->description) ) ? ' ' : htmlspecialchars ( stripslashes(nggGallery::i18n($picture->description)) );
+		$picturelist[$key]->alttext = ( empty($picture->alttext) ) ?  ' ' : htmlspecialchars ( stripslashes(nggGallery::i18n($picture->alttext)) );
+		// filter to add custom content for the output
+		$picturelist[$key] = apply_filters('ngg_image_object', $picturelist[$key], $picture->pid);
 	}
 
 	// look for gallery-$template.php or pure gallery.php
@@ -498,6 +500,9 @@ function nggCreateImageBrowser($picarray, $template = '') {
 	$picture->alttext = html_entity_decode( stripslashes($picture->alttext) );
 	$picture->description = html_entity_decode( stripslashes($picture->description) );
 	
+	// filter to add custom content for the output
+	$picture = apply_filters('ngg_image_object', $picture, $act_pid);
+	
 	// let's get the meta data
 	$meta = new nggMeta($picture->imagePath);
 	$exif = $meta->get_EXIF();
@@ -578,6 +583,9 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
 	$picture->height = (int) $height;
 	$picture->width = (int) $width;
 	$picture->caption = $caption;
+
+	// filter to add custom content for the output
+	$picture = apply_filters('ngg_image_object', $picture, $imageID);
 
 	// let's get the meta data
 	$meta = new nggMeta($picture->imagePath);
