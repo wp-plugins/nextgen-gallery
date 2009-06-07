@@ -392,6 +392,7 @@ function ngg_widget_control($widget_args = 1) {
 			//TODO:  If you change the title, it will not show up in widget admin panel
 			$before_title  = "\n" . '<div class="hslice" id="ngg-webslice" >' . "\n";
 			$before_title .= '<h2 class="widgettitle entry-title">';
+			$after_title   = '</h2>';
 			$after_widget  =  '</div>'."\n" . $after_widget;			
 		}	
 		                      

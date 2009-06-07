@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.2.1
+Version: 1.3.0
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -44,8 +44,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.2.1';
-	var $dbversion   = '1.1.0';
+	var $version     = '1.3.0';
+	var $dbversion   = '1.3.1';
 	var $minium_WP   = '2.7';
 	var $minium_WPMU = '2.7';
 	var $updateURL   = 'http://nextgen.boelinger.com/version.php';
@@ -82,6 +82,7 @@ class nggLoader {
 		
 		// Register_taxonomy must be used during wo init
 		add_action( 'init', array(&$this, 'register_taxonomy') );
+		
 	}
 	
 	function start_plugin() {
@@ -114,6 +115,9 @@ class nggLoader {
 			// Add the script and style files
 			add_action('wp_print_scripts', array(&$this, 'load_scripts') );
 			add_action('wp_print_styles', array(&$this, 'load_styles') );
+			
+			// Add a version number to the header
+			add_action('wp_head', create_function('', 'echo "\n<meta name=\'NextGEN\' content=\'' . $this->version . '\' />\n";') );
 
 		}	
 	}
@@ -258,8 +262,6 @@ class nggLoader {
 	}
 	
 	function load_scripts() {
-
-		echo "<meta name='NextGEN' content='" . $this->version . "' />\n";
 		
 		//	activate Thickbox
 		if ($this->options['thumbEffect'] == 'thickbox') {
@@ -283,6 +285,14 @@ class nggLoader {
 		// required for the slideshow
 		if ( NGGALLERY_IREXIST == true ) 
 			wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.1');
+
+		// Load AJAX navigation script, works only with shutter script as we need to add the listener
+		if ( ($this->options['thumbEffect'] == "shutter") || function_exists('srel_makeshutter') ) {
+			wp_enqueue_script ( 'ngg_script', NGGALLERY_URLPATH . 'js/ngg.js', array('jquery'));
+			wp_localize_script( 'ngg_script', 'ngg_ajax', array('path'		=> NGGALLERY_URLPATH,
+																'loading'	=> __('loading', 'nggallery'),
+			) );
+		}			
 
 	}
 	
@@ -318,7 +328,7 @@ class nggLoader {
 	function start_rewrite_module() {
 		global $nggRewrite;	
 			
-		if ( class_exists(nggRewrite) )
+		if ( class_exists('nggRewrite') )
 			$nggRewrite = new nggRewrite();	
 	}
 		

@@ -11,7 +11,7 @@ $ngg_options = get_option('ngg_options');
 
 // Some parameters from the URL
 $pictureID = (int) $_GET['pid'];
-$mode = attribute_escape($_GET['mode']);
+$mode = isset($_GET['mode']) ? attribute_escape($_GET['mode']) : '';
 
 // let's get the image data
 $picture  = nggdb::find_image( $pictureID );

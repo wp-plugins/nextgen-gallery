@@ -66,7 +66,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	?>
 	<script type="text/javascript">
 		jQuery(document).ready(function(){
-			jQuery('#slider > ul').tabs({ fxFade: true, fxSpeed: 'fast' });	
+			jQuery('#slider').tabs({ fxFade: true, fxSpeed: 'fast' });	
 		});
 	
 		function insertcode(value) {
@@ -431,7 +431,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 								}
 								?>
 							</select><br /><span class="setting-description">
-							<?php if ( !function_exists(ImageTTFBBox) ) 
+							<?php if ( !function_exists('ImageTTFBBox') ) 
 									_e('This function will not work, cause you need the FreeType library','nggallery');
 								  else 
 								  	_e('You can upload more fonts in the folder <strong>nggallery/fonts</strong>','nggallery'); ?>

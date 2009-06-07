@@ -109,7 +109,9 @@ function nggShowGallery( $galleryID, $template = '' ) {
 	
 	// set $show if slideshow first
 	if ( empty( $show ) AND ($ngg_options['galShowOrder'] == 'slide')) {
-		if (is_home()) $pageid = get_the_ID();
+		if ( is_home() ) 
+			$pageid = get_the_ID();
+		
 		$show = 'slide';
 	}
 
@@ -159,6 +161,9 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
     // $_GET from wp_query
 	$nggpage  = get_query_var('nggpage');
 	$pageid   = get_query_var('pageid');
+	
+	// we need to know the current page id
+	$current_page = (get_the_ID() == false) ? 0 : get_the_ID();
     
     if ( !is_array($picturelist) )
 		$picturelist = array($picturelist);
@@ -172,6 +177,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 	$gallery->title = stripslashes( $first_image->title );
 	$gallery->description = html_entity_decode(stripslashes( $first_image->galdesc));
 	$gallery->pageid = $first_image->pageid;
+	$gallery->anchor = 'ngg-gallery-' . $galleryID . '-' . $current_page;
 	reset($picturelist);
 
 	$maxElement  = $ngg_options['galImages'];
@@ -203,7 +209,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 	
  	// check for page navigation
  	if ($maxElement > 0) {
-	 	if ( !is_home() || $pageid == get_the_ID() ) {
+	 	if ( !is_home() || $pageid == $current_page ) {
 	 		$page = ( !empty( $nggpage ) ) ? (int) $nggpage : 1;
 		}
 		else $page = 1;
@@ -222,7 +228,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 	} else {
 		$navigation = '<div class="ngg-clear">&nbsp;</div>';
 	}	
-	//var_dump($picturelist);
+
 	foreach ($picturelist as $key => $picture) {
 		// choose link between imagebrowser or effect
 		$link = ($ngg_options['galImgBrowser']) ? $nggRewrite->get_permalink( array('pid'=>$picture->pid) ) : $picture->imageURL;	
@@ -277,14 +283,14 @@ function nggShowAlbum($albumID, $template = 'extend') {
 	// first look for gallery variable 
 	if (!empty( $gallery ))  {
 		
-		if ( ($albumID != $album) && ($albumID != 'all') ) 
-			return;
-			
 		// if gallery is is submit , then show the gallery instead 
-		$galleryID = (int) $gallery;
-		$out = nggShowGallery($galleryID);
+		$out = nggShowGallery( intval($gallery) );
 		return $out;
 	}
+	
+	//redirect to subalbum
+	if (!empty( $album ))
+		$albumID = $album;
 	 
 	// lookup in the database
 	$album = nggdb::find_album( $albumID );
@@ -315,7 +321,7 @@ function nggShowAlbum($albumID, $template = 'extend') {
 function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 	// create a gallery overview div
 	
-	global $wpdb, $nggRewrite;
+	global $wpdb, $nggRewrite, $nggdb;
 	
     // $_GET from wp_query
 	$nggpage  = get_query_var('nggpage');	
@@ -352,8 +358,35 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 
 	// re-order them and populate some 
  	foreach ($sortorder as $key) {
- 		$galleries[$key] = $unsort_galleries[$key];
-		
+ 		
+ 		//if we have a prefix 'a' then it's a subalbum, instead a gallery
+ 		if (substr( $key, 0, 1) == 'a') { 
+ 			// get the album content
+			 if ( !$subalbum = $nggdb->find_album(substr( $key, 1)) )
+ 				continue;
+ 			
+			//populate the sub album values
+			$galleries[$key]->counter = 0;
+			if ($subalbum->previewpic > 0)
+				$image = $nggdb->find_image( $subalbum->previewpic );
+			$galleries[$key]->previewpic = $subalbum->previewpic;
+			$galleries[$key]->previewurl = ($image->thumbURL) ? $image->thumbURL : '';
+			$galleries[$key]->previewname = $subalbum->name;
+			
+			//link to the subalbum
+			$args['album'] = $subalbum->id;
+			$args['gallery'] = false; 
+			$args['nggpage'] = false;
+			$galleries[$key]->pagelink = $nggRewrite->get_permalink($args);
+			$galleries[$key]->galdesc = html_entity_decode ( nggGallery::i18n($subalbum->albumdesc) );
+			$galleries[$key]->title = html_entity_decode ( nggGallery::i18n($subalbum->name) ); 
+			
+			continue;
+		}
+
+ 		// Add the counter value if avaible
+  		$galleries[$key] = $unsort_galleries[$key];
+	
 		// add the file name and the link 
 		if ($galleries[$key]->previewpic  != 0) {
 			$galleries[$key]->previewname = $albumPreview[$galleries[$key]->previewpic]->filename;
@@ -378,6 +411,9 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 		
 		// description can contain HTML tags
 		$galleries[$key]->galdesc = html_entity_decode ( stripslashes($galleries[$key]->galdesc) ) ;
+
+		// i18n
+		$galleries[$key]->title = html_entity_decode ( nggGallery::i18n($galleries[$key]->title) ) ;
 	}
 
  	// check for page navigation
@@ -460,6 +496,9 @@ function nggCreateImageBrowser($picarray, $template = '') {
 	
 	// $_GET from wp_query
 	$pid  = get_query_var('pid');
+	
+	// we need to know the current page id
+	$current_page = (get_the_ID() == false) ? 0 : get_the_ID();
 
     if ( !is_array($picarray) )
 		$picarray = array($picarray);
@@ -493,12 +532,15 @@ function nggCreateImageBrowser($picarray, $template = '') {
 	// add more variables for render output
 	$picture->href_link = $picture->get_href_link();
 	$picture->previous_image_link = $nggRewrite->get_permalink(array ('pid' => $back_pid));
+	$picture->previous_pid = $back_pid;
 	$picture->next_image_link  = $nggRewrite->get_permalink(array ('pid' => $next_pid));
+	$picture->next_pid = $next_pid;
 	$picture->number = $key + 1;
 	$picture->total = $total;
 	$picture->linktitle = htmlspecialchars( stripslashes($picture->description) );
 	$picture->alttext = html_entity_decode( stripslashes($picture->alttext) );
 	$picture->description = html_entity_decode( stripslashes($picture->description) );
+	$picture->anchor = 'ngg-imagebrowser-' . $picture->galleryid . '-' . $current_page;
 	
 	// filter to add custom content for the output
 	$picture = apply_filters('ngg_image_object', $picture, $act_pid);
@@ -566,11 +608,16 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
 	
 	// clean mode if needed 
 	$mode = ( eregi('web20|watermark', $mode) ) ? $mode : '';
+	
+	//let's initiate the url
+	$picture->thumbnailURL = false;
 
 	// check fo cached picture
 	if ( ($ngg_options['imgCacheSinglePic']) && ($post->post_status == 'publish') )
 		$picture->thumbnailURL = $picture->cached_singlepic_file($width, $height, $mode );
-	else
+	
+	// if we didn't use a cached image then we take the on-the-fly mode	
+	if (!$picture->thumbnailURL) 
 		$picture->thumbnailURL = NGGALLERY_URLPATH . 'nggshow.php?pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=' . $mode;
 
 	// add more variables for render output

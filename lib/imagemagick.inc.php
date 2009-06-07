@@ -341,7 +341,12 @@ var $imageMagickBefore;
 
 		//string to resize the picture to $this->newDimensions['newWidth'],$this->newDimensions['newHeight']
 		//should result in: -thumbnail $this->newDimensions['newWidth']x$this->newDimensions['newHeight']
-		$this->imageMagickExec .= " -resize ".$maxWidth."x".$maxHeight;
+		if($maxWidth=='0')
+			$this->imageMagickExec .= " -resize x".$maxHeight;
+		elseif($maxHeight=='0')
+			$this->imageMagickExec .= " -resize ".$maxWidth."x";
+		elseif($maxHeight!='0' && $maxWidth!='0')
+			$this->imageMagickExec .= " -resize ".$maxWidth."x".$maxHeight;
 			
 		// next calculations should be done with the 'new' dimensions
 		$this->currentDimensions['width'] = $this->newDimensions['newWidth'];

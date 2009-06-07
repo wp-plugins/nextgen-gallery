@@ -1,5 +1,5 @@
 <?php
-
+if ( !class_exists('nggImage') ) :
 /**
 * Image PHP class for the WordPress plugin NextGEN Gallery
 * 
@@ -188,5 +188,5 @@ class nggImage{
 		return $this->permalink; 
 	}
 }
-
+endif;
 ?>

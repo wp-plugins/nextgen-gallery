@@ -21,13 +21,11 @@ class nggAdminPanel{
 		
 		add_filter('contextual_help', array(&$this, 'show_help'), 10, 2);
 		add_filter('screen_meta_screen', array(&$this, 'edit_screen_meta'));
-		
-		$this->register_columns();		
 	}
 
 	// integrate the menu	
 	function add_menu()  {
-		
+	
 		add_menu_page( __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ), __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'), NGGALLERY_URLPATH .'admin/images/nextgen.png' );
 	    add_submenu_page( NGGFOLDER , __('Overview', 'nggallery'), __('Overview', 'nggallery'), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'));
 		add_submenu_page( NGGFOLDER , __('Add Gallery / Images', 'nggallery'), __('Add Gallery / Images', 'nggallery'), 'NextGEN Upload images', 'nggallery-add-gallery', array (&$this, 'show_menu'));
@@ -44,6 +42,9 @@ class nggAdminPanel{
 		if ( wpmu_site_admin() )
 			add_submenu_page( 'wpmu-admin.php' , __('NextGEN Gallery', 'nggallery'), __('NextGEN Gallery', 'nggallery'), 'activate_plugins', 'nggallery-wpmu', array (&$this, 'show_menu'));
 
+		//register the column fields
+		$this->register_columns();	
+
 	}
 
 	// load the script for the defined page and load only this code	
@@ -55,7 +56,7 @@ class nggAdminPanel{
 		$nggCheck 			= new CheckPlugin();	
 		$nggCheck->URL 		= NGGURL;
 		$nggCheck->version 	= NGGVERSION;
-		$nggCheck->name 	= "ngg";
+		$nggCheck->name 	= 'ngg';
 
 		// check for upgrade and show upgrade screen
 		if( get_option( 'ngg_db_version' ) != NGG_DBVERSION ) {
@@ -87,7 +88,8 @@ class nggAdminPanel{
 				break;
 			case "nggallery-manage-album" :
 				include_once ( dirname (__FILE__) . '/album.php' );		// nggallery_admin_manage_album
-				nggallery_admin_manage_album();
+				$ngg->manage_album = new nggManageAlbum ();
+				$ngg->manage_album->controller();
 				break;				
 			case "nggallery-options" :
 				include_once ( dirname (__FILE__) . '/settings.php' );		// nggallery_admin_options
@@ -131,6 +133,10 @@ class nggAdminPanel{
 	
 	function load_scripts() {
 		
+		// no need to go on if it's not a plugin page
+		if(!isset($_GET['page']))
+			return;
+
 		wp_register_script('ngg-ajax', NGGALLERY_URLPATH .'admin/js/ngg.ajax.js', array('jquery'), '1.0.0');
 		wp_localize_script('ngg-ajax', 'nggAjaxSetup', array(
 					'url' => admin_url('admin-ajax.php'),
@@ -152,19 +158,21 @@ class nggAdminPanel{
 				wp_enqueue_script( 'postbox' );
 				wp_enqueue_script( 'ngg-ajax' );
 				wp_enqueue_script( 'ngg-progressbar' );
+				//wp_enqueue_script( 'jquery-ui-dialog' );
 				//TODO:Add Inline edit later
 				//wp_enqueue_script( 'ngg-inline-edit', NGGALLERY_URLPATH .'admin/js/ngg.inline-edit-images.js', array('jquery'), '1.0.0' );
 				add_thickbox();
 			break;
 			case "nggallery-manage-album" :
 				wp_enqueue_script( 'jquery-ui-sortable' );
+				add_thickbox();
 			break;
 			case "nggallery-options" :
 				wp_enqueue_script( 'jquery-ui-tabs' );
 			break;		
 			case "nggallery-add-gallery" :
 				wp_enqueue_script( 'jquery-ui-tabs' );
-				wp_enqueue_script( 'mutlifile', NGGALLERY_URLPATH .'admin/js/jquery.MultiFile.js', array('jquery'), '1.1.1' );
+				wp_enqueue_script( 'mutlifile', NGGALLERY_URLPATH .'admin/js/jquery.MultiFile.js', array('jquery'), '1.4.4' );
 				wp_enqueue_script( 'ngg-swfupload-handler', NGGALLERY_URLPATH .'admin/js/swfupload.handler.js', array('swfupload_f10'), '1.0.0' );
 				wp_enqueue_script( 'ngg-ajax' );
 				wp_enqueue_script( 'ngg-progressbar' );
@@ -174,8 +182,13 @@ class nggAdminPanel{
 	
 	function load_styles() {
 		
+		// no need to go on if it's not a plugin page
+		if(!isset($_GET['page']))
+			return;
+
 		switch ($_GET['page']) {
 			case NGGFOLDER :
+			case "nggallery-about" :
 				wp_enqueue_style( 'nggadmin', NGGALLERY_URLPATH .'admin/css/nggadmin.css', false, '2.7.0', 'screen' );
 				wp_admin_css( 'css/dashboard' );
 			break;
@@ -185,6 +198,7 @@ class nggAdminPanel{
 			case "nggallery-manage-gallery" :
 			case "nggallery-roles" :
 			case "nggallery-manage-album" :
+				//wp_enqueue_style( 'jqueryui', NGGALLERY_URLPATH .'admin/css/jquery-ui.css', false, '1.7.1', 'screen' );
 				wp_enqueue_style( 'nggadmin', NGGALLERY_URLPATH .'admin/css/nggadmin.css', false, '2.7.0', 'screen' );
 				wp_enqueue_style( 'thickbox');			
 			break;

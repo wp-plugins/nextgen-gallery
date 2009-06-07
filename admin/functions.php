@@ -2,11 +2,26 @@
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
+/**
+ * nggAdmin - Class for admin operation
+ * 
+ * @package NextGEN Gallery
+ * @author Alex Rabe
+ * @copyright 2007-2209
+ * @access public
+ */
 class nggAdmin{
 
-	// **************************************************************
+	/**
+	 * create a new gallery & folder
+	 * 
+	 * @class nggAdmin
+	 * @param string $gallerytitle
+	 * @param string $defaultpath
+	 * @return
+	 */
 	function create_gallery($gallerytitle, $defaultpath) {
-		// create a new gallery & folder
+
 		global $wpdb, $user_ID;
  
 		// get the current user ID
@@ -85,7 +100,7 @@ class nggAdmin{
 			$result = $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggallery (name, path, title, author) VALUES (%s, %s, %s, %s)", $galleryname, $nggpath, $gallerytitle , $user_ID) );
 			if ($result) {
 				$message  = __('Gallery %1$s successfully created.<br/>You can show this gallery with the tag %2$s.<br/>','nggallery');
-				$message  = sprintf($message, $galleryname, '[gallery id=' . $wpdb->insert_id . ']');
+				$message  = sprintf($message, $galleryname, '[nggallery id=' . $wpdb->insert_id . ']');
 				$message .= '<a href="' . admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=' . $wpdb->insert_id . '" >';
 				$message .= __('Edit gallery','nggallery');
 				$message .= '</a>';
@@ -96,11 +111,15 @@ class nggAdmin{
 		} 
 	}
 	
-	// **************************************************************
+	/**
+	 * nggAdmin::import_gallery()
+	 * TODO: Check permission of existing thumb folder & images
+	 * 
+	 * @class nggAdmin
+	 * @param string $galleryfolder contains relative path
+	 * @return
+	 */
 	function import_gallery($galleryfolder) {
-		// ** $galleryfolder contains relative path
-		
-		//TODO: Check permission of existing thumb folder & images
 		
 		global $wpdb, $user_ID;
 
@@ -179,7 +198,14 @@ class nggAdmin{
 		return;
 
 	}
-	// **************************************************************
+
+	/**
+	 * nggAdmin::scandir()
+	 * 
+	 * @class nggAdmin
+	 * @param string $dirname
+	 * @return
+	 */
 	function scandir($dirname = '.') { 
 		// thx to php.net :-)
 		$ext = array('jpeg', 'jpg', 'png', 'gif'); 
@@ -198,6 +224,7 @@ class nggAdmin{
 	/**
 	 * nggAdmin::createThumbnail() - function to create or recreate a thumbnail
 	 * 
+	 * @class nggAdmin
 	 * @param object | int $image contain all information about the image or the id
 	 * @return string result code
 	 * @since v1.0.0
@@ -276,6 +303,7 @@ class nggAdmin{
 	/**
 	 * nggAdmin::resize_image() - create a new image, based on the height /width
 	 * 
+	 * @class nggAdmin
 	 * @param object | int $image contain all information about the image or the id
 	 * @param integer $width optional 
 	 * @param integer $height optional
@@ -319,6 +347,7 @@ class nggAdmin{
 	/**
 	 * nggAdmin::set_watermark() - set the watermarl for the image
 	 * 
+	 * @class nggAdmin
 	 * @param object | int $image contain all information about the image or the id
 	 * @return string result code
 	 */
@@ -362,16 +391,29 @@ class nggAdmin{
 		return '1';
 	}
 
-	// **************************************************************
+	/**
+	 * Add images to database
+	 * 
+	 * @class nggAdmin
+	 * @param int $galleryID
+	 * @param array $imageslist
+	 * @return array $image_ids Id's which are sucessful added
+	 */
 	function add_Images($galleryID, $imageslist) {
-		// add images to database		
+		
 		global $wpdb;
 		
 		$image_ids = array();
 		
 		if ( is_array($imageslist) ) {
 			foreach($imageslist as $picture) {
-				$result = $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES (%s, %s, %s, 0)", $galleryID, $picture, $picture) );
+				
+				// strip off the extension of the filename
+				$path_parts = pathinfo( $picture );
+				$alttext = ( !isset($path_parts['filename']) ) ? substr($path_parts['basename'], 0,strpos($path_parts['basename'], '.')) : $path_parts['filename'];
+				// save it to the database 
+				$result = $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES (%s, %s, %s, 0)", $galleryID, $picture, $alttext) );
+				// and give me the new id
 				$pic_id = (int) $wpdb->insert_id;
 				if ($result) 
 					$image_ids[] = $pic_id;
@@ -390,12 +432,18 @@ class nggAdmin{
 		
 	}
 
-	// **************************************************************
+	/**
+	 * Import some metadata into the database (if avialable)
+	 * 
+	 * @class nggAdmin
+	 * @param array|int $imagesIds
+	 * @return bool
+	 */
 	function import_MetaData($imagesIds) {
-		// add images to database		
+			
 		global $wpdb;
 		
-		require_once(NGGALLERY_ABSPATH.'/lib/image.php');
+		require_once(NGGALLERY_ABSPATH . '/lib/image.php');
 		
 		if (!is_array($imagesIds))
 			$imagesIds = array($imagesIds);
@@ -422,15 +470,21 @@ class nggAdmin{
 					wp_set_object_terms($pic_id, $taglist, 'ngg_tag');
 				} // add tags
 			}// error check
-		} // foreach
+		}
 		
 		return true;
 		
 	}
 
-	// **************************************************************
+	/**
+	 * nggAdmin::get_MetaData()
+	 * 
+	 * @class nggAdmin
+	 * @require NextGEN Meta class
+	 * @param string $picPath must be Gallery absPath + filename
+	 * @return array metadata
+	 */
 	function get_MetaData($picPath) {
-		// must be Gallery absPath + filename
 		
 		require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
 		
@@ -446,7 +500,15 @@ class nggAdmin{
 		
 	}
 
-	// **************************************************************
+	/**
+	 * Unzip a file via the PclZip class
+	 * 
+	 * @class nggAdmin
+	 * @require PclZip class
+	 * @param string $dir
+	 * @param string $file
+	 * @return bool
+	 */
 	function unzip($dir, $file) {
 		
 		if(! class_exists('PclZip'))
@@ -463,7 +525,14 @@ class nggAdmin{
 		return true;
 	}
  
-	// **************************************************************
+	/**
+	 * nggAdmin::getOnlyImages()
+	 * 
+	 * @class nggAdmin
+	 * @param mixed $p_event
+	 * @param mixed $p_header
+	 * @return bool
+	 */
 	function getOnlyImages($p_event, $p_header)	{
 		
 		$info = pathinfo($p_header['filename']);
@@ -482,23 +551,61 @@ class nggAdmin{
 		}
 	}
 
-	// **************************************************************
+	/**
+	 * Import a ZIP file via a upload form or a URL
+	 * 
+	 * @class nggAdmin
+	 * @param int (optional) $galleryID
+	 * @return bool $result
+	 */
 	function import_zipfile($galleryID) {
 
 		global $ngg, $wpdb;
 		
 		if (nggAdmin::check_quota())
 			return false;
-
+		
 		$defaultpath = $ngg->options['gallerypath'];		
-		$temp_zipfile = $_FILES['zipfile']['tmp_name'];
-		$filename = $_FILES['zipfile']['name']; 
-					
-		// check if file is a zip file
-		if (!eregi('zip|download|octet-stream', $_FILES['zipfile']['type'])) {
-			@unlink($temp_zipfile); // del temp file
-			nggGallery::show_error(__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type']);
-			return false; 
+		$zipurl = $_POST['zipurl'];
+		
+		// if someone entered a URL try to upload it
+		if (!empty($zipurl) && (function_exists('curl_init')) ) {
+			
+			if (!(preg_match('/^http(s)?:\/\//i', $zipurl) )) {
+				nggGallery::show_error( __('No valid URL path ','nggallery') );
+				return false; 
+			}
+			
+			$temp_zipfile = tempnam('/tmp', 'zipimport_');
+			$filename = basename($url);
+			
+			//Grab the zip via cURL
+			$save = fopen ( $temp_zipfile, "w" );
+			$ch = curl_init ();
+			curl_setopt ( $ch, CURLOPT_FILE, $save );
+			curl_setopt ( $ch, CURLOPT_HEADER, 0 );
+			curl_setopt ( $ch, CURLOPT_BINARYTRANSFER, 1 );
+			curl_setopt ( $ch, CURLOPT_URL, $url );
+			$success = curl_exec ( $ch );
+			if (!$success)
+				nggGallery::show_error( __('Import via cURL failed.','nggallery') . ' Error code ' . curl_errno( $ch ) . ' : ' . curl_error( $ch ) );
+			curl_close ( $ch );
+			fclose($save);
+			
+			if (!$success)
+				return false; 
+			
+		} else {
+			
+			$temp_zipfile = $_FILES['zipfile']['tmp_name'];
+			$filename = $_FILES['zipfile']['name']; 
+						
+			// check if file is a zip file
+			if (!eregi('zip|download|octet-stream', $_FILES['zipfile']['type'])) {
+				@unlink($temp_zipfile); // del temp file
+				nggGallery::show_error(__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type']);
+				return false; 
+			}
 		}
 
 		// should this unpacked into a new folder ?		
@@ -548,10 +655,14 @@ class nggAdmin{
 		return true;
 	}
 
-	// **************************************************************
+	/**
+	 * Function for uploading of images via the upload form
+	 * 
+	 * @class nggAdmin
+	 * @return void
+	 */
 	function upload_images() {
-	// upload of pictures
-		
+	
 		global $wpdb;
 		
 		// WPMU action
@@ -646,11 +757,17 @@ class nggAdmin{
 		
 		return;
 
-	} // end function
+	}
 	
-	// **************************************************************
+	/**
+	 * Upload function will be called via teh Flash uploader
+	 * 
+	 * @class nggAdmin
+	 * @param integer $galleryID
+	 * @return string $result
+	 */
 	function swfupload_image($galleryID = 0) {
-		// This function is called by the swfupload
+
 		global $wpdb;
 		
 		if ($galleryID == 0) {
@@ -708,9 +825,14 @@ class nggAdmin{
 		return '0';
 	}	
 	
-	// **************************************************************
+	/**
+	 * Check the Quota under WPMU. Only needed for this case
+	 * 
+	 * @class nggAdmin
+	 * @return bool $result
+	 */
 	function check_quota() {
-		// Only for WPMU
+
 			if ( (IS_WPMU) && wpmu_enable_function('wpmuQuotaCheck'))
 				if( $error = upload_is_user_over_quota( false ) ) {
 					nggGallery::show_error( __( 'Sorry, you have used your space allocation. Please delete some files to upload more files.','nggallery' ) );
@@ -719,9 +841,15 @@ class nggAdmin{
 			return false;
 	}
 	
-	// **************************************************************
+	/**
+	 * Set correct file permissions (taken from wp core)
+	 * 
+	 * @class nggAdmin
+	 * @param string $filename
+	 * @return bool $result
+	 */
 	function chmod($filename = '') {
-		// Set correct file permissions (taken from wp core)
+
 		$stat = @ stat(dirname($filename));
 		$perms = $stat['mode'] & 0007777;
 		$perms = $perms & 0000666;
@@ -731,9 +859,16 @@ class nggAdmin{
 		return false;
 	}
 	
+	/**
+	 * Check UID in folder and Script
+	 * Read http://www.php.net/manual/en/features.safe-mode.php to understand safe_mode
+	 * 
+	 * @class nggAdmin
+	 * @param string $foldername
+	 * @return bool $result
+	 */
 	function check_safemode($foldername) {
-		// Check UID in folder and Script
-		// Read http://www.php.net/manual/en/features.safe-mode.php to understand safe_mode
+
 		if ( SAFE_MODE ) {
 			
 			$script_uid = ( ini_get('safe_mode_gid') ) ? getmygid() : getmyuid();
@@ -750,27 +885,43 @@ class nggAdmin{
 		return true;
 	}
 	
+	/**
+	 * Cpapbility check. Check is the ID fit's to the user_ID'
+	 * 
+	 * @class nggAdmin
+	 * @param int $check_ID is teh user_id
+	 * @return bool $result
+	 */
 	function can_manage_this_gallery($check_ID) {
-		// check is the ID fit's to the user_ID'
+		
 		global $user_ID, $wp_roles;
 		
-		// get the current user ID
-		get_currentuserinfo();
-		
-		if ( !current_user_can('NextGEN Manage others gallery') )
+		if ( !current_user_can('NextGEN Manage others gallery') ) {
+			// get the current user ID
+			get_currentuserinfo();
+			
 			if ( $user_ID != $check_ID)
 				return false;
+		}
 		
 		return true;
 	
 	}
 	
+	/**
+	 * Move images from one folder to another
+	 * 
+	 * @class nggAdmin
+	 * @param array|int $pic_ids ID's of the images
+	 * @param int $dest_gid destination gallery
+	 * @return void
+	 */
 	function move_images($pic_ids, $dest_gid) {
 
 		$errors = '';
 		$count = 0;
 
-		if (!is_array($pic_ids))
+		if ( !is_array($pic_ids) )
 			$pic_ids = array($pic_ids);
 		
 		// Get destination gallery
@@ -835,6 +986,11 @@ class nggAdmin{
 	
 	/**
 	 * Copy images to another gallery
+	 * 
+	 * @class nggAdmin
+	 * @param array|int $pic_ids ID's of the images
+	 * @param int $dest_gid destination gallery
+	 * @return void
 	 */
 	function copy_images($pic_ids, $dest_gid) {
 		
@@ -863,7 +1019,7 @@ class nggAdmin{
 		
 		foreach ($images as $image) {		
 			// WPMU action
-			if (nggAdmin::check_quota())
+			if ( nggAdmin::check_quota() )
 				return;
 			
 			$i = 0;
@@ -923,6 +1079,15 @@ class nggAdmin{
 		return;
 	}
 	
+	/**
+	 * Initate the Ajax operation
+	 * 
+	 * @class nggAdmin	 
+	 * @param string $operation name of the function which should be executed
+	 * @param array $image_array
+	 * @param string $title name of the operation
+	 * @return string the javascript output
+	 */
 	function do_ajax_operation( $operation, $image_array, $title = '' ) {
 		
 		if ( !is_array($image_array) || empty($image_array) )
@@ -957,8 +1122,9 @@ class nggAdmin{
 	/**
 	 * nggAdmin::set_gallery_preview() - define a preview pic after the first upload, can be changed in the gallery settings
 	 * 
+	 * @class nggAdmin
 	 * @param int $galleryID
-	 * @return
+	 * @return void
 	 */
 	function set_gallery_preview( $galleryID ) {
 		
@@ -978,8 +1144,13 @@ class nggAdmin{
 
 } // END class nggAdmin
 
-// **************************************************************
-//TODO: Cannot be member of a class ? Check PCLZIP later...
+/**
+ * TODO: Cannot be member of a class ? Check PCLZIP later...
+ * 
+ * @param mixed $p_event
+ * @param mixed $p_header
+ * @return
+ */
 function ngg_getOnlyImages($p_event, $p_header)	{
 	
 	return nggAdmin::getOnlyImages($p_event, $p_header);

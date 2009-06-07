@@ -1,10 +1,10 @@
 <?php
-
+if ( !class_exists('nggdb') ) :
 /**
  * NextGEN Gallery Database Class
  * 
  * @author Alex Rabe, Vincent Prat
- * @copyright 2008
+ * @copyright 2008-2009
  * @since 1.0.0
  */
 class nggdb {
@@ -17,6 +17,24 @@ class nggdb {
 	 * @var object|array
 	 */
 	var $galleries = false;
+
+	/**
+	 * Holds the list of all images
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 * @var object|array
+	 */
+	var $images = false;
+
+	/**
+	 * Holds the list of all albums
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 * @var object|array
+	 */
+	var $albums = false;
 	
 	/**
 	 * The array for the pagination
@@ -43,9 +61,11 @@ class nggdb {
 		global $wpdb;
 		
 		$this->galleries = array();
-		$this->paged = array();
+		$this->images 	 = array();
+		$this->albums 	 = array();
+		$this->paged 	 = array();
 		
-		register_shutdown_function(array(&$this, "__destruct"));
+		register_shutdown_function(array(&$this, '__destruct'));
 		
 	}
 	
@@ -57,6 +77,32 @@ class nggdb {
 	function __destruct() {
 		return true;
 	}	
+
+	/**
+	 * Get all the album nad unserialize the content
+	 * 
+	 * @since 1.3.0
+	 * @param string $order_by
+	 * @param string $order_dir
+	 * @return array $album
+	 */
+	function find_all_album( $order_by = 'id', $order_dir = 'ASC') {	
+		global $wpdb; 
+		
+		$order_dir = ( $order_dir == 'DESC') ? 'DESC' : 'ASC';
+		$this->albums = $wpdb->get_results("SELECT * FROM $wpdb->nggalbum ORDER BY {$order_by} {$order_dir}" , OBJECT_K );
+		
+		if ( !$this->albums )
+			return array();
+		
+		foreach ($this->albums as $key => $value) {
+			$this->albums[$key]->galleries = (array) unserialize($this->albums[$key]->sortorder);
+			$this->albums[$key]->name = stripslashes( $this->albums[$key]->name ); 
+			$this->albums[$key]->albumdesc = stripslashes( $this->albums[$key]->albumdesc ); 
+		}
+		
+		return $this->albums;
+	}
 
 	/**
 	 * Get all the galleries
@@ -210,6 +256,7 @@ class nggdb {
 
 		return $result;		
 	}	
+	
 	/**
 	 * Delete a gallery AND all the pictures associated to this gallery!
 	 * 
@@ -236,12 +283,14 @@ class nggdb {
 		// Query database
 		if ( is_numeric($id) && $id != 0 ) {
 			$album = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->nggalbum WHERE id = %d", $id) );
-		} elseif ( $id == 'all' || $id == 0 ) {
+		} elseif ( $id == 'all' || (is_numeric($id) && $id == 0) ) {
 			// init the object and fill it
 			$album = new stdClass();
 			$album->id = 'all';
 			$album->name = __('Album overview','nggallery');
-			$album->sortorder =  serialize( $wpdb->get_col("SELECT gid FROM $wpdb->nggallery") );
+			$album->albumdesc  = __('Album overview','nggallery');
+			$album->previewpic = 0;
+			$album->sortorder  =  serialize( $wpdb->get_col("SELECT gid FROM $wpdb->nggallery") );
 		} else {
 			$album = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->nggalbum WHERE name = '%s'", $id) );
 		}
@@ -250,6 +299,11 @@ class nggdb {
 		if ( $album ) {
 			if ( !empty( $album->sortorder ) ) 
 				$album->gallery_ids = unserialize( $album->sortorder );
+			
+			// it was a bad idea to use a object, stripslashes_deep() could not used here, learn from it
+			$album->albumdesc  = stripslashes($album->albumdesc);
+			$album->name	   = stripslashes($album->name);
+					
 			return $album;
 		} 
 		
@@ -500,14 +554,67 @@ class nggdb {
 		return null;	 
 	}
 
-}
+	/**
+	 * search for images and return the result
+	 * 
+	 * @since 1.3.0
+	 * @param string $request
+	 * @return Array Result of the request
+	 */
+	function search_for_images( $request ) {
+		global $wpdb;
+		
+		// If a search pattern is specified, load the posts that match
+		if ( !empty($request) ) {
+			// added slashes screw with quote grouping when done early, so done later
+			$request = stripslashes($request);
+			
+			// split the words it a array if seperated by a space or comma
+			preg_match_all('/".*?("|$)|((?<=[\\s",+])|^)[^\\s",+]+/', $request, $matches);
+			$search_terms = array_map(create_function('$a', 'return trim($a, "\\"\'\\n\\r ");'), $matches[0]);
+			
+			$n = '%';
+			$searchand = '';
+			
+			foreach( (array) $search_terms as $term) {
+				$term = addslashes_gpc($term);
+				$search .= "{$searchand}((tt.description LIKE '{$n}{$term}{$n}') OR (tt.alttext LIKE '{$n}{$term}{$n}') OR (tt.filename LIKE '{$n}{$term}{$n}'))";
+				$searchand = ' AND ';
+			}
+			
+			$term = $wpdb->escape($request);
+			if (count($search_terms) > 1 && $search_terms[0] != $request )
+				$search .= " OR (tt.description LIKE '{$n}{$term}{$n}') OR (tt.alttext LIKE '{$n}{$term}{$n}') OR (tt.filename LIKE '{$n}{$term}{$n}')";
 
-if ( ! isset($nggdb) ) {
+			if ( !empty($search) )
+				$search = " AND ({$search}) ";
+		}
+		
+		// build the final query
+		$query = "SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE 1=1 $search ORDER BY tt.pid ASC ";
+				$result = $wpdb->get_results($query);
+
+		// Return the object from the query result
+		if ($result) {
+			foreach ($result as $image) {
+				$images[] = new nggImage( $image );
+			}
+			return $images;
+		} 
+
+		return null;
+	}
+
+}
+endif;
+
+if ( ! isset($GLOBALS['nggdb']) ) {
 	/**
 	 * Initate the NextGEN Gallery Database Object, for later cache reasons
 	 * @global object $nggdb Creates a new wpdb object based on wp-config.php Constants for the database
 	 * @since 1.1.0
 	 */
-	$nggdb = new nggdb();
+	unset($GLOBALS['nggdb']);
+	$GLOBALS['nggdb'] =& new nggdb();
 }
 ?>

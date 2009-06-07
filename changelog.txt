@@ -1,6 +1,20 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V1.3.0 - 07.06.2009
+- NEW : Subalbum support
+- NEW : Search for images in the admin tab
+- NEW : Add new gallery also in manage tab
+- NEW : AJAX support for Imagebrowser and gallery navigation (THX to Anty)
+- NEW : Added zip upload via URL (THX to Juan Jose Galvez)
+- Added : jQuery Multiple File Upload Plugin v1.44
+- Added : SWFUpload V2.2.0
+- Changed : Remove extension for Alttext during first import
+- Changed : Meta tag added via wp_head hook (THX to Viper)
+- Bugfix : Correct various PHP notice messages
+- Bugfix : Typo fix in custom fields for ngg_gal_ImageBrowser
+- Bugfix : Avoid upload of images in gallery without correct capability  
+
 V1.2.1 - 22.03.2009
 - NEW : Support for IE8 Web Slices in widgets
 - NEW : Add filter ngg_image_object

@@ -89,7 +89,7 @@ class add_nextgen_button {
 	 * @return $versio
 	 */
 	function change_tinymce_version($version) {
-			$version = $version + $internalVersion;
+			$version = $version + $this->internalVersion;
 		return $version;
 	}
 	

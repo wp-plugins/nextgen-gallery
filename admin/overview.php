@@ -4,27 +4,61 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 /**
  * nggallery_admin_overview()
  *
- * Add the admin overview in wp2.7 style 
+ * Add the admin overview the dashboard style 
  * @return mixed content
  */
-function nggallery_admin_overview()  {	
-?>
-<div class="wrap ngg-wrap">
-	<h2><?php _e('NextGEN Gallery Overview', 'nggallery') ?></h2>
-	<div id="dashboard-widgets-wrap" class="ngg-overview">
-	    <div id="dashboard-widgets" class="metabox-holder">
-	    	<div id="side-info-column" class="inner-sidebar">
-				<?php do_meta_boxes('ngg_overview', 'right', ''); ?>
-			</div>
-			<div id="post-body" class="has-sidebar">
-				<div id="dashboard-widgets-main-content" class="has-sidebar-content">
-				<?php do_meta_boxes('ngg_overview', 'left', ''); ?>
+function nggallery_admin_overview()  {
+
+	// new way since wp 2.8
+	if ( version_compare($GLOBALS['wp_version'], '2.7.999', '>') ) {
+	?>
+	<div class="wrap ngg-wrap">
+		<h2><?php _e('NextGEN Gallery Overview', 'nggallery') ?></h2>
+		<div id="dashboard-widgets-wrap" class="ngg-overview">
+		    <div id="dashboard-widgets" class="metabox-holder">
+				<div id="post-body">
+					<div id="dashboard-widgets-main-content">
+						<div class="postbox-container" style="width:49%;">
+							<?php do_meta_boxes('ngg_overview', 'left', ''); ?>
+						</div>
+			    		<div class="postbox-container" style="width:49%;">
+							<?php do_meta_boxes('ngg_overview', 'right', ''); ?>
+						</div>						
+					</div>
 				</div>
-			</div>
-	    </div>
+		    </div>
+		</div>
 	</div>
-</div>
-<?php
+	<script type="text/javascript">
+		//<![CDATA[
+		jQuery(document).ready( function($) {
+			// postboxes setup
+			postboxes.add_postbox_toggles('ngg-overview');
+		});
+		//]]>
+	</script>
+	<?php
+	
+	} else {
+	
+	?>	
+	<div class="wrap ngg-wrap">
+		<h2><?php _e('NextGEN Gallery Overview', 'nggallery') ?></h2>
+		<div id="dashboard-widgets-wrap" class="ngg-overview">
+		    <div id="dashboard-widgets" class="metabox-holder">
+		    	<div id="side-info-column" class="inner-sidebar">
+					<?php do_meta_boxes('ngg_overview', 'right', ''); ?>
+				</div>
+				<div id="post-body" class="has-sidebar">
+					<div id="dashboard-widgets-main-content" class="has-sidebar-content">
+					<?php do_meta_boxes('ngg_overview', 'left', ''); ?>
+					</div>
+				</div>
+		    </div>
+		</div>
+	</div>
+	<?php
+	}
 }
 
 /**
@@ -68,6 +102,51 @@ function ngg_overview_graphic_lib() {
 	  		<ul class="settings">
 			<?php ngg_gd_info(); ?>
 			</ul>
+		</div>
+    </div>
+</div>
+<?php	
+}
+
+/**
+ * Show the GD ibfos
+ * 
+ * @return void
+ */
+function ngg_overview_donators() {
+	global $ngg;
+	
+	$i = 0;
+	$list = '';
+	
+	$supporter = nggAdminPanel::get_remote_array($ngg->donators);
+
+	// Ensure that this is a array
+	if ( !is_array($supporter) )
+		return _e('Thanks to all donators...', 'nggallery');
+		
+	$supporter = array_reverse($supporter);
+	
+	foreach ($supporter as $name => $url) {
+		$i++;
+		if ($url)
+			$list .= "<li><a href=\"$url\">$name</a></li>\n";
+		else
+			$list .= "<li>$name</li>";
+		if ($i > 4)
+			break;
+	}
+
+?>
+<div id="dashboard_server_settings" class="dashboard-widget-holder">
+	<div class="ngg-dashboard-widget">
+	  	<div class="dashboard-widget-content">
+	  		<ul class="settings">
+			<?php echo $list; ?>
+			</ul>
+			<p class="textright">
+				<a class="button" href="admin.php?page=nggallery-about#donators"><?php _e('View all', 'nggallery'); ?></a>
+			</p>
 		</div>
     </div>
 </div>
@@ -167,6 +246,7 @@ function ngg_overview_right_now() {
 
 add_meta_box('dashboard_right_now', __('Welcome to NextGEN Gallery !', 'nggallery'), 'ngg_overview_right_now', 'ngg_overview', 'left', 'core');
 add_meta_box('dashboard_primary', __('Latest News', 'nggallery'), 'ngg_overview_news', 'ngg_overview', 'right', 'core');
+add_meta_box('ngg_lastdonators', __('Recent donators', 'nggallery'), 'ngg_overview_donators', 'ngg_overview', 'left', 'core');
 add_meta_box('ngg_server', __('Server Settings', 'nggallery'), 'ngg_overview_server', 'ngg_overview', 'left', 'core');
 add_meta_box('ngg_gd_lib', __('Graphic Library', 'nggallery'), 'ngg_overview_graphic_lib', 'ngg_overview', 'right', 'core');
 

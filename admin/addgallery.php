@@ -31,8 +31,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	
 	if ($_POST['zipupload']){
 		check_admin_referer('ngg_addgallery');
-		if ($_FILES['zipfile']['error'] == 0) 
-			$messagetext = nggAdmin::import_zipfile( intval( $_POST['zipgalselect'] ) );
+		if ($_FILES['zipfile']['error'] == 0 || (!empty($_POST['zipurl']))) 
+			nggAdmin::import_zipfile( intval( $_POST['zipgalselect'] ) );
 		else
 			nggGallery::show_error( __('Upload failed!','nggallery') );
 	}
@@ -54,7 +54,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	}
 	
 	if (isset($_POST['swf_callback'])){
-		if ($_POST['galleryselect'] == "0" )
+		if ($_POST['galleryselect'] == '0' )
 			nggGallery::show_error(__('No gallery selected !','nggallery'));
 		else {
 			// get the path to the gallery
@@ -163,7 +163,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<script type="text/javascript">
 	/* <![CDATA[ */
 		jQuery(document).ready(function(){
-			jQuery('#slider > ul').tabs({ fxFade: true, fxSpeed: 'fast' });	
+			jQuery('#slider').tabs({ fxFade: true, fxSpeed: 'fast' });	
 		});
 	/* ]]> */
 	</script>
@@ -211,12 +211,21 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<td><input type="file" name="zipfile" id="zipfile" size="35" class="uploadform"/><br />
 					<?php _e('Upload a zip file with images', 'nggallery') ;?></td> 
 				</tr>
+				<?php if (function_exists('curl_init')) : ?>
+				<tr valign="top"> 
+					<th scope="row"><?php _e('or enter a Zip-File URL', 'nggallery') ;?>:</th> 
+					<td><input type="text" name="zipurl" id="zipurl" size="35" class="uploadform"/><br />
+					<?php _e('Import a zip file with images from a url', 'nggallery') ;?></td> 
+				</tr>
+				<?php endif; ?>
 				<tr valign="top"> 
 					<th scope="row"><?php _e('in to', 'nggallery') ;?></th> 
 					<td><select name="zipgalselect">
 					<option value="0" ><?php _e('a new gallery', 'nggallery') ?></option>
 					<?php
 						foreach($gallerylist as $gallery) {
+							if ( !nggAdmin::can_manage_this_gallery($gallery->author) )
+								continue;
 							$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
 							echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . $name . '</option>' . "\n";
 						}
@@ -265,6 +274,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<option value="0" ><?php _e('Choose gallery', 'nggallery') ?></option>
 					<?php
 						foreach($gallerylist as $gallery) {
+							if ( !nggAdmin::can_manage_this_gallery($gallery->author) )
+								continue;
 							$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
 							echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . $name . '</option>' . "\n";
 						}					?>

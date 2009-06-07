@@ -61,7 +61,7 @@ class nggRewrite {
 			if ( !empty( $gallerytag ) )
 				$args ['gallerytag'] = $gallerytag;
 			
-			/* urlconstructor =  slug | type | tags | [nav] | [show]
+			/** urlconstructor =  slug | type | tags | [nav] | [show]
 				type : 	page | post
 				tags : 	album, gallery 	-> /album-([0-9]+)/gallery-([0-9]+)/
 						pid 			-> /page/([0-9]+)/
@@ -69,45 +69,44 @@ class nggRewrite {
 				nav	 : 	nggpage		-> /page-([0-9]+)/
 				show : 	show=slide		-> /slideshow/
 						show=gallery	-> /images/	
-			*/
+			**/
 
 			// 1. Blog url + main slug
 			$url = get_option('home') . '/' . $this->slug;
 			
 			// 2. Post or page ?
-			if ( $post->post_type == 'page' ) {
+			if ( $post->post_type == 'page' )
 				$url .= '/page-' . $post->ID; // Pagnename is nicer but how to handle /parent/pagename ? Confused...
-			} else {
+			else
 				$url .= '/post/' . $post->post_name;
-			}
 			
 			// 3. Album, pid or tags
-			if  (isset ($args['album']) && isset ($args['gallery']) ) {
+				
+			if (isset ($args['album']) && ($args['gallery'] == false) )
+				$url .= '/album-' . $args['album'];
+			elseif  (isset ($args['album']) && isset ($args['gallery']) )
 				$url .= '/album-' . $args['album'] . '/gallery-' . $args['gallery'];
-			}
-			if  (isset ($args['gallerytag'])) {
+				
+			if  (isset ($args['gallerytag']))
 				$url .= '/tags/' . $args['gallerytag'];
-			}
-			if  (isset ($args['pid'])) {
+				
+			if  (isset ($args['pid']))
 				$url .= '/page/' . $args['pid'];			
-			}	
 			
 			// 4. Navigation
-			if  (isset ($args['nggpage']) && ($args['nggpage']) ) {
+			if  (isset ($args['nggpage']) && ($args['nggpage']) )
 				$url .= '/page-' . $args['nggpage'];
-			}
 			
 			// 5. Show images or Slideshow
-			if  (isset ($args['show'])) {
+			if  (isset ($args['show']))
 				$url .= ( $args['show'] == 'slide' ) ? '/slideshow' : '/images';
-			}
 
 			return $url;
+			
 		} else {			
 			// we need to add the page/post id at the start_page otherwise we don't know which gallery is clicked
-			if (is_home()) {
+			if (is_home())
 				$args['pageid'] = get_the_ID();
-			}
 			
 			// taken from is_frontpage plugin, required for static homepage
 			$show_on_front = get_option('show_on_front');
@@ -116,7 +115,7 @@ class nggRewrite {
 			if (($show_on_front == 'page') && ($page_on_front == get_the_ID()))
 				$args['page_id'] = get_the_ID();
 
-			$query = htmlspecialchars(add_query_arg( $args));
+			$query = htmlspecialchars( add_query_arg($args, get_permalink( get_the_ID() )) );
 			
 			return $query;
 		}
@@ -232,6 +231,8 @@ class nggRewrite {
 			$this->slug.'/page-([0-9]+)/images/?$' => 'index.php?page_id=$matches[1]&show=gallery',
 			$this->slug.'/page-([0-9]+)/tags/([^/]+)/?$' => 'index.php?page_id=$matches[1]&gallerytag=$matches[2]',
 			$this->slug.'/page-([0-9]+)/tags/([^/]+)/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]&gallerytag=$matches[2]&nggpage=$matches[3]',
+			$this->slug.'/page-([0-9]+)/album-([^/]+)/?$' => 'index.php?page_id=$matches[1]&album=$matches[2]',
+			$this->slug.'/page-([0-9]+)/album-([^/]+)/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]&album=$matches[2]&nggpage=$matches[3]',
 			$this->slug.'/page-([0-9]+)/album-([^/]+)/gallery-([0-9]+)/?$' => 'index.php?page_id=$matches[1]&album=$matches[2]&gallery=$matches[3]',
 			$this->slug.'/page-([0-9]+)/album-([^/]+)/gallery-([0-9]+)/slideshow/?$' => 'index.php?page_id=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=slide',
 			$this->slug.'/page-([0-9]+)/album-([^/]+)/gallery-([0-9]+)/images/?$' => 'index.php?page_id=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=gallery',
@@ -248,6 +249,8 @@ class nggRewrite {
 			$this->slug.'/post/([^/]+)/images/?$' => 'index.php?name=$matches[1]&show=gallery',
 			$this->slug.'/post/([^/]+)/tags/([^/]+)/?$' => 'index.php?name=$matches[1]&gallerytag=$matches[2]',
 			$this->slug.'/post/([^/]+)/tags/([^/]+)/page-([0-9]+)/?$' => 'index.php?name=$matches[1]&gallerytag=$matches[2]&nggpage=$matches[3]',
+			$this->slug.'/post/([^/]+)/album-([^/]+)/?$' => 'index.php?name=$matches[1]&album=$matches[2]',
+			$this->slug.'/post/([^/]+)/album-([^/]+)/page-([0-9]+)/?$' => 'index.php?name=$matches[1]&album=$matches[2]&nggpage=$matches[3]',
 			$this->slug.'/post/([^/]+)/album-([^/]+)/gallery-([0-9]+)/?$' => 'index.php?name=$matches[1]&album=$matches[2]&gallery=$matches[3]',
 			$this->slug.'/post/([^/]+)/album-([^/]+)/gallery-([0-9]+)/slideshow/?$' => 'index.php?name=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=slide',
 			$this->slug.'/post/([^/]+)/album-([^/]+)/gallery-([0-9]+)/images/?$' => 'index.php?name=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=gallery',

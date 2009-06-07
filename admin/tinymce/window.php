@@ -26,9 +26,9 @@ global $wpdb;
 	<form name="NextGEN" action="#">
 	<div class="tabs">
 		<ul>
-			<li id="gallery_tab" class="current"><span><a href="javascript:mcTabs.displayTab('gallery_tab','gallery_panel');" onmousedown="return false;"><?php _e("Gallery", 'nggallery'); ?></a></span></li>
-			<li id="album_tab"><span><a href="javascript:mcTabs.displayTab('album_tab','album_panel');" onmousedown="return false;"><?php _e("Album", 'nggallery'); ?></a></span></li>
-			<li id="singlepic_tab"><span><a href="javascript:mcTabs.displayTab('singlepic_tab','singlepic_panel');" onmousedown="return false;"><?php _e("Picture", 'nggallery'); ?></a></span></li>
+			<li id="gallery_tab" class="current"><span><a href="javascript:mcTabs.displayTab('gallery_tab','gallery_panel');" onmousedown="return false;"><?php echo __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ) ?></a></span></li>
+			<li id="album_tab"><span><a href="javascript:mcTabs.displayTab('album_tab','album_panel');" onmousedown="return false;"><?php echo __ngettext( 'Album', 'Albums', 1, 'nggallery' ) ?></a></span></li>
+			<li id="singlepic_tab"><span><a href="javascript:mcTabs.displayTab('singlepic_tab','singlepic_panel');" onmousedown="return false;"><?php _e('Picture', 'nggallery'); ?></a></span></li>
 		</ul>
 	</div>
 	

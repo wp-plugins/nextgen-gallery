@@ -156,10 +156,16 @@ class nggGallery {
 				$r = '';
 				if ( 1 < $page ) {
 					$args['nggpage'] = ( 1 == $page - 1 ) ? FALSE : $page - 1;
-					$r .=  '<a class="prev" href="'. $nggRewrite->get_permalink( $args ) . '">&#9668;</a>';
+					$previous = $args['nggpage'];
+					if (FALSE == $args['nggpage']) {
+						$previous = 1; 
+					}
+					$r .=  '<a class="prev" id="ngg-prev-' . $previous . '" href="'. $nggRewrite->get_permalink( $args ) . '">&#9668;</a>';
 				}
 				
-				if ( ( $total_pages = ceil( $total / $maxElement ) ) > 1 ) {
+				$total_pages = ceil( $total / $maxElement );
+				
+				if ( $total_pages > 1 ) {
 					for ( $page_num = 1; $page_num <= $total_pages; $page_num++ ) {
 						if ( $page == $page_num ) {
 							$r .=  '<span>' . $page_num . '</span>';
@@ -179,7 +185,7 @@ class nggGallery {
 				
 				if ( ( $page ) * $maxElement < $total || -1 == $total ) {
 					$args['nggpage'] = $page + 1;
-					$r .=  '<a class="next" href="' . $nggRewrite->get_permalink ( $args ) . '">&#9658;</a>';
+					$r .=  '<a class="next" id="ngg-next-' . $args['nggpage'] . '" href="' . $nggRewrite->get_permalink ( $args ) . '">&#9658;</a>';
 				}
 				
 				$navigation = "<div class='ngg-navigation'>$r</div>";
@@ -236,7 +242,7 @@ class nggGallery {
 			'bool' => array(
 				'ngg_gal_ShowSlide'			=> 'galShowSlide',
 				'ngg_gal_ShowPiclense'		=> 'usePicLens',
-				'ngg_gal_ImgageBrowser' 	=> 'galImgBrowser',
+				'ngg_gal_ImageBrowser' 		=> 'galImgBrowser',
 				'ngg_ir_Shuffle' 			=> 'irShuffle',
 				'ngg_ir_LinkFromDisplay' 	=> 'irLinkfromdisplay',
 				'ngg_ir_ShowNavigation'		=> 'irShownavigation',
@@ -404,7 +410,7 @@ class nggGallery {
 			
 			// build the test sizes
 			$sizes = array();
-			$sizes[] = array ( 'width' => 800, 'height' => 600);
+			$sizes[] = array ( 'width' => 800,  'height' => 600);
 			$sizes[] = array ( 'width' => 1024, 'height' => 768);
 			$sizes[] = array ( 'width' => 1280, 'height' => 960);  // 1MP	
 			$sizes[] = array ( 'width' => 1600, 'height' => 1200); // 2MP
@@ -416,7 +422,7 @@ class nggGallery {
 			foreach ($sizes as $size){
 				// very, very rough estimation
 				if ($freeMemory < round( $size['width'] * $size['height'] * 5.09 )) {
-                	$result = sprintf(  __( 'Note : Based on your server memory limit you should not upload larger images then <strong>%d x %d</strong> pixel' ), $size['width'], $size['height']); 
+                	$result = sprintf(  __( 'Note : Based on your server memory limit you should not upload larger images then <strong>%d x %d</strong> pixel', 'nggallery' ), $size['width'], $size['height']); 
 					return $result;
 				}
 			}
