@@ -346,14 +346,16 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
 	// get the counter values 	
 	$picturesCounter = $wpdb->get_results('SELECT galleryid, COUNT(*) as counter FROM '.$wpdb->nggpictures.' WHERE galleryid IN (\''.implode('\',\'', $galleriesID).'\') AND exclude != 1 GROUP BY galleryid', OBJECT_K);
 	if ( is_array($picturesCounter) ) {
-	foreach ($picturesCounter as $key => $value)
-		$unsort_galleries[$key]->counter = $value->counter;
+		foreach ($picturesCounter as $key => $value)
+			$unsort_galleries[$key]->counter = $value->counter;
 	}
 	
 	// get the id's of the preview images
  	$imagesID = array();
- 	foreach ($unsort_galleries as $gallery_row)
- 		$imagesID[] = $gallery_row->previewpic;
+ 	if ( is_array($unsort_galleries) ) {
+		foreach ($unsort_galleries as $gallery_row)
+	 		$imagesID[] = $gallery_row->previewpic;
+ 	}	
  	$albumPreview = $wpdb->get_results('SELECT pid, filename FROM '.$wpdb->nggpictures.' WHERE pid IN (\''.implode('\',\'', $imagesID).'\')', OBJECT_K);
 
 	// re-order them and populate some 

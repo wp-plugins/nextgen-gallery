@@ -1,6 +1,10 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+V1.3.1
+- Bugfix : Fixed ZIP upload, wrong variable used
+- Bugfix : Check for array before foreach in album missing
+
 V1.3.0 - 07.06.2009
 - NEW : Subalbum support
 - NEW : Search for images in the admin tab

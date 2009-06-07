@@ -362,7 +362,7 @@ function showDialog() {
 	  	</tr>
 	  	<tr>
 	    	<th>
-	    		<?php _e('Select a preview image:', 'nggallery'); ?>&nbsp;
+	    		<?php _e('Select a preview image:', 'nggallery'); ?><br />
 					<select name="previewpic" style="width:95%" >
 		                <option value="0"><?php _e('No picture', 'nggallery'); ?></option>
 						<?php

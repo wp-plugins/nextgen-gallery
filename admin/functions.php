@@ -577,7 +577,7 @@ class nggAdmin{
 			}
 			
 			$temp_zipfile = tempnam('/tmp', 'zipimport_');
-			$filename = basename($url);
+			$filename = basename($zipurl);
 			
 			//Grab the zip via cURL
 			$save = fopen ( $temp_zipfile, "w" );
@@ -585,7 +585,7 @@ class nggAdmin{
 			curl_setopt ( $ch, CURLOPT_FILE, $save );
 			curl_setopt ( $ch, CURLOPT_HEADER, 0 );
 			curl_setopt ( $ch, CURLOPT_BINARYTRANSFER, 1 );
-			curl_setopt ( $ch, CURLOPT_URL, $url );
+			curl_setopt ( $ch, CURLOPT_URL, $zipurl );
 			$success = curl_exec ( $ch );
 			if (!$success)
 				nggGallery::show_error( __('Import via cURL failed.','nggallery') . ' Error code ' . curl_errno( $ch ) . ' : ' . curl_error( $ch ) );
