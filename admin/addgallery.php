@@ -46,9 +46,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	
 	if ($_POST['uploadimage']){
 		check_admin_referer('ngg_addgallery');
-		if ($_FILES['MF__F_0_0']['error'] == 0) {
+		if ( $_FILES['imagefiles']['error'][0] == 0 )
 			$messagetext = nggAdmin::upload_images();
-		}
 		else
 			nggGallery::show_error( __('Upload failed!','nggallery') );	
 	}
@@ -152,7 +151,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		jQuery(document).ready(function(){
 			jQuery('#imagefiles').MultiFile({
 				STRING: {
-			    	remove:'<?php _e('remove', 'nggallery') ;?>'
+			    	remove:'[<?php _e('remove', 'nggallery') ;?>]'
   				}
 		 	});
 		});
@@ -266,7 +265,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<table class="form-table"> 
 				<tr valign="top"> 
 					<th scope="row"><?php _e('Upload image', 'nggallery') ;?></th>
-					<td><span id='spanButtonPlaceholder'></span><input type="file" name="imagefiles" id="imagefiles" size="35" class="imagefiles"/></td>
+					<td><span id='spanButtonPlaceholder'></span><input type="file" name="imagefiles[]" id="imagefiles" size="35" class="imagefiles"/></td>
 				</tr> 
 				<tr valign="top"> 
 					<th scope="row"><?php _e('in to', 'nggallery') ;?></th> 

@@ -239,7 +239,7 @@
 				serial = serial + "sortArray[]=" + objects[no].id;
 			}			
 		}
-		jQuery('input[@name=sortorder]').val(serial);
+		jQuery('input[name=sortorder]').val(serial);
 		// debug( 'This is the new order of the images(IDs) : <br>' + orderString );
 		
 	}

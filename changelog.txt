@@ -1,7 +1,16 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
-V1.3.1
+V1.3.2 - 10.06.2009
+- Changed  : Resize maximum to 1280 x 1280 with nggshow (THX to onezero)
+- Bugfix : Bugfix for Multifile upload
+- Bugfix : Bugfix for sortorder under jQuery 1.3
+- Bugfix : Workaround for more albums per page, need more rework
+- Bugfix : AJAX reload didn't work if slideshow is shown by default
+- Bugfix : Redirect links didn't work if permalinks are deactivates
+- Bugfix : Add new gallery in manage-overview didn't use defaultpath
+
+V1.3.1 - 07.06.2009
 - Bugfix : Fixed ZIP upload, wrong variable used
 - Bugfix : Check for array before foreach in album missing
 

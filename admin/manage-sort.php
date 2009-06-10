@@ -2,11 +2,11 @@
 
 /**
  * @author Alex Rabe
- * @copyright 2008
+ * @copyright 2008-2009
  */
 
 function nggallery_sortorder($galleryID = 0){
-	global $wpdb, $ngg;
+	global $wpdb, $ngg, $nggdb;
 	
 	if ($galleryID == 0) return;
 
@@ -31,27 +31,19 @@ function nggallery_sortorder($galleryID = 0){
 		} 
 	}
 	
-	//TODO:A unique gallery call must provide me with this information, like $gallery  = new nggGallery($id);
-	
-	// get gallery values
-	$act_gallery = $wpdb->get_row("SELECT * FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
-
-	// set gallery url
-	$act_gallery_url 	= get_option ('siteurl')."/".$act_gallery->path."/";
-	$act_thumbnail_url 	= get_option ('siteurl')."/".$act_gallery->path.nggGallery::get_thumbnail_folder($act_gallery->path, FALSE);
-
 	// look for presort args	
 	$presort = $_GET['presort'];
 	$dir = ( $_GET['dir'] == 'DESC' ) ? 'DESC' : 'ASC';
 	$sortitems = array('pid', 'filename', 'alttext', 'imagedate');
 	// ensure that nobody added some evil sorting :-)
 	if (in_array( $presort, $sortitems) )
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' ORDER BY {$presort} {$dir}");
+		$picturelist = $nggdb->get_gallery($galleryID, $presort, $dir, false);
 	else	
-		$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' ORDER BY sortorder {$dir}");
-
+		$picturelist = $nggdb->get_gallery($galleryID, 'sortorder', $dir, false);
+		
 	//this is the url without any presort variable
 	$clean_url = 'admin.php?page=nggallery-manage-gallery&amp;mode=sort&amp;gid=' . $galleryID;
+	
 	// In the case somebody presort, then we take this url
 	if ( isset($_GET['dir']) || isset($_GET['presort']) )
 		$base_url = $_SERVER['REQUEST_URI'];
@@ -90,7 +82,7 @@ function nggallery_sortorder($galleryID = 0){
 			foreach($picturelist as $picture) {
 				?>
 				<div class="imageBox" id="pid-<?php echo $picture->pid ?>">
-					<div class="imageBox_theImage" style="background-image:url('<?php echo $act_thumbnail_url ."thumbs_" .$picture->filename ?>')"></div>	
+					<div class="imageBox_theImage" style="background-image:url('<?php echo $picture->thumbURL; ?>')"></div>	
 					<div class="imageBox_label"><span><?php echo stripslashes($picture->alttext) ?></span></div>
 				</div>
 				<?php

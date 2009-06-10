@@ -18,8 +18,15 @@ $picture  = nggdb::find_image( $pictureID );
 $thumb = new ngg_Thumbnail( $picture->imagePath );
 
 // Resize if necessary
-if ( !empty($_GET['width']) || !empty($_GET['height']) )
-	$thumb->resize( intval($_GET['width']), intval($_GET['height']) );
+if ( !empty($_GET['width']) || !empty($_GET['height']) ) {
+ 	// Sanitize
+ 	$w = ( !empty($_GET['width'])) ? intval($_GET['width']) : 0;
+ 	$h = ( !empty($_GET['height'])) ? intval($_GET['height']) : 0;
+	// limit the maxium size, prevent server memory overload
+	if ($w > 1280) $w = 1280;
+	if ($h > 1280) $h = 1280;
+	$thumb->resize( $w, $h );
+}
 
 // Apply effects according to the mode parameter
 if ($mode == 'watermark') {

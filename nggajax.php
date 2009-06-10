@@ -13,6 +13,7 @@ switch ($_GET['type']) {
 		
 		// get the current page/post id
 		set_query_var('pageid', intval($_GET['p']));
+		set_query_var('show', 'gallery');
 		$GLOBALS['id'] = intval($_GET['p']);
 		
 		echo nggShowGallery( intval($_GET['galleryid']) );

@@ -7,6 +7,9 @@ function nggallery_manage_gallery_main() {
 
 	global $wpdb, $ngg, $nggdb, $wp_query;
 	
+	// get the default path for a new gallery
+	$defaultpath = $ngg->options['gallerypath'];	
+	
 	if (isset ($_POST['addgallery']) && isset ($_POST['galleryname'])){
 		check_admin_referer('ngg_addgallery');
 		$newgallery = attribute_escape( $_POST['galleryname']);
@@ -28,8 +31,7 @@ function nggallery_manage_gallery_main() {
 		'total' => $nggdb->paged['max_objects_per_page'],
 		'current' => $_GET['paged']
 	));
-	
-	$defaultpath = $ngg->options['gallerypath'];	
+
 	?>
 	<script type="text/javascript"> 
 	<!--

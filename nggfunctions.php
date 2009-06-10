@@ -283,14 +283,26 @@ function nggShowAlbum($albumID, $template = 'extend') {
 	// first look for gallery variable 
 	if (!empty( $gallery ))  {
 		
+		// subalbum support only one instance, you cam't use more of them in one post
+		if ( isset($GLOBALS['subalbum']) )
+				return;
+				
+		if ( ($albumID != $album) && ($albumID != 'all') )
+			$GLOBALS['subalbum'] = true;
+			
 		// if gallery is is submit , then show the gallery instead 
 		$out = nggShowGallery( intval($gallery) );
 		return $out;
 	}
 	
-	//redirect to subalbum
-	if (!empty( $album ))
-		$albumID = $album;
+	if ( (empty( $gallery )) && (isset($GLOBALS['subalbum'])) )
+		return;
+
+	//redirect to subalbum only one time		
+	if (!empty( $album )) {
+		$GLOBALS['subalbum'] = true;
+		$albumID = $album;			
+	}
 	 
 	// lookup in the database
 	$album = nggdb::find_album( $albumID );

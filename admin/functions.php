@@ -691,54 +691,59 @@ class nggAdmin{
 		// read list of images
 		$dirlist = nggAdmin::scandir(WINABSPATH.$gallerypath);
 		
-		foreach ($_FILES as $key => $value) {
-			
-			// look only for uploded files
-			if ($_FILES[$key]['error'] == 0) {
-				$temp_file = $_FILES[$key]['tmp_name'];
-				$filepart = pathinfo ( strtolower($_FILES[$key]['name']) );
-				// required until PHP 5.2.0
-				$filepart['filename'] = substr($filepart["basename"],0 ,strlen($filepart["basename"]) - (strlen($filepart["extension"]) + 1) );
-				
-				$filename = sanitize_title($filepart['filename']) . '.' . $filepart['extension'];
+		$imagefiles = $_FILES['imagefiles'];
+		
+		if (is_array($imagefiles)) {
+			foreach ($imagefiles['name'] as $key => $value) {
 
-				// check for allowed extension and if it's an image file
-				$ext = array('jpeg', 'jpg', 'png', 'gif'); 
-				if ( !in_array($filepart['extension'], $ext) || !@getimagesize($temp_file) ){ 
-					nggGallery::show_error('<strong>'.$_FILES[$key]['name'].' </strong>'.__('is no valid image file!','nggallery'));
-					continue;
+				// look only for uploded files
+				if ($imagefiles['error'][$key] == 0) {
+					
+					$temp_file = $imagefiles['tmp_name'][$key];
+					$filepart = pathinfo ( strtolower($imagefiles['name'][$key]) );
+					// required until PHP 5.2.0
+					$filepart['filename'] = substr($filepart["basename"],0 ,strlen($filepart["basename"]) - (strlen($filepart["extension"]) + 1) );
+					
+					$filename = sanitize_title($filepart['filename']) . '.' . $filepart['extension'];
+	
+					// check for allowed extension and if it's an image file
+					$ext = array('jpeg', 'jpg', 'png', 'gif'); 
+					if ( !in_array($filepart['extension'], $ext) || !@getimagesize($temp_file) ){ 
+						nggGallery::show_error('<strong>' . $imagefiles['name'][$key] . ' </strong>'.__('is no valid image file!','nggallery'));
+						continue;
+					}
+	
+					// check if this filename already exist in the folder
+					$i = 0;
+					while (in_array($filename,$dirlist)) {
+						$filename = sanitize_title($filepart['filename']) . '_' . $i++ . '.' .$filepart['extension'];
+					}
+					
+					$dest_file = WINABSPATH . $gallerypath . '/' . $filename;
+					
+					//check for folder permission
+					if (!is_writeable(WINABSPATH.$gallerypath)) {
+						$message = sprintf(__('Unable to write to directory %s. Is this directory writable by the server?', 'nggallery'), WINABSPATH.$gallerypath);
+						nggGallery::show_error($message);
+						return;				
+					}
+					
+					// save temp file to gallery
+					if (!@move_uploaded_file($temp_file, $dest_file)){
+						nggGallery::show_error(__('Error, the file could not moved to : ','nggallery') . $dest_file);
+						nggAdmin::check_safemode(WINABSPATH.$gallerypath);		
+						continue;
+					} 
+					if (!nggAdmin::chmod ($dest_file)) {
+						nggGallery::show_error(__('Error, the file permissions could not set','nggallery'));
+						continue;
+					}
+					
+					// add to imagelist & dirlist
+					$imageslist[] = $filename;
+					$dirlist[] = $filename;
+	
 				}
-
-				// check if this filename already exist in the folder
-				$i = 0;
-				while (in_array($filename,$dirlist)) {
-					$filename = sanitize_title($filepart['filename']) . '_' . $i++ . '.' .$filepart['extension'];
-				}
-				
-				$dest_file = WINABSPATH . $gallerypath . '/' . $filename;
-				
-				//check for folder permission
-				if (!is_writeable(WINABSPATH.$gallerypath)) {
-					$message = sprintf(__('Unable to write to directory %s. Is this directory writable by the server?', 'nggallery'), WINABSPATH.$gallerypath);
-					nggGallery::show_error($message);
-					return;				
-				}
-				
-				// save temp file to gallery
-				if (!@move_uploaded_file($_FILES[$key]['tmp_name'], $dest_file)){
-					nggGallery::show_error(__('Error, the file could not moved to : ','nggallery').$dest_file);
-					nggAdmin::check_safemode(WINABSPATH.$gallerypath);		
-					continue;
-				} 
-				if (!nggAdmin::chmod ($dest_file)) {
-					nggGallery::show_error(__('Error, the file permissions could not set','nggallery'));
-					continue;
-				}
-				
-				// add to imagelist & dirlist
-				$imageslist[] = $filename;
-				$dirlist[] = $filename;
-
 			}
 		}
 		

@@ -114,8 +114,11 @@ class nggRewrite {
 			
 			if (($show_on_front == 'page') && ($page_on_front == get_the_ID()))
 				$args['page_id'] = get_the_ID();
-
-			$query = htmlspecialchars( add_query_arg($args, get_permalink( get_the_ID() )) );
+			
+			if ( !is_singular() )
+				$query = htmlspecialchars( add_query_arg($args, get_permalink( get_the_ID() )) );
+			else
+				$query = htmlspecialchars( add_query_arg( $args ) );
 			
 			return $query;
 		}
