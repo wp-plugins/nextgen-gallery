@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.3.2
+Version: 1.3.3
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -44,7 +44,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.3.2';
+	var $version     = '1.3.3';
 	var $dbversion   = '1.3.1';
 	var $minium_WP   = '2.7';
 	var $minium_WPMU = '2.7';
@@ -229,7 +229,8 @@ class nggLoader {
 		require_once (dirname (__FILE__) . '/lib/core.php');					//  94.840
 		require_once (dirname (__FILE__) . '/lib/ngg-db.php');					// 132.400
 		require_once (dirname (__FILE__) . '/lib/image.php');					//  59.424
-
+		require_once (dirname (__FILE__) . '/widgets/widgets.php');			// 298.792
+			
 		// We didn't need all stuff during a AJAX operation
 		if ( defined('DOING_AJAX') )
 			require_once (dirname (__FILE__) . '/admin/ajax.php');
@@ -237,7 +238,6 @@ class nggLoader {
 			require_once (dirname (__FILE__) . '/lib/meta.php');				// 131.856
 			require_once (dirname (__FILE__) . '/lib/tags.php');				// 117.136
 			require_once (dirname (__FILE__) . '/lib/media-rss.php');			//  82.768
-			require_once (dirname (__FILE__) . '/widgets/widgets.php');			// 298.792
 			require_once (dirname (__FILE__) . '/lib/rewrite.php');				//  71.936
 			include_once (dirname (__FILE__) . '/admin/tinymce/tinymce.php'); 	//  22.408
 
@@ -267,7 +267,7 @@ class nggLoader {
 		if ($this->options['thumbEffect'] == 'thickbox') {
 			wp_enqueue_script( 'thickbox' );
 			// Load the thickbox images after all other scripts
-			add_action( 'wp_head', array(&$this, 'load_thickbox_images'), 11 );
+			add_action( 'wp_footer', array(&$this, 'load_thickbox_images'), 11 );
 
 		}
 

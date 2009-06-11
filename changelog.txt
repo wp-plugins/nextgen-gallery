@@ -1,6 +1,10 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+v1.3.3 - 11.06.2009
+- Changed : Load Thickbox images via wp_footer()
+- Bugfix  : Widget setting couldnot be saved
+
 V1.3.2 - 10.06.2009
 - Changed  : Resize maximum to 1280 x 1280 with nggshow (THX to onezero)
 - Bugfix : Bugfix for Multifile upload
