@@ -45,6 +45,10 @@ function ngg_ajax_navigation(e, obj) {
 		
 		var galleryId = payload.substr(0, separatorPosition);
 		var postId = payload.substr(separatorPosition + 1);
+
+		if ( (galleryId.length == 0) || (postId.length == 0) ) {
+			return true;
+		}
 				
 		ngg_show_loading(e);
 		
@@ -113,6 +117,10 @@ function ngg_ajax_browser_navigation(e, obj) {
 			
 			var galleryId = payload.substr(0, separatorPosition);
 			var postId = payload.substr(separatorPosition + 1);
+			
+			if ( (galleryId.length == 0) || (postId.length == 0) ) {
+				return true;
+			}
 			
 			ngg_show_loading(e);
 			
