@@ -253,6 +253,10 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '') {
 
 	// look for gallery-$template.php or pure gallery.php
 	$filename = ( empty($template) ) ? 'gallery' : 'gallery-' . $template;
+	
+	//filter functions for custom addons
+	$gallery     = apply_filters( 'ngg_gallery_object', $gallery, $galleryID );
+	$picturelist = apply_filters( 'ngg_image_object', $picturelist, $galleryID );
 
 	// create the output
 	$out = nggGallery::capture ( $filename, array ('gallery' => $gallery, 'images' => $picturelist, 'pagination' => $navigation) );
@@ -283,15 +287,14 @@ function nggShowAlbum($albumID, $template = 'extend') {
 	// first look for gallery variable 
 	if (!empty( $gallery ))  {
 		
-		// subalbum support only one instance, you cam't use more of them in one post
-		if ( isset($GLOBALS['subalbum']) )
+		// subalbum support only one instance, you can't use more of them in one post
+		if ( isset($GLOBALS['subalbum']) || isset($GLOBALS['nggShowGallery']) )
 				return;
 				
-		if ( ($albumID != $album) && ($albumID != 'all') )
-			$GLOBALS['subalbum'] = true;
-			
 		// if gallery is is submit , then show the gallery instead 
 		$out = nggShowGallery( intval($gallery) );
+		$GLOBALS['nggShowGallery'] = true;
+		
 		return $out;
 	}
 	
@@ -303,7 +306,7 @@ function nggShowAlbum($albumID, $template = 'extend') {
 		$GLOBALS['subalbum'] = true;
 		$albumID = $album;			
 	}
-	 
+
 	// lookup in the database
 	$album = nggdb::find_album( $albumID );
 

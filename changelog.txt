@@ -1,7 +1,14 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
-v1.3.3 - 11.06.2009
+V1.3.4 - 07.06.2009
+- Added : New filter ngg_gallery_object and ngg_image_object
+- Bugfix : Fix double rendering of a gallery if two album shortcodes are used
+- Bugfix : Fix for custom field ngg_gal_sort
+- Bugfix : Changed capapbility check for upload 
+- Bugfix : Check for correct version OR memory limit
+
+V1.3.3 - 11.06.2009
 - Changed : Load Thickbox images via wp_footer()
 - Bugfix  : Widget setting couldnot be saved
 

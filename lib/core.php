@@ -231,7 +231,6 @@ class nggGallery {
 
 			'int' => array(
 				'ngg_gal_Images' 			=> 'galImages',
-				'ngg_gal_Sort' 				=> 'galSort',
 				'ngg_gal_Columns'			=> 'galColumns',
 				'ngg_paged_Galleries'		=> 'galPagedGalleries',
 				'ngg_ir_Width' 				=> 'irWidth',

@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.boelinger.com/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.3.3
+Version: 1.3.4
 
 Author URI: http://alexrabe.boelinger.com/
 
@@ -44,7 +44,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.3.3';
+	var $version     = '1.3.4';
 	var $dbversion   = '1.3.1';
 	var $minium_WP   = '2.7';
 	var $minium_WPMU = '2.7';
@@ -59,7 +59,7 @@ class nggLoader {
 		$this->load_textdomain();
 		
 		// Stop the plugin if we missed the requirements
-		if ( ( !$this->required_version() ) && ( !$this->check_memory_limit() ) )
+		if ( ( !$this->required_version() ) || ( !$this->check_memory_limit() ) )
 			return;
 			
 		// Get some constants first
@@ -229,7 +229,7 @@ class nggLoader {
 		require_once (dirname (__FILE__) . '/lib/core.php');					//  94.840
 		require_once (dirname (__FILE__) . '/lib/ngg-db.php');					// 132.400
 		require_once (dirname (__FILE__) . '/lib/image.php');					//  59.424
-		require_once (dirname (__FILE__) . '/widgets/widgets.php');			// 298.792
+		require_once (dirname (__FILE__) . '/widgets/widgets.php');				// 298.792
 			
 		// We didn't need all stuff during a AJAX operation
 		if ( defined('DOING_AJAX') )

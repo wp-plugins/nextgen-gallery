@@ -18,8 +18,8 @@ function ngg_ajax_operation() {
 		if ( !is_user_logged_in() )
 			die('-1');
 		
-		// check for correct NextGEN capability
-		if ( !current_user_can('NextGEN Upload images') || !current_user_can('NextGEN Manage gallery') ) 
+		// check for correct NextGEN capability. TODO : Can we check here already for "can_manage_this_gallery($gallery->author)" ?
+		if ( !current_user_can('NextGEN Upload images') && !current_user_can('NextGEN Manage gallery') ) 
 			die('-1');	
 		
 		// include the ngg function
