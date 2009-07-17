@@ -1,7 +1,10 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
-V1.3.4 - 07.06.2009
+V1.3.5 - 17.07.2009
+- Bugfix : Fixed XSS issue for Page title
+
+V1.3.4 - 07.07.2009
 - Added : New filter ngg_gallery_object and ngg_image_object
 - Bugfix : Fix double rendering of a gallery if two album shortcodes are used
 - Bugfix : Fix for custom field ngg_gal_sort

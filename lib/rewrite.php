@@ -181,19 +181,19 @@ class nggRewrite {
 			$new_title .= __('Gallery', 'nggallery') . $sep ;	
 
 		if ( !empty($pid) )
-			$new_title .= __('Picture', 'nggallery') . ' ' . $pid . $sep ;
+			$new_title .= __('Picture', 'nggallery') . ' ' . intval($pid) . $sep ;
 
 		if ( !empty($album) )
-			$new_title .= __('Album', 'nggallery') . ' ' . $album . $sep ;
+			$new_title .= __('Album', 'nggallery') . ' ' . intval($album) . $sep ;
 
 		if ( !empty($gallery) )
-			$new_title .= __('Gallery', 'nggallery') . ' ' . $gallery . $sep ;
+			$new_title .= __('Gallery', 'nggallery') . ' ' . intval($gallery) . $sep ;
 			
 		if ( !empty($nggpage) )
-			$new_title .= __('Page', 'nggallery') . ' ' . $nggpage . $sep ;
+			$new_title .= __('Page', 'nggallery') . ' ' . intval($nggpage) . $sep ;
 
-		if ( !empty($tag) )
-			$new_title .= $tag . $sep;
+		//if ( !empty($tag) )
+			//$new_title .= attribute_escape($tag) . $sep;
 		
 		// for all sub pages we add the canonical tag	
 		if ( !empty($new_title) )	
