@@ -1,7 +1,7 @@
 === NextGEN Gallery ===
 Contributors: Alex Rabe
 Donate link: http://alexrabe.boelinger.com/donation/
-Tags: photos, flash, slideshow, images, gallery, media, admin, post, photo-albums, pictures, widgets, photo, picture, image, nextgen-gallery
+Tags: nextgen gallery,photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery
 Requires at least: 2.7
 Stable tag: trunk
 
@@ -18,7 +18,7 @@ Important Links:
 * <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/" title="Translation and Language files">Language files</a>
 * <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/changelog/" title="NextGEN Gallery Changelog">Changelog</a>
 * <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/" title="NextGEN Gallery FAQ">NextGEN Gallery FAQ</a>
-* <a href="http://wordpress.org/tags/nextgen-gallery" title="Wordpress Support Forum">Support Forum</a>
+* <a href="http://wordpress.org/tags/nextgen-gallery?forum_id=10#postform" title="Wordpress Support Forum">Support Forum</a>
 
 = Features =
 
