@@ -133,7 +133,10 @@ Example : http://nextgen.boelinger.com/albumtags/
 
 **And at least request your question here :** http://alexrabe.boelinger.com/forums/
 
-== Changelog ==  
+== Changelog == 
+ 
+= V1.3.6 - 20.09.2009 =
+* Changed : Just change the feed link
    
 = V1.3.5 - 17.07.2009 =
 * Bugfix : Fixed XSS issue for Page title

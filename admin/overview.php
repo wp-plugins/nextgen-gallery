@@ -165,7 +165,7 @@ function ngg_overview_news(){
 <div class="rss-widget">
     <?php
 //    $rss = @fetch_rss('http://alexrabe.boelinger.com/?tag=nextgen-gallery&feed=rss2');
-      $rss = @fetch_rss('http://alexrabe.boelinger.com/feed/rss2/');
+      $rss = @fetch_rss('http://feeds.feedburner.com/alexrabe/');
 
       if ( isset($rss->items) && 0 != count($rss->items) )
       {
