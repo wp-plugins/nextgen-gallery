@@ -2,7 +2,7 @@
 Contributors: Alex Rabe
 Donate link: http://alexrabe.de/donation/
 Tags: nextgen gallery,photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery
-Requires at least: 2.7
+Requires at least: 2.8
 Tested up to: 2.9
 Stable tag: trunk
 
