@@ -29,9 +29,9 @@ $admin_base_url = admin_url() . 'admin.php?page=';
 $nb_tags = 50; // Number of tags to show on a single page
 
 // Manage URL
-$sort_order = ( isset($_GET['tag_sortorder']) ) ? attribute_escape(stripslashes($_GET['tag_sortorder'])) : 'desc';
+$sort_order = ( isset($_GET['tag_sortorder']) ) ? esc_attr(stripslashes($_GET['tag_sortorder'])) : 'desc';
 $search_url = ( isset($_GET['search']) ) ? '&amp;search=' . stripslashes($_GET['search']) : '';
-$action_url = $admin_base_url . attribute_escape(stripslashes($_GET['page'])) . '&amp;tag_sortorder=' . $sort_order. $search_url;
+$action_url = $admin_base_url . esc_attr(stripslashes($_GET['page'])) . '&amp;tag_sortorder=' . $sort_order. $search_url;
 
 // Tags Filters
 $order_array = array(
@@ -109,7 +109,7 @@ if ($nb_tags < $tag_count && $offset>0) {
 					<form method="get">
 						<p>
 							<label for="search"><?php _e('Search tags', 'nggallery'); ?></label><br />
-							<input type="hidden" name="page" value="<?php echo attribute_escape(stripslashes($_GET['page'])); ?>" />
+							<input type="hidden" name="page" value="<?php echo esc_attr(stripslashes($_GET['page'])); ?>" />
 							<input type="hidden" name="tag_sortorder" value="<?php echo $sort_order; ?>" />
 							<input type="text" name="search" id="search" size="10" value="<?php echo stripslashes($_GET['search']); ?>" />
 							<input class="button" type="submit" value="<?php _e('Go', 'nggallery'); ?>" />
@@ -121,7 +121,7 @@ if ($nb_tags < $tag_count && $offset>0) {
 						<?php
 						$output = array();
 						foreach( $order_array as $sort => $title ) {
-							$output[] = ($sort == $sort_order) ? '<span style="color: red;">'.$title.'</span>' : '<a href="'.$admin_base_url.attribute_escape(stripslashes($_GET['page'])).'&amp;tag_sortorder='.$sort.$search_url.'">'.$title.'</a>';
+							$output[] = ($sort == $sort_order) ? '<span style="color: red;">'.$title.'</span>' : '<a href="'.$admin_base_url.esc_attr(stripslashes($_GET['page'])).'&amp;tag_sortorder='.$sort.$search_url.'">'.$title.'</a>';
 						}
 						echo implode('<br />', $output);
 						$output = array();
@@ -146,7 +146,7 @@ if ($nb_tags < $tag_count && $offset>0) {
 							<?php if ($prev_offset!='') { ?>
 							<form method="get" style="display: inline;">
 								<span>
-									<input type="hidden" name="page" value="<?php echo attribute_escape(stripslashes($_GET['page'])); ?>" />
+									<input type="hidden" name="page" value="<?php echo esc_attr(stripslashes($_GET['page'])); ?>" />
 									<input type="hidden" name="tag_sortorder" value="<?php echo $sort_order; ?>" />
 									<input type="hidden" name="offset" value="<?php echo $prev_offset; ?>" />
 									<input class="button" type="submit" value="&laquo; <?php _e('Previous tags', 'nggallery'); ?>" />
@@ -159,7 +159,7 @@ if ($nb_tags < $tag_count && $offset>0) {
 							<?php if ($next_offset!='') { ?>
 							<form method="get" style="display: inline;">
 								<span>
-									<input type="hidden" name="page" value="<?php echo attribute_escape(stripslashes($_GET['page'])); ?>" />
+									<input type="hidden" name="page" value="<?php echo esc_attr(stripslashes($_GET['page'])); ?>" />
 									<input type="hidden" name="tag_sortorder" value="<?php echo $sort_order; ?>" />
 									<input type="hidden" name="offset" value="<?php echo $next_offset; ?>" />
 									<input class="button" type="submit" value="<?php _e('Next tags', 'nggallery'); ?> &raquo;" />

@@ -66,7 +66,24 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	?>
 	<script type="text/javascript">
 		jQuery(document).ready(function(){
-			jQuery('#slider').tabs({ fxFade: true, fxSpeed: 'fast' });	
+			jQuery(".expert").hide();
+			jQuery("a.switch-expert").click(function(e) {
+				jQuery(".expert").toggle();
+				return false;
+			});
+			jQuery('#slider').tabs({ fxFade: true, fxSpeed: 'fast' });
+			jQuery('.picker').ColorPicker({
+				onSubmit: function(hsb, hex, rgb, el) {
+					jQuery(el).val(hex);
+					jQuery(el).ColorPickerHide();
+				},
+				onBeforeShow: function () {
+					jQuery(this).ColorPickerSetColor(this.value);
+				}
+			})
+			.bind('keyup', function(){
+				jQuery(this).ColorPickerSetColor(this.value);
+			});
 		});
 	
 		function insertcode(value) {
@@ -109,7 +126,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<li><a href="#generaloptions"><?php _e('General Options', 'nggallery') ;?></a></li>
 			<li><a href="#thumbnails"><?php _e('Thumbnails', 'nggallery') ;?></a></li>
 			<li><a href="#images"><?php _e('Images', 'nggallery') ;?></a></li>
-			<li><a href="#gallery"><?php echo __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ) ;?></a></li>
+			<li><a href="#gallery"><?php echo _n( 'Gallery', 'Galleries', 1, 'nggallery' ) ;?></a></li>
 			<li><a href="#effects"><?php _e('Effects', 'nggallery') ;?></a></li>
 			<li><a href="#watermark"><?php _e('Watermark', 'nggallery') ;?></a></li>
 			<li><a href="#slideshow"><?php _e('Slideshow', 'nggallery') ;?></a></li>
@@ -124,11 +141,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<input type="hidden" name="page_options" value="gallerypath,deleteImg,useMediaRSS,usePicLens,usePermalinks,graphicLibrary,imageMagickDir,activateTags,appendType,maxImages" />
 				<table class="form-table ngg-options">
 					<tr valign="top">
-						<th align="left"><?php _e('Gallery path','nggallery') ?></th>
+						<th align="left"><?php _e('Gallery path','nggallery'); ?></th>
 						<td><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="text" size="35" name="gallerypath" value="<?php echo $ngg->options['gallerypath']; ?>" />
 						<span class="setting-description"><?php _e('This is the default path for all galleries','nggallery') ?></span></td>
 					</tr>
-					<tr valign="top">
+					<tr class="expert" valign="top">
 						<th align="left"><?php _e('Delete image files','nggallery') ?></th>
 						<td><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="checkbox" name="deleteImg" value="1" <?php checked('1', $ngg->options['deleteImg']); ?> />
 						<?php _e('Delete files, when removing a gallery in the database','nggallery') ?></td>
@@ -138,7 +155,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<td><input type="checkbox" name="usePermalinks" value="1" <?php checked('1', $ngg->options['usePermalinks']); ?> />
 						<?php _e('When you activate this option, you need to update your permalink structure one time.','nggallery') ?></td>
 					</tr>
-					<tr>
+					<tr class="expert">
 						<th valign="top"><?php _e('Select graphic library','nggallery') ?>:</th>
 						<td><label><input name="graphicLibrary" type="radio" value="gd" <?php checked('gd', $ngg->options['graphicLibrary']); ?> /> <?php _e('GD Library', 'nggallery') ;?></label><br />
 						<label><input name="graphicLibrary" type="radio" value="im" <?php checked('im', $ngg->options['graphicLibrary']); ?> /> <?php _e('ImageMagick (Experimental). Path to the library :', 'nggallery') ;?>&nbsp;
@@ -156,8 +173,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<span class="setting-description"><?php _e('When you activate this option, some javascript is added to your site footer. Make sure that wp_footer is called in your theme.','nggallery') ?></span></td>
 					</tr>
 				</table>
-			<h3><?php _e('Tags / Categories','nggallery') ?></h3>
-				<table class="form-table ngg-options">
+				<h3 class="expert"><?php _e('Tags / Categories','nggallery') ?></h3>
+				<table class="expert form-table ngg-options">
 					<tr>
 						<th valign="top"><?php _e('Activate related images','nggallery') ?>:</th>
 						<td><input name="activateTags" type="checkbox" value="1" <?php checked('1', $ngg->options['activateTags']); ?> />
@@ -177,7 +194,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						</td>
 					</tr>
 				</table> 				
-			<div class="submit"><input class="button-primary" type="submit" name="updateoption" value="<?php _e('Save Changes') ;?>"/></div>
+			<div class="alignright"><a href="" class="switch-expert" >[<?php _e('More settings','nggallery'); ?>]</a></div>
+			<div class="submit"><input class="button-primary" type="submit" name="updateoption" value="<?php _e('Save Changes'); ?>"/></div>
 			</form>	
 		</div>	
 		
@@ -187,7 +205,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<h2><?php _e('Thumbnail settings','nggallery'); ?></h2>
 			<form name="thumbnailsettings" method="POST" action="<?php echo $filepath.'#thumbnails'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
-			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbfix,thumbcrop,thumbquality" />
+			<input type="hidden" name="page_options" value="thumbwidth,thumbheight,thumbfix,thumbquality" />
 				<p><?php _e('Please note : If you change the settings, you need to recreate the thumbnails under -> Manage Gallery .', 'nggallery') ?></p>
 				<table class="form-table ngg-options">
 					<tr valign="top">
@@ -200,16 +218,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<td><input type="checkbox" name="thumbfix" value="1" <?php checked('1', $ngg->options['thumbfix']); ?> />
 						<?php _e('Ignore the aspect ratio, no portrait thumbnails','nggallery') ?></td>
 					</tr>
-					<tr valign="top">
-						<th align="left"><?php _e('Crop square thumbnail from image','nggallery') ?></th>
-						<td><input type="checkbox" name="thumbcrop" value="1" <?php checked('1', $ngg->options['thumbcrop']); ?> />
-						<?php _e('Create square thumbnails, use only the width setting :','nggallery') ?> <?php echo $ngg->options['thumbwidth']; ?> x <?php echo $ngg->options['thumbwidth']; ?></td>
-					</tr>
-					<tr valign="top">
+					<tr class="expert" valign="top">
 						<th align="left"><?php _e('Thumbnail quality','nggallery') ?></th>
 						<td><input type="text" size="3" maxlength="3" name="thumbquality" value="<?php echo $ngg->options['thumbquality']; ?>" /> %</td>
 					</tr>
 				</table>
+			<div class="alignright"><a href="" class="switch-expert" >[<?php _e('More settings','nggallery'); ?>]</a></div>
 			<div class="submit"><input class="button-primary" type="submit" name="updateoption" value="<?php _e('Save Changes') ;?>"/></div>
 			</form>	
 		</div>
@@ -235,8 +249,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<td><input type="text" size="3" maxlength="3" name="imgQuality" value="<?php echo $ngg->options['imgQuality']; ?>" /> %</td>
 					</tr>
 				</table>
-				<h3><?php _e('Single picture','nggallery') ?></h3>
-				<table class="form-table ngg-options">
+				<h3 class="expert"><?php _e('Single picture','nggallery') ?></h3>
+				<table class="expert form-table ngg-options">
 					<tr valign="top">
 						<th align="left"><?php _e('Cache single pictures','nggallery') ?></th>
 						<td></td>
@@ -249,6 +263,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<td><input type="submit" name="clearcache" class="button-secondary"  value="<?php _e('Proceed now','nggallery') ;?> &raquo;"/></td>
 					</tr>
 				</table>
+			<div class="alignright"><a href="" class="switch-expert" >[<?php _e('More settings','nggallery'); ?>]</a></div>
 			<div class="submit"><input class="button-primary" type="submit" name="updateoption" value="<?php _e('Save Changes') ;?>"/></div>
 			</form>	
 		</div>
@@ -259,9 +274,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<h2><?php _e('Gallery settings','nggallery'); ?></h2>
 			<form name="galleryform" method="POST" action="<?php echo $filepath.'#gallery'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
-			<input type="hidden" name="page_options" value="galNoPages,galImages,galColumns,galShowSlide,galTextSlide,galTextGallery,galShowOrder,galImgBrowser,galSort,galSortDir" />
+			<input type="hidden" name="page_options" value="galNoPages,galImages,galColumns,galShowSlide,galTextSlide,galTextGallery,galShowOrder,galImgBrowser,galSort,galSortDir,galHiddenImg,galAjaxNav" />
 				<table class="form-table ngg-options">
-					<tr>
+					<tr class="expert" >
 						<th valign="top"><?php _e('Deactivate gallery page link','nggallery') ?>:</th>
 						<td><input name="galNoPages" type="checkbox" value="1" <?php checked('1', $ngg->options['galNoPages']); ?> />
 						<?php _e('The album will not link to a gallery subpage. The gallery is shown on the same page.','nggallery') ?>
@@ -286,21 +301,33 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 							<input type="text" name="galTextGallery" value="<?php echo $ngg->options['galTextGallery'] ?>" size="20" />
 						</td>
 					</tr>
-					<tr>
+					<tr class="expert" >
 						<th valign="top"><?php _e('Show first','nggallery') ?>:</th>
 						<td><label><input name="galShowOrder" type="radio" value="gallery" <?php checked('gallery', $ngg->options['galShowOrder']); ?> /> <?php _e('Thumbnails', 'nggallery') ;?></label><br />
 						<label><input name="galShowOrder" type="radio" value="slide" <?php checked('slide', $ngg->options['galShowOrder']); ?> /> <?php _e('Slideshow', 'nggallery') ;?></label>
 						</td>
 					</tr>
-					<tr>
-						<th valign="top"><?php _e('Show ImageBrowser','nggallery') ?>:</th>
+					<tr class="expert" >
+						<th valign="top"><?php _e('Show ImageBrowser','nggallery'); ?>:</th>
 						<td><input name="galImgBrowser" type="checkbox" value="1" <?php checked('1', $ngg->options['galImgBrowser']); ?> />
-						<?php _e('The gallery will open the ImageBrowser instead the effect.','nggallery') ?>
+						<?php _e('The gallery will open the ImageBrowser instead the effect.', 'nggallery'); ?>
+						</td>
+					</tr>
+					<tr class="expert" >
+						<th valign="top"><?php _e('Add hidden images','nggallery'); ?>:</th>
+						<td><input name="galHiddenImg" type="checkbox" value="1" <?php checked('1', $ngg->options['galHiddenImg']); ?> />
+						<?php _e('If pagination is used, this option will still show all images in the modal window (Thickbox, Lightbox etc.). Note : This increase the page load','nggallery'); ?>
+						</td>
+					</tr>
+					<tr class="expert" >
+						<th valign="top"><?php _e('Enable AJAX pagination','nggallery'); ?>:</th>
+						<td><input name="galHiddenImg" type="checkbox" value="1" <?php checked('1', $ngg->options['galAjaxNav']); ?> />
+						<?php _e('Browse images without reload the page. Note : Work only in combination with Shutter effect','nggallery'); ?>
 						</td>
 					</tr>
 				</table>
-			<h3><?php _e('Sort options','nggallery') ?></h3>
-				<table class="form-table ngg-options">
+				<h3 class="expert" ><?php _e('Sort options','nggallery') ?></h3>
+				<table class="expert form-table ngg-options">
 					<tr>
 						<th valign="top"><?php _e('Sort thumbnails','nggallery') ?>:</th>
 						<td>
@@ -318,6 +345,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						</td>
 					</tr>
 				</table>
+			<div class="alignright"><a href="" class="switch-expert" >[<?php _e('More settings','nggallery'); ?>]</a></div>
 			<div class="submit"><input class="button-primary" type="submit" name="updateoption" value="<?php _e('Save Changes') ;?>"/></div>
 			</form>	
 		</div>
@@ -329,7 +357,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<form name="effectsform" method="POST" action="<?php echo $filepath.'#effects'; ?>" >
 			<?php wp_nonce_field('ngg_settings') ?>
 			<input type="hidden" name="page_options" value="thumbEffect,thumbCode" />
-			<p><?php _e('Here you can select the thumbnail effect, NextGEN Gallery will integrate the required HTML code in the images. Please note that only the Thickbox effect will automatic added to your theme.','nggallery'); ?>
+			<p><?php _e('Here you can select the thumbnail effect, NextGEN Gallery will integrate the required HTML code in the images. Please note that only the Shutter and Thickbox effect will automatic added to your theme.','nggallery'); ?>
 			<?php _e('With the placeholder','nggallery'); ?><strong> %GALLERY_NAME% </strong> <?php _e('you can activate a navigation through the images (depend on the effect). Change the code line only , when you use a different thumbnail effect or you know what you do.','nggallery'); ?></p>
 				<table class="form-table ngg-options">
 					<tr valign="top">
@@ -345,11 +373,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						</select>
 						</td>
 					</tr>
-					<tr valign="top">
+					<tr class="expert" valign="top">
 						<th><?php _e('Link Code line','nggallery') ?> :</th>
 						<td><textarea id="thumbCode" name="thumbCode" cols="50" rows="5"><?php echo htmlspecialchars(stripslashes($ngg->options['thumbCode'])); ?></textarea></td>
 					</tr>
 				</table>
+			<div class="alignright"><a href="" class="switch-expert" >[<?php _e('More settings','nggallery'); ?>]</a></div>
 			<div class="submit"><input class="button-primary" type="submit" name="updateoption" value="<?php _e('Save Changes') ;?>"/></div>
 			</form>	
 		</div>
@@ -444,7 +473,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					</tr>
 					<tr>
 						<th><?php _e('Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="wmColor" name="wmColor" onchange="setcolor('#previewText', this.value)" value="<?php echo $ngg->options['wmColor'] ?>" />
+						<td><input class="picker" type="text" size="6" maxlength="6" id="wmColor" name="wmColor" onchange="setcolor('#previewText', this.value)" value="<?php echo $ngg->options['wmColor'] ?>" />
 						<input type="text" size="1" readonly="readonly" id="previewText" style="background-color: #<?php echo $ngg->options['wmColor'] ?>" /> <?php _e('(hex w/o #)','nggallery') ?></td>
 					</tr>
 					<tr>
@@ -499,24 +528,24 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 						<th><?php _e('Shuffle mode','nggallery') ?>:</th>
 						<td><input name="irShuffle" type="checkbox" value="1" <?php checked('1', $ngg->options['irShuffle']); ?> /></td>
 					</tr>
-					<tr>
+					<tr class="expert">
 						<th><?php _e('Show next image on click','nggallery') ?>:</th>
 						<td><input name="irLinkfromdisplay" type="checkbox" value="1" <?php checked('1', $ngg->options['irLinkfromdisplay']); ?> /></td>
 					</tr>					
-					<tr>
+					<tr class="expert">
 						<th><?php _e('Show navigation bar','nggallery') ?>:</th>
 						<td><input name="irShownavigation" type="checkbox" value="1" <?php checked('1', $ngg->options['irShownavigation']); ?> /></td>
 					</tr>
-					<tr>
+					<tr class="expert">
 						<th><?php _e('Show loading icon','nggallery') ?>:</th>
 						<td><input name="irShowicons" type="checkbox" value="1" <?php checked('1', $ngg->options['irShowicons']); ?> /></td>
 					</tr>
-					<tr>
+					<tr class="expert">
 						<th><?php _e('Use watermark logo','nggallery') ?>:</th>
 						<td><input name="irWatermark" type="checkbox" value="1" <?php checked('1', $ngg->options['irWatermark']); ?> />
 						<span class="setting-description"><?php _e('You can change the logo at the watermark settings','nggallery') ?></span></td>
 					</tr>
-					<tr>
+					<tr class="expert">
 						<th><?php _e('Stretch image','nggallery') ?>:</th>
 						<td>
 						<select size="1" name="irOverstretch">
@@ -547,41 +576,41 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 							<option value="random" <?php selected('random', $ngg->options['irTransition']); ?> ><?php _e('random', 'nggallery') ;?></option>
 						</select>
 					</tr>
-					<tr>
+					<tr class="expert">
 						<th><?php _e('Use slow zooming effect','nggallery') ?>:</th>
 						<td><input name="irKenburns" type="checkbox" value="1" <?php checked('1', $ngg->options['irKenburns']); ?> /></td>
 					</tr>
 					<tr>
 						<th><?php _e('Background Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="irBackcolor" name="irBackcolor" onchange="setcolor('#previewBack', this.value)" value="<?php echo $ngg->options['irBackcolor'] ?>" />
+						<td><input class="picker" type="text" size="6" maxlength="6" id="irBackcolor" name="irBackcolor" onchange="setcolor('#previewBack', this.value)" value="<?php echo $ngg->options['irBackcolor'] ?>" />
 						<input type="text" size="1" readonly="readonly" id="previewBack" style="background-color: #<?php echo $ngg->options['irBackcolor'] ?>" /></td>
 					</tr>
 					<tr>					
 						<th><?php _e('Texts / Buttons Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="irFrontcolor" name="irFrontcolor" onchange="setcolor('#previewFront', this.value)" value="<?php echo $ngg->options['irFrontcolor'] ?>" />
+						<td><input class="picker" type="text" size="6" maxlength="6" id="irFrontcolor" name="irFrontcolor" onchange="setcolor('#previewFront', this.value)" value="<?php echo $ngg->options['irFrontcolor'] ?>" />
 						<input type="text" size="1" readonly="readonly" id="previewFront" style="background-color: #<?php echo $ngg->options['irFrontcolor'] ?>" /></td>
 					</tr>
-					<tr>					
+					<tr class="expert">					
 						<th><?php _e('Rollover / Active Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="irLightcolor" name="irLightcolor" onchange="setcolor('#previewLight', this.value)" value="<?php echo $ngg->options['irLightcolor'] ?>" />
+						<td><input class="picker" type="text" size="6" maxlength="6" id="irLightcolor" name="irLightcolor" onchange="setcolor('#previewLight', this.value)" value="<?php echo $ngg->options['irLightcolor'] ?>" />
 						<input type="text" size="1" readonly="readonly" id="previewLight" style="background-color: #<?php echo $ngg->options['irLightcolor'] ?>" /></td>
 					</tr>
-					<tr>					
+					<tr class="expert">					
 						<th><?php _e('Screen Color','nggallery') ?>:</th>
-						<td><input type="text" size="6" maxlength="6" id="irScreencolor" name="irScreencolor" onchange="setcolor('#previewScreen', this.value)" value="<?php echo $ngg->options['irScreencolor'] ?>" />
+						<td><input class="picker" type="text" size="6" maxlength="6" id="irScreencolor" name="irScreencolor" onchange="setcolor('#previewScreen', this.value)" value="<?php echo $ngg->options['irScreencolor'] ?>" />
 						<input type="text" size="1" readonly="readonly" id="previewScreen" style="background-color: #<?php echo $ngg->options['irScreencolor'] ?>" /></td>
 					</tr>
-					<tr>					
+					<tr class="expert">					
 						<th><?php _e('Background music (URL)','nggallery') ?>:</th>
 						<td><input type="text" size="50" id="irAudio" name="irAudio" value="<?php echo $ngg->options['irAudio'] ?>" /></td>
 					</tr>
-					<tr>
-						<th><?php _e('Try XHTML validation (with CDATA)','nggallery') ?>:</th>
+					<tr class="expert">
+						<th ><?php _e('Try XHTML validation (with CDATA)','nggallery') ?>:</th>
 						<td><input name="irXHTMLvalid" type="checkbox" value="1" <?php checked('1', $ngg->options['irXHTMLvalid']); ?> />
 						<span class="setting-description"><?php _e('Important : Could causes problem at some browser. Please recheck your page.','nggallery') ?></span></td>
 					</tr>
 					</table>
-				<div class="clear"> &nbsp; </div>
+				<div class="alignright"><a href="" class="switch-expert" >[<?php _e('More settings','nggallery'); ?>]</a></div>
 				<div class="submit"><input class="button-primary" type="submit" name="updateoption" value="<?php _e('Save Changes') ;?>"/></div>
 		</form>
 		</div>

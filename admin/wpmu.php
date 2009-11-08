@@ -12,7 +12,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	$ngg_options = get_site_option('ngg_options');
 	
 	// same as $_SERVER['REQUEST_URI'], but should work under IIS 6.0
-	$filepath    = get_option('siteurl'). '/wp-admin/wpmu-admin.php?page='.$_GET['page'];
+	$filepath    = site_url( 'wp-admin/wpmu-admin.php?page=' . $_GET['page'], 'admin' );
 
 	if ( isset($_POST['updateoption']) ) {	
 		check_admin_referer('ngg_wpmu_settings');
@@ -29,7 +29,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		}
 
 		update_site_option('ngg_options', $ngg_options);
-	 	$messagetext = '<font color="green">'.__('Update successfully','nggallery').'</font>';
+	 	$messagetext = __('Update successfully','nggallery');
 	}		
 	
 	// message windows
@@ -42,8 +42,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		<form name="generaloptions" method="post">
 		<?php wp_nonce_field('ngg_wpmu_settings') ?>
 		<input type="hidden" name="page_options" value="gallerypath,wpmuQuotaCheck,wpmuZipUpload,wpmuStyle,wpmuRoles,wpmuCSSfile" />
-		<fieldset class="options"> 
-			<table class="optiontable editform">
+			<table class="form-table">
 				<tr valign="top">
 					<th align="left"><?php _e('Gallery path','nggallery') ?></th>
 					<td><input type="text" size="50" name="gallerypath" value="<?php echo $ngg_options[gallerypath]; ?>" title="TEST" /><br />
@@ -86,7 +85,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 								$selected = " selected='selected'";
 							}
 							else $selected = '';
-							$css_name = attribute_escape($css_name);
+							$css_name = esc_attr($css_name);
 							echo "\n\t<option value=\"$key\" $selected>$css_name</option>";
 						}
 					?>
@@ -95,8 +94,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					</td>
 				</tr>
 			</table> 				
-		<div class="submit"><input type="submit" name="updateoption" value="<?php _e('Update') ;?> &raquo;"/></div>
-		</fieldset>	
+			<div class="submit"><input type="submit" name="updateoption" value="<?php _e('Update') ;?> &raquo;"/></div>
 		</form>	
 	</div>	
 

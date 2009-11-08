@@ -1,6 +1,32 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+= v1.4.0 - 08.11.2009 =
+* NEW : Automatic rotate images during upload or via manage gallery page (THX to Simone Fumagalli)
+* NEW : Include Bulkupdate for gallery overview, require PHP 5.2
+* NEW : XMLRPC support with 4 new methods : see xmlrpc.php for more information
+* NEW : Recent and random images can be taken from a specific gallery using the id=x parameter in the shortcode (THX to Prollius)
+* NEW : Recent images can be recent by exif date (instead of database id) by using the mode=recentdate parameter in the shortcode  (THX to Prollius)
+* NEW : Introduce the WP_Object_cache and meta_data
+* NEW : Various new hooks and filters
+* Added : Better support for role manager plugin (THX to Mattias Buelens)
+* Added : New option to add hidden images. Needed to show all images in a modal window (Thickbox, Lightbox et.)
+* Added : New link parameter for the singlepic shortcode : [singlepic id=x w=x h=x link="http://google.com"]
+* Added : New template gallery-carousel
+* Added : New id parameter for recent and random shortcodes : [random max="7" template="filename" id="2"] takes only pictures from the gallery with id=2
+* Added : New mode parameter for recent shortcode : [recent max="7" template="filename" id="3" mode="date" /] where mode can be one of (id, date, sort). Recent pictures are delivered by addition to database (id), exif date (date) or user sort order (sort).
+* Added : Enable/Disable Ajax navigation via settings
+* Added : New filter hook 'ngg_render_template' to render templates with a other plugin
+* Changed : Added option to link an album with a page id
+* Changed : Support templates for child themes, use STYLESHEETPATH instead TEMPLATEPATH (THX to Prollius)
+* Changed : Rework of Media RSS Widget
+* Bugfix : Check capability to create a new page
+* Bugfix : Fix double call of filter name , changed to ngg_picturelist_object (THX to Prollius)
+* Bugfix : Check for a deleted gallery in a album
+
+= V1.3.6 - 20.09.2009 =
+* Changed : Just change the feed link
+
 = V1.3.5 - 17.07.2009 =
 * Bugfix : Fixed XSS issue for Page title
 
@@ -8,7 +34,7 @@ by Alex Rabe & NextGEN DEV Team
 * Added : New filter ngg_gallery_object and ngg_image_object
 * Bugfix : Fix double rendering of a gallery if two album shortcodes are used
 * Bugfix : Fix for custom field ngg_gal_sort
-* Bugfix : Changed capapbility check for upload 
+* Bugfix : Changed capability check for upload 
 * Bugfix : Check for correct version OR memory limit
 
 = V1.3.3 - 11.06.2009 =
@@ -120,11 +146,11 @@ by Alex Rabe & NextGEN DEV Team
 * NEW : Create output via template files, more flexible and support for multiple templates
 * NEW : Extended role system. Each gallery has now a author
 * NEW : [thumb id="4,5,12,..."] shortcode. You can now insert thumbnails for one or more images (that are not necessarly inside the same gallery).
-* Changed : Add swfupload 2.2.0. Support for Adobe Flash 10 upload		
-* Changed : Update all Admin pages for Wordpress 2.7 Admin UI		
+* Changed : Add swfupload 2.2.0. Support for Adobe Flash 10 upload      
+* Changed : Update all Admin pages for Wordpress 2.7 Admin UI       
 * Changed : New icon for TinyMCE and WP2.7 Menue from http://www.pinvoke.com/
 * Changed : Move update message to admin.php
-* Changed : Widgets are now core and doesn't need to be activate, rework as Multi Widgets		
+* Changed : Widgets are now core and doesn't need to be activate, rework as Multi Widgets       
 * Changed : Improved the gallery management page.
 * Changed : Rename the filter 'ngg_create_gallery_thumbcode' to 'ngg_get_thumbcode'.
 * Changed : Convert tags to WP-Taxonomy tables, no more need for ngg_tags, ngg_pic2tags

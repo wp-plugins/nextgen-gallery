@@ -136,68 +136,6 @@ class nggGallery {
 	}
 	
 	/**
-	 * create the complete navigation
-	 * TODO: shall be moved to another class. This belongs to the view and not to the library.
-	 * 
-	 * @param mixed $page
-	 * @param integer $totalElement 
-	 * @param integer $maxElement
-	 * @return string pagination content
-	 */
-	function create_navigation($page, $totalElement, $maxElement = 0) {
-		global $nggRewrite;
-		
-		if ($maxElement > 0) {
-			$total = $totalElement;
-			
-			// create navigation	
-			if ( $total > $maxElement ) {
-				$total_pages = ceil( $total / $maxElement );
-				$r = '';
-				if ( 1 < $page ) {
-					$args['nggpage'] = ( 1 == $page - 1 ) ? FALSE : $page - 1;
-					$previous = $args['nggpage'];
-					if (FALSE == $args['nggpage']) {
-						$previous = 1; 
-					}
-					$r .=  '<a class="prev" id="ngg-prev-' . $previous . '" href="'. $nggRewrite->get_permalink( $args ) . '">&#9668;</a>';
-				}
-				
-				$total_pages = ceil( $total / $maxElement );
-				
-				if ( $total_pages > 1 ) {
-					for ( $page_num = 1; $page_num <= $total_pages; $page_num++ ) {
-						if ( $page == $page_num ) {
-							$r .=  '<span>' . $page_num . '</span>';
-						} else {
-							$p = false;
-							if ( $page_num < 3 || ( $page_num >= $page - 3 && $page_num <= $page + 3 ) || $page_num > $total_pages - 3 ) {
-								$args['nggpage'] = ( 1 == $page_num ) ? FALSE : $page_num;
-								$r .= '<a class="page-numbers" href="' . $nggRewrite->get_permalink( $args ) . '">' . ( $page_num ) . '</a>';
-								$in = true;
-							} elseif ( $in == true ) {
-								$r .= '<span>...</span>';
-								$in = false;
-							}
-						}
-					}
-				}
-				
-				if ( ( $page ) * $maxElement < $total || -1 == $total ) {
-					$args['nggpage'] = $page + 1;
-					$r .=  '<a class="next" id="ngg-next-' . $args['nggpage'] . '" href="' . $nggRewrite->get_permalink ( $args ) . '">&#9658;</a>';
-				}
-				
-				$navigation = "<div class='ngg-navigation'>$r</div>";
-			} else {
-				$navigation = "<div class='ngg-clear'></div>"."\n";
-			}
-		}
-		
-		return $navigation;
-	}
-	
-	/**
 	* nggGallery::get_option() - get the options and overwrite them with custom meta settings
 	*
 	* @param string $key
@@ -242,6 +180,7 @@ class nggGallery {
 				'ngg_gal_ShowSlide'			=> 'galShowSlide',
 				'ngg_gal_ShowPiclense'		=> 'usePicLens',
 				'ngg_gal_ImageBrowser' 		=> 'galImgBrowser',
+				'ngg_gal_HideImages' 		=> 'galHiddenImg',
 				'ngg_ir_Shuffle' 			=> 'irShuffle',
 				'ngg_ir_LinkFromDisplay' 	=> 'irLinkfromdisplay',
 				'ngg_ir_ShowNavigation'		=> 'irShownavigation',
@@ -257,7 +196,7 @@ class nggGallery {
 				if (array_key_exists($key, $meta_array)){
 					switch ($typ) {
 					case 'string':
-						$options[$db_value] = (string) attribute_escape($meta_array[$key][0]);
+						$options[$db_value] = (string) esc_attr($meta_array[$key][0]);
 						break;
 					case 'int':
 						$options[$db_value] = (int) $meta_array[$key][0];
@@ -318,8 +257,13 @@ class nggGallery {
 			$$key = $val;
 		}
 		
-		if (file_exists (TEMPLATEPATH . "/nggallery/$template_name.php")) {
-			include (TEMPLATEPATH . "/nggallery/$template_name.php");
+		// hook into the render feature to allow other plugins to include templates
+		$custom_template = apply_filters( 'ngg_render_template', false, $template_name );
+		
+		if ( ( $custom_template != false ) &&  file_exists ($custom_template) ) {
+			include ( $custom_template );
+		} else if (file_exists (STYLESHEETPATH . "/nggallery/$template_name.php")) {
+			include (STYLESHEETPATH . "/nggallery/$template_name.php");
 		} else if (file_exists (NGGALLERY_ABSPATH . "/view/$template_name.php")) {
 			include (NGGALLERY_ABSPATH . "/view/$template_name.php");
 		} else {
@@ -427,6 +371,38 @@ class nggGallery {
 			}
 		}
 		return;
+	}
+	
+	/**
+	 * Slightly modfifed version of pathinfo(), clean up filename & rename jpeg to jpg
+	 * 
+	 * @param string $name The name being checked. 
+	 * @return array containing information about file
+	 */
+	function fileinfo( $name ) {
+		
+		//Sanitizes a filename replacing whitespace with dashes
+		$name = sanitize_file_name($name);
+		
+		//get the parts of the name
+		$filepart = pathinfo ( strtolower($name) );
+		
+		if ( empty($filepart) )
+			return false;
+		
+		// required until PHP 5.2.0
+		if ( empty($filepart['filename']) ) 
+			$filepart['filename'] = substr($filepart['basename'],0 ,strlen($filepart['basename']) - (strlen($filepart['extension']) + 1) );
+		
+		$filepart['filename'] = sanitize_title_with_dashes( $filepart['filename'] );
+		
+		//extension jpeg will not be recognized by the slideshow, so we rename it
+		$filepart['extension'] = ($filepart['extension'] == 'jpeg') ? 'jpg' : $filepart['extension'];
+		
+		//combine the new file name
+		$filepart['basename'] = $filepart['filename'] . '.' . $filepart['extension'];
+		
+		return $filepart;
 	}
 	
 }

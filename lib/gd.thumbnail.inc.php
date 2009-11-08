@@ -3,8 +3,8 @@
  * gd.thumbnail.inc.php
  * 
  * @author 		Ian Selby (ian@gen-x-design.com)
- * @copyright 	Copyright 2006-2008
- * @version 	1.1.3 (PHP4)
+ * @copyright 	Copyright 2006-2009
+ * @version 	1.2.0 (based on 1.1.3)
  * @modded      by Alex Rabe
  * 
  */
@@ -38,12 +38,6 @@ class ngg_Thumbnail {
      * @var string
      */
     var $fileName;
-    /**
-     * Image meta data if any is available (jpeg/tiff) via the exif library
-     *
-     * @var array
-     */
-    var $imageMeta;
     /**
      * Current dimensions of working image
      *
@@ -131,7 +125,6 @@ class ngg_Thumbnail {
         $this->currentDimensions    = array();
         $this->newDimensions        = array();
         $this->fileName             = $fileName;
-        $this->imageMeta			= array();
         $this->percent              = 100;
         $this->maxWidth             = 0;
         $this->maxHeight            = 0;
@@ -193,7 +186,6 @@ class ngg_Thumbnail {
 	            $size = GetImageSize($this->fileName);
     	        $this->currentDimensions = array('width'=>$size[0],'height'=>$size[1]);
 	            $this->newImage = $this->oldImage;
-	            $this->gatherImageMeta();
 	        }
         }
 
@@ -545,7 +537,7 @@ class ngg_Thumbnail {
 	 * @param int $width
 	 * @param int $height
 	 */
-	function crop($startX,$startY,$width,$height) {
+	function crop($startX, $startY, $width, $height) {
 	    //make sure the cropped area is not greater than the size of the image
 	    if($width > $this->currentDimensions['width']) $width = $this->currentDimensions['width'];
 	    if($height > $this->currentDimensions['height']) $height = $this->currentDimensions['height'];
@@ -697,6 +689,84 @@ class ngg_Thumbnail {
 	}
 
 	/**
+	 * Flip an image.
+	 *
+	 * @param bool $horz flip the image in horizontal mode
+	 * @param bool $vert flip the image in vertical mode
+	 */
+	function flipImage( $horz = false, $vert = false ) {
+		
+		$sx = $vert ? ($this->currentDimensions['width'] - 1) : 0;
+		$sy = $horz ? ($this->currentDimensions['height'] - 1) : 0;
+		$sw = $vert ? -$this->currentDimensions['width'] : $this->currentDimensions['width'];
+		$sh = $horz ? -$this->currentDimensions['height'] : $this->currentDimensions['height'];
+		
+		$this->workingImage = imagecreatetruecolor( $this->currentDimensions['width'], $this->currentDimensions['height'] ); 
+		
+		imagecopyresampled($this->workingImage, $this->oldImage, 0, 0, $sx, $sy, $this->currentDimensions['width'], $this->currentDimensions['height'], $sw, $sh) ;
+		$this->oldImage = $this->workingImage;
+		$this->newImage = $this->workingImage;
+		
+		return true;
+	}
+	
+	/**
+	 * Rotate an image clockwise or counter clockwise
+	 *
+	 * @param string $direction could be CW or CCW
+	 */
+	function rotateImage( $dir = 'CW' ) {
+		
+		$angle = ($dir == 'CW') ? 90 : -90;
+		
+		if ( function_exists('imagerotate') ) {
+	        $this->workingImage = imagerotate($this->oldImage, 360 - $angle, 0); // imagerotate() rotates CCW 
+	        $this->currentDimensions['width']  = imagesx($this->workingImage);
+	    	$this->currentDimensions['height'] = imagesy($this->workingImage);
+    	    $this->oldImage = $this->workingImage;
+			$this->newImage = $this->workingImage;
+			return true;
+		}
+		
+		$this->workingImage = imagecreatetruecolor( $this->currentDimensions['height'], $this->currentDimensions['width'] ); 
+		
+	    imagealphablending($this->workingImage, false); 
+	    imagesavealpha($this->workingImage, true); 
+
+		switch ($angle) {
+			
+			case 90 :
+				for( $x = 0; $x < $this->currentDimensions['width']; $x++ ) { 
+	   	            for( $y = 0; $y < $this->currentDimensions['height']; $y++ ) { 
+	  	                if ( !imagecopy($this->workingImage, $this->oldImage, $this->currentDimensions['height'] - $y - 1, $x, $x, $y, 1, 1) ) 
+	  	                    return false; 
+	 	            } 
+	  	        } 
+			break;
+			
+			case -90 :
+				for( $x = 0; $x < $this->currentDimensions['width']; $x++ ) { 
+	 	            for( $y = 0; $y < $this->currentDimensions['height']; $y++ ) { 
+	 	                if ( !imagecopy($this->workingImage, $this->oldImage, $y, $this->currentDimensions['width'] - $x - 1, $x, $y, 1, 1) ) 
+	 	                    return false; 
+	 	            } 
+	 	        } 
+			break;
+						
+			default : 
+				return false;
+		}
+
+		$this->currentDimensions['width']  = imagesx($this->workingImage);
+	    $this->currentDimensions['height'] = imagesy($this->workingImage);			
+	    $this->oldImage = $this->workingImage;
+		$this->newImage = $this->workingImage;
+		
+	    return true;
+		
+	}	
+
+	/**
 	 * Inverts working image, used by reflection function
 	 * 
 	 * @access	private
@@ -739,69 +809,6 @@ class ngg_Thumbnail {
         return ($asString ? "{$rgb[0]} {$rgb[1]} {$rgb[2]}" : $rgb);
     }
     
-    /**
-     * Reads selected exif meta data from jpg images and populates $this->imageMeta with appropriate values if found
-     *
-     */
-    function gatherImageMeta() {
-    	//only attempt to retrieve info if exif exists
-    	if(function_exists("exif_read_data") && $this->format == 'JPG') {
-			$imageData = @exif_read_data($this->fileName);
-			if(isset($imageData['Make'])) 
-				$this->imageMeta['make'] = ucwords(strtolower($imageData['Make']));
-			if(isset($imageData['Model'])) 
-				$this->imageMeta['model'] = $imageData['Model'];
-			if(isset($imageData['COMPUTED']['ApertureFNumber'])) {
-				$this->imageMeta['aperture'] = $imageData['COMPUTED']['ApertureFNumber'];
-				$this->imageMeta['aperture'] = str_replace('/','',$this->imageMeta['aperture']);
-			}
-			if(isset($imageData['ExposureTime'])) {
-				$exposure = explode('/',$imageData['ExposureTime']);
-				$exposure = round($exposure[1]/$exposure[0],-1);
-				$this->imageMeta['exposure'] = '1/' . $exposure . ' second';
-			}
-			if(isset($imageData['Flash'])) {
-				if($imageData['Flash'] > 0) {
-					$this->imageMeta['flash'] = 'Yes';
-				}
-				else {
-					$this->imageMeta['flash'] = 'No';
-				}
-			}
-			if(isset($imageData['FocalLength'])) {
-				$focus = explode('/',$imageData['FocalLength']);
-				if ($focus[1] > 0)
-					$this->imageMeta['focalLength'] = round($focus[0]/$focus[1],2) . ' mm';
-			}
-			if(isset($imageData['DateTime'])) {
-				$date = $imageData['DateTime'];
-				$date = explode(' ',$date);
-				$date = str_replace(':','-',$date[0]) . ' ' . $date[1];
-				$this->imageMeta['dateTaken'] = date('m/d/Y g:i A',strtotime($date));
-			}
-    	}
-    }
-    
-    /**
-     * Rotates image either 90 degrees clockwise or counter-clockwise
-     *
-     * @param string $direction
-     */
-    function rotateImage($direction = 'CW') {
-    	if($direction == 'CW') {
-    		$this->workingImage = imagerotate($this->workingImage,-90,0);
-    	}
-    	else {
-    		$this->workingImage = imagerotate($this->workingImage,90,0);
-    	}
-    	$newWidth = $this->currentDimensions['height'];
-    	$newHeight = $this->currentDimensions['width'];
-		$this->oldImage = $this->workingImage;
-		$this->newImage = $this->workingImage;
-		$this->currentDimensions['width'] = $newWidth;
-		$this->currentDimensions['height'] = $newHeight;
-    }
-
 	/**
      * Based on the Watermark function by Marek Malcherek  
      * http://www.malcherek.de
@@ -896,8 +903,7 @@ class ngg_Thumbnail {
 	}
 	
     /**
-     * Fast imagecopyresampled
-     * by tim@leethost.com
+     * Fast imagecopyresampled by tim@leethost.com
      *
      */	
 	function fastimagecopyresampled (&$dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h, $quality = 3) {

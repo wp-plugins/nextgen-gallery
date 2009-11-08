@@ -45,14 +45,13 @@ class nggImage{
 	 * Constructor
 	 * 
 	 * @param object $gallery The nggGallery object representing the gallery containing this image
-	 * @param object $row //TODO:Obsoltete ???
 	 * @return void
 	 */
-	function nggImage($gallery, $row = false) {			
+	function nggImage($gallery) {			
 			
 		//This must be an object
 		$gallery = (object) $gallery;
-		
+
 		// Build up the object
 		foreach ($gallery as $key => $value)
 			$this->$key = $value ;
@@ -69,6 +68,9 @@ class nggImage{
 		$this->thumbURL 	= get_option ('siteurl') . '/' . $this->path . '/thumbs/thumbs_' . $this->filename;
 		$this->imagePath	= WINABSPATH.$this->path . '/' . $this->filename;
 		$this->thumbPath	= WINABSPATH.$this->path . '/thumbs/thumbs_' . $this->filename;
+		$this->meta_data	= unserialize($this->meta_data);
+		
+		wp_cache_add($this->pid, $this, 'ngg_image');
 		
 		// Get tags only if necessary
 		unset($this->tags);
@@ -171,9 +173,9 @@ class nggImage{
 	 * Get the tags associated to this image
 	 */
 	function get_tags() {
-		if (!isset($this->tags)) {
+		if ( !isset($this->tags) )
 			$this->tags = wp_get_object_terms($this->pid, 'ngg_tag', 'fields=all');
-		}
+
 		return $this->tags;
 	}
 	
@@ -182,9 +184,9 @@ class nggImage{
 	 * TODO Get a permalink to a page presenting the image
 	 */
 	function get_permalink() {
-		if ($this->permalink=='') {
+		if ($this->permalink == '')
 			$this->permalink = $this->imageURL;
-		}
+
 		return $this->permalink; 
 	}
 }

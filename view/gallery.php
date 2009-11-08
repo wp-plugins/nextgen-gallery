@@ -35,18 +35,23 @@ Follow variables are useable :
 <?php } ?>
 	
 	<!-- Thumbnails -->
-	<?php foreach ($images as $image) : ?>
+	<?php foreach ( $images as $image ) : ?>
 	
-	<div id="ngg-image-<?php echo $image->pid ?>" class="ngg-gallery-thumbnail-box" <?php echo $gallery->imagewidth ?> >
+	<div id="ngg-image-<?php echo $image->pid ?>" class="ngg-gallery-thumbnail-box" <?php echo $image->style ?> >
 		<div class="ngg-gallery-thumbnail" >
 			<a href="<?php echo $image->imageURL ?>" title="<?php echo $image->description ?>" <?php echo $image->thumbcode ?> >
+				<?php if ( !$image->hidden ) { ?>
 				<img title="<?php echo $image->alttext ?>" alt="<?php echo $image->alttext ?>" src="<?php echo $image->thumbnailURL ?>" <?php echo $image->size ?> />
+				<?php } ?>
 			</a>
 		</div>
 	</div>
+	
+	<?php if ( $image->hidden ) continue; ?>
 	<?php if ( $gallery->columns > 0 && ++$i % $gallery->columns == 0 ) { ?>
-	<br style="clear: both" />
+		<br style="clear: both" />
 	<?php } ?>
+
  	<?php endforeach; ?>
  	
 	<!-- Pagination -->

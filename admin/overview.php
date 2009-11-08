@@ -8,12 +8,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
  * @return mixed content
  */
 function nggallery_admin_overview()  {
-
-	// new way since wp 2.8
-	if ( version_compare($GLOBALS['wp_version'], '2.7.999', '>') ) {
+    
 	?>
 	<div class="wrap ngg-wrap">
 		<h2><?php _e('NextGEN Gallery Overview', 'nggallery') ?></h2>
+        <?php if (version_compare(PHP_VERSION, '5.0.0', '<')) ngg_check_for_PHP5(); ?>
 		<div id="dashboard-widgets-wrap" class="ngg-overview">
 		    <div id="dashboard-widgets" class="metabox-holder">
 				<div id="post-body">
@@ -38,31 +37,10 @@ function nggallery_admin_overview()  {
 		//]]>
 	</script>
 	<?php
-	
-	} else {
-	
-	?>	
-	<div class="wrap ngg-wrap">
-		<h2><?php _e('NextGEN Gallery Overview', 'nggallery') ?></h2>
-		<div id="dashboard-widgets-wrap" class="ngg-overview">
-		    <div id="dashboard-widgets" class="metabox-holder">
-		    	<div id="side-info-column" class="inner-sidebar">
-					<?php do_meta_boxes('ngg_overview', 'right', ''); ?>
-				</div>
-				<div id="post-body" class="has-sidebar">
-					<div id="dashboard-widgets-main-content" class="has-sidebar-content">
-					<?php do_meta_boxes('ngg_overview', 'left', ''); ?>
-					</div>
-				</div>
-		    </div>
-		</div>
-	</div>
-	<?php
-	}
 }
 
 /**
- * Show the server settings
+ * Show the server settings in a dashboard widget
  * 
  * @return void
  */
@@ -90,7 +68,7 @@ function ngg_overview_server() {
 }
 
 /**
- * Show the GD ibfos
+ * Show the GD lib info in a dashboard widget
  * 
  * @return void
  */
@@ -109,7 +87,7 @@ function ngg_overview_graphic_lib() {
 }
 
 /**
- * Show the GD ibfos
+ * Show the most recent donators
  * 
  * @return void
  */
@@ -164,7 +142,6 @@ function ngg_overview_news(){
 ?>
 <div class="rss-widget">
     <?php
-//    $rss = @fetch_rss('http://alexrabe.boelinger.com/?tag=nextgen-gallery&feed=rss2');
       $rss = @fetch_rss('http://feeds.feedburner.com/alexrabe/');
 
       if ( isset($rss->items) && 0 != count($rss->items) )
@@ -210,19 +187,19 @@ function ngg_overview_right_now() {
 		<tbody>
 			<tr class="first">
 				<td class="first b"><a href="admin.php?page=nggallery-add-gallery"><?php echo $images; ?></a></td>
-				<td class="t"><?php echo __ngettext( 'Image', 'Images', $images, 'nggallery' ); ?></td>
+				<td class="t"><?php echo _n( 'Image', 'Images', $images, 'nggallery' ); ?></td>
 				<td class="b"></td>
 				<td class="last"></td>
 			</tr>
 			<tr>
 				<td class="first b"><a href="admin.php?page=nggallery-manage-gallery"><?php echo $galleries; ?></a></td>
-				<td class="t"><?php echo __ngettext( 'Gallery', 'Galleries', $galleries, 'nggallery' ); ?></td>
+				<td class="t"><?php echo _n( 'Gallery', 'Galleries', $galleries, 'nggallery' ); ?></td>
 				<td class="b"></td>
 				<td class="last"></td>
 			</tr>
 			<tr>
 				<td class="first b"><a href="admin.php?page=nggallery-manage-album"><?php echo $albums; ?></a></td>
-				<td class="t"><?php echo __ngettext( 'Album', 'Albums', $albums, 'nggallery' ); ?></td>
+				<td class="t"><?php echo _n( 'Album', 'Albums', $albums, 'nggallery' ); ?></td>
 				<td class="b"></td>
 				<td class="last"></td>
 			</tr>
@@ -248,9 +225,14 @@ add_meta_box('dashboard_right_now', __('Welcome to NextGEN Gallery !', 'nggaller
 add_meta_box('dashboard_primary', __('Latest News', 'nggallery'), 'ngg_overview_news', 'ngg_overview', 'right', 'core');
 add_meta_box('ngg_lastdonators', __('Recent donators', 'nggallery'), 'ngg_overview_donators', 'ngg_overview', 'left', 'core');
 add_meta_box('ngg_server', __('Server Settings', 'nggallery'), 'ngg_overview_server', 'ngg_overview', 'left', 'core');
+add_meta_box('dashboard_plugins', __('Related plugins', 'nggallery'), 'ngg_related_plugins', 'ngg_overview', 'right', 'core');
 add_meta_box('ngg_gd_lib', __('Graphic Library', 'nggallery'), 'ngg_overview_graphic_lib', 'ngg_overview', 'right', 'core');
 
-// ***************************************************************
+/**
+ * Show GD Library version information
+ * 
+ * @return void
+ */
 function ngg_gd_info() {
 	
 	if(function_exists("gd_info")){
@@ -268,18 +250,27 @@ function ngg_gd_info() {
 	}
 }
 
-// ***************************************************************		
-function ngg_gd_yesNo($bool){
+/**
+ * Return localized Yes or no 
+ * 
+ * @param bool $bool
+ * @return return 'Yes' | 'No'
+ */
+function ngg_gd_yesNo( $bool ){
 	if($bool) 
 		return __('Yes', 'nggallery');
 	else 
 		return __('No', 'nggallery');
 }
 
-// ***************************************************************
+
+/**
+ * Show up some server infor's
+ * @author GamerZ (http://www.lesterchan.net)
+ * 
+ * @return void
+ */
 function ngg_get_serverinfo() {
-// thx to GaMerZ for WP-ServerInfo	
-// http://www.lesterchan.net
 
 	global $wpdb;
 	// Get MYSQL Version
@@ -297,6 +288,9 @@ function ngg_get_serverinfo() {
 	// Get PHP Max Upload Size
 	if(ini_get('upload_max_filesize')) $upload_max = ini_get('upload_max_filesize');	
 	else $upload_max = __('N/A', 'nggallery');
+	// Get PHP Output buffer Size
+	if(ini_get('output_buffering')) $output_buffer = ini_get('output_buffering');	
+	else $output_buffer = __('N/A', 'nggallery');
 	// Get PHP Max Post Size
 	if(ini_get('post_max_size')) $post_max = ini_get('post_max_size');
 	else $post_max = __('N/A', 'nggallery');
@@ -320,7 +314,7 @@ function ngg_get_serverinfo() {
 	else $xml = __('No', 'nggallery');
 	
 ?>
-	<li><?php _e('Operating System', 'nggallery'); ?> : <span><?php echo PHP_OS; ?></span></li>
+	<li><?php _e('Operating System', 'nggallery'); ?> : <span><?php echo PHP_OS; ?>&nbsp;(<?php echo (PHP_INT_SIZE * 8) ?>&nbsp;Bit)</span></li>
 	<li><?php _e('Server', 'nggallery'); ?> : <span><?php echo $_SERVER["SERVER_SOFTWARE"]; ?></span></li>
 	<li><?php _e('Memory usage', 'nggallery'); ?> : <span><?php echo $memory_usage; ?></span></li>
 	<li><?php _e('MYSQL Version', 'nggallery'); ?> : <span><?php echo $sqlversion; ?></span></li>
@@ -331,11 +325,25 @@ function ngg_get_serverinfo() {
 	<li><?php _e('PHP Memory Limit', 'nggallery'); ?> : <span><?php echo $memory_limit; ?></span></li>
 	<li><?php _e('PHP Max Upload Size', 'nggallery'); ?> : <span><?php echo $upload_max; ?></span></li>
 	<li><?php _e('PHP Max Post Size', 'nggallery'); ?> : <span><?php echo $post_max; ?></span></li>
+	<li><?php _e('PHP Output Buffer Size', 'nggallery'); ?> : <span><?php echo $output_buffer; ?></span></li>
 	<li><?php _e('PHP Max Script Execute Time', 'nggallery'); ?> : <span><?php echo $max_execute; ?>s</span></li>
 	<li><?php _e('PHP Exif support', 'nggallery'); ?> : <span><?php echo $exif; ?></span></li>
 	<li><?php _e('PHP IPTC support', 'nggallery'); ?> : <span><?php echo $iptc; ?></span></li>
 	<li><?php _e('PHP XML support', 'nggallery'); ?> : <span><?php echo $xml; ?></span></li>
 <?php
+}
+
+/**
+ * Inform about the end of PHP4
+ * 
+ * @return void
+ */
+function ngg_check_for_PHP5() {
+    ?>
+	<div class="updated">
+		<p><?php _e('NextGEN Gallery contains some functions which are only available under PHP 5.2. You are using the old PHP 4 version, upgrade now! It\'s no longer supported by the PHP group. Many shared hosting providers offer both PHP 4 and PHP 5, running simultaneously. Ask your provider if they can do this.', 'nggallery'); ?></p>
+	</div>
+    <?php
 }
 
 /**
@@ -382,7 +390,7 @@ class ngg_SpaceManager {
 		);
 
 		$quota = ngg_SpaceManager::getQuota() * 1024 * 1024;
-		$used = get_dirsize( constant( "ABSPATH" ) . constant( "UPLOADS" ) );
+		$used = get_dirsize( constant( 'ABSPATH' ) . constant( 'UPLOADS' ) );
 //		$used = get_dirsize( ABSPATH."wp-content/blogs.dir/".$blog_id."/files" );
 		
 		if ($used > $quota) $percentused = '100';
@@ -391,7 +399,7 @@ class ngg_SpaceManager {
 		$remaining = $quota - $used;
 		$percentremain = 100 - $percentused;
 
-		$out = "";
+		$out = '';
 		$out .= '<div id="spaceused"> <h3>'.__('Storage Space','nggallery').'</h3>';
 
 		if ($settings['used']['display']) {
@@ -483,5 +491,71 @@ function ngg_get_phpinfo() {
 	    }
 	    
 	return $phpinfo;
+}
+
+/**
+ * Show NextGEN Gallery related plugins. Fetch plugins from wp.org which have added 'nextgen-gallery' as tag in readme.txt
+ * 
+ * @return postbox output
+ */
+function ngg_related_plugins() {
+	include(ABSPATH . 'wp-admin/includes/plugin-install.php');
+
+	// this api sucks , tags will not be used in the correct way : nextgen-gallery cannot be searched
+	$api = plugins_api('query_plugins', array('search' => 'nextgen') );
+	
+	if ( is_wp_error($api) )
+		return;
+	
+	// don't show my own plugin :-) and some other plugins, which come up with the search result
+	$blacklist = array(
+		'nextgen-gallery',
+		'galleria-wp',
+		'photosmash-galleries',
+		'flash-album-gallery',
+		'events-calendar',
+		'widgets',
+		'side-content',
+		'featurific-for-wordpress',
+		'smooth-gallery-replacement',
+		'livesig',
+		'wordpress-gallery-slideshow',
+		'nkmimagefield',
+		'nextgen-ajax'
+	);
+	
+	$i = 0; 
+	while ( $i < 4 ) {
+
+		// pick them randomly	
+		if ( 0 == count($api->plugins) )
+			return;
+			
+		$key = array_rand($api->plugins);
+		$plugin = $api->plugins[$key];
+
+		// don't forget to remove them
+		unset($api->plugins[$key]);
+		
+		if ( !isset($plugin->name) )
+			continue;
+			
+		if ( in_array($plugin->slug , $blacklist ) ) 
+			continue;
+
+		$link   = esc_url( $plugin->homepage );
+		$title  = esc_html( $plugin->name );
+			
+		$description = esc_html( strip_tags(@html_entity_decode($plugin->short_description, ENT_QUOTES, get_option('blog_charset'))) );
+	
+		$ilink = wp_nonce_url('plugin-install.php?tab=plugin-information&plugin=' . $plugin->slug, 'install-plugin_' . $plugin->slug) .
+							'&amp;TB_iframe=true&amp;width=600&amp;height=800';
+	
+		echo "<h5><a href='$link'>$title</a></h5>&nbsp;<span>(<a href='$ilink' class='thickbox' title='$title'>" . __( 'Install' ) . "</a>)</span>\n";
+		echo "<p>$description<strong> " . __( 'Author' ) . " : </strong>$plugin->author</p>\n";
+		
+		$i++;
+	}
+
 }
 ?>

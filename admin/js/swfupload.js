@@ -941,9 +941,15 @@ SWFUpload.prototype.debugMessage = function (message) {
 			exceptionMessage = exceptionValues.join("\n") || "";
 			exceptionValues = exceptionMessage.split("\n");
 			exceptionMessage = "EXCEPTION: " + exceptionValues.join("\nEXCEPTION: ");
-			SWFUpload.Console.writeLine(exceptionMessage);
+			if (window.console)
+				console.log(exceptionMessage);
+			else	
+				SWFUpload.Console.writeLine(exceptionMessage);
 		} else {
-			SWFUpload.Console.writeLine(message);
+			if (window.console)
+				console.log(message);
+			else
+				SWFUpload.Console.writeLine(message);
 		}
 	}
 };
@@ -965,7 +971,7 @@ SWFUpload.Console.writeLine = function (message) {
 			console.setAttribute("wrap", "off");
 			console.wrap = "off";
 			console.style.overflow = "auto";
-			console.style.width = "700px";
+			console.style.width = "99%";
 			console.style.height = "350px";
 			console.style.margin = "5px";
 			documentForm.appendChild(console);

@@ -1,6 +1,6 @@
 === NextGEN Gallery ===
 Contributors: Alex Rabe
-Donate link: http://alexrabe.boelinger.com/donation/
+Donate link: http://alexrabe.de/donation/
 Tags: nextgen gallery,photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery
 Requires at least: 2.7
 Tested up to: 2.9
@@ -15,10 +15,10 @@ I figure out that some of them are really good and well designed, but I missed a
 
 Important Links:
 
-* <a href="http://nextgen.boelinger.com/" title="Demonstration page">Demonstration</a>
-* <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/" title="Translation and Language files">Language files</a>
-* <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/changelog/" title="NextGEN Gallery Changelog">Changelog</a>
-* <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/" title="NextGEN Gallery FAQ">NextGEN Gallery FAQ</a>
+* <a href="http://nextgen-gallery.com/" title="Demonstration page">Demonstration</a>
+* <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/" title="Translation and Language files">Language files</a>
+* <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/changelog/" title="NextGEN Gallery Changelog">Changelog</a>
+* <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/faq/" title="NextGEN Gallery FAQ">NextGEN Gallery FAQ</a>
 * <a href="http://wordpress.org/tags/nextgen-gallery?forum_id=10" title="Wordpress Support Forum">Support Forum</a>
 
 = Features =
@@ -104,37 +104,60 @@ When writing a page/post, you can use the follow tags:
 
 For a slideshow : **[slideshow id=x w=width h=height]**
 
-Example : http://nextgen.boelinger.com/slideshow/
+Example : http://nextgen-gallery.com/slideshow/
 
 For a album : **[album id=x template=extend]** or **[album id=x template=compact]**
 
-Example : http://nextgen.boelinger.com/album/
+Example : http://nextgen-gallery.com/album/
 
 For a gallery : **[nggallery id=x]**
 
-Example : http://nextgen.boelinger.com/gallery-page/
+Example : http://nextgen-gallery.com/gallery-page/
 
 For a single picture : **[singlepic id=x w=width h=height mode=web20|watermark float=left|right]**
 
-Example : http://nextgen.boelinger.com/singlepic/
+Example : http://nextgen-gallery.com/singlepic/
 
 For a image browser : **[imagebrowser id=x]**
 
-Example : http://nextgen.boelinger.com/image-browser/
+Example : http://nextgen-gallery.com/image-browser/
 
 To show image sorted by tags : **[nggtags gallery=mytag,wordpress,... ]**
 
-Example : http://nextgen.boelinger.com/gallery-tags/
+Example : http://nextgen-gallery.com/gallery-tags/
 
 To show tag albums : **[nggtags album=mytag,wordpress,... ]**
 
-Example : http://nextgen.boelinger.com/albumtags/
+Example : http://nextgen-gallery.com/albumtags/
 
-**A further FAQ you can found here :** http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/
+**A further FAQ you can found here :** http://alexrabe.de/wordpress-plugins/nextgen-gallery/faq/
 
-**And at least request your question here :** http://alexrabe.boelinger.com/forums/
+**And at least request your question here :** http://alexrabe.de/forums/
 
 == Changelog == 
+
+= v1.4.0 - 08.11.2009 =
+* NEW : Automatic rotate images during upload or via manage gallery page (THX to Simone Fumagalli)
+* NEW : Include Bulkupdate for gallery overview, require PHP 5.2
+* NEW : XMLRPC support with 4 new methods : see xmlrpc.php for more information
+* NEW : Recent and random images can be taken from a specific gallery using the id=x parameter in the shortcode (THX to Prollius)
+* NEW : Recent images can be recent by exif date (instead of database id) by using the mode=recentdate parameter in the shortcode  (THX to Prollius)
+* NEW : Introduce the WP_Object_cache and meta_data
+* NEW : Various new hooks and filters
+* Added : Better support for role manager plugin (THX to Mattias Buelens)
+* Added : New option to add hidden images. Needed to show all images in a modal window (Thickbox, Lightbox et.)
+* Added : New link parameter for the singlepic shortcode : [singlepic id=x w=x h=x link="http://google.com"]
+* Added : New template gallery-carousel
+* Added : New id parameter for recent and random shortcodes : [random max="7" template="filename" id="2"] takes only pictures from the gallery with id=2
+* Added : New mode parameter for recent shortcode : [recent max="7" template="filename" id="3" mode="date" /] where mode can be one of (id, date, sort). Recent pictures are delivered by addition to database (id), exif date (date) or user sort order (sort).
+* Added : Enable/Disable Ajax navigation via settings
+* Added : New filter hook 'ngg_render_template' to render templates with a other plugin
+* Changed : Added option to link an album with a page id
+* Changed : Support templates for child themes, use STYLESHEETPATH instead TEMPLATEPATH (THX to Prollius)
+* Changed : Rework of Media RSS Widget
+* Bugfix : Check capability to create a new page
+* Bugfix : Fix double call of filter name , changed to ngg_picturelist_object (THX to Prollius)
+* Bugfix : Check for a deleted gallery in a album
  
 = V1.3.6 - 20.09.2009 =
 * Changed : Just change the feed link

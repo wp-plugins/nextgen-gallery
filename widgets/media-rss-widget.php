@@ -30,7 +30,7 @@ class nggMediaRssWidget {
 	function register_widget() {
 		$name = __('NextGEN Media RSS', 'nggallery');
 		$control_ops = array(
-			'width' => 400, 'height' => 350, 
+			'width' => 250, 'height' => 350, 
 			'id_base' => 'ngg-mrssw');
 		$widget_ops = array(
 			'classname' => 'ngg_mrssw', 
@@ -45,7 +45,7 @@ class nggMediaRssWidget {
 		foreach (array_keys($this->options) as $o) {
 			// Old widgets can have null values for some reason
 			//--
-			if (	!isset($this->options[$o]['show_global_mrss']))
+			if ( !isset($this->options[$o]['show_global_mrss']) )
 				continue;
 			
 			// $id should look like {$id_base}-{$o}
@@ -79,12 +79,11 @@ class nggMediaRssWidget {
 	/**
 	* Function to render the widget control panel
 	*/
-	function render_control_panel($widget_args=1) {
+	function render_control_panel( $widget_args = 1 ) {
 		global $wp_registered_widgets;
 		static $updated = false;
 		
 		// Get the widget ID
-		//--
 		if (is_numeric($widget_args)) {
 			$widget_args = array('number' => $widget_args);
 		}
@@ -103,7 +102,6 @@ class nggMediaRssWidget {
 			foreach ( $this_sidebar as $_widget_id ) {
 				// Remove all widgets of this type from the sidebar.  We'll add the new data in a second.  This makes sure we don't get any duplicate data
 				// since widget ids aren't necessarily persistent across multiple updates
-				//--
 				if (	'ngg_mrssw' == $wp_registered_widgets[$_widget_id]['classname'] 
 					&& 	isset($wp_registered_widgets[$_widget_id]['params'][0]['number']) ) {
 					
@@ -119,9 +117,11 @@ class nggMediaRssWidget {
 					
 				$this->options[$widget_number]['show_global_mrss']	= $widget_ngg_mrssw['show_global_mrss'];
 				$this->options[$widget_number]['widget_title'] 		= stripslashes($widget_ngg_mrssw['widget_title']);
-				$this->options[$widget_number]['mrss_icon_url'] 	= stripslashes($widget_ngg_mrssw['mrss_icon_url']);
+				$this->options[$widget_number]['show_icon'] 		= $widget_ngg_mrssw['show_icon'];
 				$this->options[$widget_number]['mrss_text'] 		= stripslashes($widget_ngg_mrssw['mrss_text']);
 				$this->options[$widget_number]['mrss_title'] 		= strip_tags(stripslashes($widget_ngg_mrssw['mrss_title']));
+				// remove from pre V1.4.0 options
+				unset ( $this->options[$widget_number]['mrss_icon_url'] );				
 			}
 
 			$this->save_options();
@@ -131,52 +131,50 @@ class nggMediaRssWidget {
 		if ( -1 == $number ) {
 			$widget_title 		= '';
 			$show_global_mrss 	= true;
-			$mrss_icon_url		= NGGALLERY_URLPATH . 'images/mrss-icon.gif';
+			$show_icon			= true;
 			$mrss_text			= __('Media RSS', 'nggallery');
 			$mrss_title			= __('Link to the main image feed', 'nggallery');
 			$number 			= '%i%';
 		} else {
-			$widget_title 		= attribute_escape($this->options[$number]['widget_title']);
+			$widget_title 		= esc_attr($this->options[$number]['widget_title']);
 			$show_global_mrss 	= $this->options[$number]['show_global_mrss'];
-			$mrss_icon_url		= $this->options[$number]['mrss_icon_url'];
+			$show_icon			= $this->options[$number]['show_icon'];
 			$mrss_text			= stripslashes($this->options[$number]['mrss_text']);
 			$mrss_title			= strip_tags(stripslashes($this->options[$number]['mrss_title']));
 		}
 
 		// The widget control
-		//--
-		
 	?>
 	
 <input type="hidden" id="ngg_mrssw-submit-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][submit]" value="1" />
 <p>
-	<label><?php _e('Title:', 'nggallery'); ?><br/>
-	<input style="width: 250px;" id="ngg_mrssw-widget_title-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][widget_title]" type="text" value="<?php echo $widget_title; ?>" /></label>
-</p>
-
-<br/>
-
-<p>
-	<label><?php _e('Media RSS icon:', 'nggallery'); ?>&nbsp;<img style="float: right;" src="<?php echo $mrss_icon_url; ?>" alt='MediaRSS Icon' title="<?php echo $mrss_title; ?>" /><br/>
-		<input style="width: 250px;" id="ngg_mrssw-mrss_icon_url-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][mrss_icon_url]" type="text" value="<?php echo $mrss_icon_url; ?>" /></label>
-		
+	<label><?php _e('Title:', 'nggallery'); ?><br />
+		<input class="widefat" id="ngg_mrssw-widget_title-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][widget_title]" type="text" value="<?php echo $widget_title; ?>" />
 	</label>
 </p>
 
 <p>
 	<label>
-	<input id="ngg_mrssw-show_global_mrss-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][show_global_mrss]" type="checkbox" value="1" <?php $this->render_checked($show_global_mrss); ?> /> <?php _e('Show the global Media RSS link:', 'nggallery'); ?></label>
-</p>
-
-<p>
-	<label><?php _e('Text for the global Media RSS link:', 'nggallery'); ?><br/>
-		<input style="width: 250px;" id="ngg_mrssw-mrss_icon_url-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][mrss_text]" type="text" value="<?php echo $mrss_text; ?>" /></label>
+		<input id="ngg_mrssw-show_icon-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][show_icon]" type="checkbox" value="1" <?php $this->render_checked($show_icon); ?> />
+		<?php _e('Show Media RSS icon', 'nggallery'); ?>
 	</label>
 </p>
 
 <p>
-	<label><?php _e('Tooltip text for the global Media RSS link:', 'nggallery'); ?><br/>
-		<input style="width: 250px;" id="ngg_mrssw-mrss_icon_url-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][mrss_title]" type="text" value="<?php echo $mrss_title; ?>" /></label>
+	<label>
+		<input id="ngg_mrssw-show_global_mrss-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][show_global_mrss]" type="checkbox" value="1" <?php $this->render_checked($show_global_mrss); ?> /> <?php _e('Show the global Media RSS link', 'nggallery'); ?>
+	</label>
+</p>
+
+<p>
+	<label><?php _e('Text for the global Media RSS link:', 'nggallery'); ?><br />
+		<input class="widefat" id="ngg_mrssw-mrss_text-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][mrss_text]" type="text" value="<?php echo $mrss_text; ?>" /></label>
+	</label>
+</p>
+
+<p>
+	<label><?php _e('Tooltip text for the global Media RSS link:', 'nggallery'); ?><br />
+		<input class="widefat" id="ngg_mrssw-mrss_title-<?php echo $number; ?>" name="widget_ngg_mrssw[<?php echo $number; ?>][mrss_title]" type="text" value="<?php echo $mrss_title; ?>" /></label>
 	</label>
 </p>
 
@@ -191,7 +189,6 @@ class nggMediaRssWidget {
 		$ngg_options = nggGallery::get_option('ngg_options');
 		
 		// Get the options
-		//--
 		extract($args, EXTR_SKIP);	
 		if (is_numeric($widget_args)) {
 			$widget_args = array('number' => $widget_args);
@@ -203,7 +200,9 @@ class nggMediaRssWidget {
 					? __('Media RSS', 'nggallery') 
 					: $this->options[$number]['widget_title'];
 		$show_global_mrss 	= $this->options[$number]['show_global_mrss'];
-		$mrss_icon_url		= $this->options[$number]['mrss_icon_url'];
+		$show_icon		 	= $this->options[$number]['show_icon'];
+		// Compat reason for settings pre V1.4.X
+		$show_icon		 	= (empty( $this->options[$number]['mrss_icon_url']) ) ? $show_icon : true;
 		$mrss_text			= stripslashes($this->options[$number]['mrss_text']);
 		$mrss_title			= strip_tags(stripslashes($this->options[$number]['mrss_title']));
 
@@ -214,7 +213,7 @@ class nggMediaRssWidget {
 			echo "<ul class='ngg-media-rss-widget'>\n";
 			if ($show_global_mrss) {
 				echo "  <li>";
-				echo $this->get_mrss_link(nggMediaRss::get_mrss_url(), $mrss_icon_url, 
+				echo $this->get_mrss_link(nggMediaRss::get_mrss_url(), $show_icon, 
 								stripslashes($mrss_title), stripslashes($mrss_text), 
 								$ngg_options['usePicLens']);
 				echo "</li>\n";
@@ -228,16 +227,17 @@ class nggMediaRssWidget {
 	/**
 	 * Get a link to a Media RSS
 	 */
-	function get_mrss_link($mrss_url, $icon_url, $title, $text, $use_piclens) {
-		$out  = "";
+	function get_mrss_link($mrss_url, $show_icon = true, $title, $text, $use_piclens) {
+		$out  = '';
 		
-		if ($icon_url!='') {
+		if ($show_icon) {
+			$icon_url = NGGALLERY_URLPATH . 'images/mrss-icon.gif';
 			$out .= "<a href='$mrss_url' title='$title' class='ngg-media-rss-link'" . ($use_piclens ? ' onclick="PicLensLite.start({feedUrl:\'' . $mrss_url . '\'}); return false;"' : "") . " >";
 			$out .= "<img src='$icon_url' alt='MediaRSS Icon' title='" . (!$use_piclens ? $title : __('[View with PicLens]','nggallery')). "' class='ngg-media-rss-icon' />";
 			$out .=  "</a> ";
 		}
 		
-		if ($text!='') {
+		if ($text != '') {
 			$out .= "<a href='$mrss_url' title='$title' class='ngg-media-rss-link'>";
 			$out .= $text;
 			$out .=  "</a>";
@@ -256,7 +256,7 @@ class nggMediaRssWidget {
 			$this->options = array(
 				-1 => array(
 					'show_global_mrss' => true,
-					'mrss_icon_url' => NGGALLERY_URLPATH . 'images/mrss-icon.gif',
+					'show_icon' => true,
 					'mrss_text' => __('Media RSS', 'nggallery'),
 					'mrss_title' => __('Link to the main image feed', 'nggallery')
 				)

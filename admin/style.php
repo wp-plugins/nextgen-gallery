@@ -64,7 +64,25 @@ if (!$error && filesize($real_file) > 0) {
 	$content = htmlspecialchars($content); 
 }
 
-?>		
+?>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery('#colorSelector').ColorPicker({
+			color: '#0000ff',
+			onShow: function (colpkr) {
+				jQuery(colpkr).fadeIn(500);
+				return false;
+			},
+			onHide: function (colpkr) {
+				jQuery(colpkr).fadeOut(500);
+				return false;
+			},
+			onChange: function (hsb, hex, rgb) {
+				jQuery('#colorSelector div').css('backgroundColor', '#' + hex);
+			}
+		});
+	});
+</script>
 <div class="wrap">
 
 	<div class="bordertitle">
@@ -87,7 +105,7 @@ if (!$error && filesize($real_file) > 0) {
 						$act_css_version = $a_cssfile['Version'];
 					}
 					else $selected = '';
-					$css_name = attribute_escape($css_name);
+					$css_name = esc_attr($css_name);
 					echo "\n\t<option value=\"$key\" $selected>$css_name</option>";
 				}
 			?>
@@ -121,13 +139,17 @@ if (!$error && filesize($real_file) > 0) {
 	<?php else: ?>
 		<p><?php _e('Your theme contain a NextGEN Gallery stylesheet (nggallery.css), this file will be used','nggallery') ?></p>
 	<?php endif; ?>
+    	<p><?php _e('Tip No. 2: Use the color picker below to help you find the right color scheme for your gallery!','nggallery') ?></p>
+    	<div id="colorSelector">
+        	<div></div>
+        </div>
 	</div>
 		<?php
 		if (!$error) {
 		?>
 		<form name="template" id="template" method="post">
 			 <?php wp_nonce_field('ngg_style') ?>
-			 <div><textarea cols="70" rows="25" name="newcontent" id="newcontent" tabindex="1"><?php echo $content ?></textarea>
+			 <div><textarea cols="70" rows="25" name="newcontent" id="newcontent" tabindex="1"  class="codepress css"><?php echo $content ?></textarea>
 			 <input type="hidden" name="updatecss" value="updatecss" />
 			 <input type="hidden" name="file" value="<?php echo $file_show ?>" />
 			 </div>

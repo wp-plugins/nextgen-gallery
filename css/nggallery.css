@@ -289,6 +289,7 @@ html>body .ngg-album {
 	overflow: hidden;
 	margin:0pt;
 	padding:5px 0px 0px 0pt;
+	text-align:left;
 }
 
 .ngg-widget img {
@@ -318,3 +319,55 @@ html>body .ngg-album {
 .ngg-related-gallery img:hover {
 	border: 1px solid #000000;
 } 
+
+/* ----------- Gallery list -------------*/
+
+.ngg-galleryoverview ul li:before {
+	content: '' !important;
+}
+
+.ngg-gallery-list {
+	list-style-type:none;
+	padding: 0px !important;
+	text-indent:0px !important;	
+}
+
+.ngg-galleryoverview div.pic img{
+	width: 100%;	
+}
+
+.ngg-gallery-list li {
+	float:left;
+	margin:0 2px 0px 2px !important;
+	overflow:hidden;
+}
+
+.ngg-gallery-list li a {
+	border:1px solid #CCCCCC;
+	display:block;
+	padding:2px;
+}
+
+.ngg-gallery-list li.selected a{
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	background:#000000 none repeat scroll 0 0;
+}
+
+.ngg-gallery-list li img {
+	height:40px;
+	width:40px;	
+}
+
+li.ngg-next, li.ngg-prev {
+	height:40px;
+	width:40px;	
+	font-size:3.5em;
+}
+
+li.ngg-next a, li.ngg-prev a  {
+	padding-top: 10px;
+	border: none;
+	text-decoration: none;
+}

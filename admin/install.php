@@ -96,6 +96,7 @@ function nggallery_install () {
 		previewpic BIGINT(20) DEFAULT '0' NOT NULL ,
 		albumdesc MEDIUMTEXT NULL ,
 		sortorder LONGTEXT NOT NULL,
+		pageid BIGINT(20) DEFAULT '0' NOT NULL,
 		PRIMARY KEY id (id)
 		) $charset_collate;";
 	
@@ -147,7 +148,6 @@ function ngg_default_options() {
 	$ngg_options['thumbwidth']			= 100;  						// Thumb Width
 	$ngg_options['thumbheight']			= 75;  							// Thumb height
 	$ngg_options['thumbfix']			= true;							// Fix the dimension
-	$ngg_options['thumbcrop']			= false;						// Crop square thumbnail
 	$ngg_options['thumbquality']		= 100;  						// Thumb Quality
 		
 	// Image Settings
@@ -169,6 +169,8 @@ function ngg_default_options() {
 	$ngg_options['galSortDir']			= 'ASC';						// Sort direction
 	$ngg_options['galNoPages']   		= true;							// use no subpages for gallery
 	$ngg_options['galImgBrowser']   	= false;						// Show ImageBrowser, instead effect
+	$ngg_options['galHiddenImg']   		= false;						// For paged galleries we can hide image
+	$ngg_options['galAjaxNav']   		= false;						// AJAX Navigation for Shutter effect
 
 	// Thumbnail Effect
 	$ngg_options['thumbEffect']			= 'shutter';  					// select effect

@@ -24,7 +24,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	
 	if ($_POST['addgallery']){
 		check_admin_referer('ngg_addgallery');
-		$newgallery = attribute_escape( $_POST['galleryname']);
+		$newgallery = esc_attr( $_POST['galleryname']);
 		if ( !empty($newgallery) )
 			nggAdmin::create_gallery($newgallery, $defaultpath);
 	}
@@ -100,7 +100,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 								
 				// File Upload Settings
 				file_size_limit : "<?php echo wp_max_upload_size(); ?>b",
-				file_types : "*.jpg;*.gif;*.png",
+				file_types : "*.jpg;*.jpeg;*.gif;*.png",
 				file_types_description : "<?php _e('Image Files', 'nggallery') ;?>",
 				
 				// Queue handler
@@ -194,6 +194,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<?php } ?>
 					<i>( <?php _e('Allowed characters for file and folder names are', 'nggallery') ;?>: a-z, A-Z, 0-9, -, _ )</i></td>
 				</tr>
+				<?php do_action('ngg_add_new_gallery_form'); ?>
 				</table>
 				<div class="submit"><input class="button-primary" type="submit" name= "addgallery" value="<?php _e('Add gallery', 'nggallery') ;?>"/></div>
 			</form>

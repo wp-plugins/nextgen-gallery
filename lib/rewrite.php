@@ -64,9 +64,9 @@ class nggRewrite {
 			/** urlconstructor =  slug | type | tags | [nav] | [show]
 				type : 	page | post
 				tags : 	album, gallery 	-> /album-([0-9]+)/gallery-([0-9]+)/
-						pid 			-> /page/([0-9]+)/
+						pid 			-> /image/([0-9]+)/
 						gallerytag		-> /tags/([^/]+)/
-				nav	 : 	nggpage		-> /page-([0-9]+)/
+				nav	 : 	nggpage			-> /page-([0-9]+)/
 				show : 	show=slide		-> /slideshow/
 						show=gallery	-> /images/	
 			**/
@@ -91,7 +91,7 @@ class nggRewrite {
 				$url .= '/tags/' . $args['gallerytag'];
 				
 			if  (isset ($args['pid']))
-				$url .= '/page/' . $args['pid'];			
+				$url .= '/image/' . $args['pid'];			
 			
 			// 4. Navigation
 			if  (isset ($args['nggpage']) && ($args['nggpage']) )
@@ -191,9 +191,10 @@ class nggRewrite {
 			
 		if ( !empty($nggpage) )
 			$new_title .= __('Page', 'nggallery') . ' ' . intval($nggpage) . $sep ;
-
-		//if ( !empty($tag) )
-			//$new_title .= attribute_escape($tag) . $sep;
+		
+		//esc_attr should avoid XSS like http://domain/?gallerytag=%3C/title%3E%3Cscript%3Ealert(document.cookie)%3C/script%3E
+		if ( !empty($tag) )
+			$new_title .= esc_attr($tag) . $sep;
 		
 		// for all sub pages we add the canonical tag	
 		if ( !empty($new_title) )	
@@ -229,7 +230,8 @@ class nggRewrite {
 			// rewrite rules for pages
 			$this->slug.'/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]',
 			$this->slug.'/page-([0-9]+)/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]&nggpage=$matches[2]',
-			$this->slug.'/page-([0-9]+)/page/([0-9]+)/?$' => 'index.php?page_id=$matches[1]&pid=$matches[2]',
+			$this->slug.'/page-([0-9]+)/image/([0-9]+)/?$' => 'index.php?page_id=$matches[1]&pid=$matches[2]',
+			$this->slug.'/page-([0-9]+)/image/([0-9]+)/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]&pid=$matches[2]&nggpage=$matches[3]',
 			$this->slug.'/page-([0-9]+)/slideshow/?$' => 'index.php?page_id=$matches[1]&show=slide',
 			$this->slug.'/page-([0-9]+)/images/?$' => 'index.php?page_id=$matches[1]&show=gallery',
 			$this->slug.'/page-([0-9]+)/tags/([^/]+)/?$' => 'index.php?page_id=$matches[1]&gallerytag=$matches[2]',
@@ -247,7 +249,8 @@ class nggRewrite {
 			// rewrite rules for posts
 			$this->slug.'/post/([^/]+)/?$' => 'index.php?name=$matches[1]',
 			$this->slug.'/post/([^/]+)/page-([0-9]+)/?$' => 'index.php?name=$matches[1]&nggpage=$matches[2]',
-			$this->slug.'/post/([^/]+)/page/([0-9]+)/?$' => 'index.php?name=$matches[1]&pid=$matches[2]',
+			$this->slug.'/post/([^/]+)/image/([0-9]+)/?$' => 'index.php?name=$matches[1]&pid=$matches[2]',
+			$this->slug.'/post/([^/]+)/image/([0-9]+)/page-([0-9]+)/?$' => 'index.php?name=$matches[1]&pid=$matches[2]&nggpage=$matches[3]',
 			$this->slug.'/post/([^/]+)/slideshow/?$' => 'index.php?name=$matches[1]&show=slide',
 			$this->slug.'/post/([^/]+)/images/?$' => 'index.php?name=$matches[1]&show=gallery',
 			$this->slug.'/post/([^/]+)/tags/([^/]+)/?$' => 'index.php?name=$matches[1]&gallerytag=$matches[2]',

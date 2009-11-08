@@ -2,7 +2,7 @@
 CSS Name: Hovereffect Styles
 Description: Hover Stylesheet based on the idea of Hoverbox from http://host.sonspring.com/hoverbox/
 Author: Alex Rabe - Orginal by Nathan Smith
-Version: 0.61
+Version: 1.40
 
 This is a template stylesheet which doesn't support description below the thumbnails. It's a experimental version.
 
@@ -347,4 +347,56 @@ This is a template stylesheet which doesn't support description below the thumbn
 
 .ngg-related-gallery img:hover {
 	border: 1px solid #000000;
+}
+
+/* ----------- Gallery list -------------*/
+
+.ngg-galleryoverview ul li:before {
+	content: '' !important;
+}
+
+.ngg-gallery-list {
+	list-style-type:none;
+	padding: 0px !important;
+	text-indent:0px !important;	
+}
+
+.ngg-galleryoverview div.pic img{
+	width: 100%;	
+}
+
+.ngg-gallery-list li {
+	float:left;
+	margin:0 2px 0px 2px !important;
+	overflow:hidden;
+}
+
+.ngg-gallery-list li a {
+	border:1px solid #CCCCCC;
+	display:block;
+	padding:2px;
+}
+
+.ngg-gallery-list li.selected a{
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	background:#000000 none repeat scroll 0 0;
+}
+
+.ngg-gallery-list li img {
+	height:40px;
+	width:40px;	
+}
+
+li.ngg-next, li.ngg-prev {
+	height:40px;
+	width:40px;	
+	font-size:3.5em;
+}
+
+li.ngg-next a, li.ngg-prev a  {
+	padding-top: 10px;
+	border: none;
+	text-decoration: none;
 }

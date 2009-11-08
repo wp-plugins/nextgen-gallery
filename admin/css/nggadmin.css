@@ -1,5 +1,5 @@
 /* 
-** NextGEN Gallery Style for Wordpress 2.8
+** NextGEN Gallery Style for Wordpress 2.9
 */
 
 /* SETTINGS FOR Overview Gallery */
@@ -25,7 +25,38 @@
 	width:24px;
 }
 
+.warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+    border: 1px solid;
+    margin: 5px 0px;
+    padding:5px;
+}
 
+#donator_message {
+	margin:5px 0 15px;
+	background-color:#BDE5F8;
+	border-color:#00529B;
+	-moz-border-radius-bottomleft:3px;
+	-moz-border-radius-bottomright:3px;
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
+	border-style:solid;
+	border-width:1px;
+	margin:5px 15px 2px;
+	padding:0 0.6em;
+}
+
+#donator_message p{
+	line-height:1;
+	margin:0.5em 0;
+	padding:2px;
+}
+
+#donator_message span{
+	padding-top:10px;
+	float:right;
+}
 /* SETTING FOR FLASH UPLOAD BUTTON */
 .swfupload {
 	position:absolute;
@@ -37,6 +68,10 @@
 .ngg-options th {
 	width:22%;
 } 
+
+a.switch-expert {
+	text-decoration:none;
+}
 
 /* WATERMARK */
 #wm-preview {
@@ -103,10 +138,6 @@ p#ngg-inlinebutton {
 	vertical-align: top;
 }
 
-#ngg-listimages td, #ngg-listimages th {
-
-}
-
 .fixed tbody th.column-cb {
 	padding:7px 0 22px;
 }
@@ -116,7 +147,7 @@ p#ngg-inlinebutton {
 }
 
 .fixed .column-thumbnail{
-	width:80px;
+	width:85px;
 }
 
 .fixed .column-thumbnail img{
@@ -125,17 +156,12 @@ p#ngg-inlinebutton {
 }
 
 .fixed .column-id {
-	width: 2em;
-}
-
-.fixed .column-alt_title_desc {
-	
+	width: 5em;
 }
 
 .fixed .column-exclude, .fixed .column-action, .fixed .column-delete {
 	width: 10%;
 }
-
 
 /* SETTINGS FOR PROGRESS BAR */
 
@@ -190,11 +216,11 @@ div .progressbar span {
 
  /* SETTINGS FOR ALBUM PAGE */
 
-.tablenav select[name="act_album"] {
+.albumnav select[name="act_album"] {
 	width:150px;
 }
 
-.tablenav span {
+.albumnav span {
 	padding-left: 50px;
 }
 
@@ -410,6 +436,7 @@ DIV that shows the image as you drag it
 	margin:5px auto;
 	padding:10px;
 }
+
 /* ABOUT PAGE */ 
 .ngg-list {
 	font-size:11px; 

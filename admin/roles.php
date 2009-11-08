@@ -74,45 +74,65 @@ if ( isset($_POST['update_cap']) ) {
 
 }
 
+function ngg_get_sorted_roles() {
+	// This function returns all roles, sorted by user level (lowest to highest)
+	global $wp_roles;
+	$roles = $wp_roles->role_objects;
+	$sorted = array();
+	
+	if( class_exists('RoleManager') ) {
+		foreach( $roles as $role_key => $role_name ) {
+			$role = get_role($role_key);
+			if( empty($role) ) continue;
+			$role_user_level = array_reduce(array_keys($role->capabilities), array('WP_User', 'level_reduction'), 0);
+			$sorted[$role_user_level] = $role;
+		}
+		$sorted = array_values($sorted);
+	} else {
+		$role_order = array("subscriber", "contributor", "author", "editor", "administrator");
+		foreach($role_order as $role_key) {
+			$sorted[$role_name] = get_role($role_key);
+		}
+	}
+	return $sorted;
+}
+
 function ngg_get_role($capability){
 	// This function return the lowest roles which has the capabilities
-	$check_order = array("subscriber", "contributor", "author", "editor", "administrator");
+	$check_order = ngg_get_sorted_roles();
 
 	$args = array_slice(func_get_args(), 1);
 	$args = array_merge(array($capability), $args);
 
-	foreach ($check_order as $role) {
-		$check_role = get_role($role);
-		
+	foreach ($check_order as $check_role) {
 		if ( empty($check_role) )
 			return false;
 			
 		if (call_user_func_array(array(&$check_role, 'has_cap'), $args))
-			return $role;
+			return $check_role->name;
 	}
 	return false;
 }
 
 function ngg_set_capability($lowest_role, $capability){
 	// This function set or remove the $capability
-	$check_order = array("subscriber", "contributor", "author", "editor", "administrator");
+	$check_order = ngg_get_sorted_roles();
 
 	$add_capability = false;
 	
-	foreach ($check_order as $role) {
-		if ($lowest_role == $role)
+	foreach ($check_order as $the_role) {
+		$role = $the_role->name;
+
+		if ( $lowest_role == $role )
 			$add_capability = true;
-			
-		$the_role = get_role($role);
 		
-		// If you rename the roles, the please use the role manager plugin
+		// If you rename the roles, then please use the role manager plugin
 		
 		if ( empty($the_role) )
 			continue;
 			
 		$add_capability ? $the_role->add_cap($capability) : $the_role->remove_cap($capability) ;
 	}
-	
 }
 
 ?>

@@ -32,6 +32,24 @@ class nggManageAlbum {
 	var $albums = false;	
 
 	/**
+	 * The amount of all galleries
+	 *
+	 * @since 1.4.0
+	 * @access privat
+	 * @var int
+	 */
+	var $num_galleries = false;
+	
+	/**
+	 * The amount of all albums
+	 *
+	 * @since 1.4.0
+	 * @access privat
+	 * @var int
+	 */
+	var $num_albums = false;
+
+	/**
 	 * PHP4 compatibility layer for calling the PHP5 constructor.
 	 * 
 	 */
@@ -49,7 +67,7 @@ class nggManageAlbum {
 	
 	function controller() {
 		global $nggdb;
-	
+
 		$this->currentID = isset($_POST['act_album']) ? (int) $_POST['act_album'] : 0 ;
 
 		if (isset ($_POST['update']) || isset( $_POST['delete'] ) || isset( $_POST['add'] ) )
@@ -61,7 +79,8 @@ class nggManageAlbum {
 		// get first all galleries & albums
 		$this->albums = $nggdb->find_all_album();
 		$this->galleries  = $nggdb->find_all_galleries();	
-		
+		$this->num_albums  = count( $this->albums );
+		$this->num_galleries  = count( $this->galleries );	
 		$this->output();	
 	
 	}
@@ -72,8 +91,10 @@ class nggManageAlbum {
 		check_admin_referer('ngg_album');
 	
 		if ( isset($_POST['add']) && isset ($_POST['newalbum']) ) { 
-			$newalbum = attribute_escape($_POST['newalbum']);
+			$newalbum = esc_attr($_POST['newalbum']);
 			$result = $wpdb->query("INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newalbum','0')");
+			$this->currentID = (int) $wpdb->insert_id;
+			
 			if ($result) 
 				nggGallery::show_message(__('Update Successfully','nggallery'));
 		} 
@@ -106,11 +127,12 @@ class nggManageAlbum {
 		
 		check_admin_referer('ngg_thickbox_form');
 		
-		$name = attribute_escape( $_POST['album_name'] );
-		$desc = attribute_escape( $_POST['album_desc'] );
+		$name = esc_attr( $_POST['album_name'] );
+		$desc = esc_attr( $_POST['album_desc'] );
 		$prev = (int) $_POST['previewpic'];
+		$link = (int) $_POST['pageid'];
 		
-		$result = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET name= '%s', albumdesc= '%s', previewpic= %d WHERE id = '$this->currentID'" , $name, $desc, $prev ) );
+		$result = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET name= '%s', albumdesc= '%s', previewpic= %d, pageid= %d WHERE id = '$this->currentID'" , $name, $desc, $prev, $link ) );
 
 		if ($result)
 			nggGallery::show_message(__('Update Successfully','nggallery'));
@@ -217,7 +239,7 @@ function ngg_serialize(s)
 }
 
 function showDialog() {
-	tb_show("", "#TB_inline?width=640&height=240&inlineId=editalbum&modal=true", false);
+	tb_show("", "#TB_inline?width=640&height=305&inlineId=editalbum&modal=true", false);
 }
 
 </script>
@@ -227,7 +249,7 @@ function showDialog() {
 	<form id="selectalbum" method="POST" onsubmit="ngg_serialize()" accept-charset="utf-8">
 		<?php wp_nonce_field('ngg_album') ?>
 		<input name="sortorder" type="hidden" />
-		<div class="tablenav">
+		<div class="albumnav tablenav">
 			<div class="alignleft actions">
 				<?php _e('Select album', 'nggallery') ?>
 				<select id="act_album" name="act_album" onchange="this.form.submit();">
@@ -236,7 +258,7 @@ function showDialog() {
 						if( is_array($this->albums) ) {
 							foreach($this->albums as $album) {
 								$selected = ($this->currentID == $album->id) ? 'selected="selected" ' : '';
-								echo '<option value="'.$album->id.'" '.$selected.'>'.$album->name.'</option>'."\n";
+								echo '<option value="' . $album->id . '" ' . $selected . '>' . $album->name . '</option>'."\n";
 							}
 						}
 					?>
@@ -246,9 +268,9 @@ function showDialog() {
 					<input class="button-secondary" type="submit" name="showThickbox" value="<?php _e( 'Edit album', 'nggallery'); ?>" onclick="showDialog(); return false;" />
 					<input class="button-secondary action "type="submit" name="delete" value="<?php _e('Delete', 'nggallery'); ?>" onclick="javascript:check=confirm('<?php _e('Delete album ?','nggallery'); ?>');if(check==false) return false;"/>
 				<?php } else { ?>
-					<span><?php _e('Add new album', 'nggallery') ?>&nbsp;</span>
+					<span><?php _e('Add new album', 'nggallery'); ?>&nbsp;</span>
 					<input class="search-input" id="newalbum" name="newalbum" type="text" value="" />			
-					<input class="button-secondary action" type="submit" name="add" value="<?php _e('Add', 'nggallery') ?>"/>
+					<input class="button-secondary action" type="submit" name="add" value="<?php _e('Add', 'nggallery'); ?>"/>
 				<?php } ?>	
 			</div>
 		</div>
@@ -258,9 +280,9 @@ function showDialog() {
 	
 	<div>
 		<div style="float:right;">
-		  <a href="#" title="<?php _e('Show / hide used galleries','nggallery'); ?>" id="toggle_used"><?php _e('[Show all]', 'nggallery') ?></a>
-		| <a href="#" title="<?php _e('Maximize the widget content','nggallery'); ?>" id="all_max"><?php _e('[Maximize]', 'nggallery') ?></a>
-		| <a href="#" title="<?php _e('Minimize the widget content','nggallery'); ?>" id="all_min"><?php _e('[Minimize]', 'nggallery') ?></a>
+		  <a href="#" title="<?php _e('Show / hide used galleries','nggallery'); ?>" id="toggle_used"><?php _e('[Show all]', 'nggallery'); ?></a>
+		| <a href="#" title="<?php _e('Maximize the widget content','nggallery'); ?>" id="all_max"><?php _e('[Maximize]', 'nggallery'); ?></a>
+		| <a href="#" title="<?php _e('Minimize the widget content','nggallery'); ?>" id="all_min"><?php _e('[Minimize]', 'nggallery'); ?></a>
 		</div>
 		<?php _e('After you create and select a album, you can drag and drop a gallery or another album into your new album below','nggallery'); ?>
 	</div>
@@ -351,13 +373,13 @@ function showDialog() {
 	  	<tr>
 	    	<th>
 	    		<?php _e('Album name:', 'nggallery'); ?><br />
-				<input class="search-input" id="album_name" name="album_name" type="text" value="<?php echo attribute_escape( $album->name ); ?>" style="width:95%" />
+				<input class="search-input" id="album_name" name="album_name" type="text" value="<?php echo esc_attr( $album->name ); ?>" style="width:95%" />
 	    	</th>
 	  	</tr>
 	  	<tr>
 	    	<th>
 	    		<?php _e('Album description:', 'nggallery'); ?><br />
-	    		<textarea class="search-input" id="album_desc" name="album_desc" cols="50" rows="2" style="width:95%" ><?php echo attribute_escape( $album->albumdesc ); ?></textarea>
+	    		<textarea class="search-input" id="album_desc" name="album_desc" cols="50" rows="2" style="width:95%" ><?php echo esc_attr( $album->albumdesc ); ?></textarea>
 	    	</th>
 	  	</tr>
 	  	<tr>
@@ -366,16 +388,28 @@ function showDialog() {
 					<select name="previewpic" style="width:95%" >
 		                <option value="0"><?php _e('No picture', 'nggallery'); ?></option>
 						<?php
-							$picturelist = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures ORDER BY pid DESC");
+							$picturelist = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 GROUP BY tt.galleryid ORDER by tt.galleryid");
 							if( is_array($picturelist) ) {
 								foreach($picturelist as $picture) {
-									echo '<option value="' . $picture->pid . '" >'. $picture->pid . ' - ' . $picture->filename.'</option>'."\n";
+									echo '<option value="' . $picture->pid . '"'. (($picture->pid == $album->previewpic) ? ' selected="selected"' : '') . ' >'. $picture->pid . ' - ' . $picture->filename.'</option>'."\n";
 								}
 							}
 						?>
 					</select>
 	    	</th>
 	  	</tr>
+        <tr>
+            <th>
+                <?php _e('Page Link to', 'nggallery')?><br />
+                    <select name="pageid" style="width:95%">
+                        <option value="0" ><?php _e('Not linked', 'nggallery') ?></option>
+                        <?php 
+                        if (!isset($album->pageid))
+                            $album->pageid = 0;
+                        parent_dropdown($album->pageid); ?>
+                    </select>
+            </th>
+        </tr>
 	  	<tr align="right">
 	    	<td class="submit">
 	    		<input type="submit" class="button-primary" name="update_album" value="<?php _e("OK",'nggallery')?>" />
@@ -403,22 +437,30 @@ function showDialog() {
 		global $wpdb, $nggdb;
 		
 		$obj =  array();
+		$preview_image = '';
 		
 		// if the id started with a 'a', then it's a sub album
 		if (substr( $id, 0, 1) == 'a') {
 			
 			if ( !$album = $this->albums[ substr( $id, 1) ] )
 				return;
-				
+	
 			$obj['id']   = $album->id;
 			$obj['name'] = $obj['title'] = $album->name;
-			$obj['pagenname'] = '---';
 			$class = 'album_obj';
-			
-			if ($album->previewpic > 0)
-				$image = $nggdb->find_image( $album->previewpic );
-			$preview_image = ($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
 
+			// get the post name
+			$post = get_post($album->pageid);
+			$obj['pagenname'] = ($post == null) ? '---' : $post->post_title;
+			
+			// for spped reason we limit it to 50
+			if ( $this->num_albums < 50 ) {	
+				if ($album->previewpic != 0)
+					$image = $nggdb->find_image( $album->previewpic );
+				
+					$preview_image = ($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
+			}
+			
 			// this indicates that we have a album container
 			$prefix = 'a';
 		
@@ -431,13 +473,16 @@ function showDialog() {
 			$obj['title'] = $gallery->title;
 		
 			// get the post name
-			$post= get_post($gallery->pageid);
-			$obj['pagenname'] = ($post == null) ? '' : $post->post_title;	
+			$post = get_post($gallery->pageid);
+			$obj['pagenname'] = ($post == null) ? '---' : $post->post_title;	
 
-			// set image url
-			$image = $nggdb->find_image( $gallery->previewpic );
-			$preview_image = ($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
-
+			// for spped reason we limit it to 50
+			if ( $this->num_galleries < 50 ) {
+				// set image url
+				$image = $nggdb->find_image( $gallery->previewpic );
+				$preview_image = ($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
+			}
+			
 			$prefix = '';
 		}
 

@@ -19,6 +19,8 @@ class nggAdminPanel{
 		add_action('admin_print_scripts', array(&$this, 'load_scripts') );
 		add_action('admin_print_styles', array(&$this, 'load_styles') );
 		
+		add_action( 'admin_print_footer_scripts', 'codepress_footer_js' );
+
 		add_filter('contextual_help', array(&$this, 'show_help'), 10, 2);
 		add_filter('screen_meta_screen', array(&$this, 'edit_screen_meta'));
 	}
@@ -71,14 +73,43 @@ class nggAdminPanel{
 			echo '<div class="plugin-update">' . __('A new version of NextGEN Gallery is available !', 'nggallery') . ' <a href="http://wordpress.org/extend/plugins/nextgen-gallery/download/" target="_blank">' . __('Download here', 'nggallery') . '</a></div>' ."\n";
 		}
 		
+		// Set installation date
+		if( empty($ngg->options['installDate']) ) {
+			$ngg->options['installDate'] = time();
+			update_option('ngg_options', $ngg->options);			
+		}
+		
+		// Show donation message only one time.
+		if (isset ( $_GET['hide_donation']) ) {
+			$ngg->options['hideDonation'] = true;
+			update_option('ngg_options', $ngg->options);			
+		}
+		
+		if( $ngg->options['hideDonation'] !== true ) {
+			if ( time() > ( $ngg->options['installDate'] + ( 60 * 60 * 24 * 30 ) ) ) {
+			?>	
+				<div id="donator_message">
+					<p><?php echo str_replace('%s', 'http://alexrabe.de/donation', __('Thanks for using this plugin, I hope you are satisfied ! If you would like to support the further development, please consider a <strong><a href="%s">donation</a></strong>! If you still need some help, please post your questions <a href="http://wordpress.org/tags/nextgen-gallery?forum_id=10">here</a> .', 'nggallery')); ?>
+						<span>
+							<a href="<?php echo add_query_arg( array( 'hide_donation' => 'true') ); ?>" >
+								<small><?php _e('OK, hide this message now !', 'nggallery'); ?></small>
+							</a>
+						<span>
+					</p>
+					<br />
+				</div>
+			<?php
+			}
+		}
+		
   		switch ($_GET['page']){
 			case "nggallery-add-gallery" :
-				include_once ( dirname (__FILE__) . '/functions.php' );	// admin functions
+				include_once ( dirname (__FILE__) . '/functions.php' );		// admin functions
 				include_once ( dirname (__FILE__) . '/addgallery.php' );	// nggallery_admin_add_gallery
 				nggallery_admin_add_gallery();
 				break;
 			case "nggallery-manage-gallery" :
-				include_once ( dirname (__FILE__) . '/functions.php' );	// admin functions
+				include_once ( dirname (__FILE__) . '/functions.php' );		// admin functions
 				include_once ( dirname (__FILE__) . '/manage.php' );		// nggallery_admin_manage_gallery
 				// Initate the Manage Gallery page
 				$ngg->manage_page = new nggManageGallery ();
@@ -87,7 +118,7 @@ class nggAdminPanel{
 				
 				break;
 			case "nggallery-manage-album" :
-				include_once ( dirname (__FILE__) . '/album.php' );		// nggallery_admin_manage_album
+				include_once ( dirname (__FILE__) . '/album.php' );			// nggallery_admin_manage_album
 				$ngg->manage_album = new nggManageAlbum ();
 				$ngg->manage_album->controller();
 				break;				
@@ -99,15 +130,15 @@ class nggAdminPanel{
 				include_once ( dirname (__FILE__) . '/tags.php' );			// nggallery_admin_tags
 				break;
 			case "nggallery-style" :
-				include_once ( dirname (__FILE__) . '/style.php' );		// nggallery_admin_style
+				include_once ( dirname (__FILE__) . '/style.php' );			// nggallery_admin_style
 				nggallery_admin_style();
 				break;
 			case "nggallery-setup" :
-				include_once ( dirname (__FILE__) . '/setup.php' );		// nggallery_admin_setup
+				include_once ( dirname (__FILE__) . '/setup.php' );			// nggallery_admin_setup
 				nggallery_admin_setup();
 				break;
 			case "nggallery-roles" :
-				include_once ( dirname (__FILE__) . '/roles.php' );		// nggallery_admin_roles
+				include_once ( dirname (__FILE__) . '/roles.php' );			// nggallery_admin_roles
 				nggallery_admin_roles();
 				break;
 			case "nggallery-import" :
@@ -134,10 +165,10 @@ class nggAdminPanel{
 	function load_scripts() {
 		
 		// no need to go on if it's not a plugin page
-		if(!isset($_GET['page']))
+		if( !isset($_GET['page']) )
 			return;
 
-		wp_register_script('ngg-ajax', NGGALLERY_URLPATH .'admin/js/ngg.ajax.js', array('jquery'), '1.0.0');
+		wp_register_script('ngg-ajax', NGGALLERY_URLPATH .'admin/js/ngg.ajax.js', array('jquery'), '1.4.0');
 		wp_localize_script('ngg-ajax', 'nggAjaxSetup', array(
 					'url' => admin_url('admin-ajax.php'),
 					'action' => 'ngg_ajax_operation',
@@ -154,6 +185,8 @@ class nggAdminPanel{
 		switch ($_GET['page']) {
 			case NGGFOLDER : 
 				wp_enqueue_script( 'postbox' );
+				add_thickbox();
+			break;	
 			case "nggallery-manage-gallery" :
 				wp_enqueue_script( 'postbox' );
 				wp_enqueue_script( 'ngg-ajax' );
@@ -169,6 +202,7 @@ class nggAdminPanel{
 			break;
 			case "nggallery-options" :
 				wp_enqueue_script( 'jquery-ui-tabs' );
+				wp_enqueue_script( 'ngg-colorpicker', NGGALLERY_URLPATH .'admin/js/colorpicker/js/colorpicker.js', array('jquery'), '1.0');
 			break;		
 			case "nggallery-add-gallery" :
 				wp_enqueue_script( 'jquery-ui-tabs' );
@@ -177,29 +211,36 @@ class nggAdminPanel{
 				wp_enqueue_script( 'ngg-ajax' );
 				wp_enqueue_script( 'ngg-progressbar' );
 			break;
+			case "nggallery-style" :
+				wp_enqueue_script( 'codepress' );
+				wp_enqueue_script( 'ngg-colorpicker', NGGALLERY_URLPATH .'admin/js/colorpicker/js/colorpicker.js', array('jquery'), '1.0');
+			break;
+
 		}
 	}		
 	
 	function load_styles() {
 		
 		// no need to go on if it's not a plugin page
-		if(!isset($_GET['page']))
+		if( !isset($_GET['page']) )
 			return;
 
 		switch ($_GET['page']) {
 			case NGGFOLDER :
+				wp_enqueue_style( 'thickbox');	
 			case "nggallery-about" :
-				wp_enqueue_style( 'nggadmin', NGGALLERY_URLPATH .'admin/css/nggadmin.css', false, '2.7.0', 'screen' );
+				wp_enqueue_style( 'nggadmin', NGGALLERY_URLPATH .'admin/css/nggadmin.css', false, '2.8.0', 'screen' );
 				wp_admin_css( 'css/dashboard' );
 			break;
 			case "nggallery-add-gallery" :
 			case "nggallery-options" :
 				wp_enqueue_style( 'nggtabs', NGGALLERY_URLPATH .'admin/css/jquery.ui.tabs.css', false, '2.5.0', 'screen' );
+				wp_enqueue_style( 'nggcolorpicker', NGGALLERY_URLPATH .'admin/js/colorpicker/css/colorpicker.css', false, '1.0', 'screen');
 			case "nggallery-manage-gallery" :
 			case "nggallery-roles" :
 			case "nggallery-manage-album" :
 				//wp_enqueue_style( 'jqueryui', NGGALLERY_URLPATH .'admin/css/jquery-ui.css', false, '1.7.1', 'screen' );
-				wp_enqueue_style( 'nggadmin', NGGALLERY_URLPATH .'admin/css/nggadmin.css', false, '2.7.0', 'screen' );
+				wp_enqueue_style( 'nggadmin', NGGALLERY_URLPATH .'admin/css/nggadmin.css', false, '2.8.0', 'screen' );
 				wp_enqueue_style( 'thickbox');			
 			break;
 			case "nggallery-tags" :
@@ -207,6 +248,8 @@ class nggAdminPanel{
 				break;
 			case "nggallery-style" :
 				wp_admin_css( 'css/theme-editor' );
+				wp_enqueue_style('nggcolorpicker', NGGALLERY_URLPATH.'admin/js/colorpicker/css/colorpicker.css', false, '1.0', 'screen');
+				wp_enqueue_style('nggadmincp', NGGALLERY_URLPATH.'admin/css/nggColorPicker.css', false, '1.0', 'screen');
 			break;
 		}	
 	}
@@ -215,7 +258,7 @@ class nggAdminPanel{
 
 		$link = '';
 		// menu title is localized...
-		$i18n = strtolower  ( __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ) );
+		$i18n = strtolower  ( _n( 'Gallery', 'Galleries', 1, 'nggallery' ) );
 
 		switch ($screen) {
 			case 'toplevel_page_' . NGGFOLDER :
@@ -225,39 +268,39 @@ class nggAdminPanel{
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Setup</a>', 'nggallery');
 			break;
 			case "{$i18n}_page_nggallery-about" :
-				$link  = __('<a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/" target="_blank">Translation by alex rabe</a>', 'nggallery');
+				$link  = __('<a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/" target="_blank">Translation by alex rabe</a>', 'nggallery');
 			break;
 			case "{$i18n}_page_nggallery-roles" :
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Roles / Capabilities</a>', 'nggallery');
 			break;
 			case "{$i18n}_page_nggallery-style" :
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Styles</a>', 'nggallery');
-				$link .= ' | <a href="http://nextgen.boelinger.com/templates/" target="_blank">' . __('Templates', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/templates/" target="_blank">' . __('Templates', 'nggallery') . '</a>';
 			break;
 			case "{$i18n}_page_nggallery-gallery" :
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Gallery management</a>', 'nggallery');
-				$link .= ' | <a href="http://nextgen.boelinger.com/gallery-page/" target="_blank">' . __('Gallery example', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/gallery-page/" target="_blank">' . __('Gallery example', 'nggallery') . '</a>';
 			break;
 			case "{$i18n}_page_nggallery-manage-gallery" :
 			case "nggallery-manage-gallery":
 			case "nggallery-manage-images":
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Gallery management</a>', 'nggallery');
-				$link .= ' | <a href="http://nextgen.boelinger.com/gallery-tags/" target="_blank">' . __('Gallery tags', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/gallery-tags/" target="_blank">' . __('Gallery tags', 'nggallery') . '</a>';
 			break;
 			case "{$i18n}_page_nggallery-manage-album" :
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Album management</a>', 'nggallery');
-				$link .= ' | <a href="http://nextgen.boelinger.com/album/" target="_blank">' . __('Album example', 'nggallery') . '</a>';
-				$link .= ' | <a href="http://nextgen.boelinger.com/albumtags/" target="_blank">' . __('Album tags', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/album/" target="_blank">' . __('Album example', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/albumtags/" target="_blank">' . __('Album tags', 'nggallery') . '</a>';
 			break;
 			case "{$i18n}_page_nggallery-tags" :
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-introduction/" target="_blank">Gallery tags</a>', 'nggallery');
-				$link .= ' | <a href="http://nextgen.boelinger.com/related-images/" target="_blank">' . __('Related images', 'nggallery') . '</a>';
-				$link .= ' | <a href="http://nextgen.boelinger.com/gallery-tags/" target="_blank">' . __('Gallery tags', 'nggallery') . '</a>';
-				$link .= ' | <a href="http://nextgen.boelinger.com/albumtags/" target="_blank">' . __('Album tags', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/related-images/" target="_blank">' . __('Related images', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/gallery-tags/" target="_blank">' . __('Gallery tags', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/albumtags/" target="_blank">' . __('Album tags', 'nggallery') . '</a>';
 			break;
 			case "{$i18n}_page_nggallery-options" :
 				$link  = __('<a href="http://dpotter.net/Technical/2008/03/nextgen-gallery-review-image-management/" target="_blank">Image management</a>', 'nggallery');
-				$link .= ' | <a href="http://nextgen.boelinger.com/custom-fields/" target="_blank">' . __('Custom fields', 'nggallery') . '</a>';
+				$link .= ' | <a href="http://nextgen-gallery.com/custom-fields/" target="_blank">' . __('Custom fields', 'nggallery') . '</a>';
 			break;
 		}
 		
@@ -268,10 +311,10 @@ class nggAdminPanel{
 			$help .= "</div>\n";
 			$help .= '<h5>' . __('More Help & Info', 'nggallery') . '</h5>';
 			$help .= '<div class="metabox-prefs">';
-			$help .= __('<a href="http://wordpress.org/tags/nextgen-gallery" target="_blank">Support Forums</a>', 'nggallery');
-			$help .= ' | <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/faq/" target="_blank">' . __('FAQ', 'nggallery') . '</a>';
+			$help .= __('<a href="http://wordpress.org/tags/nextgen-gallery?forum_id=10" target="_blank">Support Forums</a>', 'nggallery');
+			$help .= ' | <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/faq/" target="_blank">' . __('FAQ', 'nggallery') . '</a>';
 			$help .= ' | <a href="http://code.google.com/p/nextgen-gallery/issues/list" target="_blank">' . __('Feature request', 'nggallery') . '</a>';
-			$help .= ' | <a href="http://alexrabe.boelinger.com/wordpress-plugins/nextgen-gallery/languages/" target="_blank">' . __('Get your language pack', 'nggallery') . '</a>';
+			$help .= ' | <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/" target="_blank">' . __('Get your language pack', 'nggallery') . '</a>';
 			$help .= ' | <a href="http://code.google.com/p/nextgen-gallery/" target="_blank">' . __('Contribute development', 'nggallery') . '</a>';
 			$help .= ' | <a href="http://wordpress.org/extend/plugins/nextgen-gallery" target="_blank">' . __('Download latest version', 'nggallery') . '</a>';
 			$help .= "</div>\n";
@@ -283,7 +326,7 @@ class nggAdminPanel{
 	function edit_screen_meta($screen) {
 
 		// menu title is localized, so we need to change the toplevel name
-		$i18n = strtolower  ( __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ) );
+		$i18n = strtolower  ( _n( 'Gallery', 'Galleries', 1, 'nggallery' ) );
 		
 		switch ($screen) {
 			case "{$i18n}_page_nggallery-manage-gallery" :

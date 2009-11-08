@@ -82,10 +82,16 @@ function ngg_upgrade() {
 		
 		// v1.3.0 -> v1.3.1
 		if (version_compare($installed_ver, '1.3.1', '<')) {
-			// add description and previewpic for the ablum itself
+			// add description and previewpic for the album itself
 			ngg_maybe_add_column( $wpdb->nggalbum, 'previewpic', "BIGINT(20) DEFAULT '0' NOT NULL AFTER name");
 			ngg_maybe_add_column( $wpdb->nggalbum, 'albumdesc', "MEDIUMTEXT NULL AFTER previewpic");
 		}		
+		
+		 // v1.3.5 -> v1.4.0
+        if (version_compare($installed_ver, '1.4.0', '<')) {
+            // add link from album to a page
+            ngg_maybe_add_column( $wpdb->nggalbum, 'pageid', "BIGINT(20) DEFAULT '0' NOT NULL AFTER sortorder");
+        }   
 		
 		// update now the database
 		update_option( "ngg_db_version", NGG_DBVERSION );
@@ -119,6 +125,21 @@ function ngg_upgrade() {
 			update_option('ngg_options', $ngg_options);
 			echo __('finished', 'nggallery') . "<br />\n";				
 		}
+
+		// Remove thumbcrop setting, thumbfix and quare size do the same
+		if (version_compare($installed_ver, '1.4.0', '<')) {
+			$ngg_options = get_option('ngg_options');
+			echo __('Update settings...', 'nggallery');
+			if ( $ngg_options['thumpcrop'] ) {
+				$ngg_options['thumbfix'] = true;
+				$ngg_options['thumbheight'] = $ngg_options['thumbwidth'] ;
+				$ngg_options['galAjaxNav'] = true;
+			}
+			$ngg_options['galHiddenImg'] = false;
+			update_option('ngg_options', $ngg_options);
+			echo __('finished', 'nggallery') . "<br />\n";				
+		}
+		
 		return;
 	}
 }
@@ -227,7 +248,7 @@ function ngg_import_date_time() {
 	if ( is_array($imagelist) ) {
 		foreach ($imagelist as $image) {
 			$picture = new nggImage($image);
-			$meta = new nggMeta($picture->imagePath, true);
+			$meta = new nggMeta($picture->pid, true);
 			$date = $meta->get_date_time();
 			$wpdb->query("UPDATE $wpdb->nggpictures SET imagedate = '$date' WHERE pid = '$picture->pid'");
 		}		

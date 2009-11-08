@@ -353,20 +353,31 @@ var $imageMagickBefore;
 		$this->currentDimensions['height'] = $this->newDimensions['newHeight'];
 		
 	}
+
+	/**
+	 * Flip an image.
+	 *
+	 * @param bool $horz flip the image in horizontal mode
+	 * @param bool $vert flip the image in vertical mode
+	 */
+	function flipImage( $horz = false, $vert = false ) {
+		
+		//TODO: need to be added
+
+	}
 	
 	/**
      * Rotates image either 90 degrees clockwise or counter-clockwise
      *
      * @param string $direction
      */
-	function rotateImage($direction = 'CW') {
-	  	if($direction == 'CW') {
-	   		$this->imageMagickExec .= " -rotate -90 ";
-	   	}
-	   	else {
-	   		$this->imageMagickExec .= " -rotate 90 ";
-	   	}
-	   	$newWidth = $this->currentDimensions['height'];
+	function rotateImage($dir = 'CW') {
+		
+		$angle = ($dir == 'CW') ? 90 : -90;
+
+  		$this->imageMagickExec .= " -rotate $angle ";
+		
+		$newWidth = $this->currentDimensions['height'];
 	   	$newHeight = $this->currentDimensions['width'];
 		$this->currentDimensions['width'] = $newWidth;
 		$this->currentDimensions['height'] = $newHeight;

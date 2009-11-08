@@ -9,14 +9,14 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<h2><?php _e('Copyright notes / Credits', 'nggallery') ;?></h2>
 	<div id="poststuff">
 		<div class="postbox">
-		    <h3 class="hndle"><span><?php _e("NextGEN DEV Team", 'nggallery'); ?></span></h3>
+		    <h3 class="hndle"><span><?php _e('NextGEN DEV Team', 'nggallery'); ?></span></h3>
 		    <div class="inside">
-				<p><?php _e('This plugin is primarily developed, maintained, supported, documented by', 'nggallery'); ?> <a href="http://alexrabe.boelinger.com" target="_blank">Alex Rabe</a>. <?php _e('There are many other folks who have made contributions to this project :', 'nggallery') ;?></p>
+				<p><?php _e('This plugin is primarily developed, maintained, supported, documented by', 'nggallery'); ?> <a href="http://alexrabe.de" target="_blank">Alex Rabe</a>. <?php _e('There are many other folks who have made contributions to this project :', 'nggallery') ;?></p>
 				<p><?php ngg_list_contributors(); ?></p>
 			</div>
 		</div>
 		<div class="postbox">
-			<h3 class="hndle"><span><?php _e("Contributors / Tribute to", 'nggallery'); ?></span></h3>
+			<h3 class="hndle"><span><?php _e('Contributors / Tribute to', 'nggallery'); ?></span></h3>
 		    <div class="inside">
 				<p><?php _e('If you study the code of this plugin, you will find out that we mixed a lot of good already existing code and ideas together.', 'nggallery') ;?>
 				<?php _e('So, we would like to thank the following people for their pioneer work (without this work it\'s impossible to create such a plugin so fast)', 'nggallery') ;?></p>		
@@ -24,7 +24,6 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 				<li><a href="http://wordpress.org" target="_blank">The WordPress Team</a> <?php _e('for their great documented code', 'nggallery') ;?></li>
 				<li><a href="http://jquery.com" target="_blank">The jQuery Team</a> <?php _e('for jQuery, which is the best Web2.0 framework', 'nggallery') ;?></li>
 				<li><a href="http://www.gen-x-design.com" target="_blank">Ian Selby</a> <?php _e('for the fantastic PHP Thumbnail Class', 'nggallery') ;?></li>
-				<li><a href="http://www.phpconcept.net" target="_blank">Vincent Blavet</a> <?php _e('for PclZip , a PHP library that manage ZIP archives', 'nggallery') ;?></li>
 				<li><a href="http://www.lesterchan.net/" target="_blank">GaMerZ</a> <?php _e('for a lot of very useful plugins and ideas', 'nggallery') ;?></li>
 				<li><a href="http://www.laptoptips.ca/" target="_blank">Andrew Ozz</a> <?php _e('for Shutter Reloaded, a real lightweight image effect', 'nggallery') ;?></li>
 				<li><a href="http://www.jeroenwijering.com/" target="_blank">Jeroen Wijering</a> <?php _e('for the best Media Flash Scripts on earth', 'nggallery') ;?></li>
@@ -35,7 +34,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			</div>
 		</div>
 		<div class="postbox">
-			<h3 class="hndle"><span><?php _e("How to support ?", 'nggallery'); ?></span></h3>
+			<h3 class="hndle"><span><?php _e('How to support ?', 'nggallery'); ?></span></h3>
 			<div class="inside">
 				<p><?php _e('There exist several ways to contribute, help or support us in this work. Non of them are mandatory.', 'nggallery') ;?></p>
 				<ul class="ngg-list">
@@ -43,12 +42,14 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					<li><strong><?php _e('Translate the plugin', 'nggallery') ;?></strong><br /><?php _e('To help people to work with this plugin, I would like to have it in all available languages', 'nggallery') ;?></li>
 					<li><strong><?php _e('Donate the work via paypal', 'nggallery') ;?></strong><br />
 						<form action="https://www.paypal.com/cgi-bin/webscr" method="post" >
-						<input type="hidden" name="cmd" value="_xclick"/><input type="hidden" name="business" value="alterego@boelinger.com"/>
-						<input type="hidden" name="item_name" value="NextGEN Gallery plugin www.alexrabe.boelinger.com"/>
-						<input type="hidden" name="no_shipping" value="1"/><input type="hidden" name="return" value="http://alexrabe.boelinger.com/" />
-						<input type="hidden" name="cancel_return" value="http://alexrabe.boelinger.com/"/>
+						<input type="hidden" name="cmd" value="_xclick"/>
+						<input type="hidden" name="business" value="alter.ego@boelinger.com"/>
+						<input type="hidden" name="item_name" value="NextGEN Gallery plugin"/>
+						<input type="hidden" name="no_shipping" value="1"/>
+						<input type="hidden" name="return" value="http://alexrabe.de/" />
+						<input type="hidden" name="cancel_return" value="http://alexrabe.de/"/>
 						<input type="hidden" name="lc" value="US" /> 
-						<input type="hidden" name="currency_code" value="USD"/>
+						<input type="hidden" name="currency_code" value="EUR"/>
 						<input type="hidden" name="tax" value="0"/>
 						<input type="hidden" name="bn" value="PP-DonationsBF"/>
 						<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!" style="border: none;"/>
@@ -59,9 +60,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			</div>
 		</div>
 		<div class="postbox" id="donators">
-			<h3 class="hndle"><span><?php _e("Thanks!", 'nggallery'); ?></span></h3>
+			<h3 class="hndle"><span><?php _e('Thanks!', 'nggallery'); ?></span></h3>
 			<div class="inside">
-				<p><?php _e('We would like to thank this people which support us in the work :', 'nggallery') ;?></p>
+				<p><?php _e('We would like to thank this people which support us in the work :', 'nggallery'); ?></p>
 				<p><a href="http://www.boelinger.com/heike/" target="_blank">HEIKE</a>, <?php ngg_list_support(); ?></p>
 			</div>
 		</div>
@@ -76,6 +77,7 @@ function ngg_list_contributors()	{
 	
 	$contributors = array(
 	'Anty (Code contributor)' => 'http://www.anty.at/',
+	'Bjoern von Prollius (Code contributor)' => 'http://www.prollius.de/',
 	'Simone Fumagalli (Code contributor)' => 'http://www.iliveinperego.com/',
 	'Vincent Prat (Code contributor)' => 'http://www.vincentprat.info',
 	'Frederic De Ranter (AJAX code contributor)' => 'http://li.deranter.com/',
