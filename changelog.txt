@@ -1,7 +1,12 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
-= v1.4.0 - 08.11.2009 =
+= V1.4.1 - 10.11.2009 =
+* Bugfix : Capabilites could not be saved
+* Bugfix : Ajax pagination option not saved
+* Bugfix : echo nggSlideshowWidget() for compat reason
+
+= V1.4.0 - 08.11.2009 =
 * NEW : Automatic rotate images during upload or via manage gallery page (THX to Simone Fumagalli)
 * NEW : Include Bulkupdate for gallery overview, require PHP 5.2
 * NEW : XMLRPC support with 4 new methods : see xmlrpc.php for more information
@@ -14,7 +19,7 @@ by Alex Rabe & NextGEN DEV Team
 * Added : New link parameter for the singlepic shortcode : [singlepic id=x w=x h=x link="http://google.com"]
 * Added : New template gallery-carousel
 * Added : New id parameter for recent and random shortcodes : [random max="7" template="filename" id="2"] takes only pictures from the gallery with id=2
-* Added : New mode parameter for recent shortcode : [recent max="7" template="filename" id="3" mode="date" /] where mode can be one of (id, date, sort). Recent pictures are delivered by addition to database (id), exif date (date) or user sort order (sort).
+* Added : New mode paramenter for recent shortcode : [recent max="7" template="filename" id="3" mode="date" /] where mode can be one of (id, date, sort). Recent pictures are delivered by addition to database (id), exif date (date) or user sort order (sort).
 * Added : Enable/Disable Ajax navigation via settings
 * Added : New filter hook 'ngg_render_template' to render templates with a other plugin
 * Changed : Added option to link an album with a page id

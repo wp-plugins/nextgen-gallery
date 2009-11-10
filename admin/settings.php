@@ -321,7 +321,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 					</tr>
 					<tr class="expert" >
 						<th valign="top"><?php _e('Enable AJAX pagination','nggallery'); ?>:</th>
-						<td><input name="galHiddenImg" type="checkbox" value="1" <?php checked('1', $ngg->options['galAjaxNav']); ?> />
+						<td><input name="galAjaxNav" type="checkbox" value="1" <?php checked('1', $ngg->options['galAjaxNav']); ?> />
 						<?php _e('Browse images without reload the page. Note : Work only in combination with Shutter effect','nggallery'); ?>
 						</td>
 					</tr>

@@ -130,13 +130,22 @@ To show tag albums : **[nggtags album=mytag,wordpress,... ]**
 
 Example : http://nextgen-gallery.com/albumtags/
 
+To show random mages : **[random max=x ]**
+
+To show the most recent added mages : **[recent max=x ]**
+
 **A further FAQ you can found here :** http://alexrabe.de/wordpress-plugins/nextgen-gallery/faq/
 
 **And at least request your question here :** http://alexrabe.de/forums/
 
 == Changelog == 
 
-= v1.4.0 - 08.11.2009 =
+= V1.4.1 - 10.11.2009 =
+* Bugfix : Capabilites could not be saved
+* Bugfix : Ajax pagination option not saved
+* Bugfix : echo nggSlideshowWidget() for compat reason
+
+= V1.4.0 - 08.11.2009 =
 * NEW : Automatic rotate images during upload or via manage gallery page (THX to Simone Fumagalli)
 * NEW : Include Bulkupdate for gallery overview, require PHP 5.2
 * NEW : XMLRPC support with 4 new methods : see xmlrpc.php for more information

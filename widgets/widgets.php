@@ -434,7 +434,7 @@ $nggWidget = new nggWidget;
  */
 function nggSlideshowWidget($galleryID, $width = '', $height = '') {
 
-	nggSlideshowWidget::render_slideshow($galleryID, $width, $height);
+	echo nggSlideshowWidget::render_slideshow($galleryID, $width, $height);
 	
 }
 

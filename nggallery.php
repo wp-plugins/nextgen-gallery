@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.de/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.4.0
+Version: 1.4.1
 
 Author URI: http://alexrabe.de/
 
@@ -44,7 +44,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.4.0';
+	var $version     = '1.4.1';
 	var $dbversion   = '1.4.0';
 	var $minium_WP   = '2.8';
 	var $minium_WPMU = '2.8';

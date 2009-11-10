@@ -91,7 +91,7 @@ function ngg_get_sorted_roles() {
 	} else {
 		$role_order = array("subscriber", "contributor", "author", "editor", "administrator");
 		foreach($role_order as $role_key) {
-			$sorted[$role_name] = get_role($role_key);
+			$sorted[$role_key] = get_role($role_key);
 		}
 	}
 	return $sorted;
