@@ -140,6 +140,14 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.4.2 - 16.11.2009 =
+* Changed : Load sildeshow XML not longer via relative path
+* Bugfix : No imagebrowser in carousel mode
+* Bugfix : JS Effect navigation based on wrong array structure
+* Bugfix : Remove whitespaces from meta import
+* Bugfix : Capability check for upgrade notice
+* Removed : Hide "more settings" for now, causes problems with IE and jQuery UI tabs
+
 = V1.4.1 - 10.11.2009 =
 * Bugfix : Capabilites could not be saved
 * Bugfix : Ajax pagination option not saved

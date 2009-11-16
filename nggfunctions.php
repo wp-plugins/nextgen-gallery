@@ -42,7 +42,7 @@ function nggShowSlideshow($galleryID, $width, $height) {
     $swfobject->add_attributes('name', 'so' . $galleryID);
 
     // adding the flash parameter   
-    $swfobject->add_flashvars( 'file', NGGALLERY_URLPATH.'xml/imagerotator.php?gid=' . $galleryID );
+    $swfobject->add_flashvars( 'file', get_option ('siteurl') . '/' . 'index.php?slideshow=true&gid=' . $galleryID );
     $swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'true', 'bool');
     $swfobject->add_flashvars( 'linkfromdisplay', $ngg_options['irLinkfromdisplay'], 'false', 'bool');
     $swfobject->add_flashvars( 'shownavigation', $ngg_options['irShownavigation'], 'true', 'bool');
@@ -119,7 +119,7 @@ function nggShowGallery( $galleryID, $template = '', $images = false ) {
     if ( !is_home() || $pageid == get_the_ID() ) { 
             
         // 1st look for ImageBrowser link
-        if ( !empty($pid) && $ngg_options['galImgBrowser'] )  {
+        if ( !empty($pid) && $ngg_options['galImgBrowser'] && ($template != 'carousel') )  {
             $out = nggShowImageBrowser( $galleryID, $template );
             return $out;
         }
@@ -259,10 +259,10 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '', $ima
 		
         // get the effect code
         if ($galleryID)
-            $thumbcode = ($ngg_options['galImgBrowser']) ? '' : $picture->get_thumbcode($picturelist[0]->name);
+            $thumbcode = ($ngg_options['galImgBrowser']) ? '' : $picture->get_thumbcode('set_' . $galleryID);
         else
             $thumbcode = ($ngg_options['galImgBrowser']) ? '' : $picture->get_thumbcode(get_the_title());
-        
+
         // create link for imagebrowser and other effects
         $args ['nggpage'] = empty($nggpage) ? false : $nggpage;
         $args ['pid']     = $picture->pid;

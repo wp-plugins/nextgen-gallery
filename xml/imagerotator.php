@@ -9,7 +9,8 @@
 */
 
 // look up for the path
-require_once( dirname(__FILE__) . '/../ngg-config.php');
+if ( !defined('ABSPATH') ) 
+    require_once( dirname(__FILE__) . '/../ngg-config.php');
 
 global $wpdb;
 

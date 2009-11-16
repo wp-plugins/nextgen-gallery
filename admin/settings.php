@@ -66,11 +66,14 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	?>
 	<script type="text/javascript">
 		jQuery(document).ready(function(){
-			jQuery(".expert").hide();
+			jQuery("a.switch-expert").hide();
+            /*
+            jQuery(".expert").hide();
 			jQuery("a.switch-expert").click(function(e) {
 				jQuery(".expert").toggle();
 				return false;
 			});
+            */
 			jQuery('#slider').tabs({ fxFade: true, fxSpeed: 'fast' });
 			jQuery('.picker').ColorPicker({
 				onSubmit: function(hsb, hex, rgb, el) {

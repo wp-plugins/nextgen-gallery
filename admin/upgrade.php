@@ -9,7 +9,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
  */
 function ngg_upgrade() {
 	
-	global $wpdb, $user_ID;
+	global $wpdb, $user_ID, $nggRewrite;
 
 	// get the current user ID
 	get_currentuserinfo();
@@ -93,6 +93,9 @@ function ngg_upgrade() {
             ngg_maybe_add_column( $wpdb->nggalbum, 'pageid', "BIGINT(20) DEFAULT '0' NOT NULL AFTER sortorder");
         }   
 		
+        // better to flush rewrite rules after upgrades
+        $nggRewrite->flush();
+        
 		// update now the database
 		update_option( "ngg_db_version", NGG_DBVERSION );
 		echo __('finished', 'nggallery') . "<br />\n";

@@ -74,7 +74,7 @@ function ngg_overview_server() {
  */
 function ngg_overview_graphic_lib() {
 ?>
-<div id="dashboard_server_settings" class="dashboard-widget-holder">
+<div id="dashboard_graphic_settings" class="dashboard-widget-holder">
 	<div class="ngg-dashboard-widget">
 	  	<div class="dashboard-widget-content">
 	  		<ul class="settings">

@@ -4,7 +4,7 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.de/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.4.1
+Version: 1.4.2
 
 Author URI: http://alexrabe.de/
 
@@ -117,6 +117,9 @@ class nggLoader {
 			// If activated, add PicLens/Cooliris javascript to footer
 			if ( $this->options['usePicLens'] )
 				add_action('wp_head', array('nggMediaRss', 'add_piclens_javascript'));
+                
+            // Look for XML request, before page is render
+            add_action('parse_request',  array(&$this, 'check_xml_request') );    
 			
 			// Why is this not core ?
 			add_action('wp_head', 'wp_print_styles');
@@ -130,6 +133,15 @@ class nggLoader {
 
 		}	
 	}
+
+    function check_xml_request( $wp ) {
+        
+        if (array_key_exists('slideshow', $wp->query_vars) && $wp->query_vars['slideshow'] == 'true') {
+            require_once (dirname (__FILE__) . '/xml/imagerotator.php');
+            exit();
+        }
+        
+    }
 	
 	function required_version() {
 		

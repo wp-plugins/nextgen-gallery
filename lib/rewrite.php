@@ -31,7 +31,10 @@ class nggRewrite {
 		
 		add_filter('query_vars', array(&$this, 'add_queryvars') );
 		add_filter('wp_title' , array(&$this, 'rewrite_title') );
-			
+		
+        //DD32 recommend : http://groups.google.com/group/wp-hackers/browse_thread/thread/50ac0d07e30765e9
+        //add_filter('rewrite_rules_array', array($this, 'RewriteRules')); 
+        	
 		if ($this->options['usePermalinks'])
 			add_action('generate_rewrite_rules', array(&$this, 'RewriteRules'));
 		
@@ -150,6 +153,7 @@ class nggRewrite {
 		$query_vars[] = 'album';
 		$query_vars[] = 'gallerytag';
 		$query_vars[] = 'show';
+        $query_vars[] = 'slideshow';
 
 		return $query_vars;
 	}
@@ -227,6 +231,9 @@ class nggRewrite {
 	*/
 	function RewriteRules($wp_rewrite) {		
 		$rewrite_rules = array (
+            // XML request
+            $this->slug.'/slideshow/([0-9]+)/?$' => 'index.php?slideshow=true&gid=$matches[1]',
+            
 			// rewrite rules for pages
 			$this->slug.'/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]',
 			$this->slug.'/page-([0-9]+)/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]&nggpage=$matches[2]',

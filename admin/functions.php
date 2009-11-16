@@ -567,11 +567,11 @@ class nggAdmin{
 				$meta = nggAdmin::get_MetaData( $image->pid );
 				
 				// get the title
-				if (!$alttext = $meta['title'])
-					$alttext = $image->alttext;
+				$alttext = empty( $meta['title'] ) ? $image->alttext : $meta['title'];
+				
 				// get the caption / description field
-				if (!$description = $meta['caption'])
-					$description = $image->description;
+				$description = empty( $meta['caption'] ) ? $image->description : $meta['caption'];
+					
 				// get the file date/time from exif
 				$timestamp = $meta['timestamp'];
 				// first update database
@@ -621,9 +621,9 @@ class nggAdmin{
 
 		$pdata = new nggMeta( $id );
 		
-		$meta['title'] = $pdata->get_META('title');		
-		$meta['caption'] = $pdata->get_META('caption');	
-		$meta['keywords'] = $pdata->get_META('keywords');
+		$meta['title'] = trim ( $pdata->get_META('title') );		
+		$meta['caption'] = trim ( $pdata->get_META('caption') );	
+		$meta['keywords'] = trim ( $pdata->get_META('keywords') );
 		$meta['timestamp'] = $pdata->get_date_time();
 		// this contain other useful meta information
 		$meta['common'] = $pdata->get_common_meta();

@@ -13,7 +13,7 @@
 	padding:2px;
 }
 
-#dashboard_server_settings ul.settings span {
+.ngg-dashboard-widget ul.settings span {
 	padding-left : 10px;
 	color:#2583AD;
 	font-weight:bold;
@@ -51,6 +51,7 @@
 	line-height:1;
 	margin:0.5em 0;
 	padding:2px;
+	padding-bottom:10px;
 }
 
 #donator_message span{
