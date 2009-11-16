@@ -69,7 +69,7 @@ class nggSlideshowWidget extends WP_Widget {
 		$swfobject->add_attributes('styleclass', 'slideshow-widget');
 	
 		// adding the flash parameter	
-		$swfobject->add_flashvars( 'file', get_option ('siteurl') . '/' . 'index.php?slideshow=true&gid=' . $galleryID );
+		$swfobject->add_flashvars( 'file', urlencode( get_option ('siteurl') . '/' . 'index.php?slideshow=true&gid=' . $galleryID ) );
 		$swfobject->add_flashvars( 'shownavigation', 'false', 'true', 'bool');
 		$swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'true', 'bool');
 		$swfobject->add_flashvars( 'showicons', $ngg_options['irShowicons'], 'true', 'bool');

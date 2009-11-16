@@ -140,6 +140,9 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.4.3 - 16.11.2009 =
+* Bugfix : Urlencode XML file path for sildeshow
+
 = V1.4.2 - 16.11.2009 =
 * Changed : Load sildeshow XML not longer via relative path
 * Bugfix : No imagebrowser in carousel mode
