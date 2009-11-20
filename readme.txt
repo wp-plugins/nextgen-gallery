@@ -17,7 +17,7 @@ Important Links:
 
 * <a href="http://nextgen-gallery.com/" title="Demonstration page">Demonstration</a>
 * <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/" title="Translation and Language files">Language files</a>
-* <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/changelog/" title="NextGEN Gallery Changelog">Changelog</a>
+* <a href="http://wordpress.org/extend/plugins/nextgen-gallery/changelog/" title="NextGEN Gallery Changelog">Changelog</a>
 * <a href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/faq/" title="NextGEN Gallery FAQ">NextGEN Gallery FAQ</a>
 * <a href="http://wordpress.org/tags/nextgen-gallery?forum_id=10" title="Wordpress Support Forum">Support Forum</a>
 
