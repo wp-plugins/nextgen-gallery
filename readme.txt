@@ -45,7 +45,7 @@ Important Links:
 
 == Credits ==
 
-Copyright 2007-2009 by Alex Rabe & NextGEN DEV-Team
+Copyright 2007-2010 by Alex Rabe & NextGEN DEV-Team
 
 The NextGEN button is taken from the Fugue Icons of http://www.pinvoke.com/.
 
