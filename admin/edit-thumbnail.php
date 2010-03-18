@@ -166,7 +166,7 @@ if ( ($ngg_options['thumbfix'] == 1) ) {
 		jQuery('#imageToEdit').Jcrop({
 			onChange: showPreview,
 			onSelect: showPreview,
-			aspectRatio: <?php echo round($WidthHtmlPrev/$HeightHtmlPrev,1) ?>
+			aspectRatio: <?php echo round($WidthHtmlPrev/$HeightHtmlPrev, 3) ?>
 		});
 	});
 -->

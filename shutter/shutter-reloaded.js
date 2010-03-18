@@ -1,7 +1,7 @@
 /*
 Shutter Reloaded for NextGEN Gallery
 http://www.laptoptips.ca/javascripts/shutter-reloaded/
-Version: 1.3.0
+Version: 1.3.1
 Copyright (C) 2007-2008  Andrew Ozz
 Released under the GPL, http://www.gnu.org/copyleft/gpl.html
 
@@ -127,8 +127,11 @@ shutterReloaded = {
 
 		NavBar = '<div id="shTitle"><div id="shPrev">' + prevlink + '</div><div id="shNext">' + nextlink + '</div><div id="shName">' + shutterLinks[ln].title + '</div>' + imgNum + '</div>';
 
-		D.innerHTML = '<div id="shWrap"><img src="'+shutterLinks[ln].link+'" id="shTopImg" title="' + t.msgClose + '" onload="shutterReloaded.showImg();" onclick="shutterReloaded.hideShutter();" />' + NavBar +'</div>';
-
+		D.innerHTML = '<div id="shWrap"><img src="" id="shTopImg" title="' + t.msgClose + '" onload="shutterReloaded.showImg();" onclick="shutterReloaded.hideShutter();" />' + NavBar +'</div>';
+		
+		//Google Chrome 4.0.249.78 bug for onload attribute
+		document.getElementById('shTopImg').src = shutterLinks[ln].link;
+		
 		window.setTimeout(function(){shutterReloaded.loading();},2000);
 	},
 

@@ -21,6 +21,7 @@ $dbdata = $meta->get_saved_meta();
 $exifdata = $meta->get_EXIF();
 $iptcdata = $meta->get_IPTC();
 $xmpdata = $meta->get_XMP();
+$class = '';
 
 ?>
 	<!-- META DATA -->

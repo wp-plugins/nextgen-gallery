@@ -133,7 +133,8 @@ function ngg_list_contributors()	{
 	'Kristoffer Th&oslash;ring (Norwegian Translation)' => '',
 	'Flactarus (Italian Translation)' => 'http://www.giroevago.it',
 	'Felip Alfred Galit&oacute; i Trilla (Catalan Translation)' => 'http://www.bratac.cat',
-	'Luka Komac (Slovenian Translation)' => 'http://www.komac.biz'
+	'Luka Komac (Slovenian Translation)' => 'http://www.komac.biz',
+    'Dimitris Ikonomou / Nikos Mouratidis (Greek Translation)' => 'http://www.kepik.gr'
 	);
 	
 	ksort($contributors);

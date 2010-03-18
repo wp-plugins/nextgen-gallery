@@ -28,21 +28,21 @@ class nggAdminPanel{
 	// integrate the menu	
 	function add_menu()  {
 	
-		add_menu_page( __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ), __ngettext( 'Gallery', 'Galleries', 1, 'nggallery' ), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'), NGGALLERY_URLPATH .'admin/images/nextgen.png' );
+		add_menu_page( _n( 'Gallery', 'Galleries', 1, 'nggallery' ), _n( 'Gallery', 'Galleries', 1, 'nggallery' ), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'), NGGALLERY_URLPATH .'admin/images/nextgen.png' );
 	    add_submenu_page( NGGFOLDER , __('Overview', 'nggallery'), __('Overview', 'nggallery'), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'));
 		add_submenu_page( NGGFOLDER , __('Add Gallery / Images', 'nggallery'), __('Add Gallery / Images', 'nggallery'), 'NextGEN Upload images', 'nggallery-add-gallery', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Manage Gallery', 'nggallery'), __('Manage Gallery', 'nggallery'), 'NextGEN Manage gallery', 'nggallery-manage-gallery', array (&$this, 'show_menu'));
-	    add_submenu_page( NGGFOLDER , __ngettext( 'Album', 'Albums', 1, 'nggallery' ), __ngettext( 'Album', 'Albums', 1, 'nggallery' ), 'NextGEN Edit album', 'nggallery-manage-album', array (&$this, 'show_menu'));
+	    add_submenu_page( NGGFOLDER , _n( 'Album', 'Albums', 1, 'nggallery' ), _n( 'Album', 'Albums', 1, 'nggallery' ), 'NextGEN Edit album', 'nggallery-manage-album', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Tags', 'nggallery'), __('Tags', 'nggallery'), 'NextGEN Manage tags', 'nggallery-tags', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Options', 'nggallery'), __('Options', 'nggallery'), 'NextGEN Change options', 'nggallery-options', array (&$this, 'show_menu'));
 	    if (wpmu_enable_function('wpmuStyle'))
 			add_submenu_page( NGGFOLDER , __('Style', 'nggallery'), __('Style', 'nggallery'), 'NextGEN Change style', 'nggallery-style', array (&$this, 'show_menu'));
-	    add_submenu_page( NGGFOLDER , __('Setup Gallery', 'nggallery'), __('Setup', 'nggallery'), 'activate_plugins', 'nggallery-setup', array (&$this, 'show_menu'));
 	    if (wpmu_enable_function('wpmuRoles'))
 			add_submenu_page( NGGFOLDER , __('Roles', 'nggallery'), __('Roles', 'nggallery'), 'activate_plugins', 'nggallery-roles', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('About this Gallery', 'nggallery'), __('About', 'nggallery'), 'NextGEN Gallery overview', 'nggallery-about', array (&$this, 'show_menu'));
 		if ( wpmu_site_admin() )
 			add_submenu_page( 'wpmu-admin.php' , __('NextGEN Gallery', 'nggallery'), __('NextGEN Gallery', 'nggallery'), 'activate_plugins', 'nggallery-wpmu', array (&$this, 'show_menu'));
+	    add_submenu_page( NGGFOLDER , __('Reset / Uninstall', 'nggallery'), __('Reset / Uninstall', 'nggallery'), 'activate_plugins', 'nggallery-setup', array (&$this, 'show_menu'));
 
 		//register the column fields
 		$this->register_columns();	
@@ -106,7 +106,8 @@ class nggAdminPanel{
 			case "nggallery-add-gallery" :
 				include_once ( dirname (__FILE__) . '/functions.php' );		// admin functions
 				include_once ( dirname (__FILE__) . '/addgallery.php' );	// nggallery_admin_add_gallery
-				nggallery_admin_add_gallery();
+				$ngg->addgallery_page = new nggAddGallery ();
+				$ngg->addgallery_page->controller();
 				break;
 			case "nggallery-manage-gallery" :
 				include_once ( dirname (__FILE__) . '/functions.php' );		// admin functions
@@ -124,7 +125,8 @@ class nggAdminPanel{
 				break;				
 			case "nggallery-options" :
 				include_once ( dirname (__FILE__) . '/settings.php' );		// nggallery_admin_options
-				nggallery_admin_options();
+				$ngg->option_page = new nggOptions ();
+				$ngg->option_page->controller();
 				break;
 			case "nggallery-tags" :
 				include_once ( dirname (__FILE__) . '/tags.php' );			// nggallery_admin_tags
@@ -255,7 +257,11 @@ class nggAdminPanel{
 	}
 	
 	function show_help($help, $screen) {
-
+		
+		// since WP3.0 it's an object
+		if ( is_object($screen) )
+			$screen = $screen->id;
+		
 		$link = '';
 		// menu title is localized...
 		$i18n = strtolower  ( _n( 'Gallery', 'Galleries', 1, 'nggallery' ) );
@@ -367,7 +373,7 @@ class nggAdminPanel{
 	 * @return array of the content
 	 */
 	function get_remote_array($url) {
-		if ( function_exists(wp_remote_request) ) {
+		if ( function_exists('wp_remote_request') ) {
 					
 			$options = array();
 			$options['headers'] = array(
@@ -471,7 +477,7 @@ if ( !class_exists( "CheckPlugin" ) ) {
 				$check_intervall = time() + $this->period;
 				update_option( $this->name . '_next_update', $check_intervall );
 				
-				if ( function_exists(wp_remote_request) ) {
+				if ( function_exists('wp_remote_request') ) {
 					
 					$options = array();
 					$options['headers'] = array(

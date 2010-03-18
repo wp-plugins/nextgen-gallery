@@ -55,8 +55,7 @@ if (isset($_POST['updatecss'])) {
 
 // get the content of the file
 //TODO: BUG : Read failed after write a file, maybe a Cache problem
-if (!is_file($real_file))
-	$error = 1;
+$error = ( !is_file($real_file) );
 
 if (!$error && filesize($real_file) > 0) {
 	$f = fopen($real_file, 'r');

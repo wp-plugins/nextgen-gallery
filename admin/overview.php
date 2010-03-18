@@ -30,6 +30,46 @@ function nggallery_admin_overview()  {
 	</div>
 	<script type="text/javascript">
 		//<![CDATA[
+        var ajaxWidgets, ajaxPopulateWidgets;
+        
+        jQuery(document).ready( function($) {
+        	// These widgets are sometimes populated via ajax
+        	ajaxWidgets = [
+        		'ngg_lastdonators',
+        		'dashboard_primary',
+        		'ngg_locale',
+        		'dashboard_plugins'
+        	];
+        
+        	ajaxPopulateWidgets = function(el) {
+        		show = function(id, i) {
+        			var p, e = $('#' + id + ' div.inside:visible').find('.widget-loading');
+        			if ( e.length ) {
+        				p = e.parent();
+        				setTimeout( function(){
+        					p.load('admin-ajax.php?action=ngg_dashboard&jax=' + id, '', function() {
+        						p.hide().slideDown('normal', function(){
+        							$(this).css('display', '');
+        							if ( 'dashboard_plugins' == id && $.isFunction(tb_init) )
+        								tb_init('#dashboard_plugins a.thickbox');
+        						});
+        					});
+        				}, i * 500 );
+        			}
+        		}
+        		if ( el ) {
+        			el = el.toString();
+        			if ( $.inArray(el, ajaxWidgets) != -1 )
+        				show(el, 0);
+        		} else {
+        			$.each( ajaxWidgets, function(i) {
+        				show(this, i);
+        			});
+        		}
+        	};
+        	ajaxPopulateWidgets();
+        } );
+
 		jQuery(document).ready( function($) {
 			// postboxes setup
 			postboxes.add_postbox_toggles('ngg-overview');
@@ -38,6 +78,19 @@ function nggallery_admin_overview()  {
 	</script>
 	<?php
 }
+
+/**
+ * Load the meta boxes
+ *
+ */
+add_meta_box('dashboard_right_now', __('Welcome to NextGEN Gallery !', 'nggallery'), 'ngg_overview_right_now', 'ngg_overview', 'left', 'core');
+if ( !(get_locale() == 'en_US') )
+	add_meta_box('ngg_locale', __('Translation', 'nggallery'), 'ngg_widget_locale', 'ngg_overview', 'left', 'core');
+add_meta_box('dashboard_primary', __('Latest News', 'nggallery'), 'ngg_widget_overview_news', 'ngg_overview', 'right', 'core');
+add_meta_box('ngg_lastdonators', __('Recent donators', 'nggallery'), 'ngg_widget_overview_donators', 'ngg_overview', 'left', 'core');
+add_meta_box('ngg_server', __('Server Settings', 'nggallery'), 'ngg_overview_server', 'ngg_overview', 'left', 'core');
+add_meta_box('dashboard_plugins', __('Related plugins', 'nggallery'), 'ngg_widget_related_plugins', 'ngg_overview', 'right', 'core');
+add_meta_box('ngg_gd_lib', __('Graphic Library', 'nggallery'), 'ngg_overview_graphic_lib', 'ngg_overview', 'right', 'core');
 
 /**
  * Show the server settings in a dashboard widget
@@ -91,6 +144,10 @@ function ngg_overview_graphic_lib() {
  * 
  * @return void
  */
+function ngg_widget_overview_donators() { 
+    echo '<p class="widget-loading hide-if-no-js">' . __( 'Loading&#8230;' ) . '</p><p class="describe hide-if-js">' . __('This widget requires JavaScript.') . '</p>';
+}
+ 
 function ngg_overview_donators() {
 	global $ngg;
 	
@@ -136,33 +193,63 @@ function ngg_overview_donators() {
  * 
  * @return void
  */
+function ngg_widget_overview_news() { 
+    echo '<p class="widget-loading hide-if-no-js">' . __( 'Loading&#8230;' ) . '</p><p class="describe hide-if-js">' . __('This widget requires JavaScript.') . '</p>';
+} 
 function ngg_overview_news(){
-	// get feed_messages
-	require_once(ABSPATH . WPINC . '/rss.php');
+
 ?>
 <div class="rss-widget">
     <?php
-      $rss = @fetch_rss('http://feeds.feedburner.com/alexrabe/');
+    $rss = @fetch_feed( 'http://feeds.feedburner.com/alexrabe' );
+      
+    if ( is_object($rss) ) {
 
-      if ( isset($rss->items) && 0 != count($rss->items) )
-      {
-        $rss->items = array_slice($rss->items, 0, 3);
-        echo "<ul>";
-		foreach ($rss->items as $item)
-        {
+        if ( is_wp_error($rss) ) {
+            echo '<p>' . sprintf(__('Newsfeed could not be loaded.  Check the <a href="%s">front page</a> to check for updates.', 'nggallery'), 'http://alexrabe.de/') . '</p>';
+    		return;
+        }
+        
+        echo '<ul>';
+		foreach ( $rss->get_items(0, 3) as $item ) {
+    		$link = $item->get_link();
+    		while ( stristr($link, 'http') != $link )
+    			$link = substr($link, 1);
+    		$link = esc_url(strip_tags($link));
+    		$title = esc_attr(strip_tags($item->get_title()));
+    		if ( empty($title) )
+    			$title = __('Untitled');
+    
+    		$desc = str_replace( array("\n", "\r"), ' ', esc_attr( strip_tags( @html_entity_decode( $item->get_description(), ENT_QUOTES, get_option('blog_charset') ) ) ) );
+    		$desc = wp_html_excerpt( $desc, 360 );
+    
+    		// Append ellipsis. Change existing [...] to [&hellip;].
+    		if ( '[...]' == substr( $desc, -5 ) )
+    			$desc = substr( $desc, 0, -5 ) . '[&hellip;]';
+    		elseif ( '[&hellip;]' != substr( $desc, -10 ) )
+    			$desc .= ' [&hellip;]';
+    
+    		$desc = esc_html( $desc );
+            
+			$date = $item->get_date();
+            $diff = '';
+            
+			if ( $date ) {
+			    
+                $diff = human_time_diff( strtotime($date, time()) );
+                 
+				if ( $date_stamp = strtotime( $date ) )
+					$date = ' <span class="rss-date">' . date_i18n( get_option( 'date_format' ), $date_stamp ) . '</span>';
+				else
+					$date = '';
+			}            
         ?>
-          <li><a class="rsswidget" title="" href='<?php echo wp_filter_kses($item['link']); ?>'><?php echo wp_specialchars($item['title']); ?></a>
-		  <span class="rss-date"><?php echo date("F jS, Y", strtotime($item['pubdate'])); ?></span> 
-          <div class="rssSummary"><strong><?php echo human_time_diff(strtotime($item['pubdate'], time())); ?></strong> - <?php echo $item['description']; ?></div></li>
+          <li><a class="rsswidget" title="" href='<?php echo $link; ?>'><?php echo $title; ?></a>
+		  <span class="rss-date"><?php echo $date; ?></span> 
+          <div class="rssSummary"><strong><?php echo $diff; ?></strong> - <?php echo $desc; ?></div></li>
         <?php
         }
-        echo "</ul>";
-      }
-      else
-      {
-        ?>
-        <p><?php printf(__('Newsfeed could not be loaded.  Check the <a href="%s">front page</a> to check for updates.', 'nggallery'), 'http://alexrabe.boelinger.com/') ?></p>
-        <?php
+        echo '</ul>';
       }
     ?>
 </div>
@@ -181,8 +268,8 @@ function ngg_overview_right_now() {
 	$albums    = intval( $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggalbum") );
 ?>
 
-<p class="sub"><?php _e('At a Glance', 'nggallery'); ?></p>
-<div class="table">
+<div class="table table_content">
+	<p class="sub"><?php _e('At a Glance', 'nggallery'); ?></p>
 	<table>
 		<tbody>
 			<tr class="first">
@@ -206,9 +293,9 @@ function ngg_overview_right_now() {
 		</tbody>
 	</table>
 </div>
-<div class="versions">
+<div class="versions" style="padding-top:14px">
     <p>
-	<?php if(current_user_can('NextGEN Upload images')): ?><a class="button rbutton" href="admin.php?page=nggallery-add-gallery"><strong><?php _e('Upload pictures', 'nggallery') ?></strong></a><?php endif; ?>
+	<?php if(current_user_can('NextGEN Upload images')): ?><a class="button rbutton" href="admin.php?page=nggallery-add-gallery"><?php _e('Upload pictures', 'nggallery') ?></a><?php endif; ?>
 	<?php _e('Here you can control your images, galleries and albums.', 'nggallery') ?>
 	</p>
 	<span>
@@ -221,12 +308,81 @@ function ngg_overview_right_now() {
 <?php
 }
 
-add_meta_box('dashboard_right_now', __('Welcome to NextGEN Gallery !', 'nggallery'), 'ngg_overview_right_now', 'ngg_overview', 'left', 'core');
-add_meta_box('dashboard_primary', __('Latest News', 'nggallery'), 'ngg_overview_news', 'ngg_overview', 'right', 'core');
-add_meta_box('ngg_lastdonators', __('Recent donators', 'nggallery'), 'ngg_overview_donators', 'ngg_overview', 'left', 'core');
-add_meta_box('ngg_server', __('Server Settings', 'nggallery'), 'ngg_overview_server', 'ngg_overview', 'left', 'core');
-add_meta_box('dashboard_plugins', __('Related plugins', 'nggallery'), 'ngg_related_plugins', 'ngg_overview', 'right', 'core');
-add_meta_box('ngg_gd_lib', __('Graphic Library', 'nggallery'), 'ngg_overview_graphic_lib', 'ngg_overview', 'right', 'core');
+/**
+ * Looks up for translation file
+ * 
+ * @return void
+ */
+function ngg_widget_locale() {
+    
+	require_once(NGGALLERY_ABSPATH . '/lib/locale.php');
+	
+	$locale = new ngg_locale();
+	
+	$overview_url = admin_url() . 'admin.php?page=' . NGGFOLDER;
+	
+	// Check if someone would like to update the translation file
+	if ( isset($_GET['locale']) && $_GET['locale'] == 'update' ) {
+		check_admin_referer('ngg_update_locale');
+		
+		$result = $locale->download_locale();
+		
+		if ($result == true) {
+		?>
+		<p class="hint"><?php _e('Translation file successful updated. Please reload page.', 'nggallery'); ?></p>
+		<p class="textright">
+			<a class="button" href="<?php echo esc_url(strip_tags($overview_url)); ?>"><?php _e('Reload page', 'nggallery'); ?></a>
+		</p>
+		<?php
+		} else {
+		?>
+		<p class="hint"><?php _e('Translation file couldn\'t be updated', 'nggallery'); ?></p>
+		<?php		
+		}
+		
+		return;
+	}
+        
+    echo '<p class="widget-loading hide-if-no-js">' . __( 'Loading&#8230;' ) . '</p><p class="describe hide-if-js">' . __('This widget requires JavaScript.') . '</p>';
+} 
+
+function ngg_locale() {
+	global $ngg;
+	
+	require_once(NGGALLERY_ABSPATH . '/lib/locale.php');
+	
+	$locale = new ngg_locale();
+	$overview_url = admin_url() . 'admin.php?page=' . NGGFOLDER;
+    $result = $locale->check();
+	$update_url    = wp_nonce_url ( $overview_url . '&amp;locale=update', 'ngg_update_locale');
+
+	//Translators can change this text via gettext
+	if ($result == 'installed') {
+		echo $ngg->translator;
+		if ( !is_wp_error($locale->response) && $locale->response['response']['code'] == '200') {
+		?>
+		<p class="textright">
+			<a class="button" href="<?php echo esc_url( strip_tags($update_url) ); ?>"><?php _e('Update', 'nggallery'); ?></a>
+		</p>
+		<?php
+		}
+	}
+	
+	//Translators can change this text via gettext
+	if ($result == 'available') {
+		?>
+		<p><strong>Download now your language file !</strong></p>
+		<p class="textright">
+			<a class="button" href="<?php echo esc_url( strip_tags($update_url) ); ?>"><?php _e('Download', 'nggallery'); ?></a>
+		</p>
+		<?php
+	}
+
+	
+	if ($result == 'not_exist')
+		echo '<p class="hint">'. sprintf( '<strong>Would you like to help to translate this plugin ?</strong> <a target="_blank" href="%s">Download</a> the current pot file and read <a href="http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/">here</a> how you can translate the plugin.', NGGALLERY_URLPATH . 'lang/nggallery.pot').'</p>';
+
+}
 
 /**
  * Show GD Library version information
@@ -289,8 +445,8 @@ function ngg_get_serverinfo() {
 	if(ini_get('upload_max_filesize')) $upload_max = ini_get('upload_max_filesize');	
 	else $upload_max = __('N/A', 'nggallery');
 	// Get PHP Output buffer Size
-	if(ini_get('output_buffering')) $output_buffer = ini_get('output_buffering');	
-	else $output_buffer = __('N/A', 'nggallery');
+	if(ini_get('pcre.backtrack_limit')) $backtrack_limit = ini_get('pcre.backtrack_limit');	
+	else $backtrack_limit = __('N/A', 'nggallery');
 	// Get PHP Max Post Size
 	if(ini_get('post_max_size')) $post_max = ini_get('post_max_size');
 	else $post_max = __('N/A', 'nggallery');
@@ -325,7 +481,7 @@ function ngg_get_serverinfo() {
 	<li><?php _e('PHP Memory Limit', 'nggallery'); ?> : <span><?php echo $memory_limit; ?></span></li>
 	<li><?php _e('PHP Max Upload Size', 'nggallery'); ?> : <span><?php echo $upload_max; ?></span></li>
 	<li><?php _e('PHP Max Post Size', 'nggallery'); ?> : <span><?php echo $post_max; ?></span></li>
-	<li><?php _e('PHP Output Buffer Size', 'nggallery'); ?> : <span><?php echo $output_buffer; ?></span></li>
+	<li><?php _e('PCRE Backtracking Limit', 'nggallery'); ?> : <span><?php echo $backtrack_limit; ?></span></li>
 	<li><?php _e('PHP Max Script Execute Time', 'nggallery'); ?> : <span><?php echo $max_execute; ?>s</span></li>
 	<li><?php _e('PHP Exif support', 'nggallery'); ?> : <span><?php echo $exif; ?></span></li>
 	<li><?php _e('PHP IPTC support', 'nggallery'); ?> : <span><?php echo $iptc; ?></span></li>
@@ -355,7 +511,7 @@ function ngg_check_for_PHP5() {
 class ngg_SpaceManager {
  
  	function getQuota() {
-		if (function_exists(get_space_allowed))
+		if (function_exists('get_space_allowed'))
 			$quota = get_space_allowed();
 		else
 			$quota = get_site_option( "blog_upload_space" );
@@ -498,6 +654,9 @@ function ngg_get_phpinfo() {
  * 
  * @return postbox output
  */
+function ngg_widget_related_plugins() { 
+    echo '<p class="widget-loading hide-if-no-js">' . __( 'Loading&#8230;' ) . '</p><p class="describe hide-if-js">' . __('This widget requires JavaScript.') . '</p>';
+}  
 function ngg_related_plugins() {
 	include(ABSPATH . 'wp-admin/includes/plugin-install.php');
 

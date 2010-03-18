@@ -4,11 +4,11 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.de/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.4.3
+Version: 1.5.0
 
 Author URI: http://alexrabe.de/
 
-Copyright 2007-2009 by Alex Rabe & NextGEN DEV-Team
+Copyright 2007-2010 by Alex Rabe & NextGEN DEV-Team
 
 The NextGEN button is taken from the Fugue Icons of http://www.pinvoke.com/.
 
@@ -44,10 +44,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.4.3';
-	var $dbversion   = '1.4.0';
-	var $minium_WP   = '2.8';
-	var $minium_WPMU = '2.8';
+	var $version     = '1.5.0';
+	var $dbversion   = '1.5.0';
+	var $minium_WP   = '2.9';
+	var $minium_WPMU = '2.9';
 	var $updateURL   = 'http://nextgen.boelinger.com/version.php';
 	var $donators    = 'http://nextgen.boelinger.com/donators.php';
 	var $options     = '';
@@ -59,6 +59,10 @@ class nggLoader {
 		// Load the language file
 		$this->load_textdomain();
 		
+		// All credits to the tranlator 
+		$this->translator  = '<p class="hint">'. __('<strong>Translation by : </strong><a target="_blank" href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/">See here</a>', 'nggallery') . '</p>';
+		$this->translator .= '<p class="hint">'. __('<strong>This translation is not yet updated for Version 1.5.0</strong>. If you would like to help with translation, download the current po from the plugin folder and read <a href="http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/">here</a> how you can translate the plugin.', 'nggallery') . '</p>'; 
+
 		// Stop the plugin if we missed the requirements
 		if ( ( !$this->required_version() ) || ( !$this->check_memory_limit() ) )
 			return;
@@ -82,7 +86,7 @@ class nggLoader {
 		// Start this plugin once all other plugins are fully loaded
 		add_action( 'plugins_loaded', array(&$this, 'start_plugin') );
 		
-		// Register_taxonomy must be used during wo init
+		// Register_taxonomy must be used during the init
 		add_action( 'init', array(&$this, 'register_taxonomy') );
 		
 		// Add a message for PHP4 Users, can disable the update message later on
@@ -101,7 +105,7 @@ class nggLoader {
 		// Content Filters
 		add_filter('ngg_gallery_name', 'sanitize_title');
 
-		// Load the admin panel or the frontend functions
+		// Check if we are in the admin area
 		if ( is_admin() ) {	
 			
 			// Pass the init check or show a message
@@ -119,10 +123,7 @@ class nggLoader {
 				add_action('wp_head', array('nggMediaRss', 'add_piclens_javascript'));
                 
             // Look for XML request, before page is render
-            add_action('parse_request',  array(&$this, 'check_xml_request') );    
-			
-			// Why is this not core ?
-			add_action('wp_head', 'wp_print_styles');
+            add_action('parse_request',  array(&$this, 'check_request') );    
 				
 			// Add the script and style files
 			add_action('wp_print_scripts', array(&$this, 'load_scripts') );
@@ -134,10 +135,29 @@ class nggLoader {
 		}	
 	}
 
-    function check_xml_request( $wp ) {
+    function check_request( $wp ) {
+    	
+    	if ( !array_key_exists('callback', $wp->query_vars) )
+    		return;
         
-        if (array_key_exists('slideshow', $wp->query_vars) && $wp->query_vars['slideshow'] == 'true') {
+        if ( $wp->query_vars['callback'] == 'imagerotator') {
             require_once (dirname (__FILE__) . '/xml/imagerotator.php');
+            exit();
+        }
+
+        if ( $wp->query_vars['callback'] == 'json') {
+            require_once (dirname (__FILE__) . '/xml/json.php');
+            exit();
+        }
+
+        if ( $wp->query_vars['callback'] == 'image') {
+            require_once (dirname (__FILE__) . '/nggshow.php');
+            exit();
+        }
+        
+		//TODO:see trac #12400 could be an option for WP3.0 
+        if ( $wp->query_vars['callback'] == 'ngg-ajax') {
+            require_once (dirname (__FILE__) . '/xml/ajax.php');
             exit();
         }
         
@@ -172,7 +192,7 @@ class nggLoader {
 	function check_memory_limit() {
 		
 		$memory_limit = (int) substr( ini_get('memory_limit'), 0, -1);
-		//This works only with enough memory, 8MB is silly, wordpress requires already 7.9999
+		//This works only with enough memory, 12MB is silly, wordpress requires already 16MB :-)
 		if ( ($memory_limit != 0) && ($memory_limit < 12 ) ) {
 			add_action(
 				'admin_notices', 
@@ -227,8 +247,8 @@ class nggLoader {
 		// define URL
 		define('NGGFOLDER', plugin_basename( dirname(__FILE__)) );
 		
-		define('NGGALLERY_ABSPATH', str_replace("\\","/", WP_PLUGIN_DIR . '/' . plugin_basename( dirname(__FILE__) ) . '/' ));
-		define('NGGALLERY_URLPATH', WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) . '/' );
+		define('NGGALLERY_ABSPATH', trailingslashit( str_replace("\\","/", WP_PLUGIN_DIR . '/' . plugin_basename( dirname(__FILE__) ) ) ) );
+		define('NGGALLERY_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 		
 		// look for imagerotator
 		define('NGGALLERY_IREXIST', !empty( $this->options['irURL'] ));
@@ -250,6 +270,7 @@ class nggLoader {
 		require_once (dirname (__FILE__) . '/lib/core.php');					//  94.840
 		require_once (dirname (__FILE__) . '/lib/ngg-db.php');					// 132.400
 		require_once (dirname (__FILE__) . '/lib/image.php');					//  59.424
+		require_once (dirname (__FILE__) . '/lib/post-thumbnail.php');			//  n.a.
 		require_once (dirname (__FILE__) . '/widgets/widgets.php');				// 298.792
 		
 		//Just needed if you access remote to WordPress
@@ -315,8 +336,9 @@ class nggLoader {
 		// Load AJAX navigation script, works only with shutter script as we need to add the listener
 		if ( $this->options['galAjaxNav'] ) { 
 			if ( ($this->options['thumbEffect'] == "shutter") || function_exists('srel_makeshutter') ) {
-				wp_enqueue_script ( 'ngg_script', NGGALLERY_URLPATH . 'js/ngg.js', array('jquery'));
+				wp_enqueue_script ( 'ngg_script', NGGALLERY_URLPATH . 'js/ngg.js', array('jquery'), '2.0');
 				wp_localize_script( 'ngg_script', 'ngg_ajax', array('path'		=> NGGALLERY_URLPATH,
+                                                                    'callback'  => get_option ('siteurl') . '/' . 'index.php?callback=ngg-ajax',
 																	'loading'	=> __('loading', 'nggallery'),
 				) );
 			}
@@ -335,7 +357,7 @@ class nggLoader {
 		if ( nggGallery::get_theme_css_file() )
 			wp_enqueue_style('NextGEN', nggGallery::get_theme_css_file() , false, '1.0.0', 'screen'); 
 		else if ($this->options['activateCSS'])
-			wp_enqueue_style('NextGEN', NGGALLERY_URLPATH.'css/'.$this->options['CSSfile'], false, '1.0.0', 'screen'); 
+			wp_enqueue_style('NextGEN', NGGALLERY_URLPATH . 'css/' . $this->options['CSSfile'], false, '1.0.0', 'screen'); 
 		
 		//	activate Thickbox
 		if ($this->options['thumbEffect'] == 'thickbox') 

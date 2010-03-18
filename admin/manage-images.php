@@ -8,8 +8,9 @@ function nggallery_picturelist() {
 	
 	// Look if its a search result
 	$is_search = isset ($_GET['s']) ? true : false;
+	$counter	= 0;	
 	
-	if ($is_search) {
+    if ($is_search) {
 
 		// fetch the imagelist 
 		$picturelist = $ngg->manage_page->search_result;
@@ -69,6 +70,8 @@ function nggallery_picturelist() {
 		$gallery_columns = ngg_manage_gallery_columns();
 		$hidden_columns  = get_hidden_columns('nggallery-manage-images');
 		$num_columns     = count($gallery_columns) - count($hidden_columns);
+		
+		$attr = (nggGallery::current_user_can( 'NextGEN Edit gallery options' )) ? '' : 'disabled="disabled"';
 
 ?>
 <!--[if IE]>
@@ -134,7 +137,7 @@ function checkSelected() {
 	var numchecked = getNumChecked(document.getElementById('updategallery'));
 	 
 	if(numchecked < 1) { 
-		alert('<?php echo js_escape(__('No images selected', 'nggallery')); ?>');
+		alert('<?php echo esc_js(__('No images selected', 'nggallery')); ?>');
 		return false; 
 	} 
 	
@@ -162,7 +165,7 @@ function checkSelected() {
 			break;			
 	}
 	
-	return confirm('<?php echo sprintf(js_escape(__("You are about to start the bulk edit for %s images \n \n 'Cancel' to stop, 'OK' to proceed.",'nggallery')), "' + numchecked + '") ; ?>');
+	return confirm('<?php echo sprintf(esc_js(__("You are about to start the bulk edit for %s images \n \n 'Cancel' to stop, 'OK' to proceed.",'nggallery')), "' + numchecked + '") ; ?>');
 }
 
 jQuery(document).ready( function() {
@@ -178,7 +181,7 @@ jQuery(document).ready( function() {
 <div class="wrap">
 
 <?php if ($is_search) :?>
-<h2><?php printf( __('Search results for &#8220;%s&#8221;', 'nggallery'), wp_specialchars( get_search_query() ) ); ?></h2>
+<h2><?php printf( __('Search results for &#8220;%s&#8221;', 'nggallery'), esc_html( get_search_query() ) ); ?></h2>
 <form class="search-form" action="" method="get">
 <p class="search-box">
 	<label class="hidden" for="media-search-input"><?php _e( 'Search Images', 'nggallery' ); ?>:</label>
@@ -203,6 +206,7 @@ jQuery(document).ready( function() {
 <?php wp_nonce_field('ngg_updategallery') ?>
 <input type="hidden" name="page" value="manage-images" />
 
+<?php if ( nggGallery::current_user_can( 'NextGEN Edit gallery options' )) : ?>
 <div id="poststuff">
 	<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
 	<div id="gallerydiv" class="postbox <?php echo postbox_classes('gallerydiv', 'ngg-manage-gallery'); ?>" >
@@ -211,10 +215,10 @@ jQuery(document).ready( function() {
 			<table class="form-table" >
 				<tr>
 					<th align="left"><?php _e('Title') ?>:</th>
-					<th align="left"><input type="text" size="50" name="title" value="<?php echo $gallery->title; ?>"  /></th>
+					<th align="left"><input <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery title' ); ?> type="text" size="50" name="title" value="<?php echo $gallery->title; ?>"  /></th>
 					<th align="right"><?php _e('Page Link to', 'nggallery') ?>:</th>
 					<th align="left">
-					<select name="pageid" style="width:95%">
+					<select <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery page id' ); ?>  name="pageid" style="width:95%">
 						<option value="0" ><?php _e('Not linked', 'nggallery') ?></option>
 						<?php parent_dropdown($gallery->pageid); ?>
 					</select>
@@ -222,10 +226,10 @@ jQuery(document).ready( function() {
 				</tr>
 				<tr>
 					<th align="left"><?php _e('Description') ?>:</th> 
-					<th align="left"><textarea name="gallerydesc" cols="30" rows="3" style="width: 95%" ><?php echo $gallery->galdesc; ?></textarea></th>
+					<th align="left"><textarea  <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery description' ); ?> name="gallerydesc" cols="30" rows="3" style="width: 95%" ><?php echo $gallery->galdesc; ?></textarea></th>
 					<th align="right"><?php _e('Preview image', 'nggallery') ?>:</th>
 					<th align="left">
-						<select name="previewpic" style="width:95%" >
+						<select <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery preview pic' ); ?> name="previewpic" style="width:95%" >
 							<option value="0" ><?php _e('No Picture', 'nggallery') ?></option>
 							<?php
 								if(is_array($picturelist)) {
@@ -240,12 +244,12 @@ jQuery(document).ready( function() {
 				</tr>
 				<tr>
 					<th align="left"><?php _e('Path', 'nggallery') ?>:</th> 
-					<th align="left"><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> type="text" size="50" name="path" value="<?php echo $gallery->path; ?>"  /></th>
+					<th align="left"><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery path' ); ?> type="text" size="50" name="path" value="<?php echo $gallery->path; ?>"  /></th>
 					<th align="right"><?php _e('Author', 'nggallery'); ?>:</th>
 					<th align="left"> 
 					<?php
 						$editable_ids = $ngg->manage_page->get_editable_user_ids( $user_ID );
-						if ( $editable_ids && count( $editable_ids ) > 1 )
+						if ( $editable_ids && count( $editable_ids ) > 1 && nggGallery::current_user_can( 'NextGEN Edit gallery author')  )
 							wp_dropdown_users( array('include' => $editable_ids, 'name' => 'author', 'selected' => empty( $gallery->author ) ? 0 : $gallery->author ) ); 
 						else
 							echo $act_author_user->display_name;
@@ -278,6 +282,8 @@ jQuery(document).ready( function() {
 </div> <!-- poststuff -->
 <?php endif; ?>
 
+<?php endif; ?>
+
 <div class="tablenav ngg-tablenav">
 	<?php if ( $page_links ) : ?>
 	<div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s' ) . '</span>%s',
@@ -293,6 +299,7 @@ jQuery(document).ready( function() {
 		<option value="set_watermark" ><?php _e("Set watermark",'nggallery'); ?></option>
 		<option value="new_thumbnail" ><?php _e("Create new thumbnails",'nggallery'); ?></option>
 		<option value="resize_images" ><?php _e("Resize images",'nggallery'); ?></option>
+		<option value="recover_images" ><?php _e("Recover from backup",'nggallery'); ?></option>
 		<option value="delete_images" ><?php _e("Delete images",'nggallery'); ?></option>
 		<option value="import_meta" ><?php _e("Import metadata",'nggallery'); ?></option>
 		<option value="rotate_cw" ><?php _e("Rotate images clockwise",'nggallery'); ?></option>
@@ -330,7 +337,6 @@ jQuery(document).ready( function() {
 if($picturelist) {
 	
 	$thumbsize 	= '';
-	$counter	= 0;
 		
 	if ($ngg->options['thumbfix'])
 		$thumbsize = 'width="' . $ngg->options['thumbwidth'] . '" height="' . $ngg->options['thumbheight'] . '"';
@@ -382,6 +388,7 @@ if($picturelist) {
 							<br /><?php echo $date; ?>
 							<?php if ( !empty($picture->meta_data) ): ?>
 							<br /><?php echo $picture->meta_data['width']; ?> x <?php echo $picture->meta_data['height']; ?> <?php _e('pixel', 'nggallery'); ?>
+							
 							<?php endif; ?>
 							<p>
 							<?php
@@ -390,9 +397,11 @@ if($picturelist) {
 							//$actions['edit']   = '<a class="editinline" href="#">' . __('Edit') . '</a>';
 							$actions['view']   = '<a class="thickbox" href="' . $picture->imageURL . '" title="' . esc_attr(sprintf(__('View "%s"'), $picture->filename)) . '">' . __('View', 'nggallery') . '</a>';
 							$actions['meta']   = '<a class="thickbox" href="' . NGGALLERY_URLPATH . 'admin/showmeta.php?id=' . $pid . '" title="' . __('Show Meta data','nggallery') . '">' . __('Meta', 'nggallery') . '</a>';
-							$actions['custom_thumb']   = '<a class="thickbox" href="' . NGGALLERY_URLPATH . 'admin/edit-thumbnail.php?id=' . $pid . '" title="' . __('Customize thumbnail','nggallery') . '">' . __('Edit thumb', 'nggallery') . '</a>';
-							$actions['rotate']   = '<a class="thickbox" href="' . NGGALLERY_URLPATH . 'admin/rotate.php?id=' . $pid . '" title="' . __('Rotate','nggallery') . '">' . __('Rotate', 'nggallery') . '</a>';
-							$actions['delete'] = '<a class="submitdelete" href="' . wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=delpic&amp;gid=" . $act_gid . "&amp;pid=" . $pid, 'ngg_delpicture'). '" class="delete column-delete" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete "%s"' , 'nggallery'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete') . '</a>';
+							$actions['custom_thumb']   = '<a class="thickbox" href="' . NGGALLERY_URLPATH . 'admin/edit-thumbnail.php?id=' . $pid . '" title="' . __('Customize thumbnail','nggallery') . '">' . __('Edit thumb', 'nggallery') . '</a>';							
+							$actions['rotate']	= '<a class="thickbox" href="' . NGGALLERY_URLPATH . 'admin/rotate.php?id=' . $pid . '" title="' . __('Rotate','nggallery') . '">' . __('Rotate', 'nggallery') . '</a>';
+							if ( file_exists( $picture->imagePath . '_backup' ) )	
+                                $actions['recover']   = '<a class="confirmrecover" href="' .wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=recoverpic&amp;gid=" . $act_gid . "&amp;pid=" . $pid, 'ngg_recoverpicture'). '" title="' . __('Recover','nggallery') . '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Recover "%s" ?' , 'nggallery'), $picture->filename)). '\');if(check==false) return false;">' . __('Recover', 'nggallery') . '</a>';
+							$actions['delete'] = '<a class="submitdelete" href="' . wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=delpic&amp;gid=" . $act_gid . "&amp;pid=" . $pid, 'ngg_delpicture'). '" class="delete column-delete" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete "%s" ?' , 'nggallery'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete') . '</a>';
 							$action_count = count($actions);
 							$i = 0;
 							echo '<div class="row-actions">';
@@ -451,14 +460,14 @@ if($picturelist) {
 }
  
 // In the case you have no capaptibility to see the search result
-if ( $counter==0 )
+if ( $counter == 0 )
 	echo '<tr><td colspan="' . $num_columns . '" align="center"><strong>'.__('No entries found','nggallery').'</strong></td></tr>';
 
 ?>
 	
 		</tbody>
 	</table>
-	<p class="submit"><input type="submit" class="button-primary action" name="updatepictures" value="<?php _e("Save Changes",'nggallery'); ?>" /></p>
+	<p class="submit"><input type="submit" class="button-primary action" name="updatepictures" value="<?php _e('Save Changes', 'nggallery'); ?>" /></p>
 	</form>	
 	<br class="clear"/>
 	</div><!-- /#wrap -->
@@ -591,7 +600,6 @@ if ( $counter==0 )
 
 // define the columns to display, the syntax is 'internal name' => 'display name'
 function ngg_manage_gallery_columns() {
-	global $ngg;
 	
 	$gallery_columns = array();
 	

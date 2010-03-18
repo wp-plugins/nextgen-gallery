@@ -76,7 +76,7 @@ class nggMeta{
 		
 		$meta = $this->image->meta_data;
 		
-		//check if we already import the meat data to the database
+		//check if we already import the meta data to the database
 		if (!is_array($meta) || ($meta['saved'] != true))
 			return false;
 		
@@ -104,65 +104,74 @@ class nggMeta{
    */
 	function get_EXIF($object = false) {
 		
-		if (!$this->exif_data)
+		if ( !$this->exif_data )
 			return false;
 		
 		if (!is_array($this->exif_array)){
-			
+                
 			$meta= array();
-			
-			// taken from WP core
-			$exif = $this->exif_data['EXIF'];
-			if (!empty($exif['FNumber']))
-				$meta['aperture'] = 'F ' . round( $this->exif_frac2dec( $exif['FNumber'] ), 2 );
-			if (!empty($exif['Model']))
-				$meta['camera'] = trim( $exif['Model'] );
-			if (!empty($exif['DateTimeDigitized']))
-				$meta['created_timestamp'] = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $this->exif_date2ts($exif['DateTimeDigitized']));
-			if (!empty($exif['FocalLength']))
-				$meta['focal_length'] = $this->exif_frac2dec( $exif['FocalLength'] ) . __(' mm','nggallery');
-			if (!empty($exif['ISOSpeedRatings']))
-				$meta['iso'] = $exif['ISOSpeedRatings'];
-			if (!empty($exif['ExposureTime'])) {
-				 $meta['shutter_speed']  = $this->exif_frac2dec ($exif['ExposureTime']);
-				 $meta['shutter_speed']  =($meta['shutter_speed'] > 0.0 and $meta['shutter_speed'] < 1.0) ? ( '1/' . round( 1 / $meta['shutter_speed'], -1) ) : ($meta['shutter_speed']); 
-				 $meta['shutter_speed'] .=  __(' sec','nggallery');
-				}
-			//Bit 0 indicates the flash firing status
-			if (!empty($exif['Flash']))
-				$meta['flash'] =  ( $exif['Flash'] & 1 ) ? __('Fired', 'nggallery') : __('Not fired',' nggallery');
-	
+            
+            if ( isset($this->exif_data['EXIF']) ) {   
+                $exif = $this->exif_data['EXIF'];
+                
+    			if (!empty($exif['FNumber']))
+    				$meta['aperture'] = 'F ' . round( $this->exif_frac2dec( $exif['FNumber'] ), 2 );
+    			if (!empty($exif['Model']))
+    				$meta['camera'] = trim( $exif['Model'] );
+    			if (!empty($exif['DateTimeDigitized']))
+    				$meta['created_timestamp'] = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $this->exif_date2ts($exif['DateTimeDigitized']));
+    			if (!empty($exif['FocalLength']))
+    				$meta['focal_length'] = $this->exif_frac2dec( $exif['FocalLength'] ) . __(' mm','nggallery');
+    			if (!empty($exif['ISOSpeedRatings']))
+    				$meta['iso'] = $exif['ISOSpeedRatings'];
+    			if (!empty($exif['ExposureTime'])) {
+    				 $meta['shutter_speed']  = $this->exif_frac2dec ($exif['ExposureTime']);
+    				 $meta['shutter_speed']  =($meta['shutter_speed'] > 0.0 and $meta['shutter_speed'] < 1.0) ? ( '1/' . round( 1 / $meta['shutter_speed'], -1) ) : ($meta['shutter_speed']); 
+    				 $meta['shutter_speed'] .=  __(' sec','nggallery');
+    				}
+    			//Bit 0 indicates the flash firing status
+    			if (!empty($exif['Flash']))
+    				$meta['flash'] =  ( $exif['Flash'] & 1 ) ? __('Fired', 'nggallery') : __('Not fired',' nggallery');
+            }
+            
 			// additional information
-			$exif = $this->exif_data['IFD0'];
-			if (!empty($exif['Model']))
-				$meta['camera'] = $exif['Model'];
-			if (!empty($exif['Make']))
-				$meta['make'] = $exif['Make'];
-			if (!empty($exif['ImageDescription']))
-				$meta['title'] = utf8_encode($exif['ImageDescription']);
-			if (!empty($exif['Orientation']))
-				$meta['Orientation'] = $exif['Orientation'];
-	
+            if ( isset($this->exif_data['IFD0']) ) {  
+    			$exif = $this->exif_data['IFD0'];
+                
+    			if (!empty($exif['Model']))
+    				$meta['camera'] = $exif['Model'];
+    			if (!empty($exif['Make']))
+    				$meta['make'] = $exif['Make'];
+    			if (!empty($exif['ImageDescription']))
+    				$meta['title'] = utf8_encode($exif['ImageDescription']);
+    			if (!empty($exif['Orientation']))
+    				$meta['Orientation'] = $exif['Orientation'];
+            }
+            
 			// this is done by Windows
-			$exif = $this->exif_data['WINXP'];
+            if ( isset($this->exif_data['WINXP']) ) {
+                $exif = $this->exif_data['WINXP'];
 
-			if (!empty($exif['Title']) && empty($meta['title']))
-				$meta['title'] = utf8_encode($exif['Title']);
-			if (!empty($exif['Author']))
-				$meta['author'] = utf8_encode($exif['Author']);
-			if (!empty($exif['Keywords']))
-				$meta['tags'] = utf8_encode($exif['Keywords']);
-			if (!empty($exif['Subject']))
-				$meta['subject'] = utf8_encode($exif['Subject']);
-			if (!empty($exif['Comments']))
-				$meta['caption'] = utf8_encode($exif['Comments']);
+    			if (!empty($exif['Title']) && empty($meta['title']))
+    				$meta['title'] = utf8_encode($exif['Title']);
+    			if (!empty($exif['Author']))
+    				$meta['author'] = utf8_encode($exif['Author']);
+    			if (!empty($exif['Keywords']))
+    				$meta['tags'] = utf8_encode($exif['Keywords']);
+    			if (!empty($exif['Subject']))
+    				$meta['subject'] = utf8_encode($exif['Subject']);
+    			if (!empty($exif['Comments']))
+    				$meta['caption'] = utf8_encode($exif['Comments']);
+            }
 							
 			$this->exif_array = $meta;
 		}
 		
 		// return one element if requested	
-		if ($object)
-			return $this->exif_array[$object];
+		if ( $object == true ) {
+		  $value = isset($this->exif_array[$object]) ? $this->exif_array[$object] : false;
+          return $value;
+		}
 				
 		return $this->exif_array;
 	
@@ -348,7 +357,7 @@ class nggMeta{
 
 			foreach ($xmpTags as $key => $value) {
 				// if the kex exist
-				if ($xmlarray[$key]) {
+				if ( isset($xmlarray[$key]) ) {
 					switch ($key) {
 						case 'xap:CreateDate':
 						case 'xap:ModifyDate':
@@ -448,8 +457,9 @@ class nggMeta{
 		'height'			=> __('Image Height','nggallery'),
 		'flash'				=> __('Flash','nggallery')
 		);
-		
-		if ($tagnames[$key]) $key = $tagnames[$key];
+
+		if ( isset($tagnames[$key]) ) 
+            $key = $tagnames[$key];
 		
 		return($key);
 

@@ -14,17 +14,17 @@ class nggManageGallery {
 	function nggManageGallery() {
 
 		// GET variables
-		if(isset($_GET['gid']))
+		if( isset($_GET['gid']) )
 			$this->gid  = (int) $_GET['gid'];
-		if(isset($_GET['pid']))
+		if( isset($_GET['pid']) )
 			$this->pid  = (int) $_GET['pid'];	
-		if(isset($_GET['mode']))
+		if( isset($_GET['mode']) )
 			$this->mode = trim ($_GET['mode']);
 		// Should be only called via manage galleries overview
-		if ( $_POST['page'] == 'manage-galleries' )
+		if ( isset($_POST['page']) && $_POST['page'] == 'manage-galleries' )
 			$this->post_processor_galleries();
 		// Should be only called via a edit single gallery page	
-		if ( $_POST['page'] == 'manage-images' )
+		if ( isset($_POST['page']) && $_POST['page'] == 'manage-images' )
 			$this->post_processor_images();
 		//Look for other POST process
 		if ( !empty($_POST) || !empty($_GET) )
@@ -80,8 +80,7 @@ class nggManageGallery {
 				}
 			}
 	
-			$delete_pic = $wpdb->query("DELETE FROM $wpdb->nggpictures WHERE galleryid = $this->gid");
-			$delete_galllery = $wpdb->query("DELETE FROM $wpdb->nggallery WHERE gid = $this->gid");
+			$delete_galllery = nggdb::delete_gallery( $this->gid );
 			
 			if($delete_galllery)
 				nggGallery::show_message( _n( 'Gallery', 'Galleries', 1, 'nggallery' ) . ' \''.$this->gid.'\' '.__('deleted successfully','nggallery'));
@@ -91,16 +90,19 @@ class nggManageGallery {
 	
 		// Delete a picture
 		if ($this->mode == 'delpic') {
-		//TODO:Remove also Tag reference
+
+			//TODO:Remove also Tag reference
 			check_admin_referer('ngg_delpicture');
 			$image = $nggdb->find_image( $this->pid );
 			if ($image) {
 				if ($ngg->options['deleteImg']) {
 					@unlink($image->imagePath);
 					@unlink($image->thumbPath);	
+					@unlink($image->imagePath . "_backup" );
 				} 
-				$delete_pic = $wpdb->query("DELETE FROM $wpdb->nggpictures WHERE pid = $image->pid");
-			}
+				$delete_pic = nggdb::delete_image ( $this->pid );
+            }
+                                
 			if($delete_pic)
 				nggGallery::show_message( __('Picture','nggallery').' \''.$this->pid.'\' '.__('deleted successfully','nggallery') );
 				
@@ -108,6 +110,21 @@ class nggManageGallery {
 	
 		}
 		
+		// Recover picture from backup
+		if ($this->mode == 'recoverpic') {
+
+			check_admin_referer('ngg_recoverpicture');
+			$image = $nggdb->find_image( $this->pid );
+            // bring back the old image
+			nggAdmin::recover_image($image);
+            nggAdmin::create_thumbnail($image);
+            
+            nggGallery::show_message(__('Operation successful. Please clear your browser cache.',"nggallery"));
+				
+		 	$this->mode = 'edit'; // show pictures
+	
+		}
+				
 		// will be called after a ajax operation
 		if (isset ($_POST['ajax_callback']))  {
 				if ($_POST['ajax_callback'] == 1)
@@ -135,6 +152,11 @@ class nggManageGallery {
 				case 'no_action';
 				// No action
 					break;
+				case 'recover_images':
+				// Recover images from backup
+					// A prefix 'gallery_' will first fetch all ids from the selected galleries
+					nggAdmin::do_ajax_operation( 'gallery_recover_image' , $_POST['doaction'], __('Recover from backup','nggallery') );
+					break;
 				case 'set_watermark':
 				// Set watermark
 					// A prefix 'gallery_' will first fetch all ids from the selected galleries
@@ -151,6 +173,9 @@ class nggManageGallery {
 		if (isset ($_POST['addgallery']) && isset ($_POST['galleryname'])){
 			
 			check_admin_referer('ngg_addgallery');
+
+			if ( !nggGallery::current_user_can( 'NextGEN Add new gallery' ))
+				wp_die(__('Cheatin&#8217; uh?'));			
 
 			// get the default path for a new gallery
 			$defaultpath = $ngg->options['gallerypath'];
@@ -208,7 +233,10 @@ class nggManageGallery {
 					break;
 				case 'rotate_ccw':
 					nggAdmin::do_ajax_operation( 'rotate_ccw' , $_POST['doaction'], __('Rotate images', 'nggallery') );
-					break;					
+					break;			
+				case 'recover_images':
+					nggAdmin::do_ajax_operation( 'recover_image' , $_POST['doaction'], __('Recover from backup', 'nggallery') );
+					break;
 				case 'set_watermark':
 					nggAdmin::do_ajax_operation( 'set_watermark' , $_POST['doaction'], __('Set watermark', 'nggallery') );
 					break;
@@ -219,7 +247,8 @@ class nggManageGallery {
 							if ($image) {
 								if ($ngg->options['deleteImg']) {
 									@unlink($image->imagePath);
-									@unlink($image->thumbPath);	
+									@unlink($image->thumbPath);
+									@unlink($image->imagePath."_backup");	
 								} 
 								$delete_pic = nggdb::delete_image( $image->pid );
 							}
@@ -329,20 +358,26 @@ class nggManageGallery {
 		// Update pictures	
 		
 			check_admin_referer('ngg_updategallery');
-		
-			$gallery_title   = esc_attr($_POST['title']);
-			$gallery_path    = esc_attr($_POST['path']);
-			$gallery_desc    = esc_attr($_POST['gallerydesc']);
-			$gallery_pageid  = (int) $_POST['pageid'];
-			$gallery_preview = (int) $_POST['previewpic'];
 			
-			$wpdb->query("UPDATE $wpdb->nggallery SET title= '$gallery_title', path= '$gallery_path', galdesc = '$gallery_desc', pageid = '$gallery_pageid', previewpic = '$gallery_preview' WHERE gid = '$this->gid'");
-	
-			if (isset ($_POST['author']))  {		
-				$gallery_author  = (int) $_POST['author'];
-				$wpdb->query("UPDATE $wpdb->nggallery SET author = '$gallery_author' WHERE gid = '$this->gid'");
+			if ( nggGallery::current_user_can( 'NextGEN Edit gallery options' )) {
+				
+				if ( nggGallery::current_user_can( 'NextGEN Edit gallery title' ))
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET title= '%s' WHERE gid = %d", $_POST['title'], $this->gid) );
+				if ( nggGallery::current_user_can( 'NextGEN Edit gallery path' ))
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET path= '%s' WHERE gid = %d", untrailingslashit ( str_replace('\\', '/', trim( stripslashes($_POST['path']) )) ), $this->gid ) );
+				if ( nggGallery::current_user_can( 'NextGEN Edit gallery description' ))
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET galdesc= '%s' WHERE gid = %d", $_POST['gallerydesc'], $this->gid) );
+				if ( nggGallery::current_user_can( 'NextGEN Edit gallery page id' ))	
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET pageid= '%d' WHERE gid = %d", (int) $_POST['pageid'], $this->gid) );
+				if ( nggGallery::current_user_can( 'NextGEN Edit gallery preview pic' ))
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET previewpic= '%d' WHERE gid = %d", (int) $_POST['previewpic'], $this->gid) );
+				if ( isset ($_POST['author']) && nggGallery::current_user_can( 'NextGEN Edit gallery author' ) ) 
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET author= '%d' WHERE gid = %d", (int) $_POST['author'], $this->gid) );
+                
+                wp_cache_delete($this->gid, 'ngg_gallery');                    
+		
 			}
-	
+		
 			$this->update_pictures();
 	
 			//hook for other plugin to update the fields
@@ -382,7 +417,8 @@ class nggManageGallery {
 			$gallery_pageid = wp_insert_post ($page);
 			if ($gallery_pageid != 0) {
 				$result = $wpdb->query("UPDATE $wpdb->nggallery SET title= '$gallery_title', pageid = '$gallery_pageid' WHERE gid = '$this->gid'");
-				nggGallery::show_message( __('New gallery page ID','nggallery'). ' ' . $pageid . ' -> <strong>' . $gallery_title . '</strong> ' .__('created','nggallery') );
+				wp_cache_delete($this->gid, 'ngg_gallery');
+                nggGallery::show_message( __('New gallery page ID','nggallery'). ' ' . $pageid . ' -> <strong>' . $gallery_title . '</strong> ' .__('created','nggallery') );
 			}
 		}
 	}
@@ -393,22 +429,24 @@ class nggManageGallery {
 		//TODO:Error message when update failed
 		//TODO:Combine update in one query per image
 		
-		$description = 	$_POST['description'];
-		$alttext = 		$_POST['alttext'];
-		$exclude = 		$_POST['exclude'];
-		$taglist = 		$_POST['tags'];
-		$pictures = 	$_POST['pid'];
+		$description = 	isset ( $_POST['description'] ) ? $_POST['description'] : false;
+		$alttext = 		isset ( $_POST['alttext'] ) ? $_POST['alttext'] : false;
+		$exclude = 		isset ( $_POST['exclude'] ) ? $_POST['exclude'] : false;
+		$taglist = 		isset ( $_POST['tags'] ) ? $_POST['tags'] : false;
+		$pictures = 	isset ( $_POST['pid'] ) ? $_POST['pid'] : false;
 		
 		if ( is_array($description) ) {
 			foreach( $description as $key => $value ) {
 				$desc = $wpdb->escape($value);
 				$wpdb->query( "UPDATE $wpdb->nggpictures SET description = '$desc' WHERE pid = $key");
+                wp_cache_delete($key, 'ngg_image');                
 			}
 		}
 		if ( is_array($alttext) ){
 			foreach( $alttext as $key => $value ) {
 				$alttext = $wpdb->escape($value);
 				$wpdb->query( "UPDATE $wpdb->nggpictures SET alttext = '$alttext' WHERE pid = $key");
+                wp_cache_delete($key, 'ngg_image');                
 			}
 		}
 
@@ -456,7 +494,7 @@ class nggManageGallery {
 	
 		return $wpdb->get_col( $query );
 	}
-	
+
 	function search_images() {
 		global $nggdb;
 		
@@ -465,8 +503,8 @@ class nggManageGallery {
 		//on what ever reason I need to set again the query var
 		set_query_var('s', $_GET['s']);
 		$request = get_search_query();
-		// looknow for the images
-		$this->search_result = $nggdb->search_for_images( $request );
+		// look now for the images
+	 	$this->search_result = array_merge( (array) $nggdb->search_for_images( $request ), (array) nggTags::find_images_for_tags( $request , 'ASC' ));
 		// show pictures page
 		$this->mode = 'edit'; 
 	}

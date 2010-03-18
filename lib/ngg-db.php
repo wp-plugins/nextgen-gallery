@@ -96,7 +96,7 @@ class nggdb {
             return array();
         
         foreach ($this->albums as $key => $value) {
-            $this->albums[$key]->galleries = (array) unserialize($this->albums[$key]->sortorder);
+            $this->albums[$key]->galleries = empty ($this->albums[$key]->sortorder) ? array() : (array) unserialize($this->albums[$key]->sortorder)  ;
             $this->albums[$key]->name = stripslashes( $this->albums[$key]->name ); 
             $this->albums[$key]->albumdesc = stripslashes( $this->albums[$key]->albumdesc );
             wp_cache_add($key, $this->albums[$key], 'ngg_album'); 
@@ -184,6 +184,7 @@ class nggdb {
         // Build the object from the query result
         if ($gallery) {
             $gallery->abspath = WINABSPATH . $gallery->path;
+            //TODO:Possible failure , $id could be a number or name
             wp_cache_add($id, $gallery, 'ngg_gallery');
             
             return $gallery;            
@@ -666,6 +667,7 @@ class nggdb {
             
             $n = '%';
             $searchand = '';
+            $search = '';
             
             foreach( (array) $search_terms as $term) {
                 $term = addslashes_gpc($term);
@@ -768,6 +770,6 @@ if ( ! isset($GLOBALS['nggdb']) ) {
      * @since 1.1.0
      */
     unset($GLOBALS['nggdb']);
-    $GLOBALS['nggdb'] =& new nggdb();
+    $GLOBALS['nggdb'] = new nggdb() ;
 }
 ?>

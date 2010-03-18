@@ -11,6 +11,9 @@ class NextGEN_shortcodes {
     
     // register the new shortcodes
     function NextGEN_shortcodes() {
+		
+		//Long posts should require a higher limit, see http://core.trac.wordpress.org/ticket/8553
+		@ini_set('pcre.backtrack_limit', 500000);
     
         // convert the old shortcode
         add_filter('the_content', array(&$this, 'convert_shortcode'));
@@ -208,6 +211,10 @@ class NextGEN_shortcodes {
             'images'    => false
         ), $atts ));
         
+        // backward compat for user which uses the name instead, still deprecated
+        if( !is_numeric($id) )
+            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' "), $id );
+            
         $out = nggShowGallery( $id, $template, $images );
             
         return $out;
@@ -237,11 +244,11 @@ class NextGEN_shortcodes {
             'h'         => ''
         ), $atts ));
         
-        $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE gid = '$id' ");
-        if(!$galleryID) $galleryID = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE name = '$id' ");
+        if( !is_numeric($id) )
+            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' "), $id );
 
-        if( $galleryID )
-            $out = nggShowSlideshow($galleryID, $w, $h);
+        if( !empty( $id ) )
+            $out = nggShowSlideshow($id, $w, $h);
         else 
             $out = __('[Gallery not found]','nggallery');
             

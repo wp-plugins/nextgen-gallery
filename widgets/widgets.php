@@ -39,9 +39,9 @@ class nggSlideshowWidget extends WP_Widget {
 			if ( $title)
 				echo $before_title . $title . $after_title;
 		?>
-		<ul>
+		<div class="ngg_slideshow widget">
 			<?php echo $out; ?>
-		</ul>
+		</div>
 		<?php
 			echo $after_widget;
 		}
@@ -65,11 +65,11 @@ class nggSlideshowWidget extends WP_Widget {
 		$swfobject->classname = 'ngg-widget-slideshow';
 		$swfobject->message =  __('<a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see the slideshow.', 'nggallery');
 		$swfobject->add_params('wmode', 'opaque');
-		$swfobject->add_params('bgcolor', $ngg_options['irScreencolor'], '000000', 'string', '#');
+		$swfobject->add_params('bgcolor', $ngg_options['irScreencolor'], 'FFFFFF', 'string', '#');
 		$swfobject->add_attributes('styleclass', 'slideshow-widget');
 	
 		// adding the flash parameter	
-		$swfobject->add_flashvars( 'file', urlencode( get_option ('siteurl') . '/' . 'index.php?slideshow=true&gid=' . $galleryID ) );
+		$swfobject->add_flashvars( 'file', urlencode( get_option ('siteurl') . '/' . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
 		$swfobject->add_flashvars( 'shownavigation', 'false', 'true', 'bool');
 		$swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'true', 'bool');
 		$swfobject->add_flashvars( 'showicons', $ngg_options['irShowicons'], 'true', 'bool');
@@ -145,215 +145,132 @@ class nggSlideshowWidget extends WP_Widget {
 add_action('widgets_init', create_function('', 'return register_widget("nggSlideshowWidget");'));
 
 /**
- * nggWidget - The widget control for NextGEN Gallery ( require WP2.5 or higher)
+ * nggWidget - The widget control for NextGEN Gallery ( require WP2.7 or higher)
  *
  * @package NextGEN Gallery
  * @author Alex Rabe
- * @copyright 2008
- * @version 1.10
+ * @copyright 2009
+ * @version 2.00
+ * @since 1.4.4
  * @access public
  */
-if (!class_exists('nggWidget')) { 
-class nggWidget {
-	
-	function nggWidget() {
-	
-		// Run our code later in case this loads prior to any required plugins.
-		add_action('widgets_init', array(&$this, 'ngg_widget_register'));
-		
+class nggWidget extends WP_Widget {
+    
+   	function nggWidget() {
+		$widget_ops = array('classname' => 'ngg_images', 'description' => __( 'Add recent or random images from the galleries', 'nggallery') );
+		$this->WP_Widget('ngg-images', __('NextGEN Widget', 'nggallery'), $widget_ops);
 	}
-	
-	function ngg_widget_register() {
 
-		if ( !$options = get_option('ngg_widget') )
-			$options = array();
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
 		
-		$widget_ops = array('classname' => 'ngg_images', 'description' => __( 'Add recent or random images from the galleries','nggallery' ));
-		$control_ops = array('width' => 250, 'height' => 200, 'id_base' => 'ngg-images');
-		$name = __('NextGEN Widget','nggallery');
-		$id = false;
+		$instance['title']	= strip_tags($new_instance['title']);
+		$instance['items']	= (int) $new_instance['items'];
+		$instance['type']	= $new_instance['type'];
+		$instance['show']	= $new_instance['show'];
+		$instance['width']	= (int) $new_instance['width'];
+		$instance['height']	= (int) $new_instance['height'];
+		$instance['exclude'] = $new_instance['exclude'];
+		$instance['list']	 = $new_instance['list'];
+		$instance['webslice']= (bool) $new_instance['webslice'];
 
-		foreach ( array_keys($options) as $o ) {
-			// Old widgets can have null values for some reason
-			if ( !isset($options[$o]['title']) )
-				continue;
-				
-			$id = "ngg-images-$o"; // Never never never translate an id
-			wp_register_sidebar_widget($id, $name, array(&$this, 'ngg_widget_output'), $widget_ops, array( 'number' => $o ) );
-			wp_register_widget_control($id, $name, array(&$this, 'ngg_widget_control'), $control_ops, array( 'number' => $o ));
-		}
+		return $instance;
+	}
 
-		// If there are none, we register the widget's existance with a generic template
-		if ( !$id ) {
-			wp_register_sidebar_widget( 'ngg-images-1', $name, array(&$this, 'ngg_widget_output'), $widget_ops, array( 'number' => -1 ) );
-			wp_register_widget_control( 'ngg-images-1', $name, array(&$this, 'ngg_widget_control'), $control_ops, array( 'number' => -1 ) );
-		}
-
-	 }
-
-function ngg_widget_control($widget_args = 1) {
+	function form( $instance ) {
 		
-		global $wp_registered_widgets;
-		static $updated = false;
-		
-		// Get the widget ID
-		if (is_numeric($widget_args))
-			$widget_args = array('number' => $widget_args);
+		//Defaults
+		$instance = wp_parse_args( (array) $instance, array( 
+            'title' => 'Gallery', 
+            'items' => '4',
+            'type'  => 'random',
+            'show'  => 'thumbnail', 
+            'height' => '50', 
+            'width' => '75',
+            'exclude' => 'all',
+            'list'  =>  '',
+            'webslice'  => true ) );
+		$title  = esc_attr( $instance['title'] );
+		$height = esc_attr( $instance['height'] );
+		$width  = esc_attr( $instance['width'] );
 
-		$widget_args = wp_parse_args($widget_args, array('number' => -1));
-		extract($widget_args, EXTR_SKIP);
-
-		$options = get_option('ngg_widget');
-		if ( !is_array($options) )
-			$options = array();
-	
-		if (!$updated && !empty($_POST['sidebar'])) {
-			$sidebar = (string) $_POST['sidebar'];
-
-			$sidebars_widgets = wp_get_sidebars_widgets();
-			if ( isset($sidebars_widgets[$sidebar]) )
-				$this_sidebar = &$sidebars_widgets[$sidebar];
-			else
-				$this_sidebar = array();
-
-			foreach ( $this_sidebar as $_widget_id ) {
-				// Remove all widgets of this type from the sidebar.  We'll add the new data in a second.  This makes sure we don't get any duplicate data
-				// since widget ids aren't necessarily persistent across multiple updates
-				if ( 'ngg_images' == $wp_registered_widgets[$_widget_id]['classname'] 
-					&& 	isset($wp_registered_widgets[$_widget_id]['params'][0]['number']) ) {
-					
-					$widget_number = $wp_registered_widgets[$_widget_id]['params'][0]['number'];
-					if (!in_array( "ngg-images-$widget_number", $_POST['widget-id'])) // the widget has been removed.
-						unset($options[$widget_number]);
-				}
-			}
-
-			foreach ( (array) $_POST['widget_ngg_images'] as $widget_number => $widget_ngg_images ) {
-				if ( !isset($widget_ngg_images['width']) && isset($options[$widget_number]) ) // user clicked cancel
-					continue;
-					
-				$widget_ngg_images = stripslashes_deep( $widget_ngg_images );
-				$options[$widget_number]['title']	= $widget_ngg_images['title'];
-				$options[$widget_number]['items']	= (int) $widget_ngg_images['items'];
-				$options[$widget_number]['type']	= $widget_ngg_images['type'];
-				$options[$widget_number]['show']	= $widget_ngg_images['show'];
-				$options[$widget_number]['width']	= (int) $widget_ngg_images['width'];
-				$options[$widget_number]['height']	= (int) $widget_ngg_images['height'];
-				$options[$widget_number]['exclude']	= $widget_ngg_images['exclude'];
-				$options[$widget_number]['list']	= $widget_ngg_images['list'];
-				$options[$widget_number]['webslice']= (bool) $widget_ngg_images['webslice'];
-
-			}
-
-			update_option('ngg_widget', $options);
-			$updated = true;
-		}
-		
-		if ( -1 == $number ) {
-			// Init parameters check
-			$title = 'Gallery';
-			$items = 4;
-			$type = 'random';
-			$show= 'thumbnail';
-			$width = 75;
-			$height = 50;
-			$exclude = 'all';
-			$list = '';
-			$number = '%i%';
-			$webslice = true;
-		} else {
-			extract( (array) $options[$number] );
-		}
-
-		// The form has inputs with names like widget-many[$number][something] so that all data for that instance of
-		// the widget are stored in one $_POST variable: $_POST['widget-many'][$number]
 		?>
 
 		<p>
-			<label for="ngg_images-title-<?php echo $number; ?>"><?php _e('Title :','nggallery'); ?>
-			<input id="ngg_images-title-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][title] ?>" type="text" class="widefat" value="<?php echo $title; ?>" />
+			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title :','nggallery'); ?>
+			<input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title');?>" type="text" class="widefat" value="<?php echo $title; ?>" />
 			</label>
 		</p>
 			
 		<p>
-			<label for="ngg_images-items-<?php echo $number; ?>"><?php _e('Show :','nggallery'); ?><br />
-			<select id="ngg_images-items-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][items]">
-				<?php for ( $i = 1; $i <= 10; ++$i ) echo "<option value='$i' ".($items==$i ? "selected='selected'" : '').">$i</option>"; ?>
+			<?php _e('Show :','nggallery'); ?><br />
+			<select id="<?php echo $this->get_field_id('items'); ?>" name="<?php echo $this->get_field_name('items'); ?>">
+				<?php for ( $i = 1; $i <= 10; ++$i ) echo "<option value='$i' ".($instance['items']==$i ? "selected='selected'" : '').">$i</option>"; ?>
 			</select>
-			<select id="ngg_images-show-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][show]" >
-				<option <?php selected("thumbnail" , $show); ?> value="thumbnail"><?php _e('Thumbnails','nggallery'); ?></option>
-				<option <?php selected("original" , $show); ?> value="original"><?php _e('Original images','nggallery'); ?></option>
+			<select id="<?php echo $this->get_field_id('show'); ?>" name="<?php echo $this->get_field_name('show'); ?>" >
+				<option <?php selected("thumbnail" , $instance['show']); ?> value="thumbnail"><?php _e('Thumbnails','nggallery'); ?></option>
+				<option <?php selected("original" , $instance['show']); ?> value="original"><?php _e('Original images','nggallery'); ?></option>
+			</select>
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('type'); ?>_random">
+			<input id="<?php echo $this->get_field_id('type'); ?>_random" name="<?php echo $this->get_field_name('type'); ?>" type="radio" value="random" <?php checked("random" , $instance['type']); ?> /> <?php _e('random','nggallery'); ?>
+			</label>
+            <label for="<?php echo $this->get_field_id('type'); ?>_recent">
+            <input id="<?php echo $this->get_field_id('type'); ?>_recent" name="<?php echo $this->get_field_name('type'); ?>" type="radio" value="recent" <?php checked("recent" , $instance['type']); ?> /> <?php _e('recent added ','nggallery'); ?>
+			</label>
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('webslice'); ?>">
+			<input id="<?php echo $this->get_field_id('webslice'); ?>" name="<?php echo $this->get_field_name('webslice'); ?>" type="checkbox" value="1" <?php checked(true , $instance['webslice']); ?> /> <?php _e('Enable IE8 Web Slices','nggallery'); ?>
+			</label>
+		</p>
+
+		<p>
+			<?php _e('Width x Height :','nggallery'); ?><br />
+			<input style="width: 50px; padding:3px;" id="<?php echo $this->get_field_id('width'); ?>" name="<?php echo $this->get_field_name('width'); ?>" type="text" value="<?php echo $width; ?>" /> x
+			<input style="width: 50px; padding:3px;" id="<?php echo $this->get_field_id('height'); ?>" name="<?php echo $this->get_field_name('height'); ?>" type="text" value="<?php echo $height; ?>" /> (px)
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('exclude'); ?>"><?php _e('Select :','nggallery'); ?>
+			<select id="<?php echo $this->get_field_id('exclude'); ?>" name="<?php echo $this->get_field_name('exclude'); ?>" class="widefat">
+				<option <?php selected("all" , $instance['exclude']); ?>  value="all" ><?php _e('All galleries','nggallery'); ?></option>
+				<option <?php selected("denied" , $instance['exclude']); ?> value="denied" ><?php _e('Only which are not listed','nggallery'); ?></option>
+				<option <?php selected("allow" , $instance['exclude']); ?>  value="allow" ><?php _e('Only which are listed','nggallery'); ?></option>
 			</select>
 			</label>
 		</p>
 
 		<p>
-			<label for="widget_ngg_images<?php echo $number; ?>">&nbsp;
-			<input name="widget_ngg_images[<?php echo $number; ?>][type]" type="radio" value="random" <?php checked("random" , $type); ?> /> <?php _e('random','nggallery'); ?>
-			<input name="widget_ngg_images[<?php echo $number; ?>][type]" type="radio" value="recent" <?php checked("recent" , $type); ?> /> <?php _e('recent added ','nggallery'); ?>
+			<label for="<?php echo $this->get_field_id('list'); ?>"><?php _e('Gallery ID :','nggallery'); ?>
+			<input id="<?php echo $this->get_field_id('list'); ?>" name="<?php echo $this->get_field_name('list'); ?>" type="text" class="widefat" value="<?php echo $instance['list']; ?>" />
+			<br /><small><?php _e('Gallery IDs, separated by commas.','nggallery'); ?></small>
 			</label>
 		</p>
-
-		<p>
-			<label for="ngg_webslice<?php echo $number; ?>">&nbsp;
-			<input id="ngg_webslice<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][webslice]" type="checkbox" value="1" <?php checked(true , $webslice); ?> /> <?php _e('Enable IE8 Web Slices','nggallery'); ?>
-			</label>
-		</p>
-
-		<p>
-			<label for="ngg_images-width-<?php echo $number; ?>"><?php _e('Width x Height :','nggallery'); ?><br />
-			<input style="width: 50px; padding:3px;" id="ngg_images-width-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][width]" type="text" value="<?php echo $width; ?>" /> x
-			<input style="width: 50px; padding:3px;" id="ngg_images-height-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][height]" type="text" value="<?php echo $height; ?>" /> (px)
-			</label>
-		</p>
-
-		<p>
-			<label for="ngg_images-exclude-<?php echo $number; ?>"><?php _e('Select :','nggallery'); ?>
-			<select id="ngg_images-exclude-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][exclude]" class="widefat">
-				<option <?php selected("all" , $exclude); ?>  value="all" ><?php _e('All galleries','nggallery'); ?></option>
-				<option <?php selected("denied" , $exclude); ?> value="denied" ><?php _e('Only which are not listed','nggallery'); ?></option>
-				<option <?php selected("allow" , $exclude); ?>  value="allow" ><?php _e('Only which are listed','nggallery'); ?></option>
-			</select>
-			</label>
-		</p>
-
-		<p>
-			<label for="ngg_images-list-<?php echo $number; ?>"><?php _e('Gallery ID :','nggallery'); ?>
-			<input id="ngg_images-list-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][list]" type="text" class="widefat" value="<?php echo $list; ?>" />
-			<br/><small><?php _e('Gallery IDs, separated by commas.','nggallery'); ?></small>
-			</label>
-		</p>
-
-		<input type="hidden" id="ngg_images-submit-<?php echo $number; ?>" name="widget_ngg_images[<?php echo $number; ?>][submit]" value="1" />
 		
 	<?php
 	
 	}
 
-	function ngg_widget_output($args, $widget_args = 1 , $options = false) {
+	function widget( $args, $instance ) {
+		extract( $args );
+        
+        if ( $instance['title'] !== false)
+            $title = apply_filters('widget_title', empty( $instance['title'] ) ? __('Gallery', 'nggallery') : $instance['title']);
 
 		global $wpdb;
 				
-		extract($args, EXTR_SKIP);
-		if ( is_numeric($widget_args) )
-			$widget_args = array( 'number' => $widget_args );
-		
-		$widget_args = wp_parse_args( $widget_args, array( 'number' => -1 ) );
-		extract($widget_args, EXTR_SKIP);
-
-		// We could get this also as parameter
-		if (!$options)				
-			$options = get_option('ngg_widget');
-			
-		$title = $options[$number]['title'];
-		$items 	= $options[$number]['items'];
-		$exclude = $options[$number]['exclude'];
-		$list = $options[$number]['list'];
-		$webslice = $options[$number]['webslice'];
+		$items 	= $instance['items'];
+		$exclude = $instance['exclude'];
+		$list = $instance['list'];
+		$webslice = $instance['webslice'];
 
 		$count = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures WHERE exclude != 1 ");
-		if ($count < $options[$number]['items']) 
-			$options[$number]['items'] = $count;
+		if ($count < $instance['items']) 
+			$instance['items'] = $count;
 
 		$exclude_list = '';
 
@@ -370,16 +287,16 @@ function ngg_widget_control($widget_args = 1) {
 				$exclude_list = "AND t.gid IN ($list)";
 		}
 		
-		if ( $options[$number]['type'] == 'random' ) 
+		if ( $instance['type'] == 'random' ) 
 			$imageList = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 $exclude_list ORDER by rand() limit {$items}");
 		else
 			$imageList = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 $exclude_list ORDER by pid DESC limit 0,$items");
 		
+        // IE8 webslice support if needed
 		if ( $webslice ) {
-			//TODO:  If you change the title, it will not show up in widget admin panel
-			$before_title  = "\n" . '<div class="hslice" id="ngg-webslice" >' . "\n";
-			$before_title .= '<h2 class="widgettitle entry-title">';
-			$after_title   = '</h2>';
+			$before_widget .= "\n" . '<div class="hslice" id="ngg-webslice" >' . "\n";
+            //the headline needs to have the class enty-title
+            $before_title  = str_replace( 'class="' , 'class="entry-title ', $before_title);
 			$after_widget  =  '</div>'."\n" . $after_widget;			
 		}	
 		                      
@@ -392,7 +309,7 @@ function ngg_widget_control($widget_args = 1) {
 				$image = new nggImage($image);
 
 				// get the effect code
-				$thumbcode = $image->get_thumbcode("sidebar_".$number);
+				$thumbcode = $image->get_thumbcode( $widget_id );
 				
 				// enable i18n support for alttext and description
 				$alttext      =  htmlspecialchars( stripslashes( nggGallery::i18n($image->alttext) ));
@@ -401,12 +318,12 @@ function ngg_widget_control($widget_args = 1) {
 				//TODO:For mixed portrait/landscape it's better to use only the height setting, if widht is 0 or vice versa
 				$out = '<a href="' . $image->imageURL . '" title="' . $description . '" ' . $thumbcode .'>';
 				// Typo fix for the next updates (happend until 1.0.2)
-				$options[$number]['show'] = ( $options[$number]['show'] == 'orginal' ) ? 'original' : $options[$number]['show'];
+				$instance['show'] = ( $instance['show'] == 'orginal' ) ? 'original' : $instance['show'];
 				
-				if ( $options[$number]['show'] == 'original' )
-					$out .= '<img src="'.NGGALLERY_URLPATH.'nggshow.php?pid='.$image->pid.'&amp;width='.$options[$number]['width'].'&amp;height='.$options[$number]['height']. '" title="'.$alttext.'" alt="'.$alttext.'" />';
+				if ( $instance['show'] == 'original' )
+					$out .= '<img src="' . get_option ('siteurl') . '/' . 'index.php?callback=image&amp;pid='.$image->pid.'&amp;width='.$instance['width'].'&amp;height='.$instance['height']. '" title="'.$alttext.'" alt="'.$alttext.'" />';
 				else	
-					$out .= '<img src="'.$image->thumbURL.'" width="'.$options[$number]['width'].'" height="'.$options[$number]['height'].'" title="'.$alttext.'" alt="'.$alttext.'" />';			
+					$out .= '<img src="'.$image->thumbURL.'" width="'.$instance['width'].'" height="'.$instance['height'].'" title="'.$alttext.'" alt="'.$alttext.'" />';			
 				
 				echo $out . '</a>'."\n";
 				
@@ -419,9 +336,9 @@ function ngg_widget_control($widget_args = 1) {
 	}
 
 }// end widget class
-}
-// let's show it
-$nggWidget = new nggWidget;	
+
+// register it
+add_action('widgets_init', create_function('', 'return register_widget("nggWidget");'));
 
 /**
  * nggSlideshowWidget($galleryID, $width, $height)
@@ -446,16 +363,18 @@ function nggSlideshowWidget($galleryID, $width = '', $height = '') {
  */
 function nggDisplayRandomImages($number, $width = '75', $height = '50', $exclude = 'all', $list = '', $show = 'thumbnail') {
 	
-	$options[1] = array('title'=>'', 
-						'items'=>$number,
-						'show'=>$show ,
-						'type'=>'random',
-						'width'=>$width, 
-						'height'=>$height, 
-						'exclude'=>$exclude,
-						'list'=>$list   );
-	
-	nggWidget::ngg_widget_output($args = array(), 1, $options);
+	$options = array(   'title'    => false, 
+						'items'    => $number,
+						'show'     => $show ,
+						'type'     => 'random',
+						'width'    => $width, 
+						'height'   => $height, 
+						'exclude'  => $exclude,
+						'list'     => $list,
+                        'webslice' => false );
+                        
+	$ngg_widget = new nggWidget();
+	$ngg_widget->widget($args = array( 'widget_id'=> 'sidebar_1' ), $options);
 }
 
 /**
@@ -466,16 +385,18 @@ function nggDisplayRandomImages($number, $width = '75', $height = '50', $exclude
  */
 function nggDisplayRecentImages($number, $width = '75', $height = '50', $exclude = 'all', $list = '', $show = 'thumbnail') {
 
-	$options[1] = array('title'=>'', 
-						'items'=>$number,
-						'show'=>$show ,
-						'type'=>'recent',
-						'width'=>$width, 
-						'height'=>$height, 
-						'exclude'=>$exclude,
-						'list'=>$list   );
-	
-	nggWidget::ngg_widget_output($args = array(), 1, $options);
+	$options = array(   'title'    => false, 
+						'items'    => $number,
+						'show'     => $show ,
+						'type'     => 'recent',
+						'width'    => $width, 
+						'height'   => $height, 
+						'exclude'  => $exclude,
+						'list'     => $list,
+                        'webslice' => false );
+                        
+	$ngg_widget = new nggWidget();
+	$ngg_widget->widget($args = array( 'widget_id'=> 'sidebar_1' ), $options);
 }
 
 ?>

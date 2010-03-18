@@ -405,6 +405,60 @@ class nggGallery {
 		return $filepart;
 	}
 	
+	/**
+	 * Check for extended capabilites. Must previously registers with add_ngg_capabilites()
+	 * 
+	 * @since 1.5.0
+	 * @param string $capability
+	 * @return bool $result of capability check
+	 */
+	function current_user_can( $capability ) {
+		
+		global $_ngg_capabilites;
+		
+		if ( is_array($_ngg_capabilites) )
+			if ( in_array($capability , $_ngg_capabilites) )
+				return current_user_can( $capability );	
+		
+		return true;
+	}
+
+	/**
+	 * Check for extended capabilites and echo disabled="disabled" for input form
+	 * 
+	 * @since 1.5.0
+	 * @param string $capability
+	 * @return void
+	 */
+	function current_user_can_form( $capability ) {
+		
+		if ( !nggGallery::current_user_can( $capability ))
+			echo 'disabled="disabled"';
+	}
+
+	/**
+	 * Register more capabilities for custom use and add it to the administrator
+	 * 
+	 * @since 1.5.0
+	 * @param string $capability
+	 * @param bool $register the new capability automatic to the admin role 
+	 * @return void
+	 */
+	function add_capabilites( $capability , $register = true ) {
+		global $_ngg_capabilites;
+		
+		if ( !is_array($_ngg_capabilites) )
+			$_ngg_capabilites = array();
+		
+		$_ngg_capabilites[] = $capability;
+		
+		if ( $register ) {
+			$role = get_role('administrator');
+			if ( !empty($role) )
+				$role->add_cap( $capability );
+		}
+		
+	}
 }
 
 ?>

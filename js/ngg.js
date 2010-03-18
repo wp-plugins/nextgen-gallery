@@ -53,7 +53,7 @@ function ngg_ajax_navigation(e, obj) {
 		ngg_show_loading(e);
 		
 		// load gallery content
-		jQuery.get(ngg_ajax.path + "nggajax.php", {p: postId, galleryid: galleryId, nggpage: pageNumber, type: "gallery"}, function (data, textStatus) {
+		jQuery.get(ngg_ajax.callback, {p: postId, galleryid: galleryId, nggpage: pageNumber, type: "gallery"}, function (data, textStatus) {
 			
 			// delete old content
 			gallery.children().remove();
@@ -125,7 +125,7 @@ function ngg_ajax_browser_navigation(e, obj) {
 			ngg_show_loading(e);
 			
 			// get content
-			jQuery.get(ngg_ajax.path + "nggajax.php", {p: postId, galleryid: galleryId, pid: imageNumber, type: "browser"}, function (data, textStatus) {
+			jQuery.get(ngg_ajax.callback, {p: postId, galleryid: galleryId, pid: imageNumber, type: "browser"}, function (data, textStatus) {
 				// delete old content
 				gallery.children().remove();
 				

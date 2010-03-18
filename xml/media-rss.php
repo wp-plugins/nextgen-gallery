@@ -28,27 +28,19 @@ require_once(dirname(__FILE__) . "/../ngg-config.php");
 require_once(dirname(__FILE__) . "/../lib/media-rss.php");
 
 // Check we have the required GET parameters
-$mode = $_GET["mode"];
-if (!isset($mode) || $mode == '')
-	$mode = last_pictures;
+$mode = isset ($_GET['mode']) ? $_GET['mode'] : 'last_pictures';
 
 // Act according to the required mode
 $rss = '';
-if ($mode=='last_pictures') {
+if ( $mode == 'last_pictures' ) {
 	
 	// Get additional parameters
-	$page = (int) $_GET["page"];
-	if (!isset($page) || $page == '') {
-		$page = 0;
-	}
+	$page = isset ($_GET['page']) ? (int) $_GET['page'] : 0;
+	$show = isset ($_GET['show']) ? (int) $_GET['show'] : 10;
 	
-	$show = (int) $_GET["show"];	
-	if (!isset($show) || $show == '' || $show == 0) {
-		$show = 10;
-	}
-	
-	$rss = nggMediaRss::get_last_pictures_mrss($page, $show);	
-} else if ( $mode=='gallery' ) {
+	$rss = nggMediaRss::get_last_pictures_mrss($page, $show);
+    	
+} else if ( $mode == 'gallery' ) {
 		
 	// Get all galleries
 	$galleries = $nggdb->find_all_galleries();
@@ -60,10 +52,10 @@ if ($mode=='last_pictures') {
 	}
 	
 	// Get additional parameters
-	$gid = (int) $_GET['gid'];
+	$gid = isset ($_GET['gid']) ? (int) $_GET['gid'] : 0;
 	
 	//if no gid is present, take the first gallery
-	if (!isset($gid) || $gid == '' || $gid == 0) {
+	if ( $gid == 0 ) {
         $first = current($galleries);
         $gid = $first->gid;
 	}
@@ -79,7 +71,7 @@ if ($mode=='last_pictures') {
 	}
 
 	// show other galleries if needed
-	$prev_next = ( $_GET['prev_next'] == 'true' ) ? true : false;
+	$prev_next = ( isset($_GET['prev_next']) && $_GET['prev_next'] == 'true' ) ? true : false;
 	$prev_gallery = $next_gallery =  null;
 	
 	// Get previous and next galleries if required
@@ -99,13 +91,13 @@ if ($mode=='last_pictures') {
 
 	$rss = nggMediaRss::get_gallery_mrss($gallery, $prev_gallery, $next_gallery);	
 	
-} else if ($mode=='album') {
+} else if ( $mode == 'album' ) {
 	
 	// Get additional parameters
-	$aid = (int) $_GET["aid"];	
-	if (!isset($aid) || $aid=='' || $aid==0) {
+    $aid = isset ($_GET['aid']) ? (int) $_GET['aid'] : 0;	
+	if ( $aid == 0 ) {
 		header('content-type:text/plain;charset=utf-8');
-		_e("No album ID has been provided as parameter","nggallery");
+		_e("No album ID has been provided as parameter", "nggallery");
 		exit;
 	}
 	
@@ -113,14 +105,14 @@ if ($mode=='last_pictures') {
 	$album = nggdb::find_album($aid);
 	if (!isset($album) || $album==null ) {
 		header('content-type:text/plain;charset=utf-8');
-		echo sprintf(__("The album ID=%s does not exist.","nggallery"), $aid);
+		echo sprintf(__("The album ID=%s does not exist.", "nggallery"), $aid);
 		exit;
 	}
 	
 	$rss = nggMediaRss::get_album_mrss($album);	
 } else {
 	header('content-type:text/plain;charset=utf-8');
-	echo sprintf(__("Invalid MediaRSS command (%s).","nggallery"), $mode);
+	echo sprintf(__("Invalid MediaRSS command (%s).", "nggallery"), $mode);
 	exit;
 }
 

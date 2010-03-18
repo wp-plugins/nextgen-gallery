@@ -69,6 +69,8 @@ class nggImage{
 		$this->imagePath	= WINABSPATH.$this->path . '/' . $this->filename;
 		$this->thumbPath	= WINABSPATH.$this->path . '/thumbs/thumbs_' . $this->filename;
 		$this->meta_data	= unserialize($this->meta_data);
+		$this->imageHTML	= $this->get_href_link();
+		$this->thumbHTML	= $this->get_href_thumb_link();
 		
 		wp_cache_add($this->pid, $this, 'ngg_image');
 		
@@ -114,8 +116,16 @@ class nggImage{
 		return $this->href;
 	}
 	
+	/**
+	 * This function creates a cache for all singlepics to reduce the CPU load
+	 * 
+	 * @param int $width
+	 * @param int $height
+	 * @param string $mode could be watermark | web20 | crop
+	 * @return the url for the image or false if failed 
+	 */
 	function cached_singlepic_file($width = '', $height = '', $mode = '' ) {
-		// This function creates a cache for all singlepics to reduce the CPU load
+
 		$ngg_options = get_option('ngg_options');
 		
 		include_once( nggGallery::graphic_library() );
@@ -138,8 +148,21 @@ class nggImage{
 		$thumb = new ngg_Thumbnail($this->imagePath, TRUE);
 		// echo $thumb->errmsg;
 		
-		if (!$thumb->error) {	
-			$thumb->resize($width , $height);
+		if (!$thumb->error) {
+            if ($mode == 'crop') {
+        		// check for portrait format
+        		if ($thumb->currentDimensions['height'] < $thumb->currentDimensions['width']) {
+                    list ( $width, $ratio_h ) = wp_constrain_dimensions($thumb->currentDimensions['width'], $thumb->currentDimensions['height'], $width);
+                    $thumb->resize($width, $ratio_h);
+        			$ypos = ($thumb->currentDimensions['height'] - $height) / 2;
+        			$thumb->crop(0, $ypos, $width, $height);
+        		} else {
+        		    $thumb->resize($width, 0);
+                    $ypos = ($thumb->currentDimensions['height'] - $height) / 2;
+        			$thumb->crop(0, $ypos, $width, $height);	
+        		}                
+            } else
+                $thumb->resize($width , $height);
 			
 			if ($mode == 'watermark') {
 				if ($ngg_options['wmType'] == 'image') {

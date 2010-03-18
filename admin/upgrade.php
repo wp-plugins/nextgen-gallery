@@ -142,6 +142,12 @@ function ngg_upgrade() {
 			update_option('ngg_options', $ngg_options);
 			echo __('finished', 'nggallery') . "<br />\n";				
 		}
+        
+        // Remove the old widget options
+        if (version_compare($installed_ver, '1.4.4', '<')) {
+            delete_option( 'ngg_widget' );
+            echo __('Updated widget structure. If you used NextGEN Widgets, you need to setup them again...', 'nggallery');
+        }
 		
 		return;
 	}

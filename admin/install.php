@@ -151,11 +151,12 @@ function ngg_default_options() {
 	$ngg_options['thumbquality']		= 100;  						// Thumb Quality
 		
 	// Image Settings
-	$ngg_options['imgResize']			= false;						// Activate resize (not used)
 	$ngg_options['imgWidth']			= 800;  						// Image Width
 	$ngg_options['imgHeight']			= 600;  						// Image height
 	$ngg_options['imgQuality']			= 85;							// Image Quality
-	$ngg_options['imgCacheSinglePic']	= true;							// cached the singlepic	
+	$ngg_options['imgCacheSinglePic']	= true;							// Cached the singlepic	
+	$ngg_options['imgBackup']			= true;							// Create a backup
+	$ngg_options['imgAutoResize']		= false;						// Resize after upload
 	
 	// Gallery Settings
 	$ngg_options['galImages']			= '20';		  					// Number of images per page

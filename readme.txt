@@ -2,7 +2,7 @@
 Contributors: Alex Rabe
 Donate link: http://alexrabe.de/donation/
 Tags: nextgen gallery,photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery
-Requires at least: 2.8
+Requires at least: 2.9
 Tested up to: 2.9.2
 Stable tag: trunk
 
@@ -37,6 +37,7 @@ Important Links:
 * TinyMCE : Button integration for easy adding the gallery tags
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
 * Language support : Translated in more than 30 languages
+* Auto translation file downloader : Donwload with one click the translation file
 * Upload tab integration : You have access to all pictures via the upload tab
 * Tag support for images : Append related images to your post, create a image tag-cloud
 * Meta data support : Import EXIF, IPTC or XMP meta data 
@@ -139,6 +140,24 @@ To show the most recent added mages : **[recent max=x ]**
 **And at least request your question here :** http://alexrabe.de/forums/
 
 == Changelog == 
+
+= V1.5.0 - 18.03.2010 =
+* NEW : Support for Post thumbnail feature
+* NEW : Backup and Recover function for images (THX to Simone Fumagalli)
+* NEW : Resize images after upload (THX to Simone Fumagalli)
+* NEW : Added a JSON class for fetching galleries in a RESTful way (see xml/json.php)
+* NEW : Adding various new capabilities for user roles
+* NEW : Auto downloader for translation file
+* Changed : Rename query var from slideshow to callback for compat reason with other plugin
+* Changed : Convert widget function to new WP structure
+* Changed : Include lookup for tags into the backend search 
+* Changed : Restructure addgallery and settings page to enable custom tabs
+* Bugfix : Select album preview from gallery preview pics instead random list
+* Bugfix : Keep fix dimension in edit thumbnail operation
+* Bugfix : Import meta data didn't work correct for existing images
+* Bugfix : Fix onload bug for Chrome 4 in Shutter script
+* Bugfix : Remove various PHP notices for a better world
+* Removed : Canonical link is now part of Wordpress 2.9
 
 = V1.4.3 - 16.11.2009 =
 * Bugfix : Urlencode XML file path for sildeshow

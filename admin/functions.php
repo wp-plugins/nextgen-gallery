@@ -127,8 +127,8 @@ class nggAdmin{
 	 * TODO: Check permission of existing thumb folder & images
 	 * 
 	 * @class nggAdmin
-	 * @param string $galleryfolder contains relative path
-	 * @return
+	 * @param string $galleryfolder contains relative path to the gallery itself
+	 * @return void
 	 */
 	function import_gallery($galleryfolder) {
 		
@@ -150,6 +150,7 @@ class nggAdmin{
 		
 		// read list of images
 		$new_imageslist = nggAdmin::scandir($gallerypath);
+
 		if (empty($new_imageslist)) {
 			nggGallery::show_message(__('Directory', 'nggallery').' <strong>'.$gallerypath.'</strong> '.__('contains no pictures', 'nggallery'));
 			return;
@@ -211,25 +212,28 @@ class nggAdmin{
 	}
 
 	/**
-	 * nggAdmin::scandir()
+	 * Scan folder for new images
 	 * 
 	 * @class nggAdmin
 	 * @param string $dirname
-	 * @return
+	 * @return array $files list of image filenames 
 	 */
-	function scandir($dirname = '.') { 
-		// thx to php.net :-)
+	function scandir( $dirname = '.' ) { 
 		$ext = array('jpeg', 'jpg', 'png', 'gif'); 
+
 		$files = array(); 
-		if($handle = opendir($dirname)) { 
-		   while(false !== ($file = readdir($handle))) 
-		       for($i=0;$i<sizeof($ext);$i++) 
-		           if(stristr($file, '.' . $ext[$i])) 
-		               $files[] = utf8_encode($file); 
-		   closedir($handle); 
+		if( $handle = opendir( $dirname ) ) { 
+			while( false !== ( $file = readdir( $handle ) ) ) {
+				$info = pathinfo( $file );
+				// just look for images with the correct extension
+                if ( isset($info['extension']) )
+				    if ( in_array( strtolower($info['extension']), $ext) )
+					   $files[] = utf8_encode( $file );
+			}		
+			closedir( $handle ); 
 		} 
-		sort($files);
-		return ($files); 
+		sort( $files );
+		return ( $files ); 
 	} 
 	
 	/**
@@ -252,7 +256,10 @@ class nggAdmin{
 
 		if ( !is_object($image) ) 
 			return __('Object didn\'t contain correct data','nggallery');
-		
+
+		// before we start we import the meta data to database (required for uploads before V1.4.0)
+		nggAdmin::maybe_import_meta( $image->pid );
+        		
 		// check for existing thumbnail
 		if (file_exists($image->thumbPath))
 			if (!is_writable($image->thumbPath))
@@ -340,6 +347,11 @@ class nggAdmin{
 
 		// skip if file is not there
 		if (!$file->error) {
+			
+			// If required save a backup copy of the file
+			if ( ($ngg->options['imgBackup'] == 1) && (!file_exists($image->imagePath . '_backup')) )
+				@copy ($image->imagePath, $image->imagePath . '_backup');
+			
 			$file->resize($width, $height, 4);
 			$file->save($image->imagePath, $ngg->options['imgQuality']);
 			// read the new sizes
@@ -419,6 +431,10 @@ class nggAdmin{
 		// skip if file is not there
 		if (!$file->error) {
 
+			// If required save a backup copy of the file
+			if ( ($ngg->options['imgBackup'] == 1) && (!file_exists($image->imagePath . '_backup')) )
+				@copy ($image->imagePath, $image->imagePath . '_backup');
+
 			// before we start we import the meta data to database (required for uploads before V1.4.X)
 			nggAdmin::maybe_import_meta( $image->pid );
 
@@ -450,7 +466,7 @@ class nggAdmin{
 	}
 
 	/**
-	 * nggAdmin::set_watermark() - set the watermarl for the image
+	 * nggAdmin::set_watermark() - set the watermark for the image
 	 * 
 	 * @class nggAdmin
 	 * @param object | int $image contain all information about the image or the id
@@ -479,6 +495,11 @@ class nggAdmin{
 
 		// skip if file is not there
 		if (!$file->error) {
+			
+			// If required save a backup copy of the file
+			if ( ($ngg->options['imgBackup'] == 1) && (!file_exists($image->imagePath . '_backup')) )
+				@copy ($image->imagePath, $image->imagePath . '_backup');
+			
 			if ($ngg->options['wmType'] == 'image') {
 				$file->watermarkImgPath = $ngg->options['wmPath'];
 				$file->watermarkImage($ngg->options['wmPos'], $ngg->options['wmXpos'], $ngg->options['wmYpos']); 
@@ -500,6 +521,47 @@ class nggAdmin{
 	}
 
 	/**
+	 * Recover image from backup copy and reprocess it
+	 * 
+	 * @class nggAdmin
+	 * @since 1.5.0
+	 * @param object | int $image contain all information about the image or the id
+	 * @return string result code
+	 */
+	
+	function recover_image($image) {
+
+		global $ngg;
+		
+		if ( is_numeric($image) )
+			$image = nggdb::find_image( $image );
+		
+		if ( !is_object( $image ) ) 
+			return __('Object didn\'t contain correct data','nggallery');		
+			
+		if (!is_writable( $image->imagePath ))
+			return ' <strong>' . $image->filename . __(' is not writeable','nggallery') . '</strong>';
+		
+		if (!file_exists( $image->imagePath . '_backup' )) {
+			return ' <strong>'.__('File do not exists','nggallery').'</strong>';
+		}
+
+		if (!@copy( $image->imagePath . '_backup' , $image->imagePath) )
+			return ' <strong>'.__('Couldn\'t restore original image','nggallery').'</strong>';
+		
+		require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
+		
+		$meta_obj = new nggMeta( $image->pid );
+					
+        $common = $meta_obj->get_common_meta();
+        $common['saved']  = true; 
+		$result = nggdb::update_image_meta($image->pid, $common);			
+		
+		return '1';
+		
+	}
+		
+	/**
 	 * Add images to database
 	 * 
 	 * @class nggAdmin
@@ -509,7 +571,7 @@ class nggAdmin{
 	 */
 	function add_Images($galleryID, $imageslist) {
 		
-		global $wpdb;
+		global $wpdb, $ngg;
 		
 		$image_ids = array();
 		
@@ -523,14 +585,19 @@ class nggAdmin{
 				$result = $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggpictures (galleryid, filename, alttext, exclude) VALUES (%s, %s, %s, 0)", $galleryID, $picture, $alttext) );
 				// and give me the new id
 				$pic_id = (int) $wpdb->insert_id;
+				
 				if ($result) 
 					$image_ids[] = $pic_id;
 
 				// add the metadata
-				nggAdmin::import_MetaData($pic_id);
+				nggAdmin::import_MetaData( $pic_id );
 				
 				// auto rotate
-				nggAdmin::rotate_image($pic_id);				
+				nggAdmin::rotate_image( $pic_id );		
+
+				// Autoresize image if required
+				if ($ngg->options['imgAutoResize'])
+						nggAdmin::resize_image( $pic_id );
 				
 				// action hook for post process after the image is added to the database
 				$image = array( 'id' => $pic_id, 'filename' => $picture, 'galleryID' => $galleryID);
@@ -539,10 +606,12 @@ class nggAdmin{
 			} 
 		} // is_array
 		
+		do_action('ngg_after_new_images_added', $galleryID, $image_ids );
+		
 		return $image_ids;
 		
 	}
-
+	
 	/**
 	 * Import some meta data into the database (if avialable)
 	 * 
@@ -585,7 +654,7 @@ class nggAdmin{
 				if ($result === false)
 					return ' <strong>' . $image->filename . ' ' . __('(Error : Couldn\'t not update data base)', 'nggallery') . '</strong>';		
 				
-				//this flag will inform us the the import is already one time performed
+				//this flag will inform us that the import is already one time performed
 				$meta['common']['saved']  = true; 
 				$result = nggdb::update_image_meta($image->pid, $meta['common']);
 				
@@ -644,12 +713,13 @@ class nggAdmin{
 				
 		require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
 				
-		$image = new nggMeta( $id );
-		
-		if ( $image->meta_data['saved'] != true ) {
-			//this flag will inform us the the import is already one time performed
-			$meta['saved']  = true; 
-			$result = nggdb::update_image_meta($image->pid, $meta['common']);
+		$meta_obj = new nggMeta( $id );
+        
+		if ( $meta_obj->image->meta_data['saved'] != true ) {
+            $common = $meta_obj->get_common_meta();
+            //this flag will inform us that the import is already one time performed
+            $common['saved']  = true; 
+			$result = nggdb::update_image_meta($id, $common);
 		} else
 			return false;
 		
@@ -757,11 +827,14 @@ class nggAdmin{
 			$temp_zipfile = $_FILES['zipfile']['tmp_name'];
 			$filename = $_FILES['zipfile']['name']; 
 						
-			// check if file is a zip file
-			if ( !preg_match('/(zip|download|octet-stream)/i', $_FILES['zipfile']['type']) ) {
-				@unlink($temp_zipfile); // del temp file
-				nggGallery::show_error(__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type']);
-				return false; 
+			// Chrome return a empty content-type : http://code.google.com/p/chromium/issues/detail?id=6800
+			if ( !preg_match('/chrome/i', $_SERVER['HTTP_USER_AGENT']) ) {
+				// check if file is a zip file
+				if ( !preg_match('/(zip|download|octet-stream)/i', $_FILES['zipfile']['type']) ) {
+					@unlink($temp_zipfile); // del temp file
+					nggGallery::show_error(__('Uploaded file was no or a faulty zip file ! The server recognize : ','nggallery').$_FILES['zipfile']['type']);
+					return false; 
+				}
 			}
 		}
 
@@ -910,6 +983,7 @@ class nggAdmin{
 
 			//create thumbnails
 			nggAdmin::do_ajax_operation( 'create_thumbnail' , $image_ids, __('Create new thumbnails','nggallery') );
+			
 			//add the preview image if needed
 			nggAdmin::set_gallery_preview ( $galleryID );
 			
@@ -931,10 +1005,8 @@ class nggAdmin{
 
 		global $wpdb;
 		
-		if ($galleryID == 0) {
-			@unlink($temp_file);		
+		if ($galleryID == 0)
 			return __('No gallery selected !', 'nggallery');
-		}
 
 		// WPMU action
 		if (nggAdmin::check_quota())
@@ -967,7 +1039,7 @@ class nggAdmin{
 
 		// check if this filename already exist
 		$i = 0;
-		while (in_array($filename,$imageslist)) {
+		while (in_array($filename, $imageslist)) {
 			$filename = $filepart['filename'] . '_' . $i++ . '.' . $filepart['extension'];
 		}
 		
@@ -1307,6 +1379,7 @@ class nggAdmin{
 	/**
 	 * Return a JSON coded array of Image ids for a requested gallery
 	 * 
+	 * @class nggAdmin
 	 * @param int $galleryID
 	 * @return arry (JSON)
 	 */
@@ -1321,6 +1394,47 @@ class nggAdmin{
 		$output = json_encode($gallery);
 		
 		return $output;
+	}
+
+	/**
+	 * Decode upload error to normal message
+	 *
+	 * @class nggAdmin
+	 * @access internal
+	 * @param int $code php upload error code
+	 * @return string message
+	 */
+	
+	function decode_upload_error( $code ) {
+		
+	        switch ($code) {
+	            case UPLOAD_ERR_INI_SIZE:
+	                $message = __ ( 'The uploaded file exceeds the upload_max_filesize directive in php.ini', 'nggallery' );
+	                break;
+	            case UPLOAD_ERR_FORM_SIZE:
+	                $message = __ ( 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form', 'nggallery' );
+	                break;
+	            case UPLOAD_ERR_PARTIAL:
+	                $message = __ ( 'The uploaded file was only partially uploaded', 'nggallery' );
+	                break;
+	            case UPLOAD_ERR_NO_FILE:
+	                $message = __ ( 'No file was uploaded', 'nggallery' );
+	                break;
+	            case UPLOAD_ERR_NO_TMP_DIR:
+	                $message = __ ( 'Missing a temporary folder', 'nggallery' );
+	                break;
+	            case UPLOAD_ERR_CANT_WRITE:
+	                $message = __ ( 'Failed to write file to disk', 'nggallery' );
+	                break;
+	            case UPLOAD_ERR_EXTENSION:
+	                $message = __ ( 'File upload stopped by extension', 'nggallery' );
+	                break;
+	            default:
+	                $message = __ ( 'Unknown upload error', 'nggallery' );
+	                break;
+	        }
+
+	        return $message; 
 	}
 
 } // END class nggAdmin

@@ -59,7 +59,7 @@ function nggallery_manage_gallery_main() {
 		var numchecked = getNumChecked(document.getElementById('editgalleries'));
 		 
 		if(numchecked < 1) { 
-			alert('<?php echo js_escape(__('No images selected', 'nggallery')); ?>');
+			alert('<?php echo esc_js(__('No images selected', 'nggallery')); ?>');
 			return false; 
 		} 
 		
@@ -76,7 +76,7 @@ function nggallery_manage_gallery_main() {
 				break;
 		}
 		
-		return confirm('<?php echo sprintf(js_escape(__("You are about to start the bulk edit for %s galleries \n \n 'Cancel' to stop, 'OK' to proceed.",'nggallery')), "' + numchecked + '") ; ?>');
+		return confirm('<?php echo sprintf(esc_js(__("You are about to start the bulk edit for %s galleries \n \n 'Cancel' to stop, 'OK' to proceed.",'nggallery')), "' + numchecked + '") ; ?>');
 	}
 
 	function showDialog( windowId, height ) {
@@ -127,10 +127,11 @@ function nggallery_manage_gallery_main() {
 					<option value="new_thumbnail" ><?php _e("Create new thumbnails",'nggallery'); ?></option>
 					<option value="resize_images" ><?php _e("Resize images",'nggallery'); ?></option>
 					<option value="import_meta" ><?php _e("Import metadata",'nggallery'); ?></option>
+					<option value="recover_images" ><?php _e("Recover from backup",'nggallery'); ?></option>
 				</select>
 				<input name="showThickbox" class="button-secondary" type="submit" value="<?php _e('Apply','nggallery'); ?>" onclick="if ( !checkSelected() ) return false;" />
 				<?php endif; ?>
-				<?php if ( current_user_can('NextGEN Upload images') ) : ?>
+				<?php if ( current_user_can('NextGEN Upload images') && nggGallery::current_user_can( 'NextGEN Add new gallery' ) ) : ?>
 					<input name="doaction" class="button-secondary action" type="submit" onclick="showAddGallery(); return false;" value="<?php _e('Add new gallery', 'nggallery') ?>"/>
 				<?php endif; ?>
 			</div>

@@ -1,6 +1,5 @@
 <?php
-require_once('ngg-config.php');
-
+// see http://codex.wordpress.org/AJAX_in_Plugins
 // check if we have all needed parameter
 if ((!isset($_GET['galleryid']) || !is_numeric($_GET['galleryid'])) || (!isset($_GET['p']) || !is_numeric($_GET['p'])) || !isset($_GET['type']))
 	die('Insufficient parameters.');

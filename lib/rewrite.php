@@ -153,7 +153,7 @@ class nggRewrite {
 		$query_vars[] = 'album';
 		$query_vars[] = 'gallerytag';
 		$query_vars[] = 'show';
-        $query_vars[] = 'slideshow';
+        $query_vars[] = 'callback';
 
 		return $query_vars;
 	}
@@ -200,10 +200,6 @@ class nggRewrite {
 		if ( !empty($tag) )
 			$new_title .= esc_attr($tag) . $sep;
 		
-		// for all sub pages we add the canonical tag	
-		if ( !empty($new_title) )	
-			add_action('wp_head', array(&$this, 'add_canonical_meta'));	
-		
 		//prepend the data
 		$title = $new_title . $title;
 		
@@ -211,9 +207,10 @@ class nggRewrite {
 	}
 	
 	/**
-	 * Canonical support for a better SEO (Dupilcat content)
+	 * Canonical support for a better SEO (Dupilcat content), not longer nedded for Wp 2.9
 	 * See : http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html
 	 * 
+	 * @deprecated
 	 * @return string $meta 
 	 */
 	function add_canonical_meta()
@@ -232,7 +229,7 @@ class nggRewrite {
 	function RewriteRules($wp_rewrite) {		
 		$rewrite_rules = array (
             // XML request
-            $this->slug.'/slideshow/([0-9]+)/?$' => 'index.php?slideshow=true&gid=$matches[1]',
+            $this->slug.'/slideshow/([0-9]+)/?$' => 'index.php?imagerotator=true&gid=$matches[1]',
             
 			// rewrite rules for pages
 			$this->slug.'/page-([0-9]+)/?$' => 'index.php?page_id=$matches[1]',

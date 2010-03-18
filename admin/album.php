@@ -91,6 +91,10 @@ class nggManageAlbum {
 		check_admin_referer('ngg_album');
 	
 		if ( isset($_POST['add']) && isset ($_POST['newalbum']) ) { 
+			
+			if (!nggGallery::current_user_can( 'NextGEN Add/Delete album' ))
+				wp_die(__('Cheatin&#8217; uh?'));			
+			
 			$newalbum = esc_attr($_POST['newalbum']);
 			$result = $wpdb->query("INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newalbum','0')");
 			$this->currentID = (int) $wpdb->insert_id;
@@ -100,7 +104,9 @@ class nggManageAlbum {
 		} 
 		
 		if ( isset($_POST['update']) && ($this->currentID > 0) ) {
-
+            
+            $gid = '';
+            
 			// get variable galleryContainer 
 			parse_str($_POST['sortorder']); 
 			if (is_array($gid)){ 
@@ -114,7 +120,10 @@ class nggManageAlbum {
 		}
 		
 		if ( isset($_POST['delete']) ) {
-	
+			
+			if (!nggGallery::current_user_can( 'NextGEN Add/Delete album' ))
+				wp_die(__('Cheatin&#8217; uh?'));
+				
 			$result = nggdb::delete_album( $this->currentID );
 			if ($result) 
 				nggGallery::show_message(__('Album deleted','nggallery'));
@@ -126,6 +135,9 @@ class nggManageAlbum {
 		global $wpdb;
 		
 		check_admin_referer('ngg_thickbox_form');
+		
+		if (!nggGallery::current_user_can( 'NextGEN Edit album settings' )) 
+			wp_die(__('Cheatin&#8217; uh?'));
 		
 		$name = esc_attr( $_POST['album_name'] );
 		$desc = esc_attr( $_POST['album_desc'] );
@@ -265,12 +277,18 @@ function showDialog() {
 				</select>
 				<?php if ($this->currentID > 0){ ?>
 					<input class="button-primary" type="submit" name="update" value="<?php _e('Update', 'nggallery'); ?>"/>
+					<?php if(nggGallery::current_user_can( 'NextGEN Edit album settings' )) { ?>
 					<input class="button-secondary" type="submit" name="showThickbox" value="<?php _e( 'Edit album', 'nggallery'); ?>" onclick="showDialog(); return false;" />
+					<?php } ?>
+					<?php if(nggGallery::current_user_can( 'NextGEN Add/Delete album' )) { ?>
 					<input class="button-secondary action "type="submit" name="delete" value="<?php _e('Delete', 'nggallery'); ?>" onclick="javascript:check=confirm('<?php _e('Delete album ?','nggallery'); ?>');if(check==false) return false;"/>
+					<?php } ?>
 				<?php } else { ?>
+					<?php if(nggGallery::current_user_can( 'NextGEN Add/Delete album' )) { ?>
 					<span><?php _e('Add new album', 'nggallery'); ?>&nbsp;</span>
 					<input class="search-input" id="newalbum" name="newalbum" type="text" value="" />			
 					<input class="button-secondary action" type="submit" name="add" value="<?php _e('Add', 'nggallery'); ?>"/>
+					<?php } ?>
 				<?php } ?>	
 			</div>
 		</div>
@@ -317,7 +335,7 @@ function showDialog() {
 		
 		if( is_array( $this->galleries ) ) {
 			//get the array of galleries	
-			$sort_array = (array) $this->albums[$this->currentID]->galleries;
+			$sort_array =  $this->currentID > 0 ? (array) $this->albums[$this->currentID]->galleries : array() ;
 			foreach($this->galleries as $gallery) {
 				if (!in_array($gallery->gid, $sort_array)) {
 					if (in_array($gallery->gid,$used_list))
@@ -388,10 +406,10 @@ function showDialog() {
 					<select name="previewpic" style="width:95%" >
 		                <option value="0"><?php _e('No picture', 'nggallery'); ?></option>
 						<?php
-							$picturelist = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt ON t.gid = tt.galleryid WHERE tt.exclude != 1 GROUP BY tt.galleryid ORDER by tt.galleryid");
+							$picturelist = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt WHERE tt.pid=t.previewpic ORDER by tt.galleryid");
 							if( is_array($picturelist) ) {
 								foreach($picturelist as $picture) {
-									echo '<option value="' . $picture->pid . '"'. (($picture->pid == $album->previewpic) ? ' selected="selected"' : '') . ' >'. $picture->pid . ' - ' . $picture->filename.'</option>'."\n";
+									echo '<option value="' . $picture->pid . '"'. (($picture->pid == $album->previewpic) ? ' selected="selected"' : '') . ' >'. $picture->pid . ' - ' . ( empty($picture->name) ? $picture->filename : $picture->name ) .' </option>'."\n";
 								}
 							}
 						?>
@@ -438,6 +456,7 @@ function showDialog() {
 		
 		$obj =  array();
 		$preview_image = '';
+        $class = '';
 		
 		// if the id started with a 'a', then it's a sub album
 		if (substr( $id, 0, 1) == 'a') {
@@ -453,12 +472,12 @@ function showDialog() {
 			$post = get_post($album->pageid);
 			$obj['pagenname'] = ($post == null) ? '---' : $post->post_title;
 			
-			// for spped reason we limit it to 50
+			// for speed reason we limit it to 50
 			if ( $this->num_albums < 50 ) {	
-				if ($album->previewpic != 0)
-					$image = $nggdb->find_image( $album->previewpic );
-				
-					$preview_image = ($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
+				if ($album->previewpic != 0) {
+					$image = $nggdb->find_image( $album->previewpic ); 
+    				$preview_image = ( !is_null($image->thumbURL) )  ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
+                }
 			}
 			
 			// this indicates that we have a album container
@@ -480,7 +499,7 @@ function showDialog() {
 			if ( $this->num_galleries < 50 ) {
 				// set image url
 				$image = $nggdb->find_image( $gallery->previewpic );
-				$preview_image = ($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
+				$preview_image = isset($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
 			}
 			
 			$prefix = '';
