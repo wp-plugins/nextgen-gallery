@@ -37,7 +37,7 @@ Important Links:
 * TinyMCE : Button integration for easy adding the gallery tags
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
 * Language support : Translated in more than 30 languages
-* Auto translation file downloader : Donwload with one click the translation file
+* Translation downloader : Download with one click the new translation file
 * Upload tab integration : You have access to all pictures via the upload tab
 * Tag support for images : Append related images to your post, create a image tag-cloud
 * Meta data support : Import EXIF, IPTC or XMP meta data 
@@ -98,8 +98,6 @@ That's it ... Have fun
 6. Screenshot Show Exif data
 
 == Frequently Asked Questions ==
-
-**Read as startup :** http://dpotter.net/Technical/index.php/2008/03/04/nextgen-gallery-review-introduction/
 
 When writing a page/post, you can use the follow tags:
 
