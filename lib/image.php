@@ -59,7 +59,7 @@ class nggImage{
 		// Finish initialisation
 		$this->name			= $gallery->name;
 		$this->path			= $gallery->path;
-		$this->title		= $gallery->title;
+		$this->title		= stripslashes($gallery->title);
 		$this->pageid		= $gallery->pageid;		
 		$this->previewpic	= $gallery->previewpic;
 	

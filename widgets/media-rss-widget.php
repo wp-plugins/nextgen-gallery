@@ -22,11 +22,10 @@ class nggMediaRssWidget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		extract( $args );
-
-		global $ngg_mrssw_plugin;
+        
 		$ngg_options = nggGallery::get_option('ngg_options');
 		
-		$title = apply_filters('widget_title', empty( $instance['title'] ) ? __('Media RSS', 'nggallery') : $instance['title']);
+        $title = apply_filters('widget_title', empty($instance['title']) ? '&nbsp;' : $instance['title'], $instance, $this->id_base);
 
 		$show_global_mrss 	= $instance['show_global_mrss'];
 		$show_icon		 	= $instance['show_icon'];

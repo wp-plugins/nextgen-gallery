@@ -362,11 +362,11 @@ class nggManageGallery {
 			if ( nggGallery::current_user_can( 'NextGEN Edit gallery options' )) {
 				
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery title' ))
-					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET title= '%s' WHERE gid = %d", $_POST['title'], $this->gid) );
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET title= '%s' WHERE gid = %d", esc_attr($_POST['title']), $this->gid) );
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery path' ))
 					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET path= '%s' WHERE gid = %d", untrailingslashit ( str_replace('\\', '/', trim( stripslashes($_POST['path']) )) ), $this->gid ) );
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery description' ))
-					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET galdesc= '%s' WHERE gid = %d", $_POST['gallerydesc'], $this->gid) );
+					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET galdesc= '%s' WHERE gid = %d", esc_attr( $_POST['gallerydesc'] ), $this->gid) );
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery page id' ))	
 					$wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET pageid= '%d' WHERE gid = %d", (int) $_POST['pageid'], $this->gid) );
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery preview pic' ))

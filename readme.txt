@@ -88,6 +88,8 @@ For commercial use please look at the Jeroen's homepage : http://www.longtailvid
 
 That's it ... Have fun
 
+http://www.youtube.com/watch?v=Le_ZsNSuIvM
+
 == Screenshots ==
 
 1. Screenshot Admin Area 
@@ -138,6 +140,11 @@ To show the most recent added mages : **[recent max=x ]**
 **And at least request your question here :** http://alexrabe.de/forums/
 
 == Changelog == 
+
+= V1.5.1 - 23.03.2010 =
+* Bugfix : PHP4 compat issue for Add gallery & options page
+* Bugfix : Gallery widget can now have a empty title
+* Bugfix : Adding correct stripslash for gallery title
 
 = V1.5.0 - 18.03.2010 =
 * NEW : Support for Post thumbnail feature

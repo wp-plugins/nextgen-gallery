@@ -156,7 +156,7 @@ function nggShowGallery( $galleryID, $template = '', $images = false ) {
  */
 function nggCreateGallery($picturelist, $galleryID = false, $template = '', $images = false) {
     global $nggRewrite;
-    
+
     $ngg_options = nggGallery::get_option('ngg_options');
 
     //the shortcode parameter will override global settings, TODO: rewrite this to a class
@@ -489,7 +489,7 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
         $galleries[$key]->galdesc = html_entity_decode ( stripslashes($galleries[$key]->galdesc) ) ;
 
         // i18n
-        $galleries[$key]->title = html_entity_decode ( nggGallery::i18n($galleries[$key]->title) ) ;
+        $galleries[$key]->title = html_entity_decode ( nggGallery::i18n( stripslashes($galleries[$key]->title) ) ) ;
         
         // apply a filter on gallery object before the output
         $galleries[$key] = apply_filters('ngg_album_galleryobject', $galleries[$key]);

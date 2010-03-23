@@ -1,6 +1,11 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+= V1.5.1 - 23.03.2010 =
+* Bugfix : PHP4 compat issue for Add gallery & options page
+* Bugfix : Gallery widget can now have a empty title
+* Bugfix : Adding correct stripslash for gallery title
+
 = V1.5.0 - 18.03.2010 =
 * NEW : Support for Post thumbnail feature
 * NEW : Backup and Recover function for images (THX to Simone Fumagalli)

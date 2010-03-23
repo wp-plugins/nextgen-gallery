@@ -30,7 +30,7 @@ class nggSlideshowWidget extends WP_Widget {
 		if ( NGGALLERY_IREXIST == false ) 	 
 			return;
 			
-		$title = apply_filters('widget_title', empty( $instance['title'] ) ? __('Slideshow', 'nggallery') : $instance['title']);
+		$title = apply_filters('widget_title', empty( $instance['title'] ) ? __('Slideshow', 'nggallery') : $instance['title'], $instance, $this->id_base);
 
 		$out = $this->render_slideshow($instance['galleryid'] , $instance['width'] , $instance['height']);
 
@@ -258,8 +258,7 @@ class nggWidget extends WP_Widget {
 	function widget( $args, $instance ) {
 		extract( $args );
         
-        if ( $instance['title'] !== false)
-            $title = apply_filters('widget_title', empty( $instance['title'] ) ? __('Gallery', 'nggallery') : $instance['title']);
+        $title = apply_filters('widget_title', empty($instance['title']) ? '&nbsp;' : $instance['title'], $instance, $this->id_base);
 
 		global $wpdb;
 				
