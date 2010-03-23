@@ -177,7 +177,7 @@ class nggOptions {
         foreach($tabs as $tab_key => $tab_name) {
             echo "\n\t<div id='$tab_key'>\n";
             // Looks for the internal class function, otherwise enable a hook for plugins
-            if ( method_exists( 'nggOptions', "tab_$tab_key" ))
+            if ( method_exists( $this, "tab_$tab_key" ))
                 call_user_func( array( &$this , "tab_$tab_key") );
             else
                 do_action( 'ngg_tab_content_' . $tab_key );
