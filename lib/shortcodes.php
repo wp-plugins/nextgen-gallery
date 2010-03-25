@@ -204,7 +204,9 @@ class NextGEN_shortcodes {
      * @return the_content
      */
     function show_gallery( $atts ) {
-    
+        
+        global $wpdb;
+        
         extract(shortcode_atts(array(
             'id'        => 0,
             'template'  => '',  

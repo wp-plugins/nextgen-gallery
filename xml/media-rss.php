@@ -66,7 +66,7 @@ if ( $mode == 'last_pictures' ) {
 	
 	if (!isset($gallery) || $gallery==null) {
 		header('content-type:text/plain;charset=utf-8');
-		echo sprintf(__("The gallery ID=%s does not exist.","nggallery"), $gid);
+		echo sprintf(__("The gallery ID=%s does not exist.","nggallery"), intval($gid) );
 		exit;
 	}
 
@@ -105,14 +105,14 @@ if ( $mode == 'last_pictures' ) {
 	$album = nggdb::find_album($aid);
 	if (!isset($album) || $album==null ) {
 		header('content-type:text/plain;charset=utf-8');
-		echo sprintf(__("The album ID=%s does not exist.", "nggallery"), $aid);
+		echo sprintf(__("The album ID=%s does not exist.", "nggallery"), intval($aid) );
 		exit;
 	}
 	
 	$rss = nggMediaRss::get_album_mrss($album);	
 } else {
 	header('content-type:text/plain;charset=utf-8');
-	echo sprintf(__("Invalid MediaRSS command (%s).", "nggallery"), $mode);
+	echo __('Invalid MediaRSS command', 'nggallery');
 	exit;
 }
 

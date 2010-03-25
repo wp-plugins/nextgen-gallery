@@ -141,6 +141,10 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.5.2 - 25.03.2010 =
+* Bugfix : XSS security vulnerability (THX to Core Security Advisories Team , Pedro Varangot) 
+* Bugfix : Missing $wpdb in shortcodes.php
+
 = V1.5.1 - 23.03.2010 =
 * Bugfix : PHP4 compat issue for Add gallery & options page
 * Bugfix : Gallery widget can now have a empty title
