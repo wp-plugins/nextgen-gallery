@@ -128,7 +128,7 @@ class nggdb {
         // Count the number of galleries and calculate the pagination
         if ($limit > 0) {
             $this->paged['total_objects'] = intval ( $wpdb->get_var( "SELECT FOUND_ROWS()" ) );
-            $this->paged['objects_per_page'] = count( $this->galleries );
+            $this->paged['objects_per_page'] = max ( count( $this->galleries ), $limit );
             $this->paged['max_objects_per_page'] = ( $limit > 0 ) ? ceil( $this->paged['total_objects'] / intval($limit)) : 1;
         }
         

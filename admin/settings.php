@@ -160,8 +160,8 @@ class nggOptions {
 			jQuery("#thumbCode").val(effectcode);
 		};
 		
-		function setcolor(fileid,color) {
-			jQuery(fileid).css("background", color );
+		function setcolor(fileid, color) {
+			jQuery(fileid).css("background-color", '#' + color );
 		};
 	</script>
 	

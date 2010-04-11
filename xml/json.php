@@ -1,7 +1,7 @@
 <?php
 /**
 * REST Application Programming Interface PHP class for the WordPress plugin NextGEN Gallery
-* Should emulate some kind of Flickr JSON callback : ?format=json&api_key=1234567890&method=search&term=myterm
+* Should emulate some kind of Flickr JSON callback : ?callback=json&format=json&api_key=1234567890&method=search&term=myterm
 
 * 
 * @author 		Alex Rabe 
@@ -37,7 +37,7 @@ class nggAPI {
 	var $output		=	'';
 
 	/**
-	 * Holds the requested innformation as array
+	 * Holds the requested information as array
 	 *
 	 * @since 1.5.0
 	 * @access private
@@ -59,12 +59,12 @@ class nggAPI {
 			wp_die('Json_encode not available. You need to use PHP 5.2');
 		
 		// Read the parameter on init
-		$this->format 	= strtolower( $_GET['format'] );
-		$this->api_key 	= $_GET['api_key']; 
-		$this->method 	= strtolower( $_GET['method'] ); 
-		$this->term		= strtolower( $_GET['term'] ); 
-		$this->id 		= (int) $_GET['id'];
-		$this->limit 	= (int) $_GET['limit'];		
+		$this->format 	= isset($_GET['format']) ? strtolower( $_GET['format'] ) : false;
+		$this->api_key 	= isset($_GET['api_key'])? $_GET['api_key'] : false; 
+		$this->method 	= isset($_GET['method']) ? strtolower( $_GET['method'] ) : false; 
+		$this->term		= isset($_GET['term'])   ? strtolower( $_GET['term'] ) : false; 
+		$this->id 		= isset($_GET['id'])     ? (int) $_GET['id'] : 0;
+		$this->limit 	= isset($_GET['limit'])  ? (int) $_GET['limit'] : 0;		
 		$this->result	= array();
 		
 		$this->start_process();

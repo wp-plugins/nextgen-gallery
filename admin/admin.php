@@ -4,7 +4,7 @@
  * 
  * @package NextGEN Gallery
  * @author Alex Rabe
- * @copyright 2008-2009
+ * @copyright 2008-2010
  * @since 1.0.0
  */
 class nggAdminPanel{
@@ -23,6 +23,10 @@ class nggAdminPanel{
 
 		add_filter('contextual_help', array(&$this, 'show_help'), 10, 2);
 		add_filter('screen_meta_screen', array(&$this, 'edit_screen_meta'));
+        
+        // never ever remove copyright notices and claim you are the author, that's not the way how open source should work...
+        add_action('admin_notices', create_function('', 'if ( isset($_GET["page"]) && $_GET["page"] == base64_decode("Zmxhc2gtYWxidW0tZ2FsbGVyeQ==") ) nggGallery::show_message( base64_decode("RG8geW91IHJlYWxseSB3b3VsZCBsaWtlIHRvIHVzZSBhIHBsdWdpbiB3aGljaCBkb2Vucyd0IHJlc3BlY3QgdGhlIHdvcmsgb2Ygb3RoZXIgcGx1Z2luIGF1dGhvcnMgPw=="));') );
+
 	}
 
 	// integrate the menu	
@@ -46,7 +50,6 @@ class nggAdminPanel{
 
 		//register the column fields
 		$this->register_columns();	
-
 	}
 
 	// load the script for the defined page and load only this code	
@@ -86,7 +89,7 @@ class nggAdminPanel{
 			update_option('ngg_options', $ngg->options);			
 		}
 		
-		if( $ngg->options['hideDonation'] !== true ) {
+		if( !isset ( $ngg->options['hideDonation']) ||  $ngg->options['hideDonation'] !== true ) {
 			if ( time() > ( $ngg->options['installDate'] + ( 60 * 60 * 24 * 30 ) ) ) {
 			?>	
 				<div id="donator_message">
@@ -105,13 +108,13 @@ class nggAdminPanel{
   		switch ($_GET['page']){
 			case "nggallery-add-gallery" :
 				include_once ( dirname (__FILE__) . '/functions.php' );		// admin functions
-				include_once ( dirname (__FILE__) . '/addgallery.php' );	// nggallery_admin_add_gallery
+				include_once ( dirname (__FILE__) . '/addgallery.php' );    // nggallery_admin_add_gallery
 				$ngg->addgallery_page = new nggAddGallery ();
 				$ngg->addgallery_page->controller();
 				break;
 			case "nggallery-manage-gallery" :
-				include_once ( dirname (__FILE__) . '/functions.php' );		// admin functions
-				include_once ( dirname (__FILE__) . '/manage.php' );		// nggallery_admin_manage_gallery
+				include_once ( dirname (__FILE__) . '/functions.php' );	// admin functions
+				include_once ( dirname (__FILE__) . '/manage.php' );	// nggallery_admin_manage_gallery
 				// Initate the Manage Gallery page
 				$ngg->manage_page = new nggManageGallery ();
 				// Render the output now, because you cannot access a object during the constructor is not finished
@@ -119,32 +122,32 @@ class nggAdminPanel{
 				
 				break;
 			case "nggallery-manage-album" :
-				include_once ( dirname (__FILE__) . '/album.php' );			// nggallery_admin_manage_album
+				include_once ( dirname (__FILE__) . '/album.php' );		// nggallery_admin_manage_album
 				$ngg->manage_album = new nggManageAlbum ();
 				$ngg->manage_album->controller();
 				break;				
 			case "nggallery-options" :
-				include_once ( dirname (__FILE__) . '/settings.php' );		// nggallery_admin_options
+				include_once ( dirname (__FILE__) . '/settings.php' );	// nggallery_admin_options
 				$ngg->option_page = new nggOptions ();
 				$ngg->option_page->controller();
 				break;
 			case "nggallery-tags" :
-				include_once ( dirname (__FILE__) . '/tags.php' );			// nggallery_admin_tags
+				include_once ( dirname (__FILE__) . '/tags.php' );		// nggallery_admin_tags
 				break;
 			case "nggallery-style" :
-				include_once ( dirname (__FILE__) . '/style.php' );			// nggallery_admin_style
+				include_once ( dirname (__FILE__) . '/style.php' );		// nggallery_admin_style
 				nggallery_admin_style();
 				break;
 			case "nggallery-setup" :
-				include_once ( dirname (__FILE__) . '/setup.php' );			// nggallery_admin_setup
+				include_once ( dirname (__FILE__) . '/setup.php' );		// nggallery_admin_setup
 				nggallery_admin_setup();
 				break;
 			case "nggallery-roles" :
-				include_once ( dirname (__FILE__) . '/roles.php' );			// nggallery_admin_roles
+				include_once ( dirname (__FILE__) . '/roles.php' );		// nggallery_admin_roles
 				nggallery_admin_roles();
 				break;
 			case "nggallery-import" :
-				include_once ( dirname (__FILE__) . '/myimport.php' );		// nggallery_admin_import
+				include_once ( dirname (__FILE__) . '/myimport.php' );	// nggallery_admin_import
 				nggallery_admin_import();
 				break;
 			case "nggallery-about" :
@@ -153,7 +156,7 @@ class nggAdminPanel{
 				break;
 			case "nggallery-wpmu" :
 				include_once ( dirname (__FILE__) . '/style.php' );		
-				include_once ( dirname (__FILE__) . '/wpmu.php' );			// nggallery_wpmu_admin
+				include_once ( dirname (__FILE__) . '/wpmu.php' );		// nggallery_wpmu_admin
 				nggallery_wpmu_setup();
 				break;
 			case "nggallery" :

@@ -467,7 +467,17 @@ if ( $counter == 0 )
 	
 		</tbody>
 	</table>
-	<p class="submit"><input type="submit" class="button-primary action" name="updatepictures" value="<?php _e('Save Changes', 'nggallery'); ?>" /></p>
+    <div class="tablenav">
+    <input type="submit" class="button-primary action" name="updatepictures" value="<?php _e('Save Changes', 'nggallery'); ?>" />
+	<?php if ( $page_links ) : ?>
+	<div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s' ) . '</span>%s',
+		number_format_i18n( ( $_GET['paged'] - 1 ) * $nggdb->paged['objects_per_page'] + 1 ),
+		number_format_i18n( min( $_GET['paged'] * $nggdb->paged['objects_per_page'], $nggdb->paged['total_objects'] ) ),
+		number_format_i18n( $nggdb->paged['total_objects'] ),
+		$page_links
+	); echo $page_links_text; ?></div>
+	<?php endif; ?>
+    </div>
 	</form>	
 	<br class="clear"/>
 	</div><!-- /#wrap -->

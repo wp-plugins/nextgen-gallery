@@ -141,6 +141,14 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.5.3 - 11.04.2010 =
+* New : Adding pagination to footer
+* Changed : Perpare new filter to replace slideshow
+* Bugfix : Remove non-breaking space from navigation
+* Bugfix : Pagination of galleries
+* Bugfix : Fixed brackets position for old shortcode query 
+* Bugfix : Slideshow option 'Show next image on click" has wrong default value 
+
 = V1.5.2 - 25.03.2010 =
 * Bugfix : XSS security vulnerability (THX to Core Security Advisories Team , Pedro Varangot) 
 * Bugfix : Missing $wpdb in shortcodes.php

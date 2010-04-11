@@ -44,7 +44,8 @@ function nggShowSlideshow($galleryID, $width, $height) {
     // adding the flash parameter   
     $swfobject->add_flashvars( 'file', urlencode (get_option ('siteurl') . '/' . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
     $swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'true', 'bool');
-    $swfobject->add_flashvars( 'linkfromdisplay', $ngg_options['irLinkfromdisplay'], 'false', 'bool');
+    // option has oposite meaning : true should switch to next image
+    $swfobject->add_flashvars( 'linkfromdisplay', !$ngg_options['irLinkfromdisplay'], 'false', 'bool');
     $swfobject->add_flashvars( 'shownavigation', $ngg_options['irShownavigation'], 'true', 'bool');
     $swfobject->add_flashvars( 'showicons', $ngg_options['irShowicons'], 'true', 'bool');
     $swfobject->add_flashvars( 'kenburns', $ngg_options['irKenburns'], 'false', 'bool');
@@ -71,7 +72,7 @@ function nggShowSlideshow($galleryID, $width, $height) {
     if ($ngg_options['irXHTMLvalid']) $out .= "\n".'-->';
     $out .= "\n".'</script>';
 
-    $out = apply_filters('ngg_show_slideshow_content', $out);
+    $out = apply_filters('ngg_show_slideshow_content', $out, $galleryID, $width, $height);
             
     return $out;    
 }
@@ -238,7 +239,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '', $ima
         $nggNav = new nggNavigation;    
         $navigation = $nggNav->create_navigation($page, $total, $maxElement);
     } else {
-        $navigation = '<div class="ngg-clear">&nbsp;</div>';
+        $navigation = '<div class="ngg-clear"></div>';
     } 
 	  
     //we cannot use the key as index, cause it's filled with the pid
@@ -515,7 +516,7 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
         $nggNav = new nggNavigation;    
         $navigation = $nggNav->create_navigation($page, $total, $maxElement);
     } else {
-        $navigation = '<div class="ngg-clear">&nbsp;</div>';
+        $navigation = '<div class="ngg-clear"></div>';
     }
 
     // apply a filter on $galleries before the output
@@ -870,7 +871,7 @@ function nggShowAlbumTags($taglist) {
     }
         
     //TODO: Add pagination later
-    $navigation = '<div class="ngg-clear">&nbsp;</div>';
+    $navigation = '<div class="ngg-clear"></div>';
     
     // create the output
     $out = nggGallery::capture ('album-compact', array ('album' => 0, 'galleries' => $picturelist, 'pagination' => $navigation) );

@@ -92,7 +92,9 @@ class nggSlideshowWidget extends WP_Widget {
 		$out .= "\n".'//]]>';
 		$out .= "\n".'-->';
 		$out .= "\n".'</script>';
-				
+		
+        $out = apply_filters('ngg_show_slideshow_widget_content', $out, $galleryID, $irWidth, $irHeight);
+        		
 		return $out;
 	}
 

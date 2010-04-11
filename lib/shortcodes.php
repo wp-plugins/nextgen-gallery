@@ -215,7 +215,7 @@ class NextGEN_shortcodes {
         
         // backward compat for user which uses the name instead, still deprecated
         if( !is_numeric($id) )
-            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' "), $id );
+            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' ", $id) );
             
         $out = nggShowGallery( $id, $template, $images );
             
@@ -247,7 +247,7 @@ class NextGEN_shortcodes {
         ), $atts ));
         
         if( !is_numeric($id) )
-            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' "), $id );
+            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' ", $id) );
 
         if( !empty( $id ) )
             $out = nggShowSlideshow($id, $w, $h);

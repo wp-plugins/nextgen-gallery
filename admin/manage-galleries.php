@@ -161,6 +161,20 @@ function nggallery_manage_gallery_main() {
 				<th scope="col" ><?php _e('Action'); ?></th>
 			</tr>
 			</thead>
+			<tfoot>
+			<tr>
+				<th scope="col" class="column-cb" >
+					<input type="checkbox" onclick="checkAll(document.getElementById('editgalleries'));" name="checkall"/>
+				</th>
+				<th scope="col" ><?php _e('ID'); ?></th>
+				<th scope="col" ><?php _e('Title', 'nggallery'); ?></th>
+				<th scope="col" ><?php _e('Description', 'nggallery'); ?></th>
+				<th scope="col" ><?php _e('Author', 'nggallery'); ?></th>
+				<th scope="col" ><?php _e('Page ID', 'nggallery'); ?></th>
+				<th scope="col" ><?php _e('Quantity', 'nggallery'); ?></th>
+				<th scope="col" ><?php _e('Action'); ?></th>
+			</tr>
+			</tfoot>            
 			<tbody>
 <?php
 
@@ -205,6 +219,16 @@ if($gallerylist) {
 ?>			
 			</tbody>
 		</table>
+        <div class="tablenav">
+		<?php if ( $page_links ) : ?>
+			<div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s' ) . '</span>%s',
+				number_format_i18n( ( $_GET['paged'] - 1 ) * $nggdb->paged['objects_per_page'] + 1 ),
+				number_format_i18n( min( $_GET['paged'] * $nggdb->paged['objects_per_page'], $nggdb->paged['total_objects'] ) ),
+				number_format_i18n( $nggdb->paged['total_objects'] ),
+				$page_links
+			); echo $page_links_text; ?></div>
+		<?php endif; ?>
+        </div>
 		</form>
 	</div>
 	<!-- #addGallery -->
