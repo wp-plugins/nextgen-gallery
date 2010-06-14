@@ -141,6 +141,11 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.5.4 - 14.06.2010 =
+* Bugfix : No resize of smaller images
+* Bugfix : Compat issues for Post Thumbnails under WP3.0
+* Bugfix : Esc_URL in Media RSS
+
 = V1.5.3 - 11.04.2010 =
 * New : Adding pagination to footer
 * Changed : Perpare new filter to replace slideshow

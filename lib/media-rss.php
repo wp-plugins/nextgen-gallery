@@ -210,10 +210,10 @@ class nggMediaRss {
 		$out .= $indent . "\t<title><![CDATA[" . nggGallery::i18n($title) . "]]></title>\n";
 		$out .= $indent . "\t<description><![CDATA[" . nggGallery::i18n($desc) . "]]></description>\n";
 		$out .= $indent . "\t<link><![CDATA[" . $image->get_permalink() . "]]></link>\n";		
-		$out .= $indent . "\t<media:content url='" . $image->imageURL . "' medium='image' />\n";
+		$out .= $indent . "\t<media:content url='" . esc_url($image->imageURL) . "' medium='image' />\n";
 		$out .= $indent . "\t<media:title><![CDATA[" . nggGallery::i18n($title) . "]]></media:title>\n";
 		$out .= $indent . "\t<media:description><![CDATA[" . nggGallery::i18n($desc) . "]]></media:description>\n";
-		$out .= $indent . "\t<media:thumbnail url='" . $image->thumbURL . "' width='" . $thumbwidth . "' height='" . $thumbheight . "' />\n";
+		$out .= $indent . "\t<media:thumbnail url='" . esc_url($image->thumbURL) . "' width='" . $thumbwidth . "' height='" . $thumbheight . "' />\n";
 		$out .= $indent . "\t<media:keywords><![CDATA[" . nggGallery::i18n($tag_names) . "]]></media:keywords>\n";
 		$out .= $indent . "\t<media:copyright><![CDATA[Copyright (c) " . get_option("blogname") . " (" . get_option("siteurl") . ")]]></media:copyright>\n";
 		$out .= $indent . "</item>\n";

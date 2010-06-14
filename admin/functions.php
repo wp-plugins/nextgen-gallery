@@ -596,8 +596,15 @@ class nggAdmin{
 				nggAdmin::rotate_image( $pic_id );		
 
 				// Autoresize image if required
-				if ($ngg->options['imgAutoResize'])
-						nggAdmin::resize_image( $pic_id );
+                if ($ngg->options['imgAutoResize']) {
+                	$imagetmp = nggdb::find_image( $pic_id );
+                	$sizetmp = @getimagesize ( $imagetmp->imagePath );
+                	$widthtmp  = $ngg->options['imgWidth'];
+                	$heighttmp = $ngg->options['imgHeight'];
+                	if (($sizetmp[0] > $widthtmp && $widthtmp) || ($sizetmp[1] > $heighttmp && $heighttmp)) {
+                			nggAdmin::resize_image( $pic_id );
+                	}
+                }
 				
 				// action hook for post process after the image is added to the database
 				$image = array( 'id' => $pic_id, 'filename' => $picture, 'galleryID' => $galleryID);
@@ -1065,7 +1072,7 @@ class nggAdmin{
 	 */
 	function check_quota() {
 
-			if ( (IS_WPMU) && wpmu_enable_function('wpmuQuotaCheck'))
+			if ( (is_multisite()) && wpmu_enable_function('wpmuQuotaCheck'))
 				if( $error = upload_is_user_over_quota( false ) ) {
 					nggGallery::show_error( __( 'Sorry, you have used your space allocation. Please delete some files to upload more files.','nggallery' ) );
 					return true;

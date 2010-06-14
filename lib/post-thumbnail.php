@@ -6,7 +6,7 @@
  * @package NextGEN Gallery
  * @author Alex Rabe 
  * @copyright 2010
- * @version 1.0.0
+ * @version 1.0.1
  * @access internal
  */
 class nggPostThumbnail {
@@ -134,26 +134,30 @@ class nggPostThumbnail {
 	 */
 	function ajax_set_post_thumbnail() {
         
+        global $post_ID;
+        
 		// check for correct capability
 		if ( !is_user_logged_in() )
 			die( '-1' );
 		
-		$post_id = intval( $_POST['post_id'] );
-		if ( !current_user_can( 'edit_post', $post_id ) )
+        // get the post id as global variable, otherwise the ajax_nonce failed later
+        $post_ID = intval( $_POST['post_id'] );
+		
+        if ( !current_user_can( 'edit_post', $post_ID ) )
 			die( '-1' );
 		
 		$thumbnail_id = intval( $_POST['thumbnail_id'] );
 		
 		// delete the image
 		if ( $thumbnail_id == '-1' ) {
-			delete_post_meta( $post_id, '_thumbnail_id' );
+			delete_post_meta( $post_ID, '_thumbnail_id' );
 			die( $this->_wp_post_thumbnail_html() );
 		}
 		
 		// for NGG we look for the image id
 		if ( $thumbnail_id && nggdb::find_image($thumbnail_id) ) {
 			// to know that we have a NGG image we add "ngg-" before the id
-			update_post_meta( $post_id, '_thumbnail_id', 'ngg-' . $thumbnail_id );
+			update_post_meta( $post_ID, '_thumbnail_id', 'ngg-' . $thumbnail_id );
 			die( $this->_wp_post_thumbnail_html( $thumbnail_id ) );
 		}
 		die( '0' );
@@ -168,11 +172,12 @@ class nggPostThumbnail {
 	 */
 	function _wp_post_thumbnail_html( $thumbnail_id = NULL ) {
 	   
-		global $_wp_additional_image_sizes;
+		global $_wp_additional_image_sizes, $post_ID;
 
-		$content = '<p class="hide-if-no-js"><a href="#" id="set-post-thumbnail" onclick="jQuery(\'#add_image\').click();return false;">' . esc_html__( 'Set thumbnail' ) . '</a></p>';
-
-		$image = nggdb::find_image($thumbnail_id);
+	    $set_thumbnail_link = '<p class="hide-if-no-js"><a title="' . esc_attr__( 'Set featured image' ) . '" href="' . esc_url( get_upload_iframe_src('image') ) . '" id="set-post-thumbnail" class="thickbox">%s</a></p>';
+	    $content = sprintf($set_thumbnail_link, esc_html__( 'Set featured image' ));
+		
+        $image = nggdb::find_image($thumbnail_id);
         $img_src = false;
 
 		// get the options
@@ -195,8 +200,9 @@ class nggPostThumbnail {
             $thumbnail_html = '<img width="266" src="'. $img_src . '" alt="'.$image->alttext.'" title="'.$image->alttext.'" />';
             
 			if ( !empty( $thumbnail_html ) ) {
-				$content = '<a href="#" id="set-post-thumbnail" onclick="jQuery(\'#add_image\').click();return false;">' . $thumbnail_html . '</a>';
-				$content .= '<p class="hide-if-no-js"><a href="#" id="remove-post-thumbnail" onclick="WPRemoveThumbnail();return false;">' . esc_html__( 'Remove thumbnail' ) . '</a></p>';
+    			$ajax_nonce = wp_create_nonce( "set_post_thumbnail-$post_ID" );
+    			$content = sprintf($set_thumbnail_link, $thumbnail_html);
+    			$content .= '<p class="hide-if-no-js"><a href="#" id="remove-post-thumbnail" onclick="WPRemoveThumbnail(\'' . $ajax_nonce . '\');return false;">' . esc_html__( 'Remove featured image' ) . '</a></p>';
 			}
 		}
 
