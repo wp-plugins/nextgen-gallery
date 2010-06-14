@@ -141,6 +141,10 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.5.5 - 14.06.2010 =
+* Bugfix : Compat issue for post thumbnails with WP2.9
+* NEW : Adding more hooks for custom fields plugin
+
 = V1.5.4 - 14.06.2010 =
 * Bugfix : No resize of smaller images
 * Bugfix : Compat issues for Post Thumbnails under WP3.0

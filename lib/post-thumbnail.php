@@ -173,9 +173,12 @@ class nggPostThumbnail {
 	function _wp_post_thumbnail_html( $thumbnail_id = NULL ) {
 	   
 		global $_wp_additional_image_sizes, $post_ID;
-
-	    $set_thumbnail_link = '<p class="hide-if-no-js"><a title="' . esc_attr__( 'Set featured image' ) . '" href="' . esc_url( get_upload_iframe_src('image') ) . '" id="set-post-thumbnail" class="thickbox">%s</a></p>';
-	    $content = sprintf($set_thumbnail_link, esc_html__( 'Set featured image' ));
+        
+        if (function_exists('get_upload_iframe_src')) {
+    	    $set_thumbnail_link = '<p class="hide-if-no-js"><a title="' . esc_attr__( 'Set featured image' ) . '" href="' . esc_url( get_upload_iframe_src('image') ) . '" id="set-post-thumbnail" class="thickbox">%s</a></p>';
+    	    $content = sprintf($set_thumbnail_link, esc_html__( 'Set featured image' ));
+        } else
+    		$content = '<p class="hide-if-no-js"><a href="#" id="set-post-thumbnail" onclick="jQuery(\'#add_image\').click();return false;">' . esc_html__( 'Set thumbnail' ) . '</a></p>';
 		
         $image = nggdb::find_image($thumbnail_id);
         $img_src = false;

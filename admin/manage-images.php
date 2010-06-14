@@ -270,6 +270,7 @@ jQuery(document).ready( function() {
 					</th>
 				</tr>
 				<?php endif; ?>
+                <?php do_action('ngg_manage_gallery_settings', $act_gid); ?>  
 			</table>
 			
 			<div class="submit">
