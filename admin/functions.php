@@ -1072,7 +1072,7 @@ class nggAdmin{
 	 */
 	function check_quota() {
 
-			if ( (is_multisite()) && wpmu_enable_function('wpmuQuotaCheck'))
+			if ( (IS_WPMU) && wpmu_enable_function('wpmuQuotaCheck'))
 				if( $error = upload_is_user_over_quota( false ) ) {
 					nggGallery::show_error( __( 'Sorry, you have used your space allocation. Please delete some files to upload more files.','nggallery' ) );
 					return true;
