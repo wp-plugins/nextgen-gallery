@@ -707,3 +707,8 @@ To show the most recent added mages : **[recent max=x ]**
 * NEW : Overview Page
 * NEW : Core function
 * NEW : Slideshow
+
+== Upgrade Notice ==
+
+= 1.5.5 =
+Compat issue for post thumbnails with WP2.9 and WP3.0. No Database changes...
