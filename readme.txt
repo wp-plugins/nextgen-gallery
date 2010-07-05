@@ -1,5 +1,5 @@
 === NextGEN Gallery ===
-Contributors: Alex Rabe
+Contributors: alexrabe
 Donate link: http://alexrabe.de/donation/
 Tags: photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery,nextgen gallery
 Requires at least: 2.9
