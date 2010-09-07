@@ -1,6 +1,27 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+= V1.7.0 - sometimes =
+* TODO : Adding Google Sitemaps for Images
+* TODO : Facebook connector
+* TODO : Switch to Plupload (http://www.plupload.com/)
+
+= V1.6.0 - 07.09.2010 =
+* NEW : Wordpress 3.0 Network (Multi-Site) support
+* NEW : Integrate jQuery Cycle as NON-Flash slideshow 
+* NEW : Adding jQuery File Tree for import folder (THX to Sergey Pasyuk )
+* NEW : Added action hook 'ngg_show_imagebrowser_first' on custom request
+* NEW : Added filter hook 'ngg_slideshow_size' to resize sildeshow for mobile browser plugins
+* Changed : Reorder tabs for upload
+* Changed : New menu icon and screen icon (THX to Ben Dunkle)
+* Changed : Load frontend libs always
+* Changed : Rework of overview page
+* Bugfix : Security bugfix for Zip-Upload (THX to Dominic Szablewski)
+* Bugfix : Allow JPG, PNG, GIF extension
+* Bugfix : New German translation (THX to Martin Kramarz)
+* Bugfix : Copy/Move also backup file
+* Bugfix : Calculate correct ratio for fix thumbnail size (THX to Alekz Keck)
+
 = V1.5.5 - 14.06.2010 =
 * Bugfix : Compat issue for post thumbnails with WP2.9
 * NEW : Adding more hooks for custom fields plugin
@@ -12,7 +33,7 @@ by Alex Rabe & NextGEN DEV Team
 
 = V1.5.3 - 11.04.2010 =
 * New : Adding pagination to footer
-* Changed : Perpare new filter to replace slideshow
+* Changed : Prepare new filter to replace slideshow
 * Bugfix : Remove non-breaking space from navigation
 * Bugfix : Pagination of galleries
 * Bugfix : Fixed brackets position for old shortcode query 

@@ -5,7 +5,7 @@ if ( !class_exists('swfobject') ) :
  * 
  * @author Alex Rabe
  * @package NextGEN Gallery
- * @version 0.2
+ * @version 0.5
  * @copyright GNU General Public License Version 2
  * @access public
  * @example http://code.google.com/p/swfobject/
@@ -133,10 +133,9 @@ class swfobject {
 	function add_flashvars ( $key, $value, $default = '', $type = '', $prefix = '' ) {
 
 		if ( is_bool( $value ) )
-			$value = ( $value ) ? "true" : "false";
-		
-		if ( $type == "bool" )
-			$value = ( $value == "1" ) ? "true" : "false";
+			$value = ( $value ) ? 'true' : 'false';
+		elseif ( $type == 'bool' )
+			$value = ( $value == '1' ) ? 'true' : 'false';
 		
 		// do not add the variable if we hit the default setting 	
 		if ( $value == $default )	
@@ -149,10 +148,9 @@ class swfobject {
 	function add_params ( $key, $value, $default = '', $type = '', $prefix = '' ) {
 
 		if ( is_bool( $value ) )
-			$value = ( $value ) ? "true" : "false";
-		
-		if ( $type == "bool" )
-			$value = ( $value == "1" ) ? "true" : "false";
+			$value = ( $value ) ? 'true' : 'false';
+		elseif ( $type == 'bool' )
+			$value = ( $value == '1' ) ? 'true' : 'false';
 		
 		// do not add the variable if we hit the default setting 	
 		if ( $value == $default )	
@@ -165,10 +163,9 @@ class swfobject {
 	function add_attributes ( $key, $value, $default = '', $type = '', $prefix = '' ) {
 
 		if ( is_bool( $value ) )
-			$value = ( $value ) ? "true" : "false";
-		
-		if ( $type == "bool" )
-			$value = ( $value == "1" ) ? "true" : "false";
+			$value = ( $value ) ? 'true' : 'false';
+		elseif ( $type == 'bool' )
+			$value = ( $value == '1' ) ? 'true' : 'false';
 		
 		// do not add the variable if we hit the default setting 	
 		if ( $value == $default )	

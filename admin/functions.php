@@ -7,7 +7,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
  * 
  * @package NextGEN Gallery
  * @author Alex Rabe
- * @copyright 2007-2009
+ * @copyright 2007-2010
  * @access public
  */
 class nggAdmin{
@@ -106,7 +106,7 @@ class nggAdmin{
 			do_action('ngg_created_new_gallery', $gallery_id);
 
 			// return only the id if defined
-			if ($return_id)
+			if ($output == false)
 				return $gallery_id;
 				
 			if ($result) {
@@ -270,8 +270,12 @@ class nggAdmin{
 		// skip if file is not there
 		if (!$thumb->error) {
 			if ($ngg->options['thumbfix'])  {
-				// check for portrait format
-				if ($thumb->currentDimensions['height'] > $thumb->currentDimensions['width']) {
+
+				// calculate correct ratio
+				$wratio = $ngg->options['thumbwidth'] / $thumb->currentDimensions['width'];
+				$hratio = $ngg->options['thumbheight'] / $thumb->currentDimensions['height'];
+				
+				if ($wratio > $hratio) {
 					// first resize to the wanted width
 					$thumb->resize($ngg->options['thumbwidth'], 0);
 					// get optimal y startpos
@@ -612,7 +616,10 @@ class nggAdmin{
 									
 			} 
 		} // is_array
-		
+        
+        // delete dirsize after adding new images
+        delete_transient( 'dirsize_cache' );
+        
 		do_action('ngg_after_new_images_added', $galleryID, $image_ids );
 		
 		return $image_ids;
@@ -751,7 +758,9 @@ class nggAdmin{
 		$archive = new PclZip($file);
 
 		// extract all files in one folder
-		if ($archive->extract(PCLZIP_OPT_PATH, $dir, PCLZIP_OPT_REMOVE_ALL_PATH, PCLZIP_CB_PRE_EXTRACT, 'ngg_getOnlyImages') == 0) {
+		if ($archive->extract(PCLZIP_OPT_PATH, $dir, PCLZIP_OPT_REMOVE_ALL_PATH, 
+                                PCLZIP_CB_PRE_EXTRACT, 'ngg_getOnlyImages',
+                                PCLZIP_CB_POST_EXTRACT, 'ngg_checkExtract') == 0) {
 			nggGallery::show_error( 'Error : ' . $archive->errorInfo(true) );
 			return false;
 		}
@@ -767,8 +776,10 @@ class nggAdmin{
 	 * @param mixed $p_header
 	 * @return bool
 	 */
-	function getOnlyImages($p_event, $p_header)	{
-		
+	function getOnlyImages($p_event, &$p_header)	{
+        // avoid null byte hack (THX to Dominic Szablewski)
+        $p_header['filename'] = substr ( $p_header['filename'], 0, strpos($p_header['filename'], chr(0) ));        
+        // check for extension
 		$info = pathinfo($p_header['filename']);
 		// check for extension
 		$ext = array('jpeg', 'jpg', 'png', 'gif'); 
@@ -796,7 +807,7 @@ class nggAdmin{
 
 		global $ngg, $wpdb;
 		
-		if (nggAdmin::check_quota())
+		if (nggWPMU::check_quota())
 			return false;
 		
 		$defaultpath = $ngg->options['gallerypath'];		
@@ -903,7 +914,7 @@ class nggAdmin{
 		global $nggdb;
 		
 		// WPMU action
-		if (nggAdmin::check_quota())
+		if (nggWPMU::check_quota())
 			return;
 
 		// Images must be an array
@@ -1002,7 +1013,7 @@ class nggAdmin{
 	}
 	
 	/**
-	 * Upload function will be called via teh Flash uploader
+	 * Upload function will be called via the Flash uploader
 	 * 
 	 * @class nggAdmin
 	 * @param integer $galleryID
@@ -1016,7 +1027,7 @@ class nggAdmin{
 			return __('No gallery selected !', 'nggallery');
 
 		// WPMU action
-		if (nggAdmin::check_quota())
+		if (nggWPMU::check_quota())
 			return '0';
 
 		// Check the upload
@@ -1063,22 +1074,6 @@ class nggAdmin{
 		
 		return '0';
 	}	
-	
-	/**
-	 * Check the Quota under WPMU. Only needed for this case
-	 * 
-	 * @class nggAdmin
-	 * @return bool $result
-	 */
-	function check_quota() {
-
-			if ( (IS_WPMU) && wpmu_enable_function('wpmuQuotaCheck'))
-				if( $error = upload_is_user_over_quota( false ) ) {
-					nggGallery::show_error( __( 'Sorry, you have used your space allocation. Please delete some files to upload more files.','nggallery' ) );
-					return true;
-				}
-			return false;
-	}
 	
 	/**
 	 * Set correct file permissions (taken from wp core)
@@ -1204,8 +1199,10 @@ class nggAdmin{
 				continue;				
 			}
 			
+            // Move backup file, if possible
+            @rename($image->imagePath . '_backup', $destination_path . '_backup');
 			// Move the thumbnail, if possible
-			!@rename($image->thumbPath, $destination_thumbnail);
+			@rename($image->thumbPath, $destination_thumbnail);
 			
 			// Change the gallery id in the database , maybe the filename
 			if ( nggdb::update_image($image->pid, $dest_gid, $destination_file_name) )
@@ -1258,7 +1255,7 @@ class nggAdmin{
 		
 		foreach ($images as $image) {		
 			// WPMU action
-			if ( nggAdmin::check_quota() )
+			if ( nggWPMU::check_quota() )
 				return;
 			
 			$i = 0;
@@ -1279,8 +1276,10 @@ class nggAdmin{
 				continue;				
 			}
 			
-			// Copy the thumbnail if possible
-			!@copy($image->thumbPath, $destination_thumb_file_path);
+            // Copy backup file, if possible
+            @copy($image->imagePath . '_backup', $destination_file_path . '_backup');
+            // Copy the thumbnail if possible
+			@copy($image->thumbPath, $destination_thumb_file_path);
 			
 			// Create new database entry for the image
 			$new_pid = nggdb::insert_image( $destination->gid, $destination_file_name, $image->alttext, $image->description, $image->exclude);
@@ -1453,9 +1452,26 @@ class nggAdmin{
  * @param mixed $p_header
  * @return
  */
-function ngg_getOnlyImages($p_event, $p_header)	{
-	
+function ngg_getOnlyImages($p_event, &$p_header)	{
 	return nggAdmin::getOnlyImages($p_event, $p_header);
+}
+
+/**
+ * Ensure after zip extraction that it could be only a image file
+ * 
+ * @param mixed $p_event
+ * @param mixed $p_header
+ * @return 1
+ */
+function ngg_checkExtract($p_event, &$p_header)	{
 	
+    // look for valid extraction
+    if ($p_header['status'] == 'ok') {
+        // check if it's any image file, delete all other files
+        if ( !@getimagesize ( $p_header['filename'] ))
+            unlink($p_header['filename']);
+    }
+	
+    return 1;
 }
 ?>

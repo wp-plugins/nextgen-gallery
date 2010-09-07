@@ -3,7 +3,7 @@
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
 /**
- * Return a script for the Imagerotator flash slideshow. Can be used in any tmeplate with <?php echo nggShowSlideshow($galleryID, $width, $height) ?>
+ * Return a script for the Imagerotator flash slideshow. Can be used in any template with <?php echo nggShowSlideshow($galleryID, $width, $height) ?>
  * Require the script swfobject.js in the header or footer
  * 
  * @access public 
@@ -23,6 +23,10 @@ function nggShowSlideshow($galleryID, $width, $height) {
         $out = '[' . nggGallery::i18n($ngg_options['galTextSlide']) . ']'; 
         return $out;
     }
+
+    //Redirect all calls to the JavaScript slideshow if wanted
+    if ( $ngg_options['enableIR'] !== '1' || nggGallery::detect_mobile_phone() === true )
+        return nggShow_JS_Slideshow($galleryID, $width, $height);
     
     // If the Imagerotator didn't exist, skip the output
     if ( NGGALLERY_IREXIST == false ) 
@@ -30,7 +34,8 @@ function nggShowSlideshow($galleryID, $width, $height) {
         
     if (empty($width) ) $width  = (int) $ngg_options['irWidth'];
     if (empty($height)) $height = (int) $ngg_options['irHeight'];
-
+    // Doesn't work fine with zero
+    $ngg_options['irRotatetime'] = ($ngg_options['irRotatetime'] == 0) ? 5 : $ngg_options['irRotatetime'];
     // init the flash output
     $swfobject = new swfobject( $ngg_options['irURL'] , 'so' . $galleryID, $width, $height, '7.0.0', 'false');
 
@@ -42,7 +47,7 @@ function nggShowSlideshow($galleryID, $width, $height) {
     $swfobject->add_attributes('name', 'so' . $galleryID);
 
     // adding the flash parameter   
-    $swfobject->add_flashvars( 'file', urlencode (get_option ('siteurl') . '/' . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
+    $swfobject->add_flashvars( 'file', urlencode ( trailingslashit ( get_option ('siteurl') ) . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
     $swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'true', 'bool');
     // option has oposite meaning : true should switch to next image
     $swfobject->add_flashvars( 'linkfromdisplay', !$ngg_options['irLinkfromdisplay'], 'false', 'bool');
@@ -65,6 +70,8 @@ function nggShowSlideshow($galleryID, $width, $height) {
     $out  = '<div class="slideshow">' . $swfobject->output() . '</div>';
     // add now the script code
     $out .= "\n".'<script type="text/javascript" defer="defer">';
+    // load script via jQuery afterwards
+    // $out .= "\n".'jQuery.getScript( "'  . NGGALLERY_URLPATH . 'admin/js/swfobject.js' . '", function() {} );';
     if ($ngg_options['irXHTMLvalid']) $out .= "\n".'<!--';
     if ($ngg_options['irXHTMLvalid']) $out .= "\n".'//<![CDATA[';
     $out .= $swfobject->javascript();
@@ -75,6 +82,58 @@ function nggShowSlideshow($galleryID, $width, $height) {
     $out = apply_filters('ngg_show_slideshow_content', $out, $galleryID, $width, $height);
             
     return $out;    
+}
+
+/**
+ * Return a script for the jQuery based slideshow. Can be used in any template with <?php echo nggShow_JS_Slideshow($galleryID, $width, $height) ?>
+ * Require the script jquery.cycle.all.js
+ * 
+ * @since 1.6.0 
+ * @access public
+ * @param integer $galleryID ID of the gallery
+ * @param integer $width Width of the slideshow container
+ * @param integer $height Height of the slideshow container
+ * @param string $class Classname of the div container
+ * @return the content
+ */
+function nggShow_JS_Slideshow($galleryID, $width, $height, $class = 'ngg-slideshow') {
+	
+    global $slideCounter;
+   
+    $ngg_options = nggGallery::get_option('ngg_options');
+    
+    // we need to know the current page id
+    $current_page = (get_the_ID() == false) ? rand(5, 15) : get_the_ID();
+	// look for a other slideshow instance
+	if ( !isset($slideCounter) ) $slideCounter = 1; 
+    // create unique anchor
+    $anchor = 'ngg-slideshow-' . $galleryID . '-' . $current_page . '-' . $slideCounter++;
+    
+    if (empty($width) ) $width  = (int) $ngg_options['irWidth'];
+    if (empty($height)) $height = (int) $ngg_options['irHeight'];
+    
+    //filter to resize images for mobile browser
+    list($width, $height) = apply_filters('ngg_slideshow_size', array( $width, $height ) );
+        
+    $out  = '<div id="' . $anchor . '" class="' . $class . '" style="height:' . $height . 'px;width:' . $width . 'px;">';
+    $out .= "\n". '<div id="' . $anchor . '-loader" class="ngg-slideshow-loader" style="height:' . $height . 'px;width:' . $width . 'px;">';
+    $out .= "\n". '<img src="'. NGGALLERY_URLPATH . 'images/loader.gif " alt="" />';
+    $out .= "\n". '</div>';
+    $out .= '</div>'."\n";
+    $out .= "\n".'<script type="text/javascript" defer="defer">';
+    $out .= "\n".'jQuery.getScript( "'  . NGGALLERY_URLPATH . 'js/jquery.cycle.all.min.js' . '", function() { ';
+    $out .= "\n".'jQuery.getScript( "'  . NGGALLERY_URLPATH . 'js/ngg.slideshow.min.js' . '", function() { jQuery("#' . $anchor . '").nggSlideshow( {' .
+            'id: '      . $galleryID    . ',' . 
+            'fx:"'      . $ngg_options['slideFx'] . '",' .
+            'width:'    . $width        . ',' . 
+            'height:'   . $height       . ',' .
+            'domain: "' . trailingslashit ( get_option ('siteurl') ) . '",' .
+            'timeout:'  . $ngg_options['irRotatetime'] * 1000 .
+            '}); } );';
+    $out .= "\n".'} );';
+    $out .= "\n".'</script>';
+
+    return $out;
 }
 
 /**
@@ -114,6 +173,13 @@ function nggShowGallery( $galleryID, $template = '', $images = false ) {
             $pageid = get_the_ID();
         
         $show = 'slide';
+    }
+
+    // filter to call up the imagebrowser instead of the gallery
+    // use in your theme : add_action( 'ngg_show_imagebrowser_first', create_function('', 'return true;') );
+    if ( apply_filters('ngg_show_imagebrowser_first', false, $galleryID ) && $show != 'thumbnails' )  {
+        $out = nggShowImageBrowser( $galleryID, $template );
+        return $out;
     }
 
     // go on only on this page
@@ -181,6 +247,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '', $ima
     $gallery = new stdclass;
     $gallery->ID = (int) $galleryID;
     $gallery->show_slideshow = false;
+    $gallery->show_piclens = false;
     $gallery->name = stripslashes ( $first_image->name  );
     $gallery->title = stripslashes( $first_image->title );
     $gallery->description = html_entity_decode(stripslashes( $first_image->galdesc));

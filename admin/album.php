@@ -145,10 +145,10 @@ class nggManageAlbum {
 		$link = (int) $_POST['pageid'];
 		
 		$result = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET name= '%s', albumdesc= '%s', previewpic= %d, pageid= %d WHERE id = '$this->currentID'" , $name, $desc, $prev, $link ) );
-
+        
 		//hook for other plugin to update the fields
-		do_action('ngg_update_album', $this->currentID, $_POST);  
-
+		do_action('ngg_update_album', $this->currentID, $_POST);        
+        
 		if ($result)
 			nggGallery::show_message(__('Update Successfully','nggallery'));
 	}
@@ -260,6 +260,7 @@ function showDialog() {
 </script>
 
 <div class="wrap album" id="wrap" >
+    <?php screen_icon( 'nextgen-gallery' ); ?>
 	<h2><?php _e('Manage Albums', 'nggallery') ?></h2>
 	<form id="selectalbum" method="POST" onsubmit="ngg_serialize()" accept-charset="utf-8">
 		<?php wp_nonce_field('ngg_album') ?>
@@ -436,9 +437,9 @@ function showDialog() {
         
 	  	<tr align="right">
 	    	<td class="submit">
-	    		<input type="submit" class="button-primary" name="update_album" value="<?php _e("OK",'nggallery')?>" />
+	    		<input type="submit" class="button-primary" name="update_album" value="<?php _e('OK', 'nggallery'); ?>" />
 	    		&nbsp;
-	    		<input class="button-secondary" type="reset" value="<?php _e("Cancel",'nggallery')?>" onclick="tb_remove()"/>
+	    		<input class="button-secondary" type="reset" value="<?php _e('Cancel', 'nggallery'); ?>" onclick="tb_remove()"/>
 	    	</td>
 		</tr>
 	</table>

@@ -18,35 +18,32 @@ class nggAdminPanel{
 		// Add the script and style files
 		add_action('admin_print_scripts', array(&$this, 'load_scripts') );
 		add_action('admin_print_styles', array(&$this, 'load_styles') );
-		
-		add_action( 'admin_print_footer_scripts', 'codepress_footer_js' );
 
 		add_filter('contextual_help', array(&$this, 'show_help'), 10, 2);
 		add_filter('screen_meta_screen', array(&$this, 'edit_screen_meta'));
         
-        // never ever remove copyright notices and claim you are the author, that's not the way how open source should work...
-        add_action('admin_notices', create_function('', 'if ( isset($_GET["page"]) && $_GET["page"] == base64_decode("Zmxhc2gtYWxidW0tZ2FsbGVyeQ==") ) nggGallery::show_message( base64_decode("RG8geW91IHJlYWxseSB3b3VsZCBsaWtlIHRvIHVzZSBhIHBsdWdpbiB3aGljaCBkb2Vucyd0IHJlc3BlY3QgdGhlIHdvcmsgb2Ygb3RoZXIgcGx1Z2luIGF1dGhvcnMgPw=="));') );
-
 	}
 
 	// integrate the menu	
 	function add_menu()  {
 	
-		add_menu_page( _n( 'Gallery', 'Galleries', 1, 'nggallery' ), _n( 'Gallery', 'Galleries', 1, 'nggallery' ), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'), NGGALLERY_URLPATH .'admin/images/nextgen.png' );
+		add_menu_page( _n( 'Gallery', 'Galleries', 1, 'nggallery' ), _n( 'Gallery', 'Galleries', 1, 'nggallery' ), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'), 'div' );
 	    add_submenu_page( NGGFOLDER , __('Overview', 'nggallery'), __('Overview', 'nggallery'), 'NextGEN Gallery overview', NGGFOLDER, array (&$this, 'show_menu'));
 		add_submenu_page( NGGFOLDER , __('Add Gallery / Images', 'nggallery'), __('Add Gallery / Images', 'nggallery'), 'NextGEN Upload images', 'nggallery-add-gallery', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Manage Gallery', 'nggallery'), __('Manage Gallery', 'nggallery'), 'NextGEN Manage gallery', 'nggallery-manage-gallery', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , _n( 'Album', 'Albums', 1, 'nggallery' ), _n( 'Album', 'Albums', 1, 'nggallery' ), 'NextGEN Edit album', 'nggallery-manage-album', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Tags', 'nggallery'), __('Tags', 'nggallery'), 'NextGEN Manage tags', 'nggallery-tags', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('Options', 'nggallery'), __('Options', 'nggallery'), 'NextGEN Change options', 'nggallery-options', array (&$this, 'show_menu'));
-	    if (wpmu_enable_function('wpmuStyle'))
+	    if ( wpmu_enable_function('wpmuStyle') )
 			add_submenu_page( NGGFOLDER , __('Style', 'nggallery'), __('Style', 'nggallery'), 'NextGEN Change style', 'nggallery-style', array (&$this, 'show_menu'));
-	    if (wpmu_enable_function('wpmuRoles'))
+	    if ( wpmu_enable_function('wpmuRoles') || wpmu_site_admin() )
 			add_submenu_page( NGGFOLDER , __('Roles', 'nggallery'), __('Roles', 'nggallery'), 'activate_plugins', 'nggallery-roles', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('About this Gallery', 'nggallery'), __('About', 'nggallery'), 'NextGEN Gallery overview', 'nggallery-about', array (&$this, 'show_menu'));
-		if ( wpmu_site_admin() )
-			add_submenu_page( 'wpmu-admin.php' , __('NextGEN Gallery', 'nggallery'), __('NextGEN Gallery', 'nggallery'), 'activate_plugins', 'nggallery-wpmu', array (&$this, 'show_menu'));
-	    add_submenu_page( NGGFOLDER , __('Reset / Uninstall', 'nggallery'), __('Reset / Uninstall', 'nggallery'), 'activate_plugins', 'nggallery-setup', array (&$this, 'show_menu'));
+		// See trac #14435 , changed for 3.1 : http://core.trac.wordpress.org/ticket/14435
+        if ( wpmu_site_admin() ) 
+			add_submenu_page( 'ms-admin.php' , __('NextGEN Gallery', 'nggallery'), __('NextGEN Gallery', 'nggallery'), 'activate_plugins', 'nggallery-wpmu', array (&$this, 'show_menu'));
+	    if ( !is_multisite() || wpmu_site_admin() ) 
+            add_submenu_page( NGGFOLDER , __('Reset / Uninstall', 'nggallery'), __('Reset / Uninstall', 'nggallery'), 'activate_plugins', 'nggallery-setup', array (&$this, 'show_menu'));
 
 		//register the column fields
 		$this->register_columns();	
@@ -73,7 +70,7 @@ class nggAdminPanel{
 		
 		// Show update message
         if ( current_user_can('activate_plugins') )
-    		if ( $nggCheck->startCheck() && (!IS_WPMU) ) {
+    		if ( $nggCheck->startCheck() && (!is_multisite()) ) {
     			echo '<div class="plugin-update">' . __('A new version of NextGEN Gallery is available !', 'nggallery') . ' <a href="http://wordpress.org/extend/plugins/nextgen-gallery/download/" target="_blank">' . __('Download here', 'nggallery') . '</a></div>' ."\n";
     		}
 		
@@ -215,6 +212,7 @@ class nggAdminPanel{
 				wp_enqueue_script( 'ngg-swfupload-handler', NGGALLERY_URLPATH .'admin/js/swfupload.handler.js', array('swfupload_f10'), '1.0.0' );
 				wp_enqueue_script( 'ngg-ajax' );
 				wp_enqueue_script( 'ngg-progressbar' );
+				wp_enqueue_script( 'jqueryFileTree', NGGALLERY_URLPATH .'admin/js/jqueryFileTree/jqueryFileTree.js', array('jquery'), '1.0.1' );
 			break;
 			case "nggallery-style" :
 				wp_enqueue_script( 'codepress' );
@@ -225,6 +223,8 @@ class nggAdminPanel{
 	}		
 	
 	function load_styles() {
+
+        wp_enqueue_style( 'nggmenu', NGGALLERY_URLPATH .'admin/css/menu.css', array() );
 		
 		// no need to go on if it's not a plugin page
 		if( !isset($_GET['page']) )
@@ -235,9 +235,10 @@ class nggAdminPanel{
 				wp_enqueue_style( 'thickbox');	
 			case "nggallery-about" :
 				wp_enqueue_style( 'nggadmin', NGGALLERY_URLPATH .'admin/css/nggadmin.css', false, '2.8.1', 'screen' );
-				wp_admin_css( 'css/dashboard' );
+                wp_admin_css( 'css/dashboard' );
 			break;
 			case "nggallery-add-gallery" :
+				wp_enqueue_style( 'jqueryFileTree', NGGALLERY_URLPATH .'admin/js/jqueryFileTree/jqueryFileTree.css', false, '1.0.1', 'screen' );
 			case "nggallery-options" :
 				wp_enqueue_style( 'nggtabs', NGGALLERY_URLPATH .'admin/css/jquery.ui.tabs.css', false, '2.5.0', 'screen' );
 				wp_enqueue_style( 'nggcolorpicker', NGGALLERY_URLPATH .'admin/js/colorpicker/css/colorpicker.css', false, '1.0', 'screen');
@@ -355,12 +356,16 @@ class nggAdminPanel{
 	}
 
 	function register_column_headers($screen, $columns) {
-		global $_wp_column_headers;
+		global $_wp_column_headers, $wp_list_table;
 	
 		if ( !isset($_wp_column_headers) )
 			$_wp_column_headers = array();
 	
 		$_wp_column_headers[$screen] = $columns;
+        
+        //TODO: Deprecated in 3.1, see http://core.trac.wordpress.org/ticket/14579
+       	//$wp_list_table = new _WP_List_Table_Compat($screen);
+       	//$wp_list_table->_columns = $columns;
 	}
 
 	function register_columns() {
@@ -404,15 +409,15 @@ class nggAdminPanel{
 
 function wpmu_site_admin() {
 	// Check for site admin
-	if ( function_exists('is_site_admin') )
-		if ( is_site_admin() )
+	if ( function_exists('is_super_admin') )
+		if ( is_super_admin() )
 			return true;
 			
 	return false;
 }
 
 function wpmu_enable_function($value) {
-	if (IS_WPMU) {
+	if (is_multisite()) {
 		$ngg_options = get_site_option('ngg_options');
 		return $ngg_options[$value];
 	}

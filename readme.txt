@@ -2,16 +2,16 @@
 Contributors: alexrabe
 Donate link: http://alexrabe.de/donation/
 Tags: photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery,nextgen gallery
-Requires at least: 2.9
+Requires at least: 3.0
 Tested up to: 3.0
 Stable tag: trunk
 
-NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option.
+NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with dozens of options and features.
 
 == Description ==
 
-NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a Flash slideshow option. Before I start writing the plugin I study all photo and picture plugins for WordPress,
-I figure out that some of them are really good and well designed, but I missed a simple and easy administration back end to handle multiple photos, galleries and albums.
+NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a slideshow option. Before I started writing the plugin I studied all the existing image and gallery plugins for WordPress. 
+Some of them are really good and well designed, but the gap I filled was a simple administration system at the back end which can also handle multiple galleries.
 
 Important Links:
 
@@ -33,7 +33,7 @@ Important Links:
 * Watermark function : You can add a watermark image or text 
 * JavaScript Effect : Use any available popular image effect : Shutter, Thickbox, Lightbox or Highslide
 * Multiple CSS Stylesheet : Use a nice shadow effect for your thumbnails with your own CSS file 
-* Slideshow : Full integrated flash slideshow
+* Slideshow : Full integrated slideshow as jQuery or Flash solution
 * TinyMCE : Button integration for easy adding the gallery tags
 * Sidebar Widget : Show a slideshow, random or recent picture at your sidebar 
 * Language support : Translated in more than 30 languages
@@ -47,8 +47,6 @@ Important Links:
 == Credits ==
 
 Copyright 2007-2010 by Alex Rabe & NextGEN DEV-Team
-
-The NextGEN button is taken from the Fugue Icons of http://www.pinvoke.com/.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -66,7 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ** Please note **
 
-The JW Image Rotator (Slideshow) is not part of this license and is available
+The JW Image Rotator (Flash Slideshow) is not part of this license and is available
 under a Creative Commons License, which allowing you to use, modify and redistribute 
 them for noncommercial purposes. 
 
@@ -75,16 +73,11 @@ For commercial use please look at the Jeroen's homepage : http://www.longtailvid
 
 == Installation ==
 
-1. 	Upload the files to wp-content/plugins/nextgen-gallery
+1. 	Install & Activate the plugin
 
-2.  If you would like to use a Flash slideshow (only a option), go to <a href="http://www.longtailvideo.com/players/jw-image-rotator/" title="JW Image Rotator">Longtail Video</a>, download the JW Image Rotator and unpack the conent. Upload the file imagerotator.swf to your WordPress Upload folder
+2.	Add a gallery and upload some images (the main gallery folder must have write permission)
 
-3. 	Activate the plugin
-
-4.	Add a gallery and upload some images (the main gallery folder must have write permission)
-
-5. 	Go to your post/page an enter the tag '[nggallery id=x]' or '[slideshow id=x]'.
-	See more tags in the FAQ section
+3. 	Go to your post/page an enter the tag '[nggallery id=x]' or '[slideshow id=x]'.	See more tags in the FAQ section
 
 That's it ... Have fun
 
@@ -137,9 +130,25 @@ To show the most recent added mages : **[recent max=x ]**
 
 **A further FAQ you can found here :** http://alexrabe.de/wordpress-plugins/nextgen-gallery/faq/
 
-**And at least request your question here :** http://alexrabe.de/forums/
+**And at least request your question here :** http://wordpress.org/tags/nextgen-gallery?forum_id=10
 
 == Changelog == 
+
+= V1.6.0 - 07.09.2010 =
+* NEW : Wordpress 3.0 Network (Multi-Site) support
+* NEW : Integrate jQuery Cycle as NON-Flash slideshow 
+* NEW : Adding jQuery File Tree for import folder (THX to Sergey Pasyuk )
+* NEW : Added action hook 'ngg_show_imagebrowser_first' on custom request
+* NEW : Added filter hook 'ngg_slideshow_size' to resize sildeshow for mobile browser plugins
+* Changed : Reorder tabs for upload
+* Changed : New menu icon and screen icon (THX to Ben Dunkle)
+* Changed : Load frontend libs always
+* Changed : Rework of overview page
+* Bugfix : Security bugfix for Zip-Upload (THX to Dominic Szablewski)
+* Bugfix : Allow JPG, PNG, GIF extension
+* Bugfix : New German translation (THX to Martin Kramarz)
+* Bugfix : Copy/Move also backup file
+* Bugfix : Calculate correct ratio for fix thumbnail size (THX to Alekz Keck)
 
 = V1.5.5 - 14.06.2010 =
 * Bugfix : Compat issue for post thumbnails with WP2.9

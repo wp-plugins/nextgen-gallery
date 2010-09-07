@@ -119,9 +119,6 @@ class nggAddGallery {
      */
     function controller() {
         global $ngg, $nggdb;
-
-        // get list of tabs
-        $tabs = $this->tabs_order();
         
     	// check for the max image size
     	$this->maxsize    = nggGallery::check_memory_limit();
@@ -136,9 +133,12 @@ class nggAddGallery {
     	$swf_upload_link = wp_nonce_url($swf_upload_link, 'ngg_swfupload');
     	//flash doesn't seem to like encoded ampersands, so convert them back here
     	$swf_upload_link = str_replace('&#038;', '&', $swf_upload_link);
+
+        // get list of tabs
+        $tabs = $this->tabs_order();
 	?>
 	
-	<?php if($ngg->options['swfUpload']) { ?>
+	<?php if($ngg->options['swfUpload'] && !empty ($this->gallerylist) ) { ?>
 	<!-- SWFUpload script -->
 	<script type="text/javascript">
 		var ngg_swf_upload;
@@ -158,7 +158,7 @@ class nggAddGallery {
 								
 				// File Upload Settings
 				file_size_limit : "<?php echo wp_max_upload_size(); ?>b",
-				file_types : "*.jpg;*.jpeg;*.gif;*.png",
+				file_types : "*.jpg;*.jpeg;*.gif;*.png;*.JPG;*.JPEG;*.GIF;*.PNG",
 				file_types_description : "<?php _e('Image Files', 'nggallery') ;?>",
 				
 				// Queue handler
@@ -222,9 +222,21 @@ class nggAddGallery {
 		jQuery(document).ready(function(){
 			jQuery('#slider').tabs({ fxFade: true, fxSpeed: 'fast' });	
 		});
+		
+		// File Tree implementation
+		jQuery(function() {								 
+		    jQuery("span.browsefiles").show().click(function(){
+    		    jQuery("#file_browser").fileTree({
+    		      script: "admin-ajax.php?action=ngg_file_browser&nonce=<?php echo wp_create_nonce( 'ngg-ajax' ) ;?>",
+                  root: jQuery("#galleryfolder").val(),
+    		    }, function(folder) {
+    		        jQuery("#galleryfolder").val( folder );
+    		    });
+		    	jQuery("#file_browser").show('slide');
+		    });	
+		});
 	/* ]]> */
 	</script>
-
 	<div id="slider" class="wrap">
         <ul id="tabs">
             <?php    
@@ -257,18 +269,19 @@ class nggAddGallery {
     function tabs_order() {
      
     	$tabs = array();
-    	
+        
+    	if ( !empty ($this->gallerylist) )
+    	   $tabs['uploadimage'] = __( 'Upload Images', 'nggallery' );
+        
         if ( nggGallery::current_user_can( 'NextGEN Add new gallery' ))
     	   $tabs['addgallery'] = __('Add new gallery', 'nggallery');
         
         if ( wpmu_enable_function('wpmuZipUpload') && nggGallery::current_user_can( 'NextGEN Upload a zip' ) ) 
             $tabs['zipupload'] = __('Upload a Zip-File', 'nggallery');
     	
-        if (!IS_WPMU && nggGallery::current_user_can( 'NextGEN Import image folder' ) ) 
+        if (!is_multisite() && nggGallery::current_user_can( 'NextGEN Import image folder' ) ) 
             $tabs['importfolder'] = __('Import image folder', 'nggallery');
             
-    	$tabs['uploadimage'] = __( 'Upload Images', 'nggallery' );
-    	
     	$tabs = apply_filters('ngg_addgallery_tabs', $tabs);
     
     	return $tabs;
@@ -285,7 +298,7 @@ class nggAddGallery {
 			<tr valign="top"> 
 				<th scope="row"><?php _e('New Gallery', 'nggallery') ;?>:</th> 
 				<td><input type="text" size="35" name="galleryname" value="" /><br />
-				<?php if(!IS_WPMU) { ?>
+				<?php if(!is_multisite()) { ?>
 				<?php _e('Create a new , empty gallery below the folder', 'nggallery') ;?>  <strong><?php echo $this->defaultpath ?></strong><br />
 				<?php } ?>
 				<i>( <?php _e('Allowed characters for file and folder names are', 'nggallery') ;?>: a-z, A-Z, 0-9, -, _ )</i></td>
@@ -331,7 +344,7 @@ class nggAddGallery {
 				</select>
 				<br /><?php echo $this->maxsize; ?>
 				<br /><?php echo _e('Note : The upload limit on your server is ','nggallery') . "<strong>" . ini_get('upload_max_filesize') . "Byte</strong>\n"; ?>
-				<br /><?php if ( (IS_WPMU) && wpmu_enable_function('wpmuQuotaCheck') ) display_space_usage(); ?></td> 
+				<br /><?php if ( (is_multisite()) && wpmu_enable_function('wpmuQuotaCheck') ) display_space_usage(); ?></td> 
 			</tr> 
 			</table>
 			<div class="submit"><input class="button-primary" type="submit" name= "zipupload" value="<?php _e('Start upload', 'nggallery') ;?>"/></div>
@@ -348,7 +361,9 @@ class nggAddGallery {
 			<table class="form-table"> 
 			<tr valign="top"> 
 				<th scope="row"><?php _e('Import from Server path:', 'nggallery') ;?></th> 
-				<td><input type="text" size="35" name="galleryfolder" value="<?php echo $this->defaultpath; ?>" /><br />
+				<td><input type="text" size="35" id="galleryfolder" name="galleryfolder" value="<?php echo $this->defaultpath; ?>" /><span class="browsefiles button" style="display:none"><?php _e('Browse...', 'nggallery'); ?></span><br />
+				<div id="file_browser"></div>
+				<br /><i>( <?php _e('Note : Change the default path in the gallery settings', 'nggallery') ;?> )</i>
 				<br /><?php echo $this->maxsize; ?>
 				<?php if (SAFE_MODE) {?><br /><?php _e(' Please note : For safe-mode = ON you need to add the subfolder thumbs manually', 'nggallery') ;?><?php }; ?></td> 
 			</tr>
@@ -387,7 +402,7 @@ class nggAddGallery {
 					}					?>
 				</select>
 				<br /><?php echo $this->maxsize; ?>
-				<br /><?php if ((IS_WPMU) && wpmu_enable_function('wpmuQuotaCheck')) display_space_usage(); ?></td> 
+				<br /><?php if ((is_multisite()) && wpmu_enable_function('wpmuQuotaCheck')) display_space_usage(); ?></td> 
 			</tr> 
 			</table>
 			<div class="submit">

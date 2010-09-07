@@ -11,16 +11,17 @@ function nggallery_admin_overview()  {
     
 	?>
 	<div class="wrap ngg-wrap">
+        <?php screen_icon( 'nextgen-gallery' ); ?>
 		<h2><?php _e('NextGEN Gallery Overview', 'nggallery') ?></h2>
         <?php if (version_compare(PHP_VERSION, '5.0.0', '<')) ngg_check_for_PHP5(); ?>
 		<div id="dashboard-widgets-wrap" class="ngg-overview">
 		    <div id="dashboard-widgets" class="metabox-holder">
 				<div id="post-body">
 					<div id="dashboard-widgets-main-content">
-						<div class="postbox-container" style="width:49%;">
+						<div class="postbox-container" style="width:75%;">
 							<?php do_meta_boxes('ngg_overview', 'left', ''); ?>
 						</div>
-			    		<div class="postbox-container" style="width:49%;">
+			    		<div class="postbox-container" style="width:24%;">
 							<?php do_meta_boxes('ngg_overview', 'right', ''); ?>
 						</div>						
 					</div>
@@ -84,13 +85,44 @@ function nggallery_admin_overview()  {
  *
  */
 add_meta_box('dashboard_right_now', __('Welcome to NextGEN Gallery !', 'nggallery'), 'ngg_overview_right_now', 'ngg_overview', 'left', 'core');
+add_meta_box('ngg_meta_box', __('Do you like this Plugin?', 'nggallery'), 'ngg_likeThisMetaBox', 'ngg_overview', 'right', 'core');
 if ( !(get_locale() == 'en_US') )
-	add_meta_box('ngg_locale', __('Translation', 'nggallery'), 'ngg_widget_locale', 'ngg_overview', 'left', 'core');
-add_meta_box('dashboard_primary', __('Latest News', 'nggallery'), 'ngg_widget_overview_news', 'ngg_overview', 'right', 'core');
-add_meta_box('ngg_lastdonators', __('Recent donators', 'nggallery'), 'ngg_widget_overview_donators', 'ngg_overview', 'left', 'core');
-add_meta_box('ngg_server', __('Server Settings', 'nggallery'), 'ngg_overview_server', 'ngg_overview', 'left', 'core');
-add_meta_box('dashboard_plugins', __('Related plugins', 'nggallery'), 'ngg_widget_related_plugins', 'ngg_overview', 'right', 'core');
-add_meta_box('ngg_gd_lib', __('Graphic Library', 'nggallery'), 'ngg_overview_graphic_lib', 'ngg_overview', 'right', 'core');
+	add_meta_box('ngg_locale', __('Translation', 'nggallery'), 'ngg_widget_locale', 'ngg_overview', 'right', 'core');
+add_meta_box('dashboard_primary', __('Latest News', 'nggallery'), 'ngg_widget_overview_news', 'ngg_overview', 'left', 'core');
+add_meta_box('ngg_lastdonators', __('Recent donators', 'nggallery'), 'ngg_widget_overview_donators', 'ngg_overview', 'right', 'core');
+if ( !is_multisite() || is_super_admin() ) {			
+    add_meta_box('ngg_server', __('Server Settings', 'nggallery'), 'ngg_overview_server', 'ngg_overview', 'right', 'core');
+    add_meta_box('dashboard_plugins', __('Related plugins', 'nggallery'), 'ngg_widget_related_plugins', 'ngg_overview', 'left', 'core');
+}
+
+function ngg_likeThisMetaBox() {
+
+	echo '<p>';
+    echo sprintf(__('This plugin is primarily developed, maintained, supported and documented by <a href="%s">Alex Rabe</a> with a lot of love & effort. Any kind of contribution would be highly appreciated. Thanks!', 'nggallery'), 'http://alexrabe.de/');
+	echo '</p><ul>';
+
+	$url = 'http://wordpress.org/extend/plugins/nextgen-gallery/' ;
+	echo "<li style='padding-left: 38px; background:transparent url(" . NGGALLERY_URLPATH . "admin/images/icon-rating.png ) no-repeat scroll center left; background-position: 16px 50%; text-decoration: none;'><a href='{$url}' target='_blank'>";
+	_e('Give it a good rating on WordPress.org.', 'nggallery');
+	echo "</a></li>";
+
+	$url = 'http://alexrabe.de/donation/';
+	echo "<li style='padding-left: 38px; background:transparent url(" . NGGALLERY_URLPATH . "admin/images/icon-paypal.gif ) no-repeat scroll center left; background-position: 16px 50%; text-decoration: none;'><a href='{$url}' target='_blank'>";
+	_e("Donate the work via paypal.", 'nggallery');
+	echo "</a></li>";
+
+	$url = 'http://www.amazon.de/gp/registry/wishlist/28H3MATVSL17C';
+	echo "<li style='padding-left: 38px; background:transparent url(" . NGGALLERY_URLPATH . "admin/images/icon-amazon.gif ) no-repeat scroll center left; background-position: 16px 50%; text-decoration: none;'><a href='{$url}' target='_blank'>";
+	_e("Send a gift to show your appreciation.", 'nggallery');
+	echo "</a></li>";
+
+	$url = 'http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/';
+	echo "<li style='padding-left: 38px; background:transparent url(" . NGGALLERY_URLPATH . "admin/images/icon-translate.png ) no-repeat scroll center left; background-position: 16px 50%; text-decoration: none;'><a href='{$url}'>";
+	_e("Help to translating it.", 'nggallery');
+	echo "</a></li>";
+
+	echo '</ul>';
+}
 
 /**
  * Show the server settings in a dashboard widget
@@ -101,38 +133,14 @@ function ngg_overview_server() {
 ?>
 <div id="dashboard_server_settings" class="dashboard-widget-holder wp_dashboard_empty">
 	<div class="ngg-dashboard-widget">
-	  <?php if (IS_WPMU) {
-	  	if (wpmu_enable_function('wpmuQuotaCheck'))
-			echo ngg_SpaceManager::details();
-		else {
-			//TODO:WPMU message in WP2.5 style
-			echo ngg_SpaceManager::details();
-		}
-	  } else { ?>
 	  	<div class="dashboard-widget-content">
       		<ul class="settings">
       		<?php ngg_get_serverinfo(); ?>
+            </ul>
+            <p><strong><?php _e('Graphic Library', 'nggallery'); ?></strong></p>
+            <ul class="settings">
+            <?php ngg_gd_info(); ?>
 	   		</ul>
-		</div>
-	  <?php } ?>
-    </div>
-</div>
-<?php	
-}
-
-/**
- * Show the GD lib info in a dashboard widget
- * 
- * @return void
- */
-function ngg_overview_graphic_lib() {
-?>
-<div id="dashboard_graphic_settings" class="dashboard-widget-holder">
-	<div class="ngg-dashboard-widget">
-	  	<div class="dashboard-widget-content">
-	  		<ul class="settings">
-			<?php ngg_gd_info(); ?>
-			</ul>
 		</div>
     </div>
 </div>
@@ -267,26 +275,25 @@ function ngg_overview_right_now() {
 	$galleries = intval( $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggallery") );
 	$albums    = intval( $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggalbum") );
 ?>
-
 <div class="table table_content">
 	<p class="sub"><?php _e('At a Glance', 'nggallery'); ?></p>
 	<table>
 		<tbody>
 			<tr class="first">
 				<td class="first b"><a href="admin.php?page=nggallery-add-gallery"><?php echo $images; ?></a></td>
-				<td class="t"><?php echo _n( 'Image', 'Images', $images, 'nggallery' ); ?></td>
+				<td class="t"><a href="admin.php?page=nggallery-add-gallery"><?php echo _n( 'Image', 'Images', $images, 'nggallery' ); ?></a></td>
 				<td class="b"></td>
 				<td class="last"></td>
 			</tr>
 			<tr>
 				<td class="first b"><a href="admin.php?page=nggallery-manage-gallery"><?php echo $galleries; ?></a></td>
-				<td class="t"><?php echo _n( 'Gallery', 'Galleries', $galleries, 'nggallery' ); ?></td>
+				<td class="t"><a href="admin.php?page=nggallery-manage-gallery"><?php echo _n( 'Gallery', 'Galleries', $galleries, 'nggallery' ); ?></a></td>
 				<td class="b"></td>
 				<td class="last"></td>
 			</tr>
 			<tr>
 				<td class="first b"><a href="admin.php?page=nggallery-manage-album"><?php echo $albums; ?></a></td>
-				<td class="t"><?php echo _n( 'Album', 'Albums', $albums, 'nggallery' ); ?></td>
+				<td class="t"><a href="admin.php?page=nggallery-manage-album"><?php echo _n( 'Album', 'Albums', $albums, 'nggallery' ); ?></a></td>
 				<td class="b"></td>
 				<td class="last"></td>
 			</tr>
@@ -298,14 +305,53 @@ function ngg_overview_right_now() {
 	<?php if(current_user_can('NextGEN Upload images')): ?><a class="button rbutton" href="admin.php?page=nggallery-add-gallery"><?php _e('Upload pictures', 'nggallery') ?></a><?php endif; ?>
 	<?php _e('Here you can control your images, galleries and albums.', 'nggallery') ?>
 	</p>
-	<span>
-	<?php
-		$userlevel = '<span class="b">' . (current_user_can('manage_options') ? __('Gallery Administrator', 'nggallery') : __('Gallery Editor', 'nggallery')) . '</span>';
-        printf(__('You currently have %s rights.', 'nggallery'), $userlevel);
-    ?>
-    </span>
-</div>
+<br class="clear" />
+</div>    
 <?php
+if ( is_multisite() )
+    ngg_dashboard_quota();
+}
+
+// Display File upload quota on dashboard
+function ngg_dashboard_quota() {
+    
+	if ( get_site_option( 'upload_space_check_disabled' ) )
+		return;
+        
+    if ( !wpmu_enable_function('wpmuQuotaCheck') )
+        return;    
+
+	$quota = get_space_allowed();
+	$used = get_dirsize( BLOGUPLOADDIR ) / 1024 / 1024;
+
+	if ( $used > $quota )
+		$percentused = '100';
+	else
+		$percentused = ( $used / $quota ) * 100;
+	$used_color = ( $percentused < 70 ) ? ( ( $percentused >= 40 ) ? 'waiting' : 'approved' ) : 'spam';
+	$used = round( $used, 2 );
+	$percentused = number_format( $percentused );
+
+	?>
+	<p class="sub musub" style="position:static" ><?php _e( 'Storage Space' ); ?></p>
+	<div class="table table_content musubtable">
+	<table>
+		<tr class="first">
+			<td class="first b b-posts"><?php printf( __( '<a href="%1$s" title="Manage Uploads" class="musublink">%2$sMB</a>' ), esc_url( admin_url( 'admin.php?page=nggallery-manage-gallery' ) ), $quota ); ?></td>
+			<td class="t posts"><?php _e( 'Space Allowed' ); ?></td>
+		</tr>
+	</table>
+	</div>
+	<div class="table table_discussion musubtable">
+	<table>
+		<tr class="first">
+			<td class="b b-comments"><?php printf( __( '<a href="%1$s" title="Manage Uploads" class="musublink">%2$sMB (%3$s%%)</a>' ), esc_url( admin_url( 'admin.php?page=nggallery-manage-gallery' ) ), $used, $percentused ); ?></td>
+			<td class="last t comments <?php echo $used_color;?>"><?php _e( 'Space Used' );?></td>
+		</tr>
+	</table>
+	</div>
+	<br class="clear" />
+	<?php
 }
 
 /**
@@ -503,128 +549,6 @@ function ngg_check_for_PHP5() {
 }
 
 /**
- * WPMU feature taken from Z-Space Upload Quotas
- * @author Dylan Reeve
- * @url http://dylan.wibble.net/
- *
- */
-class ngg_SpaceManager {
- 
- 	function getQuota() {
-		if (function_exists('get_space_allowed'))
-			$quota = get_space_allowed();
-		else
-			$quota = get_site_option( "blog_upload_space" );
-			
-		return $quota;
-	}
-	 
-	function details() {
-		
-		// take default seetings
-		$settings = array(
-
-			'remain'	=> array(
-			'color_text'	=> 'white',
-			'color_bar'		=> '#0D324F',
-			'color_bg'		=> '#a0a0a0',
-			'decimals'		=> 2,
-			'unit'			=> 'm',
-			'display'		=> true,
-			'graph'			=> false
-			),
-
-			'used'		=> array(
-			'color_text'	=> 'white',
-			'color_bar'		=> '#0D324F',
-			'color_bg'		=> '#a0a0a0',
-			'decimals'		=> 2,
-			'unit'			=> 'm',
-			'display'		=> true,
-			'graph'			=> true
-			)
-		);
-
-		$quota = ngg_SpaceManager::getQuota() * 1024 * 1024;
-		$used = get_dirsize( constant( 'ABSPATH' ) . constant( 'UPLOADS' ) );
-//		$used = get_dirsize( ABSPATH."wp-content/blogs.dir/".$blog_id."/files" );
-		
-		if ($used > $quota) $percentused = '100';
-		else $percentused = ( $used / $quota ) * 100;
-
-		$remaining = $quota - $used;
-		$percentremain = 100 - $percentused;
-
-		$out = '';
-		$out .= '<div id="spaceused"> <h3>'.__('Storage Space','nggallery').'</h3>';
-
-		if ($settings['used']['display']) {
-			$out .= __('Upload Space Used:','nggallery') . "\n";
-			$out .= ngg_SpaceManager::buildGraph($settings['used'], $used,$quota,$percentused);
-			$out .= "<br />";
-		}
-
-		if($settings['remain']['display']) {
-			$out .= __('Upload Space Remaining:','nggallery') . "\n";
-			$out .= ngg_SpaceManager::buildGraph($settings['remain'], $remaining,$quota,$percentremain);
-
-		}
-
-		$out .= "</div>";
-
-		echo $out;
-	}
-
-	function buildGraph($settings, $size, $quota, $percent) {
-		$color_bar = $settings['color_bar'];
-		$color_bg = $settings['color_bg'];
-		$color_text = $settings['color_text'];
-		
-		switch ($settings['unit']) {
-			case "b":
-				$unit = "B";
-				break;
-				
-			case "k":
-				$unit = "KB";
-				$size = $size / 1024;
-				$quota = $quota / 1024;
-				break;
-				
-			case "g":   // Gigabytes, really?
-				$unit = "GB";
-				$size = $size / 1024 / 1024 / 1024;
-				$quota = $quota / 1024 / 1024 / 1024;
-				break;
-				
-			default:
-				$unit = "MB";
-				$size = $size / 1024 / 1024;
-				$quota = $quota / 1024 / 1024;
-				break;
-		}
-
-		$size = round($size, (int)$settings['decimals']);
-
-		$pct = round(($size / $quota)*100);
-
-		if ($settings['graph']) {
-			//TODO:move style to CSS
-			$out = '<div style="display: block; margin: 0; padding: 0; height: 15px; border: 1px inset; width: 100%; background-color: '.$color_bg.';">'."\n";
-			$out .= '<div style="display: block; height: 15px; border: none; background-color: '.$color_bar.'; width: '.$pct.'%;">'."\n";
-			$out .= '<div style="display: inline; position: relative; top: 0; left: 0; font-size: 10px; color: '.$color_text.'; font-weight: bold; padding-bottom: 2px; padding-left: 5px;">'."\n";
-			$out .= $size.$unit;
-			$out .= "</div>\n</div>\n</div>\n";
-		} else {
-			$out = "<strong>".$size.$unit." ( ".number_format($percent)."%)"."</strong><br />";
-		}
-
-		return $out;
-	}
-
-}
-
-/**
  * ngg_get_phpinfo() - Extract all of the data from phpinfo into a nested array
  * 
  * @author jon@sitewizard.ca
@@ -680,7 +604,8 @@ function ngg_related_plugins() {
 		'livesig',
 		'wordpress-gallery-slideshow',
 		'nkmimagefield',
-		'nextgen-ajax'
+		'nextgen-ajax',
+        'projectmanager'
 	);
 	
 	$i = 0; 

@@ -13,14 +13,17 @@ function ngg_upgrade() {
 
 	// get the current user ID
 	get_currentuserinfo();
-
-	// Be sure that the tables exist
-	if($wpdb->get_var("show tables like '$wpdb->nggpictures'") == $wpdb->prefix . 'ngg_pictures') {
+    
+    // in multisite environment the pointer $wpdb->nggpictures will not work
+    $nggpictures = $wpdb->prefix . 'ngg_pictures';
+    
+    // Be sure that the tables exist
+	if( $wpdb->get_var("show tables like '$nggpictures'") == $nggpictures) {
 
 		echo __('Upgrade database structure...', 'nggallery');
 		$wpdb->show_errors();
 
-		$installed_ver = get_option( "ngg_db_version" );
+		$installed_ver = get_option( 'ngg_db_version' );
 		
 		// 0.9.7 is smaller that 0.97, my fault :-)
 		if ( $installed_ver == '0.9.7' ) $installed_ver = '0.97';
@@ -149,8 +152,20 @@ function ngg_upgrade() {
             echo __('Updated widget structure. If you used NextGEN Widgets, you need to setup them again...', 'nggallery');
         }
 		
+        if (version_compare($installed_ver, '1.6.0', '<')) {
+            $ngg_options = get_option('ngg_options');
+            $ngg_options['enableIR'] = '1';
+            $ngg_options['slideFx']  = 'fade';
+            update_option('ngg_options', $ngg_options);
+            echo __('Updated options.', 'nggallery');
+        }
+        
 		return;
 	}
+    
+    echo __('Could not find NextGEN Gallery database tables, upgrade failed !', 'nggallery');
+    
+    return;
 }
 
 /**
@@ -299,10 +314,11 @@ function ngg_maybe_add_column($table_name, $column_name, $create_ddl) {
  * 
  * @return Upgrade Message
  */
-function nggallery_upgrade_page()  {	
+function nggallery_upgrade_page()  {
+    
 	$filepath    = admin_url() . 'admin.php?page=' . $_GET['page'];
 	
-	if ($_GET['upgrade'] == 'now') {
+	if ( isset($_GET['upgrade']) && $_GET['upgrade'] == 'now') {
 		nggallery_start_upgrade($filepath);
 		return;
 	}
@@ -329,7 +345,7 @@ function nggallery_start_upgrade($filepath) {
 <div class="wrap">
 	<h2><?php _e('Upgrade NextGEN Gallery', 'nggallery') ;?></h2>
 	<p><?php ngg_upgrade();?></p>
-	<p><?php _e('Upgrade sucessful', 'nggallery') ;?></p>
+	<p><?php _e('Upgrade finished...', 'nggallery') ;?></p>
 	<h3><a href="<?php echo $filepath;?>"><?php _e('Continue', 'nggallery'); ?>...</a></h3>
 </div>
 <?php

@@ -260,7 +260,7 @@ function media_upload_nextgen_form($errors) {
 						<td class="savesend">
 							<?php
 							if ( $calling_post_id && current_theme_supports( 'post-thumbnails', get_post_type( $calling_post_id ) ) )
-								echo "<a class='ngg-post-thumbnail' id='ngg-post-thumbnail-" . $picid . "' href='#' onclick='NGGSetAsThumbnail(\"$picid\");return false;'>" . esc_html__( 'Use as thumbnail' ) . "</a>";
+								echo "<a class='ngg-post-thumbnail' id='ngg-post-thumbnail-" . $picid . "' href='#' onclick='NGGSetAsThumbnail(\"$picid\");return false;'>" . esc_html__( 'Use as featured image' ) . "</a>";
 							?>
 							<button type="submit" class="button" value="1" name="send[<?php echo $picid ?>]"><?php esc_html_e( 'Insert into Post' ); ?></button>
 						</td>

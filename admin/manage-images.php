@@ -179,7 +179,7 @@ jQuery(document).ready( function() {
 </script>
 
 <div class="wrap">
-
+<?php screen_icon( 'nextgen-gallery' ); ?>
 <?php if ($is_search) :?>
 <h2><?php printf( __('Search results for &#8220;%s&#8221;', 'nggallery'), esc_html( get_search_query() ) ); ?></h2>
 <form class="search-form" action="" method="get">
@@ -244,7 +244,7 @@ jQuery(document).ready( function() {
 				</tr>
 				<tr>
 					<th align="left"><?php _e('Path', 'nggallery') ?>:</th> 
-					<th align="left"><input <?php if (IS_WPMU) echo 'readonly = "readonly"'; ?> <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery path' ); ?> type="text" size="50" name="path" value="<?php echo $gallery->path; ?>"  /></th>
+					<th align="left"><input <?php if ( is_multisite() ) echo 'readonly = "readonly"'; ?> <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery path' ); ?> type="text" size="50" name="path" value="<?php echo $gallery->path; ?>"  /></th>
 					<th align="right"><?php _e('Author', 'nggallery'); ?>:</th>
 					<th align="left"> 
 					<?php
@@ -256,7 +256,7 @@ jQuery(document).ready( function() {
 					?>
 					</th>
 				</tr>
-				<?php if(current_user_can("publish_pages")) : ?>
+				<?php if(current_user_can( 'publish_pages' )) : ?>
 				<tr>
 					<th align="left">&nbsp;</th>
 					<th align="left">&nbsp;</th>				
@@ -270,9 +270,10 @@ jQuery(document).ready( function() {
 					</th>
 				</tr>
 				<?php endif; ?>
-                <?php do_action('ngg_manage_gallery_settings', $act_gid); ?>  
+                <?php do_action('ngg_manage_gallery_settings', $act_gid); ?>               
+                
 			</table>
-			
+
 			<div class="submit">
 				<input type="submit" class="button-secondary" name="scanfolder" value="<?php _e("Scan Folder for new images",'nggallery'); ?> " />
 				<input type="submit" class="button-primary action" name="updatepictures" value="<?php _e("Save Changes",'nggallery'); ?>" />

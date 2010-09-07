@@ -4,13 +4,11 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.de/?page_id=80
 Description: A NextGENeration Photo gallery for the Web 2.0.
 Author: Alex Rabe
-Version: 1.5.5
+Version: 1.6.0
 
 Author URI: http://alexrabe.de/
 
 Copyright 2007-2010 by Alex Rabe & NextGEN DEV-Team
-
-The NextGEN button is taken from the Fugue Icons of http://www.pinvoke.com/.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,14 +24,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-Please note  :
-
-The JW Image Rotator (Slideshow) is not part of this license and is available
-under a Creative Commons License, which allowing you to use, modify and redistribute 
-them for noncommercial purposes. 
-
-For commercial use please look at the Jeroen's homepage : http://www.longtailvideo.com 
-
 */ 
 
 // Stop direct call
@@ -44,10 +34,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.5.5';
-	var $dbversion   = '1.5.0';
-	var $minium_WP   = '2.9';
-	var $minium_WPMU = '2.9';
+	var $version     = '1.6.0';
+	var $dbversion   = '1.6.0';
+	var $minium_WP   = '3.0';
 	var $updateURL   = 'http://nextgen.boelinger.com/version.php';
 	var $donators    = 'http://nextgen.boelinger.com/donators.php';
 	var $options     = '';
@@ -55,13 +44,6 @@ class nggLoader {
 	var $add_PHP5_notice = false;
 	
 	function nggLoader() {
-
-		// Load the language file
-		$this->load_textdomain();
-		
-		// All credits to the tranlator 
-		$this->translator  = '<p class="hint">'. __('<strong>Translation by : </strong><a target="_blank" href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/">See here</a>', 'nggallery') . '</p>';
-		$this->translator .= '<p class="hint">'. __('<strong>This translation is not yet updated for Version 1.5.0</strong>. If you would like to help with translation, download the current po from the plugin folder and read <a href="http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/">here</a> how you can translate the plugin.', 'nggallery') . '</p>'; 
 
 		// Stop the plugin if we missed the requirements
 		if ( ( !$this->required_version() ) || ( !$this->check_memory_limit() ) )
@@ -88,7 +70,11 @@ class nggLoader {
 		
 		// Register_taxonomy must be used during the init
 		add_action( 'init', array(&$this, 'register_taxonomy') );
-		
+        
+        // Hook to upgrade all blogs with one click and adding a new one later
+        add_action( 'wpmu_upgrade_site', array(&$this, 'multisite_upgrade') );
+        add_action( 'wpmu_new_blog', array(&$this, 'multisite_new_blog'), 10, 6); 	
+        		
 		// Add a message for PHP4 Users, can disable the update message later on
 		if (version_compare(PHP_VERSION, '5.0.0', '<'))
 			add_filter('transient_update_plugins', array(&$this, 'disable_upgrade'));
@@ -101,6 +87,13 @@ class nggLoader {
 	function start_plugin() {
 
 		global $nggRewrite;
+
+		// Load the language file
+		$this->load_textdomain();
+		
+		// All credits to the tranlator 
+		$this->translator  = '<p class="hint">'. __('<strong>Translation by : </strong><a target="_blank" href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/">See here</a>', 'nggallery') . '</p>';
+		$this->translator .= '<p class="hint">'. __('<strong>This translation is not yet updated for Version 1.6.0</strong>. If you would like to help with translation, download the current po from the plugin folder and read <a href="http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/">here</a> how you can translate the plugin.', 'nggallery') . '</p>'; 
 				
 		// Content Filters
 		add_filter('ngg_gallery_name', 'sanitize_title');
@@ -126,8 +119,8 @@ class nggLoader {
             add_action('parse_request',  array(&$this, 'check_request') );    
 				
 			// Add the script and style files
-			add_action('wp_print_scripts', array(&$this, 'load_scripts') );
-			add_action('wp_print_styles', array(&$this, 'load_styles') );
+			add_action('template_redirect', array(&$this, 'load_scripts') );
+			add_action('template_redirect', array(&$this, 'load_styles') );
 			
 			// Add a version number to the header
 			add_action('wp_head', create_function('', 'echo "\n<meta name=\'NextGEN\' content=\'' . $this->version . '\' />\n";') );
@@ -165,16 +158,12 @@ class nggLoader {
 	
 	function required_version() {
 		
-		global $wp_version, $wpmu_version;
-		
-		// Check for WPMU installation
-		if (!defined ('IS_WPMU'))
-			define('IS_WPMU', version_compare($wpmu_version, $this->minium_WPMU, '>=') );
+		global $wp_version;
 			
 		// Check for WP version installation
 		$wp_ok  =  version_compare($wp_version, $this->minium_WP, '>=');
 		
-		if ( ($wp_ok == FALSE) and (IS_WPMU == FALSE) ) {
+		if ( ($wp_ok == FALSE) ) {
 			add_action(
 				'admin_notices', 
 				create_function(
@@ -192,8 +181,8 @@ class nggLoader {
 	function check_memory_limit() {
 		
 		$memory_limit = (int) substr( ini_get('memory_limit'), 0, -1);
-		//This works only with enough memory, 12MB is silly, wordpress requires already 16MB :-)
-		if ( ($memory_limit != 0) && ($memory_limit < 12 ) ) {
+		//This works only with enough memory, 16MB is silly, wordpress requires already 16MB :-)
+		if ( ($memory_limit != 0) && ($memory_limit < 16 ) ) {
 			add_action(
 				'admin_notices', 
 				create_function(
@@ -264,7 +253,6 @@ class nggLoader {
 	}
 	
 	function load_dependencies() {
-		global $nggdb;
 	
 		// Load global libraries												// average memory usage (in bytes)
 		require_once (dirname (__FILE__) . '/lib/core.php');					//  94.840
@@ -272,7 +260,13 @@ class nggLoader {
 		require_once (dirname (__FILE__) . '/lib/image.php');					//  59.424
 		require_once (dirname (__FILE__) . '/lib/post-thumbnail.php');			//  n.a.
 		require_once (dirname (__FILE__) . '/widgets/widgets.php');				// 298.792
-		
+        require_once (dirname (__FILE__) . '/lib/multisite.php');
+
+        // Load frontend libraries							
+        require_once (dirname (__FILE__) . '/lib/navigation.php');		        // 242.016
+        require_once (dirname (__FILE__) . '/nggfunctions.php');		        // n.a.
+		require_once (dirname (__FILE__) . '/lib/shortcodes.php'); 		        // 92.664
+
 		//Just needed if you access remote to WordPress
 		if ( defined('XMLRPC_REQUEST') )
 			require_once (dirname (__FILE__) . '/lib/xmlrpc.php');
@@ -292,12 +286,6 @@ class nggLoader {
 				require_once (dirname (__FILE__) . '/admin/admin.php');
 				require_once (dirname (__FILE__) . '/admin/media-upload.php');
 				$this->nggAdminPanel = new nggAdminPanel();
-				
-			// Load frontend libraries							
-			} else {
-				require_once (dirname (__FILE__) . '/lib/navigation.php');		// 242.016
-				require_once (dirname (__FILE__) . '/nggfunctions.php');		// n.a.
-				require_once (dirname (__FILE__) . '/lib/shortcodes.php'); 		// 92.664
 			}	
 		}
 	}
@@ -330,9 +318,11 @@ class nggLoader {
 	    }
 		
 		// required for the slideshow
-		if ( NGGALLERY_IREXIST == true ) 
+		if ( NGGALLERY_IREXIST == true && $ngg_options['enableIR'] == '1' && nggGallery::detect_mobile_phone() === false ) 
 			wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.2');
-
+        else    
+            wp_enqueue_script ( 'jquery' );
+            
 		// Load AJAX navigation script, works only with shutter script as we need to add the listener
 		if ( $this->options['galAjaxNav'] ) { 
 			if ( ($this->options['thumbEffect'] == "shutter") || function_exists('srel_makeshutter') ) {
@@ -381,9 +371,24 @@ class nggLoader {
 		if ( class_exists('nggRewrite') )
 			$nggRewrite = new nggRewrite();	
 	}
+    
+    // THX to Shiba for the code
+    // See: http://shibashake.com/wordpress-theme/write-a-plugin-for-wordpress-multi-site
+    function multisite_new_blog($blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+    	global $wpdb;
+        
+        include_once (dirname (__FILE__) . '/admin/install.php');
+        
+    	if (is_plugin_active_for_network( $this->plugin_name )) {
+    		$current_blog = $wpdb->blogid;
+    		switch_to_blog($blog_id);
+    		nggallery_install();
+    		switch_to_blog($current_blog);
+    	}
+    }
 		
 	function activate() {
-		
+		global $wpdb;
 		//Since version 1.4.0 it's tested only with PHP5.2, currently we keep PHP4 support a while
         //if (version_compare(PHP_VERSION, '5.2.0', '<')) { 
         //        deactivate_plugins(plugin_basename(__FILE__)); // Deactivate ourself
@@ -392,6 +397,21 @@ class nggLoader {
         //} 
 
 		include_once (dirname (__FILE__) . '/admin/install.php');
+        
+    	if ( is_multisite() ) {
+    		// check if it is a network activation - if so, run the activation function for each blog id
+    		if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1)) {
+                $current_blog = $wpdb->blogid;
+    			// Get all blog ids
+    			$blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+    			foreach ($blogids as $blog_id) {
+    				switch_to_blog($blog_id);
+    				nggallery_install();
+    			}
+    			switch_to_blog($current_blog);
+    			return;
+    		}	
+    	} 
 		
 		// check for tables
 		nggallery_install();
@@ -412,6 +432,18 @@ class nggLoader {
         nggallery_uninstall();
 	}
 	
+    function multisite_upgrade ( $blog_id ) {
+        global $wpdb;
+        
+        include_once (dirname (__FILE__) . '/admin/upgrade.php');
+        
+        $current_blog = $wpdb->blogid;
+        switch_to_blog( $blog_id );
+        ngg_upgrade();
+        switch_to_blog($current_blog);
+    	return;
+    }
+    
 	function disable_upgrade($option){
 
 	 	$this_plugin = plugin_basename(__FILE__);

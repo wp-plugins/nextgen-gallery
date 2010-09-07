@@ -19,8 +19,11 @@ class nggMediaRss {
 	 */
 	function add_piclens_javascript() {
 		echo "\n" . '<!-- NextGeEN Gallery CoolIris/PicLens support -->';
-		echo "\n" . '<script type="text/javascript" src="http://lite.piclens.com/current/piclens_optimized.js"></script>';
-		echo "\n" . '<!-- /NextGEN Gallery CoolIris/PicLens support -->';
+        if (is_ssl())
+		  echo "\n" . '<script type="text/javascript" src="https://lite.piclens.com/current/piclens_optimized.js"></script>';
+		else
+            echo "\n" . '<script type="text/javascript" src="http://lite.piclens.com/current/piclens_optimized.js"></script>';
+        echo "\n" . '<!-- /NextGEN Gallery CoolIris/PicLens support -->';
 	}
 	
 	/**

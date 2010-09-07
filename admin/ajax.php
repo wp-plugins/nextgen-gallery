@@ -1,12 +1,14 @@
 <?php
-
-/**
- * @author Alex Rabe
- * @copyright 2008 - 2009
- */
-
 add_action('wp_ajax_ngg_ajax_operation', 'ngg_ajax_operation' );
 
+/**
+ * Image edit functions via AJAX
+ * 
+ * @author Alex Rabe
+ * @copyright 2008 - 2010
+ * 
+ * @return void
+ */
 function ngg_ajax_operation() {
 		
 	global $wpdb;
@@ -23,7 +25,7 @@ function ngg_ajax_operation() {
 		die('-1');	
 	
 	// include the ngg function
-	include_once (dirname (__FILE__). '/functions.php');
+	include_once (dirname (__FILE__) . '/functions.php');
 
 	// Get the image id
 	if ( isset($_POST['image'])) {
@@ -190,6 +192,7 @@ function ngg_rotateImage() {
 }
 
 add_action('wp_ajax_ngg_dashboard', 'ngg_ajax_dashboard');
+
 function ngg_ajax_dashboard() {
     
    	require_once( dirname( dirname(__FILE__) ) . '/admin/admin.php');
@@ -220,5 +223,77 @@ function ngg_ajax_dashboard() {
     	break;
 
     }
-    die();    
+    die();
+}    
+
+add_action('wp_ajax_ngg_file_browser', 'ngg_ajax_file_browser');
+	
+/**
+ * jQuery File Tree PHP Connector 
+ * @author Cory S.N. LaViska - A Beautiful Site (http://abeautifulsite.net/)
+ * @version 1.0.1
+ * 
+ * @return string folder content 
+ */
+function ngg_ajax_file_browser() {
+    
+    global $ngg;
+
+	// check for correct NextGEN capability
+	if ( !current_user_can('NextGEN Upload images') && !current_user_can('NextGEN Manage gallery') ) 
+		die('No access');	
+
+    if ( !defined('ABSPATH') )
+        die('No access');
+
+	// if nonce is not correct it returns -1
+	check_ajax_referer( 'ngg-ajax', 'nonce' );
+    
+    //PHP4 compat script
+	if (!function_exists('scandir')) {
+		function scandir($dir, $listDirectories = false, $skipDots = true ) {
+			$dirArray = array();
+			if ($handle = opendir($dir) ) {
+				while (false !== ($file = readdir($handle))) {
+					if (($file != '.' && $file != '..' ) || $skipDots == true) {
+						if($listDirectories == false) { if(is_dir($file)) { continue; } }
+						array_push($dirArray, basename($file) );
+					}
+				}
+				closedir($handle);
+			}
+			return $dirArray;
+		}
+	}
+    
+    // start from the default path
+    $root = trailingslashit ( WINABSPATH );
+    // get the current directory
+	$dir = trailingslashit ( urldecode($_POST['dir']) );
+    
+	if( file_exists($root . $dir) ) {
+		$files = scandir($root . $dir);
+		natcasesort($files);
+        
+        // The 2 counts for . and .. 
+		if( count($files) > 2 ) {
+			echo "<ul class=\"jqueryDirTree\" style=\"display: none;\">";
+			
+            // return only directories
+			foreach( $files as $file ) {
+			 
+			    //reserved name for the thumnbnails, don't use it as folder name
+                if ( $file == 'thumbs')
+                    continue;
+                    
+				if ( file_exists($root . $dir . $file) && $file != '.' && $file != '..' && is_dir($root . $dir . $file) ) {
+					echo "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" . esc_html($dir . $file) . "/\">" . esc_html($file) . "</a></li>";
+				}
+			}
+            
+			echo "</ul>";
+		}
+	}
+    
+    die();	
 }

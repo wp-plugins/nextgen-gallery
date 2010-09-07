@@ -64,8 +64,8 @@
 			return {
 					longname  : 'NextGEN',
 					author 	  : 'Alex Rabe',
-					authorurl : 'http://alexrabe.boelinger.com',
-					infourl   : 'http://alexrabe.boelinger.com',
+					authorurl : 'http://alexrabe.de',
+					infourl   : 'http://alexrabe.de',
 					version   : "2.0"
 			};
 		}

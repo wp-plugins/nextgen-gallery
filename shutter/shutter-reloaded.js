@@ -196,7 +196,7 @@ shutterReloaded = {
 		S.style.width = D.style.width = '';
 		T.style.width = (TI.width - 4) + 'px';
 
-		shHeight = t.wHeight - 7;
+		shHeight = t.wHeight - 50;
 
 		if ( t.FS ) {
 			if ( TI.width > (t.wWidth - 10) )

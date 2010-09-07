@@ -51,9 +51,8 @@ class nggAPI {
 	 */	
 	function __construct() {
 		
-		// Enable the JSON API when you add define('NGG_JSON_ENABLE',true); in the wp-config.php file
-		if ( !defined('NGG_JSON_ENABLED') )
-			wp_die('JSON API not enabled. Add <strong>define(\'NGG_JSON_ENABLED\', true);</strong> to your wp-config.php file');
+        if ( !defined('ABSPATH') )
+            die('You are not allowed to call this page directly.');
 
 		if ( !function_exists('json_encode') )
 			wp_die('Json_encode not available. You need to use PHP 5.2');
@@ -82,16 +81,16 @@ class nggAPI {
 				$this->result['images'] = array_merge( (array) nggdb::search_for_images( $this->term ), (array) nggTags::find_images_for_tags( $this->term , 'ASC' ));
 			break;
 			case 'gallery' :
-				//search for some a gallery
-				$this->result['images'][] = nggdb::get_gallery( $this->id, 'pid', 'ASC' );
+				//search for some gallery
+				$this->result['images'] = ($this->id == 0) ? nggdb::find_last_images( 0 , 100 ) : nggdb::get_gallery( $this->id, 'pid', 'ASC' );
 			break;
 			case 'image' :
 				//search for some image
-				$this->result['images'][] = nggdb::find_image( $this->id );
+				$this->result['images'] = nggdb::find_image( $this->id );
 			break;
 			case 'tag' :
 				//search for images based on tags
-				$this->result['images'][] = nggTags::find_images_for_tags( $this->term , 'ASC' );
+				$this->result['images'] = nggTags::find_images_for_tags( $this->term , 'ASC' );
 			break;
 			case 'recent' :
 				//search for images based on tags
@@ -120,6 +119,38 @@ class nggAPI {
 		$this->result = array ('stat' => 'fail', 'code' => '99', 'message' => 'Insufficient permissions. Method requires read privileges; none granted.');
 		return false;
 	}
+
+    /**
+     * Iterates through a multidimensional array
+     * 
+     * @author Boris Glumpler
+     * @param array $arr
+     * @return void
+     */
+    function create_xml_array( &$arr )
+    {
+        if( is_object( $arr ) )
+            $arr = get_object_vars( $arr );
+
+        foreach( (array)$arr as $k => $v ) {
+            if( is_object( $v ) )
+                $v = get_object_vars( $v );
+                
+            if( ! is_array( $v ) )
+                $xml .= "<$k>$v</$k>\n";
+            else
+            {
+                if( is_numeric( $k ) )
+                    $k = 'job';
+                    
+                $xml .= "<$k>\n";
+                $xml .= $this->create_xml_array( $v );
+                $xml .= "</$k>\n";
+            }
+        }
+        
+        return $xml;
+    }
 	
 	function render_output() {
 		
@@ -128,9 +159,8 @@ class nggAPI {
 			$this->output = json_encode($this->result);
 		} else {
 			header('Content-Type: text/xml; charset=' . get_option('blog_charset'), true);
-			//TODO:Implement XML Output
 			$this->output  = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n";
-			$this->output .= "<rsp stat=' " . $this->result['stat'] . "'><err code='00' msg='Currently not supported' /></rsp>\n";
+			$this->output .= "<nextgen-gallery>" . create_xml_array( $this->result )  . "</nextgen-gallery>\n";
 		}	
 		
 	}

@@ -136,8 +136,8 @@ function ngg_default_options() {
 	$ngg_options['usePermalinks']		= false;						// use permalinks for parameters
 	$ngg_options['graphicLibrary']		= 'gd';							// default graphic library
 	$ngg_options['imageMagickDir']		= '/usr/local/bin/';			// default path to ImageMagick
-	$ngg_options['useMediaRSS']			= true;							// activate the global Media RSS file
-	$ngg_options['usePicLens']			= true;							// activate the PicLens Link for galleries
+	$ngg_options['useMediaRSS']			= false;						// activate the global Media RSS file
+	$ngg_options['usePicLens']			= false;						// activate the PicLens Link for galleries
 	
 	// Tags / categories
 	$ngg_options['activateTags']		= false;						// append related images
@@ -189,8 +189,10 @@ function ngg_default_options() {
 	$ngg_options['wmColor']				= '000000';  					// Font Color
 	$ngg_options['wmOpaque']			= '100';  						// Font Opaque
 
-	// Image Rotator settings
-	$ngg_options['irURL']				= '';
+	// Image Rotator settings 
+	$ngg_options['enableIR']		    = false;
+    $ngg_options['slideFx']		        = 'fade';
+    $ngg_options['irURL']				= '';
 	$ngg_options['irXHTMLvalid']		= false;
 	$ngg_options['irAudio']				= '';
 	$ngg_options['irWidth']				= 320; 
@@ -214,11 +216,11 @@ function ngg_default_options() {
 	$ngg_options['CSSfile']				= 'nggallery.css';  			// set default css filename
 	
 	// special overrides for WPMU	
-	if (IS_WPMU) {
+	if (is_multisite()) {
 		// get the site options
 		$ngg_wpmu_options = get_site_option('ngg_options');
 		
-		// get the default value during installation
+		// get the default value during first installation
 		if (!is_array($ngg_wpmu_options)) {
 			$ngg_wpmu_options['gallerypath'] = 'wp-content/blogs.dir/%BLOG_ID%/files/';
 			$ngg_wpmu_options['wpmuCSSfile'] = 'nggallery.css';
