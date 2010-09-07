@@ -269,7 +269,7 @@ function nggCreateGallery($picturelist, $galleryID = false, $template = '', $ima
     
     // show slideshow link
     if ($galleryID) {
-        if (($ngg_options['galShowSlide']) AND (NGGALLERY_IREXIST)) {
+        if ($ngg_options['galShowSlide']) {
             $gallery->show_slideshow = true;
             $gallery->slideshow_link = $nggRewrite->get_permalink(array ( 'show' => 'slide') );
             $gallery->slideshow_link_text = nggGallery::i18n($ngg_options['galTextSlide']);
