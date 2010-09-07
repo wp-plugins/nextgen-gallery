@@ -5,7 +5,7 @@ if ( !class_exists('swfobject') ) :
  * 
  * @author Alex Rabe
  * @package NextGEN Gallery
- * @version 0.5
+ * @version 0.6
  * @copyright GNU General Public License Version 2
  * @access public
  * @example http://code.google.com/p/swfobject/
@@ -170,7 +170,7 @@ class swfobject {
 		// do not add the variable if we hit the default setting 	
 		if ( $value == $default )	
 			return;
-			
+		
 		$this->attributes[$key] = $prefix . $value;
 		return;
 	}
@@ -180,8 +180,11 @@ class swfobject {
 		if ( is_array($params) ) {
 			foreach ($params as $key => $value) {
 				if  ( !empty($list) )
-					$list .= ",";	
-				$list .= "\n\t\t" . $key . ' : ' . '"' . $value .'"';
+					$list .= ",";
+				if (false === strrpos($key, '.') )		
+					$list .= "\n\t\t" . $key . ' : ' . '"' . $value .'"';
+				else
+					$list .= "\n\t\t'" . $key . '\' : ' . '"' . $value .'"';	
 			}
 		}
 		$js = "\t" . $name . ' : {' . $list . '}';		
@@ -190,4 +193,5 @@ class swfobject {
 	
 }
 endif;
+
 ?>
