@@ -30,8 +30,8 @@ jQuery.fn.nggSlideshow = function ( args ) {
                 jQuery( img ).bind('load', function() {
                     jQuery( obj ).append( imageResize(this, s.width , s.height) );
                     counter++;
-                    // start cycle after the second image
-                    if (counter == 3)
+                    // start cycle after the third image
+                    if (counter == 3 || stack.length == 0 )
                         startSlideshow();                        
                 });
                 i++;

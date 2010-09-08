@@ -134,6 +134,11 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.6.1 - 08.09.2010 =
+* Bugfix : Script load of swfobject.js failed
+* Bugfix : Show sideshow also with 1 or 2 images
+* Bugfix : Rework null byte check in zip upload
+
 = V1.6.0 - 07.09.2010 =
 * NEW : Wordpress 3.0 Network (Multi-Site) support
 * NEW : Integrate jQuery Cycle as NON-Flash slideshow 

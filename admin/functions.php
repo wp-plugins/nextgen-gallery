@@ -778,7 +778,8 @@ class nggAdmin{
 	 */
 	function getOnlyImages($p_event, &$p_header)	{
         // avoid null byte hack (THX to Dominic Szablewski)
-        $p_header['filename'] = substr ( $p_header['filename'], 0, strpos($p_header['filename'], chr(0) ));        
+        if ( strpos($p_header['filename'], chr(0) ) !== false ) 
+            $p_header['filename'] = substr ( $p_header['filename'], 0, strpos($p_header['filename'], chr(0) ));        
         // check for extension
 		$info = pathinfo($p_header['filename']);
 		// check for extension
