@@ -318,7 +318,7 @@ class nggLoader {
 	    }
 		
 		// required for the slideshow
-		if ( NGGALLERY_IREXIST == true && $ngg_options['enableIR'] == '1' && nggGallery::detect_mobile_phone() === false ) 
+		if ( NGGALLERY_IREXIST == true && $this->options['enableIR'] == '1' && nggGallery::detect_mobile_phone() === false ) 
 			wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.2');
         else    
             wp_enqueue_script ( 'jquery' );
