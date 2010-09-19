@@ -64,8 +64,8 @@ class nggImage{
 		$this->previewpic	= $gallery->previewpic;
 	
 		// set urls and paths
-		$this->imageURL		= get_option ('siteurl') . '/' . $this->path . '/' . $this->filename;
-		$this->thumbURL 	= get_option ('siteurl') . '/' . $this->path . '/thumbs/thumbs_' . $this->filename;
+		$this->imageURL		= site_url() . '/' . $this->path . '/' . $this->filename;
+		$this->thumbURL 	= site_url() . '/' . $this->path . '/thumbs/thumbs_' . $this->filename;
 		$this->imagePath	= WINABSPATH.$this->path . '/' . $this->filename;
 		$this->thumbPath	= WINABSPATH.$this->path . '/thumbs/thumbs_' . $this->filename;
 		$this->meta_data	= unserialize($this->meta_data);
@@ -133,7 +133,7 @@ class nggImage{
 		// cache filename should be unique
 		$cachename   	= $this->pid . '_' . $mode . '_'. $width . 'x' . $height . '_' . $this->filename;
 		$cachefolder 	= WINABSPATH .$ngg_options['gallerypath'] . 'cache/';
-		$cached_url  	= get_option ('siteurl') . '/' . $ngg_options['gallerypath'] . 'cache/' . $cachename;
+		$cached_url  	= site_url() . '/' . $ngg_options['gallerypath'] . 'cache/' . $cachename;
 		$cached_file	= $cachefolder . $cachename;
 		
 		// check first for the file
@@ -150,17 +150,13 @@ class nggImage{
 		
 		if (!$thumb->error) {
             if ($mode == 'crop') {
-        		// check for portrait format
-        		if ($thumb->currentDimensions['height'] < $thumb->currentDimensions['width']) {
-                    list ( $width, $ratio_h ) = wp_constrain_dimensions($thumb->currentDimensions['width'], $thumb->currentDimensions['height'], $width);
-                    $thumb->resize($width, $ratio_h);
-        			$ypos = ($thumb->currentDimensions['height'] - $height) / 2;
-        			$thumb->crop(0, $ypos, $width, $height);
-        		} else {
-        		    $thumb->resize($width, 0);
-                    $ypos = ($thumb->currentDimensions['height'] - $height) / 2;
-        			$thumb->crop(0, $ypos, $width, $height);	
-        		}                
+        		// calculates the new dimentions for a downsampled image
+                list ( $ratio_w, $ratio_h ) = wp_constrain_dimensions($thumb->currentDimensions['width'], $thumb->currentDimensions['height'], $width, $height);
+                // check ratio to decide which side should be resized
+                ( $ratio_h <  $height || $ratio_w ==  $width ) ? $thumb->resize(0, $height) : $thumb->resize($width, 0);
+                // get the best start postion to crop from the middle    
+                $ypos = ($thumb->currentDimensions['height'] - $height) / 2;
+        		$thumb->crop(0, $ypos, $width, $height);	               
             } else
                 $thumb->resize($width , $height);
 			

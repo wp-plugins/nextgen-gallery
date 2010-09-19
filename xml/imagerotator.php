@@ -15,7 +15,7 @@ if ( !defined('ABSPATH') )
 global $wpdb;
 
 $ngg_options = get_option ('ngg_options');
-$siteurl	 = get_option ('siteurl');
+$siteurl	 = site_url();
 
 // get the gallery id
 $galleryID = (int) $_GET['gid'];

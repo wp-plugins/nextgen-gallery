@@ -95,13 +95,14 @@ function ngg_upgrade() {
             // add link from album to a page
             ngg_maybe_add_column( $wpdb->nggalbum, 'pageid', "BIGINT(20) DEFAULT '0' NOT NULL AFTER sortorder");
         }   
-		
-        // better to flush rewrite rules after upgrades
-        $nggRewrite->flush();
-        
+      
 		// update now the database
 		update_option( "ngg_db_version", NGG_DBVERSION );
 		echo __('finished', 'nggallery') . "<br />\n";
+
+        // better to flush rewrite rules after upgrades
+        $nggRewrite->flush();
+
 		$wpdb->hide_errors();
 		
 		// *** From here we start file operation which could failed sometimes,

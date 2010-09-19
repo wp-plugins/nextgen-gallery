@@ -487,7 +487,7 @@ class nggOptions {
         
         // take the first image as sample
         $imageID  = $wpdb->get_var("SELECT MIN(pid) FROM $wpdb->nggpictures");
-        $imageURL = ($imageID) ? $imageURL = '<img src="'. get_option ('siteurl') . '/' . 'index.php?callback=image&amp;pid=' . intval ($imageID) . '&amp;mode=watermark&amp;width=300&amp;height=250" />' : '';
+        $imageURL = ($imageID) ? $imageURL = '<img src="'. site_url() . '/' . 'index.php?callback=image&amp;pid=' . intval ($imageID) . '&amp;mode=watermark&amp;width=300&amp;height=250" />' : '';
 
 	?>
 	<!-- Watermark settings -->

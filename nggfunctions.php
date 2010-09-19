@@ -47,7 +47,7 @@ function nggShowSlideshow($galleryID, $width, $height) {
     $swfobject->add_attributes('name', 'so' . $galleryID);
 
     // adding the flash parameter   
-    $swfobject->add_flashvars( 'file', urlencode ( trailingslashit ( get_option ('siteurl') ) . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
+    $swfobject->add_flashvars( 'file', urlencode ( trailingslashit ( site_url() ) . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
     $swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'true', 'bool');
     // option has oposite meaning : true should switch to next image
     $swfobject->add_flashvars( 'linkfromdisplay', !$ngg_options['irLinkfromdisplay'], 'false', 'bool');
@@ -121,16 +121,14 @@ function nggShow_JS_Slideshow($galleryID, $width, $height, $class = 'ngg-slidesh
     $out .= "\n". '</div>';
     $out .= '</div>'."\n";
     $out .= "\n".'<script type="text/javascript" defer="defer">';
-    $out .= "\n".'jQuery.getScript( "'  . NGGALLERY_URLPATH . 'js/jquery.cycle.all.min.js' . '", function() { ';
-    $out .= "\n".'jQuery.getScript( "'  . NGGALLERY_URLPATH . 'js/ngg.slideshow.min.js' . '", function() { jQuery("#' . $anchor . '").nggSlideshow( {' .
+    $out .= "\n" . 'jQuery("#' . $anchor . '").nggSlideshow( {' .
             'id: '      . $galleryID    . ',' . 
             'fx:"'      . $ngg_options['slideFx'] . '",' .
             'width:'    . $width        . ',' . 
             'height:'   . $height       . ',' .
-            'domain: "' . trailingslashit ( get_option ('siteurl') ) . '",' .
+            'domain: "' . trailingslashit ( site_url() ) . '",' .
             'timeout:'  . $ngg_options['irRotatetime'] * 1000 .
-            '}); } );';
-    $out .= "\n".'} );';
+            '});';
     $out .= "\n".'</script>';
 
     return $out;
@@ -224,6 +222,8 @@ function nggShowGallery( $galleryID, $template = '', $images = false ) {
 function nggCreateGallery($picturelist, $galleryID = false, $template = '', $images = false) {
     global $nggRewrite;
 
+    require_once (dirname (__FILE__) . '/lib/media-rss.php');
+    
     $ngg_options = nggGallery::get_option('ngg_options');
 
     //the shortcode parameter will override global settings, TODO: rewrite this to a class
@@ -534,12 +534,12 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
         // add the file name and the link 
         if ($galleries[$key]->previewpic  != 0) {
             $galleries[$key]->previewname = $albumPreview[$galleries[$key]->previewpic]->filename;
-            $galleries[$key]->previewurl  = get_option ('siteurl').'/' . $galleries[$key]->path . '/thumbs/thumbs_' . $albumPreview[$galleries[$key]->previewpic]->filename;
+            $galleries[$key]->previewurl  = site_url().'/' . $galleries[$key]->path . '/thumbs/thumbs_' . $albumPreview[$galleries[$key]->previewpic]->filename;
         } else {
             $first_image = $wpdb->get_row('SELECT * FROM '. $wpdb->nggpictures .' WHERE exclude != 1 AND galleryid = '. $key .' ORDER by pid DESC limit 0,1');
             $galleries[$key]->previewpic  = $first_image->pid;
             $galleries[$key]->previewname = $first_image->filename;
-            $galleries[$key]->previewurl  = get_option ('siteurl') . '/' . $galleries[$key]->path . '/thumbs/thumbs_' . $first_image->filename;
+            $galleries[$key]->previewurl  = site_url() . '/' . $galleries[$key]->path . '/thumbs/thumbs_' . $first_image->filename;
         }
 
         // choose between variable and page link
@@ -774,7 +774,7 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
     
     // if we didn't use a cached image then we take the on-the-fly mode 
     if (!$picture->thumbnailURL) 
-        $picture->thumbnailURL = get_option ('siteurl') . '/' . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=' . $mode;
+        $picture->thumbnailURL = site_url() . '/' . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=' . $mode;
 
     // add more variables for render output
     $picture->imageURL = ( empty($link) ) ? $picture->imageURL : $link;
@@ -931,7 +931,7 @@ function nggShowAlbumTags($taglist) {
     foreach ($picturelist as $key => $picture) {
         $picturelist[$key]->previewpic  = $picture->pid;
         $picturelist[$key]->previewname = $picture->filename;
-        $picturelist[$key]->previewurl  = get_option ('siteurl') . '/' . $picture->path . '/thumbs/thumbs_' . $picture->filename;
+        $picturelist[$key]->previewurl  = site_url() . '/' . $picture->path . '/thumbs/thumbs_' . $picture->filename;
         $picturelist[$key]->counter     = $picture->count;
         $picturelist[$key]->title       = $picture->name;
         $picturelist[$key]->pagelink    = $nggRewrite->get_permalink( array('gallerytag'=>$picture->slug) );
@@ -1009,7 +1009,7 @@ function the_related_images($type = 'tags', $maxNumbers = 7) {
 }
 
 /**
- * nggShowRandomRecent($type, $maxImages,$template) - return recent or random images
+ * nggShowRandomRecent($type, $maxImages, $template, $galleryId) - return recent or random images
  * 
  * @access public
  * @param string $type 'id' (for latest addition to DB), 'date' (for image with the latest date), 'sort' (for image sorted by user order) or 'random'

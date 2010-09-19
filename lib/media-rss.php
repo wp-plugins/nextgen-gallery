@@ -65,7 +65,7 @@ class nggMediaRss {
 		
 		$title = stripslashes(get_option('blogname'));
 		$description = stripslashes(get_option('blogdescription'));
-		$link = get_option('siteurl');
+		$link = site_url();
 		$prev_link = ($page > 0) ? nggMediaRss::get_last_pictures_mrss_url($page-1, $show) : '';
 		$next_link = count($images)!=0 ? nggMediaRss::get_last_pictures_mrss_url($page+1, $show) : '';
 		
@@ -218,7 +218,7 @@ class nggMediaRss {
 		$out .= $indent . "\t<media:description><![CDATA[" . nggGallery::i18n($desc) . "]]></media:description>\n";
 		$out .= $indent . "\t<media:thumbnail url='" . esc_url($image->thumbURL) . "' width='" . $thumbwidth . "' height='" . $thumbheight . "' />\n";
 		$out .= $indent . "\t<media:keywords><![CDATA[" . nggGallery::i18n($tag_names) . "]]></media:keywords>\n";
-		$out .= $indent . "\t<media:copyright><![CDATA[Copyright (c) " . get_option("blogname") . " (" . get_option("siteurl") . ")]]></media:copyright>\n";
+		$out .= $indent . "\t<media:copyright><![CDATA[Copyright (c) " . get_option("blogname") . " (" . site_url() . ")]]></media:copyright>\n";
 		$out .= $indent . "</item>\n";
 
 		return $out;
@@ -226,7 +226,7 @@ class nggMediaRss {
 	
 	function get_permalink($page_id) {		 
 		if ($page_id == 0)	
-			$permalink = get_option('siteurl');		 
+			$permalink = site_url();		 
 		else 
 			$permalink = get_permalink($page_id);
 				 

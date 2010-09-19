@@ -474,7 +474,7 @@ function ngg_gd_yesNo( $bool ){
  */
 function ngg_get_serverinfo() {
 
-	global $wpdb;
+	global $wpdb, $ngg;
 	// Get MYSQL Version
 	$sqlversion = $wpdb->get_var("SELECT VERSION() AS version");
 	// GET SQL Mode
@@ -500,7 +500,7 @@ function ngg_get_serverinfo() {
 	if(ini_get('max_execution_time')) $max_execute = ini_get('max_execution_time');
 	else $max_execute = __('N/A', 'nggallery');
 	// Get PHP Memory Limit 
-	if(ini_get('memory_limit')) $memory_limit = ini_get('memory_limit');
+	if(ini_get('memory_limit')) $memory_limit = $ngg->memory_limit . 'M';
 	else $memory_limit = __('N/A', 'nggallery');
 	// Get actual memory_get_usage
 	if (function_exists('memory_get_usage')) $memory_usage = round(memory_get_usage() / 1024 / 1024, 2) . __(' MByte', 'nggallery');

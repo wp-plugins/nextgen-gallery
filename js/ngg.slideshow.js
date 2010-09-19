@@ -5,7 +5,7 @@ jQuery.fn.nggSlideshow = function ( args ) {
                      height: 240,
                      fx: 	'fade',
                      domain: '',
-                     timeout: 5000, };
+                     timeout: 5000 };
                      
     var s = jQuery.extend( {}, defaults, args);
     

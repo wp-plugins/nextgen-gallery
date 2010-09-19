@@ -34,7 +34,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.6.1';
+	var $version     = '1.6.2';
 	var $dbversion   = '1.6.0';
 	var $minium_WP   = '3.0';
 	var $updateURL   = 'http://nextgen.boelinger.com/version.php';
@@ -94,6 +94,9 @@ class nggLoader {
 		// All credits to the tranlator 
 		$this->translator  = '<p class="hint">'. __('<strong>Translation by : </strong><a target="_blank" href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/">See here</a>', 'nggallery') . '</p>';
 		$this->translator .= '<p class="hint">'. __('<strong>This translation is not yet updated for Version 1.6.0</strong>. If you would like to help with translation, download the current po from the plugin folder and read <a href="http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/">here</a> how you can translate the plugin.', 'nggallery') . '</p>'; 
+
+        // Check for upgrade
+        $this->check_for_upgrade();
 				
 		// Content Filters
 		add_filter('ngg_gallery_name', 'sanitize_title');
@@ -179,10 +182,12 @@ class nggLoader {
 	}
 	
 	function check_memory_limit() {
-		
-		$memory_limit = (int) substr( ini_get('memory_limit'), 0, -1);
+
+        // get the real memory limit before some increase it
+		$this->memory_limit = (int) substr( ini_get('memory_limit'), 0, -1);
+        
 		//This works only with enough memory, 16MB is silly, wordpress requires already 16MB :-)
-		if ( ($memory_limit != 0) && ($memory_limit < 16 ) ) {
+		if ( ($this->memory_limit != 0) && ($this->memory_limit < 16 ) ) {
 			add_action(
 				'admin_notices', 
 				create_function(
@@ -195,6 +200,22 @@ class nggLoader {
 		
 		return true;
 		
+	}
+
+	function check_for_upgrade() {
+
+		// Inform about a database upgrade
+		if( get_option( 'ngg_db_version' ) != NGG_DBVERSION ) {
+			add_action(
+				'admin_notices', 
+				create_function(
+					'', 
+					'echo \'<div id="message" class="error"><p><strong>' . __('Please update the database of NextGEN Gallery.', 'nggallery') . ' <a href="admin.php?page=nextgen-gallery">' . __('Click here to proceed.', 'nggallery') . '</a>' . '</strong></p></div>\';'
+				)
+			);
+		}
+        
+		return;		
 	}
 	
 	function define_tables() {		
@@ -258,6 +279,7 @@ class nggLoader {
 		require_once (dirname (__FILE__) . '/lib/core.php');					//  94.840
 		require_once (dirname (__FILE__) . '/lib/ngg-db.php');					// 132.400
 		require_once (dirname (__FILE__) . '/lib/image.php');					//  59.424
+		require_once (dirname (__FILE__) . '/lib/tags.php');				    // 117.136
 		require_once (dirname (__FILE__) . '/lib/post-thumbnail.php');			//  n.a.
 		require_once (dirname (__FILE__) . '/widgets/widgets.php');				// 298.792
         require_once (dirname (__FILE__) . '/lib/multisite.php');
@@ -276,7 +298,6 @@ class nggLoader {
 			require_once (dirname (__FILE__) . '/admin/ajax.php');
 		else {
 			require_once (dirname (__FILE__) . '/lib/meta.php');				// 131.856
-			require_once (dirname (__FILE__) . '/lib/tags.php');				// 117.136
 			require_once (dirname (__FILE__) . '/lib/media-rss.php');			//  82.768
 			require_once (dirname (__FILE__) . '/lib/rewrite.php');				//  71.936
 			include_once (dirname (__FILE__) . '/admin/tinymce/tinymce.php'); 	//  22.408
@@ -298,6 +319,10 @@ class nggLoader {
 	
 	function load_scripts() {
 		
+        // if you don't want that NGG load the scripts, add this constant
+        if ( defined('NGG_SKIP_LOAD_SCRIPTS') )
+            return;
+        
 		//	activate Thickbox
 		if ($this->options['thumbEffect'] == 'thickbox') {
 			wp_enqueue_script( 'thickbox' );
@@ -320,15 +345,18 @@ class nggLoader {
 		// required for the slideshow
 		if ( NGGALLERY_IREXIST == true && $this->options['enableIR'] == '1' && nggGallery::detect_mobile_phone() === false ) 
 			wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.2');
-        else    
-            wp_enqueue_script ( 'jquery' );
+        else {
+            wp_register_script('jquery-cycle', NGGALLERY_URLPATH .'js/jquery.cycle.all.min.js', array('jquery'), '2.88');
+            wp_enqueue_script('ngg-slideshow', NGGALLERY_URLPATH .'js/ngg.slideshow.min.js', array('jquery-cycle'), '1.01'); 
+                    
+        }   
             
 		// Load AJAX navigation script, works only with shutter script as we need to add the listener
 		if ( $this->options['galAjaxNav'] ) { 
 			if ( ($this->options['thumbEffect'] == "shutter") || function_exists('srel_makeshutter') ) {
 				wp_enqueue_script ( 'ngg_script', NGGALLERY_URLPATH . 'js/ngg.js', array('jquery'), '2.0');
 				wp_localize_script( 'ngg_script', 'ngg_ajax', array('path'		=> NGGALLERY_URLPATH,
-                                                                    'callback'  => get_option ('siteurl') . '/' . 'index.php?callback=ngg-ajax',
+                                                                    'callback'  => site_url() . '/' . 'index.php?callback=ngg-ajax',
 																	'loading'	=> __('loading', 'nggallery'),
 				) );
 			}
@@ -338,7 +366,7 @@ class nggLoader {
 	
 	function load_thickbox_images() {
 		// WP core reference relative to the images. Bad idea
-		echo "\n" . '<script type="text/javascript">tb_pathToImage = "' . get_option('siteurl') . '/wp-includes/js/thickbox/loadingAnimation.gif";tb_closeImage = "' . get_option('siteurl') . '/wp-includes/js/thickbox/tb-close.png";</script>'. "\n";			
+		echo "\n" . '<script type="text/javascript">tb_pathToImage = "' . site_url() . '/wp-includes/js/thickbox/loadingAnimation.gif";tb_closeImage = "' . site_url() . '/wp-includes/js/thickbox/tb-close.png";</script>'. "\n";			
 	}
 	
 	function load_styles() {

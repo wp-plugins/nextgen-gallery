@@ -25,10 +25,6 @@ class nggSlideshowWidget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		extract( $args );
-
-		// If the Imagerotator didn't exist, skip the output
-		if ( NGGALLERY_IREXIST == false ) 	 
-			return;
 			
 		$title = apply_filters('widget_title', empty( $instance['title'] ) ? __('Slideshow', 'nggallery') : $instance['title'], $instance, $this->id_base);
 
@@ -55,7 +51,7 @@ class nggSlideshowWidget extends WP_Widget {
 		$ngg_options = get_option('ngg_options');
 
         //Redirect all calls to the JavaScript slideshow if wanted
-        if ( $ngg_options['enableIR'] !== '1' || nggGallery::detect_mobile_phone() === true )
+        if ( $ngg_options['enableIR'] !== '1' || nggGallery::detect_mobile_phone() === true || NGGALLERY_IREXIST == false )
             return nggShow_JS_Slideshow($galleryID, $irWidth, $irHeight, 'ngg-widget-slideshow');
 	
 		if (empty($irWidth) ) $irWidth = (int) $ngg_options['irWidth'];
@@ -71,7 +67,7 @@ class nggSlideshowWidget extends WP_Widget {
 		$swfobject->add_attributes('styleclass', 'slideshow-widget');
 	
 		// adding the flash parameter	
-		$swfobject->add_flashvars( 'file', urlencode( get_option ('siteurl') . '/' . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
+		$swfobject->add_flashvars( 'file', urlencode( site_url() . '/' . 'index.php?callback=imagerotator&gid=' . $galleryID ) );
 		$swfobject->add_flashvars( 'shownavigation', 'false', 'true', 'bool');
 		$swfobject->add_flashvars( 'shuffle', $ngg_options['irShuffle'], 'true', 'bool');
 		$swfobject->add_flashvars( 'showicons', $ngg_options['irShowicons'], 'true', 'bool');
@@ -329,7 +325,7 @@ class nggWidget extends WP_Widget {
 				$instance['show'] = ( $instance['show'] == 'orginal' ) ? 'original' : $instance['show'];
 				
 				if ( $instance['show'] == 'original' )
-					$out .= '<img src="' . get_option ('siteurl') . '/' . 'index.php?callback=image&amp;pid='.$image->pid.'&amp;width='.$instance['width'].'&amp;height='.$instance['height']. '" title="'.$alttext.'" alt="'.$alttext.'" />';
+					$out .= '<img src="' . site_url() . '/' . 'index.php?callback=image&amp;pid='.$image->pid.'&amp;width='.$instance['width'].'&amp;height='.$instance['height']. '" title="'.$alttext.'" alt="'.$alttext.'" />';
 				else	
 					$out .= '<img src="'.$image->thumbURL.'" width="'.$instance['width'].'" height="'.$instance['height'].'" title="'.$alttext.'" alt="'.$alttext.'" />';			
 				

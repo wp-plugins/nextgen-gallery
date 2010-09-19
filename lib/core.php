@@ -43,7 +43,7 @@ class nggGallery {
 		}
 		
 		// set gallery url
-		$folder_url 	= get_option ('siteurl') . '/' . $picturepath.nggGallery::get_thumbnail_folder($picturepath, FALSE);
+		$folder_url 	= site_url() . '/' . $picturepath.nggGallery::get_thumbnail_folder($picturepath, FALSE);
 		$thumbnailURL	= $folder_url . 'thumbs_' . $fileName;
 		
 		return $thumbnailURL;
@@ -68,7 +68,7 @@ class nggGallery {
 		}
 		
 		// set gallery url
-		$imageURL 	= get_option ('siteurl') . '/' . $picturepath . '/' . $fileName;
+		$imageURL 	= site_url() . '/' . $picturepath . '/' . $fileName;
 		
 		return $imageURL;	
 	}
@@ -304,8 +304,19 @@ class nggGallery {
 		
 	}
 	
+	/**
+	 * Look for the stylesheet in the theme folder
+	 * 
+	 * @return string path to stylesheet
+	 */
 	function get_theme_css_file() {
-		if ( file_exists (STYLESHEETPATH . '/nggallery.css') )
+	   
+  		// allow other plugins to include a stylesheet
+		$stylesheet = apply_filters( 'ngg_load_stylesheet', false );
+        
+		if ( ( $stylesheet != false ) &&  file_exists ($stylesheet) )
+			return ( $stylesheet );
+		elseif ( file_exists (STYLESHEETPATH . '/nggallery.css') )
 			return get_stylesheet_directory_uri() . '/nggallery.css';
 		else
 			return false;		

@@ -134,6 +134,15 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.6.2 - 19.09.2010 =
+* NEW : Added constant NGG_SKIP_LOAD_SCRIPTS to avoid script load
+* Bugfix : Load Tags library with core files
+* Bugfix : Slideshow script failed in IE7, load script now in header
+* Bugfix : Load slideshow widget always
+* Changed : New admin notice for database upgrade
+* Changed : Rework crop feature for featured images
+* Changed : Use site_url() instead get_option ('siteurl'), required for SSL support
+
 = V1.6.1 - 08.09.2010 =
 * Bugfix : Script load of swfobject.js failed
 * Bugfix : Show sideshow also with 1 or 2 images
