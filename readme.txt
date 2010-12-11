@@ -134,6 +134,23 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.7.0 - 11.12.2010 =
+* NEW : Publish a new post direct from the gallery admin page
+* NEW : Added filter hook 'ngg_get_image_metadata' to add more exif/iptc information
+* NEW : Adding Autocomplete field to TinyMCE Popup and Album page
+* NEW : More methods for XMLRPC interface
+* Changed : New hooks for gallery table (THX to Alexander Schneider)
+* Changed : Introduce jQuery dialog as new UI element
+* Changed : Call TinyMCE window via admin-ajax
+* Bugfix : Better support for SSL blogs
+* Bugfix : Install/Upgrade failed when table prefix contain captial letters
+* Bugfix : Fix validation issues in Media-RSS
+* Bugifx : Empty tags in XMP Meta causes PHP error
+* Bugifx : Rework load mechanism for slideshow
+* Bugfix : Copy meta data when image is copied
+* Bugfix : Icon Support for Ozh' Admin Drop Down Menu
+* Bugfix : Use correct sort order in slideshow
+
 = V1.6.2 - 19.09.2010 =
 * NEW : Added constant NGG_SKIP_LOAD_SCRIPTS to avoid script load
 * Bugfix : Load Tags library with core files

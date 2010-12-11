@@ -323,20 +323,24 @@ class nggMeta{
 						if ($list_element == false)
 							array_pop($stack);
 						$list_element = true;
-						// save it in our temp array
-						$list_array[] = $val['value']; 
+                        // do not parse empty tags
+                        if ( empty($val['value']) ) continue;                             
+					    // save it in our temp array
+   						$list_array[] = $val['value']; 
 						// in the case it's a list element we seralize it
 						$value = implode(",", $list_array);
 						$this->setArrayValue($xmlarray, $stack, $value);
 			      	} else {
 			      		array_push($stack, $val['tag']);
-			      		$this->setArrayValue($xmlarray, $stack, $val['value']);
+                        // do not parse empty tags
+                        if ( !empty($val['value']) )
+                            $this->setArrayValue($xmlarray, $stack, $val['value']);
 			      		array_pop($stack);
 			      	}
 			    }
 			    
 			} // foreach
-			
+
 			// cut off the useless tags
 			$xmlarray = $xmlarray['x:xmpmeta']['rdf:RDF']['rdf:Description'];
 			  
@@ -381,8 +385,7 @@ class nggMeta{
 	function setArrayValue(&$array, $stack, $value) {
 		if ($stack) {
 			$key = array_shift($stack);
-			//TODO:Review this, reports sometimes a error "Fatal error: Only variables can be passed by reference" (PHP 5.2.6)
-	    	$this->setArrayValue($array[$key], $stack, $value);
+            $this->setArrayValue($array[$key], $stack, $value);
 	    	return $array;
 	  	} else {
 	    	$array = $value;

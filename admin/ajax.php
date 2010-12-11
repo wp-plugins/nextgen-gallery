@@ -297,3 +297,70 @@ function ngg_ajax_file_browser() {
     
     die();	
 }
+
+add_action('wp_ajax_ngg_tinymce', 'ngg_ajax_tinymce');
+/**
+ * Call TinyMCE window content via admin-ajax
+ * 
+ * @since 1.7.0 
+ * @return html content
+ */
+function ngg_ajax_tinymce() {
+
+    // check for rights
+    if ( !current_user_can('edit_pages') && !current_user_can('edit_posts') ) 
+    	die(__("You are not allowed to be here"));
+        	
+   	include_once( dirname( dirname(__FILE__) ) . '/admin/tinymce/window.php');
+    
+    die();	
+}
+
+/**
+ * This rebuild the slugs for albums, galleries and images as ajax routine, max 50 elements per request
+ * 
+ * @since 1.7.0
+ * @return string '1'
+ */
+function ngg_ajax_rebuild_unique_slugs() {
+    global $wpdb;
+    
+	$action = $_POST['_action'];
+    $offset = (int) $_POST['offset'];
+    
+    switch ($action) {
+        case 'images':
+        	$images = $wpdb->get_results("SELECT * FROM $wpdb->nggpictures ORDER BY pid ASC LIMIT $offset, 50", OBJECT_K);
+        	if ( is_array($images) ) {
+                foreach ($images as $image) {
+            		//slug must be unique, we use the alttext for that
+                    $image->slug = nggdb::get_unique_slug( sanitize_title( $image->alttext ), 'image' );
+                    $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggpictures SET image_slug= '%s' WHERE pid = '%d'" , $image->slug, $image->pid ) );
+                }
+            }
+        break;
+        case 'gallery':
+        	$galleries = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY gid ASC LIMIT $offset, 50", OBJECT_K);
+        	if ( is_array($galleries) ) {
+                foreach ($galleries as $gallery) {
+            		//slug must be unique, we use the title for that
+                    $gallery->slug = nggdb::get_unique_slug( sanitize_title( $gallery->title ), 'gallery' );
+                    $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggallery SET slug= '%s' WHERE gid = '%d'" , $gallery->slug, $gallery->gid ) );
+                }
+            } 
+        break;
+        case 'album':
+        	$albumlist = $wpdb->get_results("SELECT * FROM $wpdb->nggalbum ORDER BY id ASC LIMIT $offset, 50", OBJECT_K);
+        	if ( is_array($albumlist) ) {
+                foreach ($albumlist as $album) {
+            		//slug must be unique, we use the name for that
+                    $album->slug = nggdb::get_unique_slug( sanitize_title( $album->name ), 'album' );
+                    $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET slug= '%s' WHERE id = '%d'" , $album->slug, $album->id ) );
+                }
+            }         
+        break;
+    }
+
+	die(1);
+}
+add_action( 'wp_ajax_ngg_rebuild_unique_slugs', 'ngg_ajax_rebuild_unique_slugs' );

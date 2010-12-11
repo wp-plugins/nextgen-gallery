@@ -95,9 +95,8 @@ class nggManageAlbum {
 			if (!nggGallery::current_user_can( 'NextGEN Add/Delete album' ))
 				wp_die(__('Cheatin&#8217; uh?'));			
 			
-			$newalbum = esc_attr($_POST['newalbum']);
-			$result = $wpdb->query("INSERT INTO $wpdb->nggalbum (name, sortorder) VALUES ('$newalbum','0')");
-			$this->currentID = (int) $wpdb->insert_id;
+			$result = nggdb::add_album( $_POST['newalbum'] );
+            $this->currentID = ($result) ? $result : 0 ;
 			
 			if ($result) 
 				nggGallery::show_message(__('Update Successfully','nggallery'));
@@ -109,7 +108,7 @@ class nggManageAlbum {
             
 			// get variable galleryContainer 
 			parse_str($_POST['sortorder']); 
-			if (is_array($gid)){ 
+			if ( is_array($gid) ){ 
 				$serial_sort = serialize($gid); 
 				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '$serial_sort' WHERE id = $this->currentID ");
 			} else {
@@ -125,6 +124,9 @@ class nggManageAlbum {
 				wp_die(__('Cheatin&#8217; uh?'));
 				
 			$result = nggdb::delete_album( $this->currentID );
+            
+            $this->currentID = 0;
+            
 			if ($result) 
 				nggGallery::show_message(__('Album deleted','nggallery'));
 		}
@@ -132,19 +134,22 @@ class nggManageAlbum {
 	}
 
 	function update_album() {
-		global $wpdb;
+		global $wpdb, $nggdb;
 		
 		check_admin_referer('ngg_thickbox_form');
 		
 		if (!nggGallery::current_user_can( 'NextGEN Edit album settings' )) 
 			wp_die(__('Cheatin&#8217; uh?'));
 		
-		$name = esc_attr( $_POST['album_name'] );
-		$desc = esc_attr( $_POST['album_desc'] );
+		$name = $_POST['album_name'];
+		$desc = $_POST['album_desc'];
 		$prev = (int) $_POST['previewpic'];
 		$link = (int) $_POST['pageid'];
-		
-		$result = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET name= '%s', albumdesc= '%s', previewpic= %d, pageid= %d WHERE id = '$this->currentID'" , $name, $desc, $prev, $link ) );
+        
+		// slug must be unique, we use the title for that
+        $slug = nggdb::get_unique_slug( sanitize_title( $name ), 'album' );
+        
+		$result = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET slug= '%s', name= '%s', albumdesc= '%s', previewpic= %d, pageid= %d WHERE id = '%d'" , $slug, $name, $desc, $prev, $link, $this->currentID ) );
         
 		//hook for other plugin to update the fields
 		do_action('ngg_update_album', $this->currentID, $_POST);        
@@ -167,7 +172,10 @@ class nggManageAlbum {
 jQuery(document).ready(
 	function()
 	{
-
+        jQuery("#previewpic").nggAutocomplete( {
+            type: 'image',domain: "<?php echo site_url(); ?>/"
+        });
+        
 		jQuery('#selectContainer').sortable( {
 			items: '.groupItem',
 			placeholder: 'sort_placeholder',
@@ -254,7 +262,13 @@ function ngg_serialize(s)
 }
 
 function showDialog() {
-	tb_show("", "#TB_inline?width=640&height=305&inlineId=editalbum&modal=true", false);
+	jQuery( "#editalbum").dialog({
+		width: 640,
+        resizable : false,
+		modal: true,
+        title: '<?php _e('Edit Album', 'nggallery'); ?>'        
+	});
+    jQuery('#editalbum .dialog-cancel').click(function() { jQuery( "#editalbum" ).dialog("close"); });
 }
 
 </script>
@@ -274,7 +288,7 @@ function showDialog() {
 						if( is_array($this->albums) ) {
 							foreach($this->albums as $album) {
 								$selected = ($this->currentID == $album->id) ? 'selected="selected" ' : '';
-								echo '<option value="' . $album->id . '" ' . $selected . '>' . $album->name . '</option>'."\n";
+								echo '<option value="' . $album->id . '" ' . $selected . '>' . $album->id . ' - ' . $album->name . '</option>'."\n";
 							}
 						}
 					?>
@@ -407,15 +421,16 @@ function showDialog() {
 	  	<tr>
 	    	<th>
 	    		<?php _e('Select a preview image:', 'nggallery'); ?><br />
-					<select name="previewpic" style="width:95%" >
+					<select id="previewpic" name="previewpic" style="width:95%" >
+                        <?php if ($album->previewpic == 0) ?>
 		                <option value="0"><?php _e('No picture', 'nggallery'); ?></option>
 						<?php
-							$picturelist = $wpdb->get_results("SELECT t.*, tt.* FROM $wpdb->nggallery AS t INNER JOIN $wpdb->nggpictures AS tt WHERE tt.pid=t.previewpic ORDER by tt.galleryid");
-							if( is_array($picturelist) ) {
-								foreach($picturelist as $picture) {
-									echo '<option value="' . $picture->pid . '"'. (($picture->pid == $album->previewpic) ? ' selected="selected"' : '') . ' >'. $picture->pid . ' - ' . ( empty($picture->name) ? $picture->filename : $picture->name ) .' </option>'."\n";
-								}
-							}
+                            if ($album->previewpic == 0)
+                                echo '<option value="0" selected="selected">' . __('No picture', 'nggallery') . '</option>';
+                            else {
+                                $picture = nggdb::find_image($album->previewpic);
+                                echo '<option value="' . $picture->pid . '" selected="selected" >'. $picture->pid . ' - ' . ( empty($picture->alltext) ? $picture->filename : $picture->alltext ) .' </option>'."\n";
+                            }
 						?>
 					</select>
 	    	</th>
@@ -439,7 +454,7 @@ function showDialog() {
 	    	<td class="submit">
 	    		<input type="submit" class="button-primary" name="update_album" value="<?php _e('OK', 'nggallery'); ?>" />
 	    		&nbsp;
-	    		<input class="button-secondary" type="reset" value="<?php _e('Cancel', 'nggallery'); ?>" onclick="tb_remove()"/>
+	    		<input class="button-secondary dialog-cancel" type="reset" value="<?php _e('Cancel', 'nggallery'); ?>"/>
 	    	</td>
 		</tr>
 	</table>
@@ -526,6 +541,7 @@ function showDialog() {
 							<p><strong>' . __('Name', 'nggallery') . ' : </strong>' . nggGallery::i18n( $obj['name'] ) . '</p>
 							<p><strong>' . __('Title', 'nggallery') . ' : </strong>' . nggGallery::i18n( $obj['title'] ) . '</p>
 							<p><strong>' . __('Page', 'nggallery'). ' : </strong>' . nggGallery::i18n( $obj['pagenname'] ) . '</p>
+							' . apply_filters('ngg_display_album_item_content', '', $obj['id']) . '
 						</div>
 				</div>
 			   </div>'; 
