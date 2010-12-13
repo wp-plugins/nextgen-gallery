@@ -603,10 +603,10 @@ class nggdb {
 
         // slug must be unique, we use the alttext for that        
         $slug = nggdb::get_unique_slug( sanitize_title( $alttext ), 'image' );
-			
+
 		// Add the image
-		if ( false === $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggpictures (slug, galleryid, filename, description, alttext, meta_data, post_id, imagedate, exclude, sortorder) 
-													 VALUES (%d, %d, %s, %s, %s, %s, %d, %s, %d, %d)", $slug, $id, $filename, $description, $alttext, $meta_data, $post_id, $imagedate, $exclude, $sortorder ) ) ) {
+		if ( false === $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggpictures (image_slug, galleryid, filename, description, alttext, meta_data, post_id, imagedate, exclude, sortorder) 
+													 VALUES (%s, %d, %s, %s, %s, %s, %d, %s, %d, %d)", $slug, $id, $filename, $description, $alttext, $meta_data, $post_id, $imagedate, $exclude, $sortorder ) ) ) {
 			return false;
 		}
 		
