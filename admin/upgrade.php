@@ -177,7 +177,7 @@ function ngg_upgrade() {
         	   <?php _e('Therefore it\'s needed to have a unique identifier for each image, gallery and album.', 'nggallery'); ?><br />
                <?php _e('Depend on the amount of database entries this will take a while, don\'t reload this page.', 'nggallery') ;?></p>
                <?php
-               ngg_rebuild_unique_slugs::init();
+               ngg_rebuild_unique_slugs::start_rebuild();
             }
                 
         }
@@ -380,11 +380,7 @@ function nggallery_start_upgrade($filepath) {
  */
 class ngg_rebuild_unique_slugs {
 
-	static function init() {
-        self::start_rebuild();
-	}
-
-	static function start_rebuild() {
+	function start_rebuild() {
         global $wpdb;
         
         $total = array();

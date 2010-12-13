@@ -134,6 +134,11 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.7.1 - 13.12.2010 =
+* Changed : Disable upgrade for PHP4 user
+* Changed : Disable colorpicker for option page
+* Bugfix : Compat fix for upgrade
+
 = V1.7.0 - 11.12.2010 =
 * NEW : Publish a new post direct from the gallery admin page
 * NEW : Added filter hook 'ngg_get_image_metadata' to add more exif/iptc information
@@ -145,8 +150,8 @@ To show the most recent added mages : **[recent max=x ]**
 * Bugfix : Better support for SSL blogs
 * Bugfix : Install/Upgrade failed when table prefix contain captial letters
 * Bugfix : Fix validation issues in Media-RSS
-* Bugifx : Empty tags in XMP Meta causes PHP error
-* Bugifx : Rework load mechanism for slideshow
+* Bugfix : Empty tags in XMP Meta causes PHP error
+* Bugfix : Rework load mechanism for slideshow
 * Bugfix : Copy meta data when image is copied
 * Bugfix : Icon Support for Ozh' Admin Drop Down Menu
 * Bugfix : Use correct sort order in slideshow
