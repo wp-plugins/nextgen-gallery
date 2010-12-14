@@ -135,7 +135,7 @@ To show the most recent added mages : **[recent max=x ]**
 == Changelog == 
 
 = V1.7.2 - 13.12.2010 =
-* Bugfix : Adding images to database require slug
+* Bugfix : Adding images to database require slug (NOT NULL)
 
 = V1.7.1 - 13.12.2010 =
 * Changed : Disable upgrade for PHP4 user
