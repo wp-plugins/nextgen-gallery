@@ -41,7 +41,7 @@ class nggAdminPanel{
 			add_submenu_page( NGGFOLDER , __('Roles', 'nggallery'), __('Roles', 'nggallery'), 'activate_plugins', 'nggallery-roles', array (&$this, 'show_menu'));
 	    add_submenu_page( NGGFOLDER , __('About this Gallery', 'nggallery'), __('About', 'nggallery'), 'NextGEN Gallery overview', 'nggallery-about', array (&$this, 'show_menu'));
 		//TODO: Remove after WP 3.1 release, not longer needed 
-        if ( wpmu_site_admin() ) 
+        if ( is_multisite() && wpmu_site_admin() ) 
 			add_submenu_page( 'ms-admin.php' , __('NextGEN Gallery', 'nggallery'), __('NextGEN Gallery', 'nggallery'), 'activate_plugins', 'nggallery-wpmu', array (&$this, 'show_menu'));
 
 	    if ( !is_multisite() || wpmu_site_admin() ) 
@@ -120,8 +120,7 @@ class nggAdminPanel{
 				// Initate the Manage Gallery page
 				$ngg->manage_page = new nggManageGallery ();
 				// Render the output now, because you cannot access a object during the constructor is not finished
-				$ngg->manage_page->controller();
-				
+				$ngg->manage_page->controller();				
 				break;
 			case "nggallery-manage-album" :
 				include_once ( dirname (__FILE__) . '/album.php' );		// nggallery_admin_manage_album
@@ -171,7 +170,8 @@ class nggAdminPanel{
 	}
 	
 	function load_scripts() {
-		
+		global $wp_version;
+        
 		// no need to go on if it's not a plugin page
 		if( !isset($_GET['page']) )
 			return;
@@ -189,12 +189,9 @@ class nggAdminPanel{
 		) );
 		wp_register_script('ngg-progressbar', NGGALLERY_URLPATH .'admin/js/ngg.progressbar.js', array('jquery'), '2.0.1');
 		wp_register_script('swfupload_f10', NGGALLERY_URLPATH .'admin/js/swfupload.js', array('jquery'), '2.2.0');
-        // Package included sortable, dialog, autocomplete, tabs
-        wp_register_script('jquery-ui', NGGALLERY_URLPATH .'admin/js/jquery-ui-1.8.6.min.js', array('jquery'), '1.8.6');
         // Until release of 3.1 not used, due to script conflict
-        wp_register_script('jquery-ui-autocomplete', NGGALLERY_URLPATH .'admin/js/jquery.ui.autocomplete.min.js', array('jquery-ui-core'), '1.8.6');
-        wp_register_script('ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui'), '1.0');
-				
+        wp_register_script('jquery-ui-autocomplete', NGGALLERY_URLPATH .'admin/js/jquery.ui.autocomplete.min.js', array('jquery-ui-core', 'jquery-ui-widget'), '1.8.9');
+       		
 		switch ($_GET['page']) {
 			case NGGFOLDER : 
 				wp_enqueue_script( 'postbox' );
@@ -208,10 +205,18 @@ class nggAdminPanel{
 				add_thickbox();
 			break;
 			case "nggallery-manage-album" :
-                // Until release of 3.1 comment out, due to script conflict
-				//wp_enqueue_script( 'jquery-ui-sortable' );
-                //wp_enqueue_script( 'jquery-ui-dialog' );
-                wp_enqueue_script( 'ngg-autocomplete' );
+                if ( version_compare( $wp_version, '3.0.999', '>' ) ) {
+                    wp_enqueue_script( 'jquery-ui-autocomplete' ); 
+                    wp_enqueue_script( 'jquery-ui-dialog' );
+                    wp_enqueue_script( 'jquery-ui-sortable' );
+                    wp_enqueue_script( 'ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui-autocomplete'), '1.0');
+                 } else {
+                    // Due to script conflict with jQuery UI 1.8.6
+                    wp_deregister_script( 'jquery-ui-sortable' );
+                    // Package included sortable, dialog, autocomplete, tabs
+                    wp_enqueue_script('jquery-ui', NGGALLERY_URLPATH .'admin/js/jquery-ui-1.8.6.min.js', array('jquery'), '1.8.6');
+                    wp_enqueue_script('ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui'), '1.0');
+                }                
 			break;
 			case "nggallery-options" :
 				wp_enqueue_script( 'jquery-ui-tabs' );

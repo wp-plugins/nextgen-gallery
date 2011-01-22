@@ -104,6 +104,10 @@ class nggAPI {
 				//return images, galleries or albums for autocomplete drop down list
 				return $this->autocomplete();                
 			break;
+			case 'version' :
+				$this->result = array ('stat' => 'ok', 'version' => $ngg->version);
+				return;           
+			break;
 			default :
 				$this->result = array ('stat' => 'fail', 'code' => '98', 'message' => 'Method not known.');
 				return false;	

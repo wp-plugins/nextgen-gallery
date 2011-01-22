@@ -2,9 +2,17 @@ NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
 = V1.8.0 - sometimes =
-* TODO : Adding Google Sitemaps for Images
+* TODO : Adding Google Sitemaps for Images (see http://wordpress.org/extend/plugins/google-image-sitemap/ , http://wordpress.org/support/topic/plugin-google-xml-sitemap-for-images-how-to-include-galleries)
 * TODO : Facebook connector
 * TODO : Switch to Plupload (http://www.plupload.com/)
+
+= V1.7.3 - 20.1.2011 
+* NEW : Introduce plugin health check for conflicts with other plugins/themes
+* NEW : Adding new XMLRPC method ngg.deleteImage
+* NEW : Adding new XMLRPC method ngg.editImage
+* Changed : Rework register script for autocomplete feature
+* Bugfix : Bugfix for Multisite setup and flash upload
+* Bugfix : WP3.1 compat issue, show site admin page only on Multisite installation
 
 = V1.7.2 - 13.12.2010 =
 * Bugfix : Adding images to database require slug

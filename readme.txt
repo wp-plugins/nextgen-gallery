@@ -3,7 +3,7 @@ Contributors: alexrabe
 Donate link: http://alexrabe.de/donation/
 Tags: photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery,nextgen gallery
 Requires at least: 3.0
-Tested up to: 3.0
+Tested up to: 3.1
 Stable tag: trunk
 
 NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with dozens of options and features.
@@ -46,7 +46,7 @@ Important Links:
 
 == Credits ==
 
-Copyright 2007-2010 by Alex Rabe & NextGEN DEV-Team
+Copyright 2007-2011 by Alex Rabe & NextGEN DEV-Team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -133,6 +133,14 @@ To show the most recent added mages : **[recent max=x ]**
 **And at least request your question here :** http://wordpress.org/tags/nextgen-gallery?forum_id=10
 
 == Changelog == 
+
+= V1.7.3 - 20.01.2011 
+* NEW : Introduce plugin health check for conflicts with other plugins/themes
+* NEW : Adding new XMLRPC method ngg.deleteImage
+* NEW : Adding new XMLRPC method ngg.editImage
+* Changed : Rework register script for autocomplete feature
+* Bugfix : Bugfix for Multisite setup and flash upload
+* Bugfix : WP3.1 compat issue, show site admin page only on Multisite installation
 
 = V1.7.2 - 13.12.2010 =
 * Bugfix : Adding images to database require slug (NOT NULL)

@@ -4,7 +4,7 @@
  *
  * @package NextGEN Gallery
  * @author Alex Rabe
- * @copyright 2009-2010
+ * @copyright 2009-2011
  */
 class nggXMLRPC{
 	
@@ -21,8 +21,10 @@ class nggXMLRPC{
 	    
 		$methods['ngg.installed'] = array(&$this, 'nggInstalled');
         // Image methods
-	    $methods['ngg.uploadImage'] = array(&$this, 'uploadImage');
 	    $methods['ngg.getImages'] = array(&$this, 'getImages');
+	    $methods['ngg.uploadImage'] = array(&$this, 'uploadImage');
+        $methods['ngg.deleteImage'] = array(&$this, 'deleteImage');
+        $methods['ngg.editImage'] = array(&$this, 'editImage');
         // Gallery methods
 	    $methods['ngg.getGalleries'] = array(&$this, 'getGalleries');
 	    $methods['ngg.newGallery'] = array(&$this, 'newGallery');
@@ -214,6 +216,102 @@ class nggXMLRPC{
 	}
 
 	/**
+	 * Method "ngg.deleteImage"
+	 * Delete a Image from the database and gallery
+	 * 
+	 * @since 1.7.3
+	 * 
+	 * @param array $args Method parameters.
+	 * 			- int blog_id
+	 *	    	- string username
+	 *	    	- string password
+	 *	    	- int image_id 
+	 * @return true
+	 */
+	function deleteImage($args) {
+		
+		global $nggdb, $ngg;
+        
+        require_once ( dirname ( dirname( __FILE__ ) ). '/admin/functions.php' );	// admin functions
+
+        $this->escape($args);
+		$blog_ID    = (int) $args[0];
+		$username	= $args[1];
+		$password	= $args[2];
+        $id    	    = (int) $args[3];
+
+		if ( !$user = $this->login($username, $password) )
+			return $this->error;
+
+		if ( !$image = nggdb::find_image($id) )
+			return(new IXR_Error(404, __("Invalid image ID")));
+
+		if ( !current_user_can( 'NextGEN Manage gallery' ) && !nggAdmin::can_manage_this_gallery($image->author) )
+			return new IXR_Error( 401, __( 'Sorry, you must be able to edit this image' ) );
+
+		if ($ngg->options['deleteImg']) {
+            @unlink($image->imagePath);
+            @unlink($image->thumbPath);	
+            @unlink($image->imagePath . "_backup" );
+        } 
+
+        nggdb::delete_image ( $id );
+		
+		return true;
+		
+	}
+
+	/**
+	 * Method "ngg.editImage"
+	 * Edit a existing Image
+	 * 
+	 * @since 1.7.3
+	 * 
+	 * @param array $args Method parameters.
+	 * 			- int blog_id
+	 *	    	- string username
+	 *	    	- string password
+	 *	    	- int Image ID
+	 *	    	- string alt/title text
+	 *	    	- string description
+	 *	    	- int exclude from gallery (0 or 1)
+	 * @return true if success
+	 */
+	function editImage($args) {
+		
+		global $ngg;
+
+		require_once ( dirname ( dirname( __FILE__ ) ). '/admin/functions.php' );	// admin functions
+        
+        $this->escape($args);
+		$blog_ID    = (int) $args[0];
+		$username	= $args[1];
+		$password	= $args[2];
+		$id      	= (int) $args[3];
+        $alttext    = $args[4];
+        $description= $args[5];
+        $exclude    = (int) $args[6];
+
+		if ( !$user = $this->login($username, $password) )
+			return $this->error;
+
+		if ( !$image = nggdb::find_image($id)  )
+			return(new IXR_Error(404, __("Invalid image ID")));
+
+        if ( !current_user_can( 'NextGEN Manage gallery' ) && !nggAdmin::can_manage_this_gallery($image->author) )
+            return new IXR_Error( 401, __( 'Sorry, you must be able to edit this image' ) );
+
+		if ( !empty( $alttext ) )
+			$result = nggdb::update_image($id, false, false, $description, $alttext, $exclude);
+		
+		if ( !$result )
+			return new IXR_Error(500, __('Sorry, could not update the image'));
+
+		return true;
+		
+	}
+
+	/**
 	 * Method "ngg.newGallery"
 	 * Create a new gallery
 	 * 
@@ -311,7 +409,7 @@ class nggXMLRPC{
 	 * Method "ngg.newAlbum"
 	 * Create a new album
 	 * 
-	 * @since 1.7
+	 * @since 1.7.0
 	 * 
 	 * @param array $args Method parameters.
 	 * 			- int blog_id
@@ -460,6 +558,8 @@ class nggXMLRPC{
 		
 		global $nggdb;
 
+        require_once ( dirname ( dirname( __FILE__ ) ). '/admin/functions.php' );	// admin functions
+
         $this->escape($args);
 		$blog_ID    = (int) $args[0];
 		$username	= $args[1];
@@ -549,7 +649,7 @@ class nggXMLRPC{
 
 	/**
 	 * Method "ngg.getImages"
-	 * Return the list of all imgaes inside a gallery
+	 * Return the list of all images inside a gallery
 	 * 
 	 * @since 1.4
 	 * 

@@ -58,6 +58,15 @@
 	padding-top:10px;
 	float:right;
 }
+
+#plugin_check img {
+    float: right;
+}
+
+#plugin_check p.message {
+	font-size: 90%;
+	color: #666;
+}
 /* SETTING FOR FLASH UPLOAD BUTTON */
 .swfupload {
 	position:absolute;

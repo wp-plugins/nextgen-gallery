@@ -409,10 +409,11 @@ function nggShowAlbum($albumID, $template = 'extend') {
     if (!empty( $gallery ))  {
         
         // subalbum support only one instance, you can't use more of them in one post
+        //TODO: causes problems with SFC plugin, due to a second filter callback
         if ( isset($GLOBALS['subalbum']) || isset($GLOBALS['nggShowGallery']) )
                 return;
                 
-        // if gallery is is submit , then show the gallery instead 
+        // if gallery is submit , then show the gallery instead 
         $out = nggShowGallery( intval($gallery) );
         $GLOBALS['nggShowGallery'] = true;
         
@@ -1064,7 +1065,7 @@ function nggShowRandomRecent($type, $maxImages, $template = '', $galleryId = 0) 
     if ( is_array($picturelist) )
         $out = nggCreateGallery($picturelist, false, $template);
 
-    $out = apply_filters('ngg_show_images_content', $out, $taglist);
+    $out = apply_filters('ngg_show_images_content', $out, $picturelist);
     
     return $out;
 }
