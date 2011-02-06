@@ -134,7 +134,7 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
-= V1.7.3 - 20.01.2011 
+= V1.7.3 - 20.01.2011 =
 * NEW : Introduce plugin health check for conflicts with other plugins/themes
 * NEW : Adding new XMLRPC method ngg.deleteImage
 * NEW : Adding new XMLRPC method ngg.editImage
