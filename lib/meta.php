@@ -340,8 +340,12 @@ class nggMeta{
 			    }
 			    
 			} // foreach
-
-			// cut off the useless tags
+            
+            // don't parse a empty array
+            if( empty($xmlarray) || empty($xmlarray['x:xmpmeta']) )
+                return false;
+			
+            // cut off the useless tags
 			$xmlarray = $xmlarray['x:xmpmeta']['rdf:RDF']['rdf:Description'];
 			  
 			// --------- Some values from the XMP format--------- //

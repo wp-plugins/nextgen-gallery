@@ -134,6 +134,12 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.7.4 - 15.02.2011 =
+* Bugfix : Disallow direct call of ajax file to avoid path disclosure (THX to High-Tech Bridge SA)
+* Bugfix : Rework jQuery Cycle slideshow for IE compat reason (THX to Justin Dickenson)
+* Bugfix : Resize only larger images in slideshow
+* Bugfix : Improved image format detection in gd.thumbnail class (THX to Kupar.b)
+
 = V1.7.3 - 20.01.2011 =
 * NEW : Introduce plugin health check for conflicts with other plugins/themes
 * NEW : Adding new XMLRPC method ngg.deleteImage
