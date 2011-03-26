@@ -42,7 +42,6 @@ Important Links:
 * Tag support for images : Append related images to your post, create a image tag-cloud
 * Meta data support : Import EXIF, IPTC or XMP meta data 
 * Sort images feature
-* Cool flash addons here : http://wordpress.org/extend/plugins/nextgen-flashviewer/
 
 == Credits ==
 
