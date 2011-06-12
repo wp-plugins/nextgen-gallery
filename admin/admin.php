@@ -21,8 +21,11 @@ class nggAdminPanel{
 		add_action('admin_print_styles', array(&$this, 'load_styles') );
 
 		add_filter('contextual_help', array(&$this, 'show_help'), 10, 2);
-		add_filter('screen_meta_screen', array(&$this, 'edit_screen_meta'));
-        
+        add_filter('current_screen', array(&$this, 'edit_current_screen'));
+
+        // Add WPML hook to register description / alt text for translation
+        add_action('ngg_image_updated', array('nggGallery', 'RegisterString') );
+       
 	}
 
 	// integrate the menu	
@@ -353,50 +356,52 @@ class nggAdminPanel{
 		
 		return $help;
 	}
-	
-	function edit_screen_meta($screen) {
+
+	/**
+	 * We need to manipulate the current_screen name so that we can show the correct column screen options
+	 * 
+     * @since 1.8.0
+	 * @param object $screen
+	 * @return object $screen
+	 */
+	function edit_current_screen($screen) {
+	   
+    	if ( is_string($screen) )
+    		$screen = convert_to_screen($screen);
 
 		// menu title is localized, so we need to change the toplevel name
 		$i18n = strtolower  ( _n( 'Gallery', 'Galleries', 1, 'nggallery' ) );
 		
-		switch ($screen) {
+		switch ($screen->id) {
 			case "{$i18n}_page_nggallery-manage-gallery" :
 				// we would like to have screen option only at the manage images / gallery page
 				if ( isset ($_POST['sortGallery']) )
 					$screen = $screen;
 				else if ( ($_GET['mode'] == 'edit') || isset ($_POST['backToGallery']) )
-					$screen = 'nggallery-manage-images';
+					$screen->base = $screen->id = 'nggallery-manage-images';
 				else if ( ($_GET['mode'] == 'sort') )
 					$screen = $screen;
 				else
-					$screen = 'nggallery-manage-gallery';	
+					$screen->base = $screen->id = 'nggallery-manage-gallery';	
 			break;
 		}
 
 		return $screen;
 	}
 
-	function register_column_headers($screen, $columns) {
-		global $_wp_column_headers, $wp_list_table;
-	
-		if ( !isset($_wp_column_headers) )
-			$_wp_column_headers = array();
-	
-		$_wp_column_headers[$screen] = $columns;
-        
-        //TODO: Deprecated in 3.1, see http://core.trac.wordpress.org/ticket/14579
-       	//$wp_list_table = new _WP_List_Table_Compat($screen);
-       	//$wp_list_table->_columns = $columns;
-	}
-
+	/**
+	 * We need to register the columns at a very early point
+	 * 
+	 * @return void
+	 */
 	function register_columns() {
 		include_once ( dirname (__FILE__) . '/manage-images.php' );
-		
-		$this->register_column_headers('nggallery-manage-images', ngg_manage_image_columns() );
+
+		$wp_list_table = new _NGG_Images_List_Table('nggallery-manage-images');
 		
 		include_once ( dirname (__FILE__) . '/manage-galleries.php' );
 		
-		$this->register_column_headers('nggallery-manage-galleries', ngg_manage_gallery_columns() );	
+		$wp_list_table = new _NGG_Galleries_List_Table('nggallery-manage-gallery');	
 	}
 
 	/**

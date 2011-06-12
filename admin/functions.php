@@ -59,7 +59,7 @@ class nggAdmin{
 		}
 		
 		// 1. Check for existing folder
-		if ( is_dir(WINABSPATH . $defaultpath . $name ) ) {
+		if ( is_dir(WINABSPATH . $defaultpath . $name ) && !(SAFE_MODE) ) {
 			$suffix = 1;
 			do {
 				$alt_name = substr ($name, 0, 200 - ( strlen( $suffix ) + 1 ) ) . "_$suffix";
@@ -191,6 +191,11 @@ class nggAdmin{
 		
 		// all images must be valid files
 		foreach($new_images as $key => $picture) {
+            
+            // filter function to rename/change/modify image before
+            $picture = apply_filters('ngg_pre_add_new_image', $picture, $gallery_id);
+            $new_images[$key] = $picture;
+            
 			if (!@getimagesize($gallerypath . '/' . $picture) ) {
 				unset($new_images[$key]);
 				@unlink($gallerypath . '/' . $picture);				
@@ -221,7 +226,7 @@ class nggAdmin{
 	 * @return array $files list of image filenames 
 	 */
 	function scandir( $dirname = '.' ) { 
-		$ext = array('jpeg', 'jpg', 'png', 'gif'); 
+		$ext = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif') );
 
 		$files = array(); 
 		if( $handle = opendir( $dirname ) ) { 
@@ -584,6 +589,9 @@ class nggAdmin{
 		if ( is_array($imageslist) ) {
 			foreach($imageslist as $picture) {
 				
+                // filter function to rename/change/modify image before
+                $picture = apply_filters('ngg_pre_add_new_image', $picture, $galleryID);
+                
 				// strip off the extension of the filename
 				$path_parts = pathinfo( $picture );
 				$alttext = ( !isset($path_parts['filename']) ) ? substr($path_parts['basename'], 0,strpos($path_parts['basename'], '.')) : $path_parts['filename'];
@@ -785,7 +793,7 @@ class nggAdmin{
         // check for extension
 		$info = pathinfo($p_header['filename']);
 		// check for extension
-		$ext = array('jpeg', 'jpg', 'png', 'gif'); 
+		$ext = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif') ); 
 		if ( in_array( strtolower($info['extension']), $ext) ) {
 			// For MAC skip the ".image" files
 			if ($info['basename']{0} ==  '.' ) 
@@ -1044,8 +1052,8 @@ class nggAdmin{
 		$filename = $filepart['basename'];
 
 		// check for allowed extension
-		$ext = array('jpg', 'png', 'gif'); 
-		if (!in_array($filepart['extension'], $ext))
+		$ext = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif') ); 
+		if (!in_array( strtolower( $filepart['extension'] ), $ext))
 			return $_FILES[$key]['name'] . __('is no valid image file!', 'nggallery');
 
 		// get the path to the gallery	

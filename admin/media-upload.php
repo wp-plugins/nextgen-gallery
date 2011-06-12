@@ -3,7 +3,7 @@
 /**
  * @title  Add action/filter for the upload tab 
  * @author Alex Rabe
- * @copyright 2008-2009
+ * @copyright 2008-2011
  */
 
 function ngg_wp_upload_tabs ($tabs) {
@@ -79,7 +79,7 @@ function media_upload_nextgen_save_image() {
 
 function media_upload_nextgen_form($errors) {
 
-	global $wpdb, $wp_query, $wp_locale, $type, $tab, $post_mime_types, $ngg;
+	global $wpdb, $wp_query, $wp_locale, $type, $tab, $post_mime_types, $ngg, $nggdb;
 	
 	media_upload_header();
 
@@ -166,7 +166,7 @@ function media_upload_nextgen_form($errors) {
 			<option value="0" <?php selected('0', $galleryID); ?> ><?php esc_attr( _e('No gallery',"nggallery") ); ?></option>
 			<?php
 			// Show gallery selection
-			$gallerylist = $wpdb->get_results("SELECT * FROM $wpdb->nggallery ORDER BY gid ASC");
+			$gallerylist = $nggdb->find_all_galleries();
 			if(is_array($gallerylist)) {
 				foreach($gallerylist as $gallery) {
 					$selected = ($gallery->gid == $galleryID )?	' selected="selected"' : "";

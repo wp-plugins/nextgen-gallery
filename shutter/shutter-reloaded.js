@@ -1,8 +1,8 @@
 /*
 Shutter Reloaded for NextGEN Gallery
 http://www.laptoptips.ca/javascripts/shutter-reloaded/
-Version: 1.3.1
-Copyright (C) 2007-2008  Andrew Ozz
+Version: 1.3.2
+Copyright (C) 2007-2008  Andrew Ozz (Modification by Alex Rabe)
 Released under the GPL, http://www.gnu.org/copyleft/gpl.html
 
 Acknowledgement: some ideas are from: Shutter by Andrew Sutherland - http://code.jalenack.com, WordPress - http://wordpress.org, Lightbox by Lokesh Dhakar - http://www.huddletogether.com, the icons are from Crystal Project Icons, Everaldo Coelho, http://www.everaldo.com
@@ -107,7 +107,7 @@ shutterReloaded = {
 		var dv = t.textBtns ? ' | ' : '';
 		if ( shutterLinks[ln].num > 1 ) {
 			prev = shutterSets[shutterLinks[ln].set][shutterLinks[ln].num - 2];
-			prevlink = '<a href="#" onclick="shutterReloaded.make('+prev+');return false">&lt;&lt;</a>'+dv;
+			prevlink = '<a href="#" id="prevpic" onclick="shutterReloaded.make('+prev+');return false">&lt;&lt;</a>'+dv;
 			previmg = new Image();
 			previmg.src = shutterLinks[prev].link;
 		} else {
@@ -116,7 +116,7 @@ shutterReloaded = {
 
 		if ( shutterLinks[ln].num != -1 && shutterLinks[ln].num < (shutterSets[shutterLinks[ln].set].length) ) {
 			next = shutterSets[shutterLinks[ln].set][shutterLinks[ln].num];
-			nextlink = '<a href="#" onclick="shutterReloaded.make('+next+');return false">&gt;&gt;</a>'+dv;
+			nextlink = '<a href="#" id="nextpic" onclick="shutterReloaded.make('+next+');return false">&gt;&gt;</a>'+dv;
 			nextimg = new Image();
 			nextimg.src = shutterLinks[next].link;
 		} else {
@@ -127,8 +127,9 @@ shutterReloaded = {
 
 		NavBar = '<div id="shTitle"><div id="shPrev">' + prevlink + '</div><div id="shNext">' + nextlink + '</div><div id="shName">' + shutterLinks[ln].title + '</div>' + imgNum + '</div>';
 
-		D.innerHTML = '<div id="shWrap"><img src="" id="shTopImg" title="' + t.msgClose + '" onload="shutterReloaded.showImg();" onclick="shutterReloaded.hideShutter();" />' + NavBar +'</div>';
+		D.innerHTML = '<div id="shWrap"><img src="'+shutterLinks[ln].link+'" id="shTopImg" title="' + t.msgClose + '" onload="shutterReloaded.showImg();" onclick="shutterReloaded.hideShutter();" />' + NavBar +'</div>';
 		
+		document.onkeydown = function(event){shutterReloaded.handleArrowKeys(event);};
 		//Google Chrome 4.0.249.78 bug for onload attribute
 		document.getElementById('shTopImg').src = shutterLinks[ln].link;
 		
@@ -155,6 +156,7 @@ shutterReloaded = {
 		window.scrollTo(0,t.Top);
 		window.onresize = t.FS = t.Top = t.VP = null;
 		document.documentElement.style.overflowX = '';
+		document.onkeydown = null;
 	},
 
 	resize : function(ln) {
@@ -239,5 +241,28 @@ shutterReloaded = {
 		for (i = 0; i < obj.length; i++) obj[i].style.visibility = vis;
 		for (i = 0; i < emb.length; i++) emb[i].style.visibility = vis;
 		for (i = 0; i < ifr.length; i++) ifr[i].style.visibility = vis;
+	},
+	
+	handleArrowKeys : function(e) {
+	    var code = 0;
+	    if (!e) var e = window.event
+	    	if (e.keyCode) code = e.keyCode;
+	    	else if (e.which) code = e.which;
+	    	
+		var nextlink = document.getElementById('prevpic');
+		var prevlink = document.getElementById('nextpic');
+		var closelink = document.getElementById('shTopImg');
+	
+		switch (code) {
+		    case 39:
+			if (prevlink) prevlink.onclick();
+			break;    
+		    case 37:
+			if (nextlink) nextlink.onclick();
+			break;    
+		    case 27:
+			if (closelink) closelink.onclick();
+			break;    
+		 }
 	}
 }

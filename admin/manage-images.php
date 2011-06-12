@@ -8,7 +8,9 @@ function nggallery_picturelist() {
 	
 	// Look if its a search result
 	$is_search = isset ($_GET['s']) ? true : false;
-	$counter	= 0;	
+	$counter	= 0;
+    
+    $wp_list_table = new _NGG_Images_List_Table('nggallery-manage-images');	
 	
     if ($is_search) {
 
@@ -47,17 +49,7 @@ function nggallery_picturelist() {
 		
 		// get picture values
 		$picturelist = $nggdb->get_gallery($act_gid, $ngg->options['galSort'], $ngg->options['galSortDir'], false, 50, $start );
-		
-		// build pagination
-		$page_links = paginate_links( array(
-			'base' => add_query_arg( 'paged', '%#%' ),
-			'format' => '',
-			'prev_text' => __('&laquo;'),
-			'next_text' => __('&raquo;'),
-			'total' => $nggdb->paged['max_objects_per_page'],
-			'current' => $_GET['paged']
-		));
-		
+
 		// get the current author
 		$act_author_user    = get_userdata( (int) $gallery->author );
 
@@ -67,7 +59,7 @@ function nggallery_picturelist() {
 		$gallerylist = $nggdb->find_all_galleries();
 
 		//get the columns
-		$image_columns = ngg_manage_image_columns();
+		$image_columns   = $wp_list_table->get_columns();
 		$hidden_columns  = get_hidden_columns('nggallery-manage-images');
 		$num_columns     = count($image_columns) - count($hidden_columns);
 		
@@ -165,7 +157,16 @@ function getNumChecked(form)
 function checkSelected() {
 
 	var numchecked = getNumChecked(document.getElementById('updategallery'));
-	 
+
+    if (typeof document.activeElement == "undefined" && document.addEventListener) {
+    	document.addEventListener("focus", function (e) {
+    		document.activeElement = e.target;
+    	}, true);
+    }
+	
+    if ( document.activeElement.name == 'paged' )
+        return true;
+     
 	if(numchecked < 1) { 
 		alert('<?php echo esc_js(__('No images selected', 'nggallery')); ?>');
 		return false; 
@@ -211,7 +212,6 @@ jQuery(document).ready( function() {
 	// close postboxes that should be closed
 	jQuery('.if-js-closed').removeClass('if-js-closed').addClass('closed');
 	postboxes.add_postbox_toggles('ngg-manage-gallery');
-
 });
 
 //-->
@@ -325,15 +325,8 @@ jQuery(document).ready( function() {
 
 <?php endif; ?>
 
-<div class="tablenav ngg-tablenav">
-	<?php if ( $page_links ) : ?>
-	<div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s' ) . '</span>%s',
-		number_format_i18n( ( $_GET['paged'] - 1 ) * $nggdb->paged['objects_per_page'] + 1 ),
-		number_format_i18n( min( $_GET['paged'] * $nggdb->paged['objects_per_page'], $nggdb->paged['total_objects'] ) ),
-		number_format_i18n( $nggdb->paged['total_objects'] ),
-		$page_links
-	); echo $page_links_text; ?></div>
-	<?php endif; ?>
+<div class="tablenav top ngg-tablenav">
+    <?php $ngg->manage_page->pagination( 'top', $_GET['paged'], $nggdb->paged['total_objects'], $nggdb->paged['objects_per_page']  ); ?>
 	<div class="alignleft actions">
 	<select id="bulkaction" name="bulkaction">
 		<option value="no_action" ><?php _e("Bulk actions",'nggallery'); ?></option>
@@ -365,15 +358,15 @@ jQuery(document).ready( function() {
 
 	<thead>
 	<tr>
-<?php print_column_headers('nggallery-manage-images'); ?>
+<?php $wp_list_table->print_column_headers(true); ?>
 	</tr>
 	</thead>
 	<tfoot>
 	<tr>
-<?php print_column_headers('nggallery-manage-images', false); ?>
+<?php $wp_list_table->print_column_headers(false); ?>
 	</tr>
 	</tfoot>
-	<tbody>
+	<tbody id="the-list">
 <?php
 if($picturelist) {
 	
@@ -399,28 +392,30 @@ if($picturelist) {
 		<tr id="picture-<?php echo $pid ?>" class="<?php echo $alternate ?> iedit"  valign="top">
 			<?php
 			foreach($image_columns as $image_column_key => $column_display_name) {
-				$class = "class=\"$image_column_key column-$image_column_key\"";
+				$class = "class='$image_column_key column-$image_column_key'";
 		
 				$style = '';
 				if ( in_array($image_column_key, $hidden_columns) )
 					$style = ' style="display:none;"';
 		
-				$attributes = "$class$style";
+				$attributes = $class . $style;
 				
 				switch ($image_column_key) {
 					case 'cb' :
+                        $attributes = 'class="column-cb check-column"' . $style;
 						?> 
 						<th <?php echo $attributes ?> scope="row"><input name="doaction[]" type="checkbox" value="<?php echo $pid ?>" /></th>
 						<?php
 					break;
 					case 'id' :
 						?>
-						<td <?php echo $attributes ?> scope="row" style=""><?php echo $pid; ?>
+						<td <?php echo $attributes ?> style=""><?php echo $pid; ?>
 							<input type="hidden" name="pid[]" value="<?php echo $pid ?>" />
 						</td>
 						<?php
 					break;
 					case 'filename' :
+                        $attributes = 'class="title column-filename column-title"' . $style;
 						?>
 						<td <?php echo $attributes ?>>
 							<strong><a href="<?php echo $picture->imageURL; ?>" class="thickbox" title="<?php echo $picture->filename ?>">
@@ -457,12 +452,10 @@ if($picturelist) {
 						<?php						
 					break;
 					case 'thumbnail' :
-     					// generate the thumbnail size if the meta data available
-     					if (is_array ($size = $picture->meta_data['thumbnail']) )
-							$thumbsize = 'width="' . $size['width'] . '" height="' . $size['height'] . '"';
+                        $attributes = 'class="id column-thumbnail media-icon"' . $style;
 						?>
 						<td <?php echo $attributes ?>><a href="<?php echo $picture->imageURL; if(strpos($picture->imageURL, '?')) { echo '&'; } else { echo '?'; } echo mt_rand(); ?>" class="thickbox" title="<?php echo $picture->filename ?>">
-								<img class="thumb" src="<?php echo $picture->thumbURL; if(strpos($picture->thumbURL, '?')) { echo '&'; } else { echo '?'; } echo mt_rand(); ?>" <?php echo $thumbsize ?> id="thumb<?php echo $pid ?>" />
+								<img class="thumb" src="<?php echo $picture->thumbURL; if(strpos($picture->thumbURL, '?')) { echo '&'; } else { echo '?'; } echo mt_rand(); ?>" id="thumb<?php echo $pid ?>" />
 							</a>
 						</td>
 						<?php						
@@ -508,16 +501,9 @@ if ( $counter == 0 )
 	
 		</tbody>
 	</table>
-    <div class="tablenav">
+    <div class="tablenav bottom">
     <input type="submit" class="button-primary action" name="updatepictures" value="<?php _e('Save Changes', 'nggallery'); ?>" />
-	<?php if ( $page_links ) : ?>
-	<div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s' ) . '</span>%s',
-		number_format_i18n( ( $_GET['paged'] - 1 ) * $nggdb->paged['objects_per_page'] + 1 ),
-		number_format_i18n( min( $_GET['paged'] * $nggdb->paged['objects_per_page'], $nggdb->paged['total_objects'] ) ),
-		number_format_i18n( $nggdb->paged['total_objects'] ),
-		$page_links
-	); echo $page_links_text; ?></div>
-	<?php endif; ?>
+    <?php $ngg->manage_page->pagination( 'bottom', $_GET['paged'], $nggdb->paged['total_objects'], $nggdb->paged['objects_per_page']  ); ?>
     </div>
 	</form>	
 	<br class="clear"/>
@@ -649,25 +635,67 @@ if ( $counter == 0 )
 	<?php
 }
 
-// define the columns to display, the syntax is 'internal name' => 'display name'
-function ngg_manage_image_columns() {
-	
-	$image_columns = array();
-	
-	$image_columns['cb'] = '<input name="checkall" type="checkbox" onclick="checkAll(document.getElementById(\'updategallery\'));" />';
-	$image_columns['id'] = __('ID');
-	$image_columns['thumbnail'] = __('Thumbnail', 'nggallery');
-	
-	$image_columns['filename'] = __('Filename', 'nggallery');
-	
-	$image_columns['alt_title_desc'] = __('Alt &amp; Title Text', 'nggallery') . ' / ' . __('Description', 'nggallery');
-	$image_columns['tags'] = __('Tags (comma separated list)', 'nggallery');
+/**
+ * Construtor class to create the table layout
+ *
+ * @package WordPress
+ * @subpackage List_Table
+ * @since 1.8.0
+ * @access private
+ */
+class _NGG_Images_List_Table extends WP_List_Table {
+	var $_screen;
+	var $_columns;
 
-	$image_columns['exclude'] = __('exclude', 'nggallery');
-	
-	$image_columns = apply_filters('ngg_manage_images_columns', $image_columns);
+	function _NGG_Images_List_Table( $screen ) {
+		if ( is_string( $screen ) )
+			$screen = convert_to_screen( $screen );
 
-	return $image_columns;
+		$this->_screen = $screen;
+		$this->_columns = array() ;
+
+		add_filter( 'manage_' . $screen->id . '_columns', array( &$this, 'get_columns' ), 0 );
+	}
+
+	function get_column_info() {
+		$columns = get_column_headers( $this->_screen );
+		$hidden = get_hidden_columns( $this->_screen );
+		$_sortable = $this->get_sortable_columns();
+
+		foreach ( $_sortable as $id => $data ) {
+			if ( empty( $data ) )
+				continue;
+
+			$data = (array) $data;
+			if ( !isset( $data[1] ) )
+				$data[1] = false;
+
+			$sortable[$id] = $data;
+		}
+        
+		return array( $columns, $hidden, $sortable );
+	}
+    
+    // define the columns to display, the syntax is 'internal name' => 'display name'
+	function get_columns() {
+    	$columns = array();
+    	
+    	$columns['cb'] = '<input name="checkall" type="checkbox" onclick="checkAll(document.getElementById(\'updategallery\'));" />';
+    	$columns['id'] = __('ID');
+    	$columns['thumbnail'] = __('Thumbnail', 'nggallery');
+    	$columns['filename'] = __('Filename', 'nggallery');
+    	$columns['alt_title_desc'] = __('Alt &amp; Title Text', 'nggallery') . ' / ' . __('Description', 'nggallery');
+    	$columns['tags'] = __('Tags (comma separated list)', 'nggallery');
+    	$columns['exclude'] = __('exclude', 'nggallery');
+    	
+    	$columns = apply_filters('ngg_manage_images_columns', $columns);
+    
+    	return $columns;
+	}
+
+	function get_sortable_columns() {
+		return array();
+	}    
 }
 
 ?>

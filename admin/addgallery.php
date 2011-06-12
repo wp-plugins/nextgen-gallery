@@ -133,6 +133,9 @@ class nggAddGallery {
 
         // get list of tabs
         $tabs = $this->tabs_order();
+        
+        // with this filter you can add custom file types
+        $file_types = apply_filters( 'ngg_swf_file_types', '*.jpg;*.jpeg;*.gif;*.png;*.JPG;*.JPEG;*.GIF;*.PNG' );
 	?>
 	
 	<?php if($ngg->options['swfUpload'] && !empty ($this->gallerylist) ) { ?>
@@ -155,7 +158,7 @@ class nggAddGallery {
 								
 				// File Upload Settings
 				file_size_limit : "<?php echo wp_max_upload_size(); ?>b",
-				file_types : "*.jpg;*.jpeg;*.gif;*.png;*.JPG;*.JPEG;*.GIF;*.PNG",
+				file_types : "<?php echo $file_types; ?>",
 				file_types_description : "<?php _e('Image Files', 'nggallery') ;?>",
 				
 				// Queue handler

@@ -20,6 +20,13 @@ class nggManageGallery {
 			$this->pid  = (int) $_GET['pid'];	
 		if( isset($_GET['mode']) )
 			$this->mode = trim ($_GET['mode']);
+        // Check for pagination request, avoid post process of other submit button
+        if ( isset($_POST['paged']) ) {
+            if ( $_GET['paged'] != $_POST['paged'] ) {
+                $_GET['paged'] = $_POST['paged'];
+                return; 
+            }
+        }    
 		// Should be only called via manage galleries overview
 		if ( isset($_POST['page']) && $_POST['page'] == 'manage-galleries' )
 			$this->post_processor_galleries();
@@ -57,7 +64,7 @@ class nggManageGallery {
 	function processor() {
 	
 		global $wpdb, $ngg, $nggdb;
-		
+        
 		// Delete a picture
 		if ($this->mode == 'delpic') {
 
@@ -364,7 +371,7 @@ class nggManageGallery {
 				
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery title' )) {
 				    // don't forget to update the slug
-				    $slug = nggdb::get_unique_slug( sanitize_title( $_POST['title'] ), 'gallery' );
+				    $slug = nggdb::get_unique_slug( sanitize_title( $_POST['title'] ), 'gallery', $this->gid );
 				    $wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggallery SET title= '%s', slug= '%s' WHERE gid = %d", esc_attr($_POST['title']), $slug, $this->gid) );				    
 				}
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery path' ))
@@ -483,7 +490,7 @@ class nggManageGallery {
                     // only uptade this field if someone change the alttext
                     if ( $image->alttext != $alttext[$image->pid] ) {
                         $image->alttext = $alttext[$image->pid];
-                        $image->image_slug = nggdb::get_unique_slug( sanitize_title( $image->alttext ), 'image' );                        
+                        $image->image_slug = nggdb::get_unique_slug( sanitize_title( $image->alttext ), 'image', $image->pid );                        
                     }
                     
                     // set exclude flag
@@ -496,7 +503,10 @@ class nggManageGallery {
                     $wpdb->query( $wpdb->prepare ("UPDATE $wpdb->nggpictures SET image_slug = '%s', alttext = '%s', description = '%s', exclude = %d WHERE pid = %d", 
                                                                                  $image->image_slug, $image->alttext, $image->description, $image->exclude, $image->pid) );    
                     // remove from cache    
-                    wp_cache_delete($image->pid, 'ngg_image'); 
+                    wp_cache_delete($image->pid, 'ngg_image');
+                    
+                    // hook for other plugins after image is updated
+                    do_action('ngg_image_updated', $image); 
                 }
                 
             }
@@ -547,5 +557,81 @@ class nggManageGallery {
 		// show pictures page
 		$this->mode = 'edit'; 
 	}
+    
+	/**
+	 * Display the pagination.
+	 *
+	 * @since 1.8.0
+     * @author taken from WP core
+	 * @return string echo the html pagination bar
+	 */
+	function pagination( $which, $current, $total_items, $per_page ) {
+	   
+	    $total_pages = ceil( $total_items / $per_page );
+
+		$output = '<span class="displaying-num">' . sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
+
+		$current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+		$current_url = remove_query_arg( array( 'hotkeys_highlight_last', 'hotkeys_highlight_first' ), $current_url );
+
+		$page_links = array();
+
+		$disable_first = $disable_last = '';
+		if ( $current == 1 )
+			$disable_first = ' disabled';
+		if ( $current == $total_pages )
+			$disable_last = ' disabled';
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'first-page' . $disable_first,
+			esc_attr__( 'Go to the first page' ),
+			esc_url( remove_query_arg( 'paged', $current_url ) ),
+			'&laquo;'
+		);
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'prev-page' . $disable_first,
+			esc_attr__( 'Go to the previous page' ),
+			esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $current_url ) ),
+			'&lsaquo;'
+		);
+
+		if ( 'bottom' == $which )
+			$html_current_page = $current;
+		else
+			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name='%s' value='%s' size='%d' />",
+				esc_attr__( 'Current page' ),
+				esc_attr( 'paged' ),
+				$current,
+				strlen( $total_pages )
+			);
+
+		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+		$page_links[] = '<span class="paging-input">' . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . '</span>';
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'next-page' . $disable_last,
+			esc_attr__( 'Go to the next page' ),
+			esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $current_url ) ),
+			'&rsaquo;'
+		);
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'last-page' . $disable_last,
+			esc_attr__( 'Go to the last page' ),
+			esc_url( add_query_arg( 'paged', $total_pages, $current_url ) ),
+			'&raquo;'
+		);
+
+		$output .= "\n" . join( "\n", $page_links );
+
+		$page_class = $total_pages < 2 ? ' one-page' : '';
+
+		$pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+
+		echo $pagination;
+	}
+
 }
 ?>

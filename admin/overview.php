@@ -111,11 +111,6 @@ function ngg_likeThisMetaBox() {
 	_e("Donate the work via paypal.", 'nggallery');
 	echo "</a></li>";
 
-	$url = 'http://www.amazon.de/gp/registry/wishlist/28H3MATVSL17C';
-	echo "<li style='padding-left: 38px; background:transparent url(" . NGGALLERY_URLPATH . "admin/images/icon-amazon.gif ) no-repeat scroll center left; background-position: 16px 50%; text-decoration: none;'><a href='{$url}' target='_blank'>";
-	_e("Send a gift to show your appreciation.", 'nggallery');
-	echo "</a></li>";
-
 	$url = 'http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/';
 	echo "<li style='padding-left: 38px; background:transparent url(" . NGGALLERY_URLPATH . "admin/images/icon-translate.png ) no-repeat scroll center left; background-position: 16px 50%; text-decoration: none;'><a href='{$url}'>";
 	_e("Help translating it.", 'nggallery');
@@ -705,7 +700,7 @@ function ngg_get_serverinfo() {
 	if(ini_get('max_execution_time')) $max_execute = ini_get('max_execution_time');
 	else $max_execute = __('N/A', 'nggallery');
 	// Get PHP Memory Limit 
-	if(ini_get('memory_limit')) $memory_limit = $ngg->memory_limit . 'M';
+	if(ini_get('memory_limit')) $memory_limit = $ngg->memory_limit;
 	else $memory_limit = __('N/A', 'nggallery');
 	// Get actual memory_get_usage
 	if (function_exists('memory_get_usage')) $memory_usage = round(memory_get_usage() / 1024 / 1024, 2) . __(' MByte', 'nggallery');

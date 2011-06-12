@@ -316,8 +316,8 @@ class nggWidget extends WP_Widget {
 				$thumbcode = $image->get_thumbcode( $widget_id );
 				
 				// enable i18n support for alttext and description
-				$alttext      =  htmlspecialchars( stripslashes( nggGallery::i18n($image->alttext) ));
-				$description  =  htmlspecialchars( stripslashes( nggGallery::i18n($image->description) ));
+				$alttext      =  htmlspecialchars( stripslashes( nggGallery::i18n($image->alttext, 'pic_' . $image->pid . '_alttext') ));
+				$description  =  htmlspecialchars( stripslashes( nggGallery::i18n($image->description, 'pic_' . $image->pid . '_description') ));
 				
 				//TODO:For mixed portrait/landscape it's better to use only the height setting, if widht is 0 or vice versa
 				$out = '<a href="' . $image->imageURL . '" title="' . $description . '" ' . $thumbcode .'>';

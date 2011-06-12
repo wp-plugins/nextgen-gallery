@@ -325,6 +325,10 @@ add_action( 'wp_ajax_ngg_rebuild_unique_slugs', 'ngg_ajax_rebuild_unique_slugs' 
  */
 function ngg_ajax_rebuild_unique_slugs() {
     global $wpdb;
+
+    // check for correct NextGEN capability
+	if ( !current_user_can('NextGEN Change options') ) 
+		die('No access');
     
 	$action = $_POST['_action'];
     $offset = (int) $_POST['offset'];
@@ -335,7 +339,7 @@ function ngg_ajax_rebuild_unique_slugs() {
         	if ( is_array($images) ) {
                 foreach ($images as $image) {
             		//slug must be unique, we use the alttext for that
-                    $image->slug = nggdb::get_unique_slug( sanitize_title( $image->alttext ), 'image' );
+                    $image->slug = nggdb::get_unique_slug( sanitize_title( $image->alttext ), 'image', $image->pid );
                     $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggpictures SET image_slug= '%s' WHERE pid = '%d'" , $image->slug, $image->pid ) );
                 }
             }
@@ -345,7 +349,7 @@ function ngg_ajax_rebuild_unique_slugs() {
         	if ( is_array($galleries) ) {
                 foreach ($galleries as $gallery) {
             		//slug must be unique, we use the title for that
-                    $gallery->slug = nggdb::get_unique_slug( sanitize_title( $gallery->title ), 'gallery' );
+                    $gallery->slug = nggdb::get_unique_slug( sanitize_title( $gallery->title ), 'gallery', $gallery->gid );
                     $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggallery SET slug= '%s' WHERE gid = '%d'" , $gallery->slug, $gallery->gid ) );
                 }
             } 
@@ -355,7 +359,7 @@ function ngg_ajax_rebuild_unique_slugs() {
         	if ( is_array($albumlist) ) {
                 foreach ($albumlist as $album) {
             		//slug must be unique, we use the name for that
-                    $album->slug = nggdb::get_unique_slug( sanitize_title( $album->name ), 'album' );
+                    $album->slug = nggdb::get_unique_slug( sanitize_title( $album->name ), 'album', $album->id );
                     $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET slug= '%s' WHERE id = '%d'" , $album->slug, $album->id ) );
                 }
             }         
@@ -436,10 +440,10 @@ function ngg_ajax_test_head_footer() {
 
 		// Check to see if we found the existence of wp_head
 		if ( ! strstr( $html, '<!--wp_head-->' ) )
-			die('Missing the call to <?php wp_head(); ?> in your theme');
+			die('Missing the call to wp_head() in your theme, contact the theme author');
 		// Check to see if we found the existence of wp_footer
 		if ( ! strstr( $html, '<!--wp_footer-->' ) )
-			die('Missing the call to <?php wp_footer(); ?> in your theme');
+			die('Missing the call to wp_footer() in your theme, contact the theme author');
 	}
     die('success');	
 }

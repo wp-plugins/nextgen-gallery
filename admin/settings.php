@@ -36,7 +36,8 @@ class nggOptions {
     	global $ngg, $nggRewrite;
     	
     	$old_state = $ngg->options['usePermalinks'];
-    
+        $old_slug  = $ngg->options['permalinkSlug'];
+            
     	if ( isset($_POST['irDetect']) ) {
     		check_admin_referer('ngg_settings');
     		$ngg->options['irURL'] = ngg_search_imagerotator();
@@ -56,6 +57,10 @@ class nggOptions {
     		//		$value = sanitize_option($option, $value); // This does stripslashes on those that need it
     				$ngg->options[$option] = $value;
     			}
+                
+                // do not allow a empty string
+                if ( empty ( $ngg->options['permalinkSlug'] ) ) 
+                    $ngg->options['permalinkSlug'] = 'nggallery';
 
         		// the path should always end with a slash	
         		$ngg->options['gallerypath']    = trailingslashit($ngg->options['gallerypath']);
@@ -68,7 +73,7 @@ class nggOptions {
     		update_option('ngg_options', $ngg->options);
     
     		// Flush Rewrite rules
-    		if ( $old_state != $ngg->options['usePermalinks'] )
+    		if ( $old_state != $ngg->options['usePermalinks'] || $old_slug != $ngg->options['permalinkSlug'] ) 
     			$nggRewrite->flush();
     		
     	 	nggGallery::show_message(__('Update Successfully','nggallery'));
@@ -230,7 +235,7 @@ class nggOptions {
 		<h2><?php _e('General Options','nggallery'); ?></h2>
 		<form name="generaloptions" method="post" action="<?php echo $this->filepath; ?>">
 		<?php wp_nonce_field('ngg_settings') ?>
-		<input type="hidden" name="page_options" value="gallerypath,deleteImg,useMediaRSS,usePicLens,usePermalinks,graphicLibrary,imageMagickDir,activateTags,appendType,maxImages" />
+		<input type="hidden" name="page_options" value="gallerypath,deleteImg,useMediaRSS,usePicLens,usePermalinks,permalinkSlug,graphicLibrary,imageMagickDir,activateTags,appendType,maxImages" />
 			<table class="form-table ngg-options">
 				<tr valign="top">
 					<th align="left"><?php _e('Gallery path','nggallery'); ?></th>
@@ -245,12 +250,13 @@ class nggOptions {
 				<tr valign="top">
 					<th align="left"><?php _e('Activate permalinks','nggallery') ?></th>
 					<td><input type="checkbox" name="usePermalinks" value="1" <?php checked('1', $ngg->options['usePermalinks']); ?> />
-					<?php _e('When you activate this option, you need to update your permalink structure one time.','nggallery'); ?></td>
+					<?php _e('When you activate this option, you need to update your permalink structure one time.','nggallery'); ?>
+                    <?php _e('Gallery slug name :','nggallery'); ?>
+                    <input type="text" size="15" name="permalinkSlug" value="<?php echo $ngg->options['permalinkSlug']; ?>" /></td>
 				</tr>
 				<tr class="expert">
 					<th valign="top"><?php _e('Create new URL friendly image slugs','nggallery'); ?></th>
-					<td><input type="submit" name="createslugs" class="button-secondary"  value="<?php _e('Proceed now','nggallery') ;?> &raquo;"/>
-                    <?php _e('Currently not used, prepare database for upcoming version','nggallery'); ?></td>
+					<td><input type="submit" name="createslugs" class="button-secondary"  value="<?php _e('Proceed now','nggallery') ;?> &raquo;"/></td>
 				</tr>                
 				<tr class="expert">
 					<th valign="top"><?php _e('Select graphic library','nggallery'); ?></th>

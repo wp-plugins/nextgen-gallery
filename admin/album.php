@@ -147,7 +147,7 @@ class nggManageAlbum {
 		$link = (int) $_POST['pageid'];
         
 		// slug must be unique, we use the title for that
-        $slug = nggdb::get_unique_slug( sanitize_title( $name ), 'album' );
+        $slug = nggdb::get_unique_slug( sanitize_title( $name ), 'album', $this->currentID );
         
 		$result = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->nggalbum SET slug= '%s', name= '%s', albumdesc= '%s', previewpic= %d, pageid= %d WHERE id = '%d'" , $slug, $name, $desc, $prev, $link, $this->currentID ) );
         
@@ -173,7 +173,7 @@ jQuery(document).ready(
 	function()
 	{
         jQuery("#previewpic").nggAutocomplete( {
-            type: 'image',domain: "<?php echo site_url(); ?>/"
+            type: 'image',domain: "<?php echo home_url(); ?>/"
         });
         
 		jQuery('#selectContainer').sortable( {

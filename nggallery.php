@@ -2,9 +2,9 @@
 /*
 Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.de/?page_id=80
-Description: A NextGENeration Photo gallery for the Web 2.0.
+Description: A NextGENeration Photo Gallery for WordPress
 Author: Alex Rabe
-Version: 1.7.4
+Version: 1.8.0
 
 Author URI: http://alexrabe.de/
 
@@ -34,8 +34,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.7.4';
-	var $dbversion   = '1.7.0';
+	var $version     = '1.8.0';
+	var $dbversion   = '1.8.0';
 	var $minium_WP   = '3.0';
 	var $donators    = 'http://nextgen.boelinger.com/donators.php';
 	var $options     = '';
@@ -95,7 +95,7 @@ class nggLoader {
 		
 		// All credits to the tranlator 
 		$this->translator  = '<p class="hint">'. __('<strong>Translation by : </strong><a target="_blank" href="http://alexrabe.de/wordpress-plugins/nextgen-gallery/languages/">See here</a>', 'nggallery') . '</p>';
-		$this->translator .= '<p class="hint">'. __('<strong>This translation is not yet updated for Version 1.7.3</strong>. If you would like to help with translation, download the current po from the plugin folder and read <a href="http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/">here</a> how you can translate the plugin.', 'nggallery') . '</p>'; 
+		$this->translator .= '<p class="hint">'. __('<strong>This translation is not yet updated for Version 1.8.0</strong>. If you would like to help with translation, download the current po from the plugin folder and read <a href="http://alexrabe.de/wordpress-plugins/wordtube/translation-of-plugins/">here</a> how you can translate the plugin.', 'nggallery') . '</p>'; 
 
         // Check for upgrade
         $this->check_for_upgrade();
@@ -184,21 +184,27 @@ class nggLoader {
 	}
 	
 	function check_memory_limit() {
-
-        // get the real memory limit before some increase it
-		$this->memory_limit = (int) substr( ini_get('memory_limit'), 0, -1);
         
-		//This works only with enough memory, 16MB is silly, wordpress requires already 16MB :-)
-		if ( ($this->memory_limit != 0) && ($this->memory_limit < 16 ) ) {
-			add_action(
-				'admin_notices', 
-				create_function(
-					'', 
-					'echo \'<div id="message" class="error"><p><strong>' . __('Sorry, NextGEN Gallery works only with a Memory Limit of 16 MB or higher', 'nggallery') . '</strong></p></div>\';'
-				)
-			);
-			return false;
-		}
+        // get the real memory limit before some increase it
+		$this->memory_limit = ini_get('memory_limit');
+        
+        // Yes, we reached Gigabyte limits, so check if it's a megabyte limit
+        if (strtolower( substr($memory_limit, -1) ) == 'm') {
+            
+            $this->memory_limit = (int) substr( $this->memory_limit, 0, -1);
+        
+    		//This works only with enough memory, 16MB is silly, wordpress requires already 16MB :-)
+    		if ( ($this->memory_limit != 0) && ($this->memory_limit < 16 ) ) {
+    			add_action(
+    				'admin_notices', 
+    				create_function(
+    					'', 
+    					'echo \'<div id="message" class="error"><p><strong>' . __('Sorry, NextGEN Gallery works only with a Memory Limit of 16 MB or higher', 'nggallery') . '</strong></p></div>\';'
+    				)
+    			);
+    			return false;
+    		}
+        }
 		
 		return true;
 		
@@ -208,6 +214,7 @@ class nggLoader {
 
 		// Inform about a database upgrade
 		if( get_option( 'ngg_db_version' ) != NGG_DBVERSION ) {
+            if ( isset ($_GET['page']) && $_GET['page'] == NGGFOLDER ) return;
 			add_action(
 				'admin_notices', 
 				create_function(
@@ -284,6 +291,7 @@ class nggLoader {
 		require_once (dirname (__FILE__) . '/lib/post-thumbnail.php');			//  n.a.
 		require_once (dirname (__FILE__) . '/widgets/widgets.php');				// 298.792
         require_once (dirname (__FILE__) . '/lib/multisite.php');
+        require_once (dirname (__FILE__) . '/lib/sitemap.php');
 
         // Load frontend libraries							
         require_once (dirname (__FILE__) . '/lib/navigation.php');		        // 242.016
@@ -334,7 +342,7 @@ class nggLoader {
 
 		// activate modified Shutter reloaded if not use the Shutter plugin
 		if ( ($this->options['thumbEffect'] == "shutter") && !function_exists('srel_makeshutter') ) {
-			wp_register_script('shutter', NGGALLERY_URLPATH .'shutter/shutter-reloaded.js', false ,'1.3.0');
+			wp_register_script('shutter', NGGALLERY_URLPATH .'shutter/shutter-reloaded.js', false ,'1.3.2');
 			wp_localize_script('shutter', 'shutterSettings', array(
 						'msgLoading' => __('L O A D I N G', 'nggallery'),
 						'msgClose' => __('Click to Close', 'nggallery'),
@@ -357,7 +365,7 @@ class nggLoader {
 			if ( ($this->options['thumbEffect'] == "shutter") || function_exists('srel_makeshutter') ) {
 				wp_enqueue_script ( 'ngg_script', NGGALLERY_URLPATH . 'js/ngg.js', array('jquery'), '2.0');
 				wp_localize_script( 'ngg_script', 'ngg_ajax', array('path'		=> NGGALLERY_URLPATH,
-                                                                    'callback'  => site_url() . '/' . 'index.php?callback=ngg-ajax',
+                                                                    'callback'  => home_url() . '/' . 'index.php?callback=ngg-ajax',
 																	'loading'	=> __('loading', 'nggallery'),
 				) );
 			}
@@ -384,7 +392,7 @@ class nggLoader {
 
 		// activate modified Shutter reloaded if not use the Shutter plugin
 		if ( ($this->options['thumbEffect'] == 'shutter') && !function_exists('srel_makeshutter') )
-			wp_enqueue_style('shutter', NGGALLERY_URLPATH .'shutter/shutter-reloaded.css', false, '1.3.0', 'screen');
+			wp_enqueue_style('shutter', NGGALLERY_URLPATH .'shutter/shutter-reloaded.css', false, '1.3.2', 'screen');
 		
 	}
 	
@@ -419,11 +427,11 @@ class nggLoader {
 	function activate() {
 		global $wpdb;
 		//Starting from version 1.8.0 it's works only with PHP5.2
-        //if (version_compare(PHP_VERSION, '5.2.0', '<')) { 
-        //        deactivate_plugins(plugin_basename(__FILE__)); // Deactivate ourself
-        //        wp_die("Sorry, but you can't run this plugin, it requires PHP 5.2 or higher."); 
-		//		return; 
-        //} 
+        if (version_compare(PHP_VERSION, '5.2.0', '<')) { 
+                deactivate_plugins(plugin_basename(__FILE__)); // Deactivate ourself
+                wp_die("Sorry, but you can't run this plugin, it requires PHP 5.2 or higher."); 
+				return; 
+        } 
 
 		include_once (dirname (__FILE__) . '/admin/install.php');
         

@@ -138,7 +138,8 @@ function ngg_default_options() {
 	$ngg_options['deleteImg']			= true;							// delete Images
 	$ngg_options['swfUpload']			= true;							// activate the batch upload
 	$ngg_options['usePermalinks']		= false;						// use permalinks for parameters
-	$ngg_options['graphicLibrary']		= 'gd';							// default graphic library
+    $ngg_options['permalinkSlug']		= 'nggallery';                  // the default slug for permalinks
+    $ngg_options['graphicLibrary']		= 'gd';							// default graphic library
 	$ngg_options['imageMagickDir']		= '/usr/local/bin/';			// default path to ImageMagick
 	$ngg_options['useMediaRSS']			= false;						// activate the global Media RSS file
 	$ngg_options['usePicLens']			= false;						// activate the PicLens Link for galleries

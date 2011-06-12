@@ -233,15 +233,18 @@ class ngg_Thumbnail {
 		    $memoryNeeded = memory_get_usage() + $memoryNeeded;
 			// get memory limit
 			$memory_limit = ini_get('memory_limit');
-			if ($memory_limit != '') {
-				$memory_limit = substr($memory_limit, 0, -1) * 1024 * 1024;
-			}
-			
-			if ($memoryNeeded > $memory_limit) {
-				$memoryNeeded = round ($memoryNeeded / 1024 / 1024, 2);
-				$this->errmsg = 'Exceed Memory limit. Require : '.$memoryNeeded. " MByte" ;
-		        $this->error = true;
-	        }
+            if ( strtolower(substr($memory_limit, -1)) == 'm' ) {
+                
+    			if ($memory_limit != '') {
+    				$memory_limit = substr($memory_limit, 0, -1) * 1024 * 1024;
+    			}
+    			
+    			if ($memoryNeeded > $memory_limit) {
+    				$memoryNeeded = round ($memoryNeeded / 1024 / 1024, 2);
+    				$this->errmsg = 'Exceed Memory limit. Require : '.$memoryNeeded. " MByte" ;
+    		        $this->error = true;
+    	        }
+            }
 		}
 	    return;
 	}

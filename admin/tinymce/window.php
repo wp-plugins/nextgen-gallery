@@ -24,17 +24,17 @@ global $wpdb, $nggdb;
 <script type="text/javascript">
 jQuery(document).ready(function(){ 
     jQuery("#gallerytag").nggAutocomplete( {
-        type: 'gallery',domain: "<?php echo site_url(); ?>/"
+        type: 'gallery',domain: "<?php echo home_url(); ?>/"
     });
     jQuery("#albumtag").nggAutocomplete( {
-        type: 'album',domain: "<?php echo site_url(); ?>/"
+        type: 'album',domain: "<?php echo home_url(); ?>/"
     });
     jQuery("#singlepictag").nggAutocomplete( {
-        type: 'image',domain: "<?php echo site_url(); ?>/"
+        type: 'image',domain: "<?php echo home_url(); ?>/"
     });
 });
 </script>
-<body id="link" onload="tinyMCEPopup.executeOnLoad('init();');document.body.style.display='';document.getElementById('gallerytag').focus();" style="display: none">
+<body id="link" onload="tinyMCEPopup.executeOnLoad('init();');document.body.style.display='';" style="display: none">
 <!-- <form onsubmit="insertLink();return false;" action="#"> -->
 	<form name="NextGEN" action="#">
 	<div class="tabs">

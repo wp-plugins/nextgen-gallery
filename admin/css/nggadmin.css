@@ -151,10 +151,6 @@ p#ngg-inlinebutton {
 .fixed tbody th.column-cb {
 	padding:7px 0 22px;
 }
-.fixed .column-cb {
-	padding:0;
-	width:2.2em;
-}
 
 .fixed .column-thumbnail{
 	width:85px;
@@ -167,6 +163,14 @@ p#ngg-inlinebutton {
 
 .fixed .column-id {
 	width: 5em;
+}
+
+.fixed .column-title {
+	width: 25%;
+}
+
+.fixed .column-description {
+	width: 40%;
 }
 
 .fixed .column-exclude, .fixed .column-action, .fixed .column-delete {
