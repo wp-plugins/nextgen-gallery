@@ -36,7 +36,7 @@ class nggLoader {
 	
 	var $version     = '1.8.0';
 	var $dbversion   = '1.8.0';
-	var $minium_WP   = '3.0';
+	var $minium_WP   = '3.1';
 	var $donators    = 'http://nextgen.boelinger.com/donators.php';
 	var $options     = '';
 	var $manage_page;
