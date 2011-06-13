@@ -239,7 +239,7 @@ class nggRewrite {
     		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/slideshow/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=slide',
     		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/images/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=gallery',
     		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/page-([0-9]+)/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&nggpage=$matches[4]',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/page-([0-9]+)/slideshow/?$' => 'index.php?pagename=$matches[1]&album=$matches[21]&gallery=$matches[3]&nggpage=$matches[4]&show=slide',
+    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/page-([0-9]+)/slideshow/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&nggpage=$matches[4]&show=slide',
     		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/page-([0-9]+)/images/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&nggpage=$matches[4]&show=gallery',
     		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/image/([^/]+)/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&pid=$matches[4]',
             
