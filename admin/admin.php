@@ -377,9 +377,9 @@ class nggAdminPanel{
 				// we would like to have screen option only at the manage images / gallery page
 				if ( isset ($_POST['sortGallery']) )
 					$screen = $screen;
-				else if ( ($_GET['mode'] == 'edit') || isset ($_POST['backToGallery']) )
+				else if ( (isset($_GET['mode']) && $_GET['mode'] == 'edit') || isset ($_POST['backToGallery']) )
 					$screen->base = $screen->id = 'nggallery-manage-images';
-				else if ( ($_GET['mode'] == 'sort') )
+				else if ( (isset($_GET['mode']) && $_GET['mode'] == 'sort') )
 					$screen = $screen;
 				else
 					$screen->base = $screen->id = 'nggallery-manage-gallery';	

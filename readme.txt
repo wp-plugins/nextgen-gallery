@@ -130,6 +130,12 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.8.1 - 18.06.2011 =
+* Bugfix : Special case for pagination, instead of showing page-1, we show the clean url
+* Bugfix : Various PHP notice fixes
+* Bugfix : Typo in rewrite rules
+* Bugfix : Flush rewrite rules during upgrade later
+
 = V1.8.0 - 12.06.2011 =
 * NEW : Full rework of permalink url structure
 * NEW : Adding Google Sitemaps for Images (require WordPress SEO plugin by YOAST )

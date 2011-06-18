@@ -75,7 +75,7 @@ class nggRewrite {
 
 			// 1. Post / Page url + main slug
             $url = trailingslashit ( get_permalink ($post->ID) ) . $this->slug; 
-			
+
 			// 2. Album, pid or tags
 			if (isset ($args['album']) && ($args['gallery'] == false) )
 				$url .= '/' . $args['album'];
@@ -91,6 +91,8 @@ class nggRewrite {
 			// 3. Navigation
 			if  (isset ($args['nggpage']) && ($args['nggpage']) )
 				$url .= '/page-' . $args['nggpage'];
+            elseif (isset ($args['nggpage']) && ($args['nggpage'] === false) && ( count($args) == 1 ) )
+                $url = trailingslashit ( get_permalink ($post->ID) ); // special case instead of showing page-1, we show the clean url
 			
 			// 4. Show images or Slideshow
 			if  (isset ($args['show']))
