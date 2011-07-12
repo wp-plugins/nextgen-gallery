@@ -130,6 +130,10 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.8.2 - 12.07.2011 =
+* Bugfix : Set pagination variables for search result, otherwise update failed
+* Bugfix : Update failed for paged galleries since WordPress 3.2
+
 = V1.8.1 - 18.06.2011 =
 * Bugfix : Special case for pagination, instead of showing page-1, we show the clean url
 * Bugfix : Various PHP notice fixes

@@ -60,7 +60,7 @@ function nggallery_manage_gallery_main() {
         	}, true);
         }
     	
-        if ( document.activeElement.name == 'paged' )
+        if ( document.activeElement.name == 'post_paged' )
             return true;
 	
 		var numchecked = getNumChecked(document.getElementById('editgalleries'));

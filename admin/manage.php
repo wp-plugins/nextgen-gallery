@@ -12,7 +12,7 @@ class nggManageGallery {
 	
 	// initiate the manage page
 	function nggManageGallery() {
-
+        
 		// GET variables
 		if( isset($_GET['gid']) )
 			$this->gid  = (int) $_GET['gid'];
@@ -21,13 +21,13 @@ class nggManageGallery {
 		if( isset($_GET['mode']) )
 			$this->mode = trim ($_GET['mode']);
         // Check for pagination request, avoid post process of other submit button
-        if ( isset($_POST['paged']) ) {
-            if ( $_GET['paged'] != $_POST['paged'] ) {
-                $_GET['paged'] = $_POST['paged'];
-                return; 
-            }
-        }    
-		// Should be only called via manage galleries overview
+        if ( isset($_POST['post_paged']) ) {
+            if ( $_GET['paged'] != $_POST['post_paged'] ) {		
+                $_GET['paged'] = $_POST['post_paged'];		
+                return;		
+            }		
+        }                        
+        // Should be only called via manage galleries overview
 		if ( isset($_POST['page']) && $_POST['page'] == 'manage-galleries' )
 			$this->post_processor_galleries();
 		// Should be only called via a edit single gallery page	
@@ -290,9 +290,9 @@ class nggManageGallery {
 			check_admin_referer('ngg_thickbox_form');
 			
 			//save the new values for the next operation
-			$ngg->options['thumbwidth']  = (int)  $_POST['thumbwidth'];
-			$ngg->options['thumbheight'] = (int)  $_POST['thumbheight'];
-			$ngg->options['thumbfix']    = (bool) $_POST['thumbfix']; 
+			$ngg->options['thumbwidth']  = (int) $_POST['thumbwidth'];
+			$ngg->options['thumbheight'] = (int) $_POST['thumbheight'];
+			$ngg->options['thumbfix']    = isset ( $_POST['thumbfix'] ) ? true : false; 
 			update_option('ngg_options', $ngg->options);
 			
 			$pic_ids  = explode(',', $_POST['TB_imagelist']);
@@ -362,12 +362,12 @@ class nggManageGallery {
 			}
 		}
 	
-		if (isset ($_POST['updatepictures']))  {
+		if (isset ($_POST['updatepictures']) )  {
 		// Update pictures	
 		
 			check_admin_referer('ngg_updategallery');
 			
-			if ( nggGallery::current_user_can( 'NextGEN Edit gallery options' )) {
+			if ( nggGallery::current_user_can( 'NextGEN Edit gallery options' )  && !isset ($_GET['s']) ) {
 				
 				if ( nggGallery::current_user_can( 'NextGEN Edit gallery title' )) {
 				    // don't forget to update the slug
@@ -552,8 +552,18 @@ class nggManageGallery {
 		//on what ever reason I need to set again the query var
 		set_query_var('s', $_GET['s']);
 		$request = get_search_query();
-		// look now for the images
-	 	$this->search_result = array_merge( (array) $nggdb->search_for_images( $request ), (array) nggTags::find_images_for_tags( $request , 'ASC' ));
+		
+        // look now for the images
+        $search_for_images = (array) $nggdb->search_for_images( $request );
+        $search_for_tags   = (array) nggTags::find_images_for_tags( $request , 'ASC' );
+
+        // finally merge the two results together
+        $this->search_result = array_merge( $search_for_images , $search_for_tags );
+
+        // TODO: Currently we didn't support a proper pagination
+        $nggdb->paged['total_objects'] = $nggdb->paged['objects_per_page'] = count ($this->search_result) ;
+        $nggdb->paged['max_objects_per_page'] = 1;        
+        
 		// show pictures page
 		$this->mode = 'edit'; 
 	}
@@ -562,12 +572,12 @@ class nggManageGallery {
 	 * Display the pagination.
 	 *
 	 * @since 1.8.0
-     * @author taken from WP core
+     * @author taken from WP core (see includes/class-wp-list-table.php)
 	 * @return string echo the html pagination bar
 	 */
 	function pagination( $which, $current, $total_items, $per_page ) {
-	   
-	    $total_pages = ceil( $total_items / $per_page );
+
+        $total_pages = ($per_page > 0) ? ceil( $total_items / $per_page ) : 1;
 
 		$output = '<span class="displaying-num">' . sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
 
@@ -602,7 +612,7 @@ class nggManageGallery {
 		else
 			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name='%s' value='%s' size='%d' />",
 				esc_attr__( 'Current page' ),
-				esc_attr( 'paged' ),
+				esc_attr( 'post_paged' ),
 				$current,
 				strlen( $total_pages )
 			);
@@ -624,9 +634,12 @@ class nggManageGallery {
 			'&raquo;'
 		);
 
-		$output .= "\n" . join( "\n", $page_links );
+		$output .= "\n<span class='pagination-links'>" . join( "\n", $page_links ) . '</span>';
 
-		$page_class = $total_pages < 2 ? ' one-page' : '';
+		if ( $total_pages )
+			$page_class = $total_pages < 2 ? ' one-page' : '';
+		else
+			$page_class = ' no-pages';
 
 		$pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
 

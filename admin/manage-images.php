@@ -164,7 +164,7 @@ function checkSelected() {
     	}, true);
     }
 	
-    if ( document.activeElement.name == 'paged' )
+    if ( document.activeElement.name == 'post_paged' )
         return true;
      
 	if(numchecked < 1) { 
@@ -658,6 +658,7 @@ class _NGG_Images_List_Table extends WP_List_Table {
 	}
 
 	function get_column_info() {
+	   
 		$columns = get_column_headers( $this->_screen );
 		$hidden = get_hidden_columns( $this->_screen );
 		$_sortable = $this->get_sortable_columns();
