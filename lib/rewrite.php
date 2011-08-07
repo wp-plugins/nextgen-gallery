@@ -12,9 +12,22 @@
 */
 class nggRewrite {
 
-	// default value
-	var $slug = 'nggallery';	
-
+	/**
+	 * Default slug name
+	 *
+	 * @since 1.8.0
+	 * @var string
+	 */
+	var $slug = 'nggallery';
+    
+	/**
+	 * Contain the main rewrite structure
+	 *
+	 * @since 1.8.3
+	 * @var array
+	 */    
+    var $ngg_rules = '';
+    
 	/**
 	* Constructor
 	*/
@@ -37,6 +50,26 @@ class nggRewrite {
         	
 		if ($this->options['usePermalinks'])
 			add_action('generate_rewrite_rules', array(&$this, 'RewriteRules'));
+
+        // setup the main rewrite structure for the plugin
+        $this->ngg_rules = array(
+            '/page-([0-9]+)/' => '&nggpage=[matches]',
+    		'/image/([^/]+)/' => '&pid=[matches]',
+    		'/image/([^/]+)/page-([0-9]+)/' => '&pid=[matches]&nggpage=[matches]',
+    		'/slideshow/' => '&show=slide',
+    		'/images/' => '&show=gallery',
+    		'/tags/([^/]+)/' => '&gallerytag=[matches]',
+    		'/tags/([^/]+)/page-([0-9]+)/' => '&gallerytag=[matches]&nggpage=[matches]',
+    		'/([^/]+)/' => '&album=[matches]',
+    		'/([^/]+)/page-([0-9]+)/' => '&album=[matches]&nggpage=[matches]',
+    		'/([^/]+)/([^/]+)/' => '&album=[matches]&gallery=[matches]',
+    		'/([^/]+)/([^/]+)/slideshow/' => '&album=[matches]&gallery=[matches]&show=slide',
+    		'/([^/]+)/([^/]+)/images/' => '&album=[matches]&gallery=[matches]&show=gallery',
+    		'/([^/]+)/([^/]+)/page-([0-9]+)/' => '&album=[matches]&gallery=[matches]&nggpage=[matches]',
+    		'/([^/]+)/([^/]+)/page-([0-9]+)/slideshow/' => '&album=[matches]&gallery=[matches]&nggpage=[matches]&show=slide',
+    		'/([^/]+)/([^/]+)/page-([0-9]+)/images/' => '&album=[matches]&gallery=[matches]&nggpage=[matches]&show=gallery',
+    		'/([^/]+)/([^/]+)/image/([^/]+)/' => '&album=[matches]&gallery=[matches]&pid=[matches]'        
+        );        		
 		
 		
 	} // end of initialization
@@ -47,12 +80,17 @@ class nggRewrite {
 	function get_permalink( $args ) {
 		global $wp_rewrite, $wp_query;
 
+        // taken from is_frontpage plugin, required for static homepage
+        $show_on_front = get_option('show_on_front');
+        $page_on_front = get_option('page_on_front');
+
 		//TODO: Watch out for ticket http://trac.wordpress.org/ticket/6627
 		if ($wp_rewrite->using_permalinks() && $this->options['usePermalinks'] ) {
 			$post = &get_post(get_the_ID());
 
-			// $_GET from wp_query
-			$album = get_query_var('album');
+			// If the album is not set before get it from the wp_query ($_GET) 
+            if ( !isset ($args['album'] ) )
+                $album = get_query_var('album');
 			if ( !empty( $album ) )
 				$args ['album'] = $album;
 			
@@ -75,6 +113,9 @@ class nggRewrite {
 
 			// 1. Post / Page url + main slug
             $url = trailingslashit ( get_permalink ($post->ID) ) . $this->slug; 
+            //TODO: For static home pages generate the link to the selected page, still doesn't work
+            if (($show_on_front == 'page') && ($page_on_front == get_the_ID()))
+                $url = trailingslashit ( $post->guid ) . $this->slug;
 
 			// 2. Album, pid or tags
 			if (isset ($args['album']) && ($args['gallery'] == false) )
@@ -104,10 +145,6 @@ class nggRewrite {
 			// we need to add the page/post id at the start_page otherwise we don't know which gallery is clicked
 			if (is_home())
 				$args['pageid'] = get_the_ID();
-			
-			// taken from is_frontpage plugin, required for static homepage
-			$show_on_front = get_option('show_on_front');
-			$page_on_front = get_option('page_on_front');
 			
 			if (($show_on_front == 'page') && ($page_on_front == get_the_ID()))
 				$args['page_id'] = get_the_ID();
@@ -225,31 +262,11 @@ class nggRewrite {
         global $ngg;
         
 		$rewrite_rules = array (
-        
-            // new page rewrites
-            '(.+?)/' . $this->slug . '/page-([0-9]+)/?$' => 'index.php?pagename=$matches[1]&nggpage=$matches[2]',
-    		'(.+?)/' . $this->slug . '/image/([^/]+)/?$' => 'index.php?pagename=$matches[1]&pid=$matches[2]',
-    		'(.+?)/' . $this->slug . '/image/([^/]+)/page-([0-9]+)/?$' => 'index.php?pagename=$matches[1]&pid=$matches[2]&nggpage=$matches[3]',
-    		'(.+?)/' . $this->slug . '/slideshow/?$' => 'index.php?pagename=$matches[1]&show=slide',
-    		'(.+?)/' . $this->slug . '/images/?$' => 'index.php?pagename=$matches[1]&show=gallery',
-    		'(.+?)/' . $this->slug . '/tags/([^/]+)/?$' => 'index.php?pagename=$matches[1]&gallerytag=$matches[2]',
-    		'(.+?)/' . $this->slug . '/tags/([^/]+)/page-([0-9]+)/?$' => 'index.php?pagename=$matches[1]&gallerytag=$matches[2]&nggpage=$matches[3]',
-
-    		'(.+?)/' . $this->slug . '/([^/]+)/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]',
-    		'(.+?)/' . $this->slug . '/([^/]+)/page-([0-9]+)/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&nggpage=$matches[3]',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/slideshow/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=slide',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/images/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&show=gallery',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/page-([0-9]+)/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&nggpage=$matches[4]',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/page-([0-9]+)/slideshow/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&nggpage=$matches[4]&show=slide',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/page-([0-9]+)/images/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&nggpage=$matches[4]&show=gallery',
-    		'(.+?)/' . $this->slug . '/([^/]+)/([^/]+)/image/([^/]+)/?$' => 'index.php?pagename=$matches[1]&album=$matches[2]&gallery=$matches[3]&pid=$matches[4]',
-            
             // XML request
-            $this->slug . '/slideshow/([0-9]+)/?$' => 'index.php?imagerotator=true&gid=$matches[1]',
-		);
+            $this->slug . '/slideshow/([0-9]+)/?$' => 'index.php?imagerotator=true&gid=$matches[1]'
+		);  
         
-        $rewrite_rules = array_merge($this->generate_rewrite_rules(), $rewrite_rules);                                                
+        $rewrite_rules = array_merge($rewrite_rules, $this->generate_rewrite_rules() ); 
 		$wp_rewrite->rules = array_merge($rewrite_rules, $wp_rewrite->rules);		
 	}
 
@@ -262,25 +279,7 @@ class nggRewrite {
 	function generate_rewrite_rules() {
         global $wp_rewrite;	   
         
-        $new_rules = array(
-            '/page-([0-9]+)/' => '&nggpage=[matches]',
-    		'/image/([^/]+)/' => '&pid=[matches]',
-    		'/image/([^/]+)/page-([0-9]+)/' => '&pid=[matches]&nggpage=[matches]',
-    		'/slideshow/' => '&show=slide',
-    		'/images/' => '&show=gallery',
-    		'/tags/([^/]+)/' => '&gallerytag=[matches]',
-    		'/tags/([^/]+)/page-([0-9]+)/' => '&gallerytag=[matches]&nggpage=[matches]',
-    		'/([^/]+)/' => '&album=[matches]',
-    		'/([^/]+)/page-([0-9]+)/' => '&album=[matches]&nggpage=[matches]',
-    		'/([^/]+)/([^/]+)/' => '&album=[matches]&gallery=[matches]',
-    		'/([^/]+)/([^/]+)/slideshow/' => '&album=[matches]&gallery=[matches]&show=slide',
-    		'/([^/]+)/([^/]+)/images/' => '&album=[matches]&gallery=[matches]&show=gallery',
-    		'/([^/]+)/([^/]+)/page-([0-9]+)/' => '&album=[matches]&gallery=[matches]&nggpage=[matches]',
-    		'/([^/]+)/([^/]+)/page-([0-9]+)/slideshow/' => '&album=[matches]&gallery=[matches]&nggpage=[matches]&show=slide',
-    		'/([^/]+)/([^/]+)/page-([0-9]+)/images/' => '&album=[matches]&gallery=[matches]&nggpage=[matches]&show=gallery',
-    		'/([^/]+)/([^/]+)/image/([^/]+)/' => '&album=[matches]&gallery=[matches]&pid=[matches]'        
-        );
-        
+        $rewrite_rules = array();
         $permalink_structure =  $wp_rewrite->permalink_structure;      
 		
         //get everything up to the first rewrite tag
@@ -290,7 +289,7 @@ class nggRewrite {
         
 		$num_tokens = count($tokens[0]);
 
-		$index = $wp_rewrite->index; //probably 'index.php'
+		$this->index = $wp_rewrite->index; //probably 'index.php'
 
 		//build a list from the rewritecode and queryreplace arrays, that will look something like
 		//tagname=$matches[i] where i is the current $i
@@ -329,10 +328,71 @@ class nggRewrite {
 
 		//get the 'tagname=$matches[i]'
 		$query = ( isset($queries) && is_array($queries) ) ? $queries[$num_toks - 1] : '';
-
-        $post_rewrite = array();
+       
+        if ( $num_toks ) {
+            // In the case we build for each and every page ( based on a simple %pagename% rule ) the rewrite rules,
+            // we need to add them first, then the post rules
+            if ( $wp_rewrite->use_verbose_page_rules )
+                $rewrite_rules = array_merge ( $this->page_rewrite_rules(), $this->add_rewrite_rules( $match, $query, $num_toks ) );
+            else
+                $rewrite_rules = array_merge ( $this->add_rewrite_rules( $match, $query, $num_toks ), $this->page_rewrite_rules() );
+        }
         
-        foreach ( $new_rules as $regex => $new_query) {
+        return $rewrite_rules;
+	}
+
+	/**
+	 * Retrieve all of the rewrite rules for pages.
+	 *
+	 * If the 'use_verbose_page_rules' property is false, then there will only
+	 * be a single rewrite rule for pages for those matching '%pagename%'. With
+	 * the property set to true, the attachments and the pages will be added for
+	 * each individual attachment URI and page URI, respectively.
+	 *
+	 * @since 1.8.3
+	 * @access public
+	 * @return array
+	 */
+	function page_rewrite_rules() {
+        global $wp_rewrite;
+ 
+		$rewrite_rules = array();
+
+		if ( ! $wp_rewrite->use_verbose_page_rules ) {
+            
+            $rewrite_rules = $this->add_rewrite_rules( "(.+?)/", 'pagename=$matches[1]', 1 );
+    		return $rewrite_rules;
+		}
+
+		$page_uris = $wp_rewrite->page_uri_index();
+		$uris = $page_uris[0];
+
+		if ( is_array( $uris ) ) {
+  
+			foreach ( $uris as $uri => $pagename ) {
+                $rewrite_rules = array_merge($rewrite_rules, $this->add_rewrite_rules( "($uri)/", 'pagename=$matches[1]', 1 ) );
+			}
+                
+		}
+
+		return $rewrite_rules;
+	}
+
+    /**
+     * Build the final structure of the rewrite rules based on match/query
+     * 
+     * @since 1.8.3
+     * @param string $match
+     * @param string $query
+     * @param int $num_toks
+     * @return array
+     */
+    function add_rewrite_rules( $match, $query, $num_toks ) {
+        global $wp_rewrite;
+        
+        $rewrite_rules = array();
+            
+        foreach ( $this->ngg_rules as $regex => $new_query) {
             
             // first add your nextgen slug
             $final_match = $match . $this->slug;
@@ -348,16 +408,17 @@ class nggRewrite {
                 $new_query = preg_replace('/\[matches\]/', '$matches[' . ++$offset . ']', $new_query, 1);
             }
             $final_query = $query . $new_query;
-            
+
             //close the match and finalise the query
             $final_match .= '?$';
-            $final_query = $index . '?' . $final_query;
-            
-            $post_rewrite = array_merge($post_rewrite, array($final_match => $final_query));
+            $final_query = $this->index . '?' . $final_query;
+
+            $rewrite_rules = array_merge($rewrite_rules, array($final_match => $final_query));
+
         }
 
-		return $post_rewrite; //the finished rules. phew!
-	}
+		return $rewrite_rules;        
+    }
 	
 }  // of nggRewrite CLASS
 

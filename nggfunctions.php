@@ -157,6 +157,7 @@ function nggShowGallery( $galleryID, $template = '', $images = false ) {
     $ngg_options['galSortDir'] = ($ngg_options['galSortDir'] == 'DESC') ? 'DESC' : 'ASC';
     
     // get gallery values
+    //TODO: Use pagination limits here to reduce memory needs
     $picturelist = nggdb::get_gallery($galleryID, $ngg_options['galSort'], $ngg_options['galSortDir']);
 
     if ( !$picturelist )

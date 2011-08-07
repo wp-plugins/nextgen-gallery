@@ -142,10 +142,15 @@ class nggGallery {
 	* @return array $options
 	*/
 	function get_option($key) {
+        global $post;
+        
 		// get first the options from the database 
 		$options = get_option($key);
-		
-		// Get all key/value data for the current post. 
+
+        if ( $post == null )
+            return $options;
+            
+		// Get all key/value data for the current post.            
 		$meta_array = get_post_custom();
 		
 		// Ensure that this is a array
@@ -536,6 +541,35 @@ class nggGallery {
 		}
     
         return false;    
+    }
+    
+    /**
+     * get_memory_usage
+     * 
+     * @access only for debug purpose
+     * @since 1.8.3
+     * @param string $text
+     * @return void
+     */
+    function get_memory( $text = '' ) {
+        global $memory;
+
+        $memory_peak = memory_get_usage();
+        $diff = 0;
+        
+		if ( isset($memory) )
+            $diff = $memory_peak - $memory;
+            
+        $exp = ($diff < 0) ? '-' : '';
+        $diff = ($exp == '-') ? 0 - $diff : $diff;
+        
+        $memory = $memory_peak;
+           
+        $unit = array('b','kb','mb','gb','tb','pb');
+        $rounded = @round($diff/pow(1024,($i=floor(log($diff,1024)))),2).' '.$unit[$i];
+            
+        echo $text . ': ' . $exp . $rounded .'<br />'; 
+          
     }
 }
 ?>

@@ -130,6 +130,13 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.8.3 - 07.08.2011 =
+* Changed : Support for simple custom permalink structures (i.e. /%category%/%postname%/)
+* Bugfix : Sub-Albums in Albums didn't create the correct link 
+* Bugfix : AJAX Pagination didn't work anymore
+* Bugfix : Adding index.php to home_url()
+* Bugfix : Preview picture lost on backend gallery page 2 or higher
+
 = V1.8.2 - 12.07.2011 =
 * Bugfix : Set pagination variables for search result, otherwise update failed
 * Bugfix : Update failed for paged galleries since WordPress 3.2

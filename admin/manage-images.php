@@ -270,6 +270,13 @@ jQuery(document).ready( function() {
 						<select <?php nggGallery::current_user_can_form( 'NextGEN Edit gallery preview pic' ); ?> name="previewpic" style="width:95%" >
 							<option value="0" ><?php _e('No Picture', 'nggallery') ?></option>
 							<?php
+                                // ensure that a preview pic from a other page is still shown here
+                                if ( intval($gallery->previewpic) != 0) {
+                                    if ( !array_key_exists ($gallery->previewpic, $picturelist )){
+                                        $previewpic = $nggdb->find_image($gallery->previewpic);
+                                        echo '<option value="'.$previewpic->pid.'" selected="selected" >'.$previewpic->pid.' - '.$previewpic->filename.'</option>'."\n";                
+                                    }
+                                }
 								if(is_array($picturelist)) {
 									foreach($picturelist as $picture) {
                                         if ($picture->exclude) continue;									   

@@ -137,7 +137,7 @@ function ngg_plugin_check() {
                 img_ok:   '<img src="<?php echo esc_url( admin_url( 'images/yes.png' ) ); ?>" class="icon" alt="ok"/>',
                 img_fail: '<img src="<?php echo esc_url( admin_url( 'images/no.png' ) ); ?>" class="icon" alt="failed" />',
                 adminurl: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-                domain:   '<?php echo esc_url( trailingslashit ( home_url() ) ); ?>'
+                domain:   '<?php echo esc_url( home_url('index.php') ); ?>'
 		},
 		
         run: function( index, state ) {
