@@ -20,8 +20,8 @@ class nggManageGallery {
 			$this->pid  = (int) $_GET['pid'];	
 		if( isset($_GET['mode']) )
 			$this->mode = trim ($_GET['mode']);
-        // Check for pagination request, avoid post process of other submit button
-        if ( isset($_POST['post_paged']) ) {
+        // Check for pagination request, avoid post process of other submit button, exclude search results
+        if ( isset($_POST['post_paged']) && !isset($_GET['s'] ) ) {
             if ( $_GET['paged'] != $_POST['post_paged'] ) {		
                 $_GET['paged'] = $_POST['post_paged'];		
                 return;		
