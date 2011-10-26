@@ -130,6 +130,9 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.8.4 - 26.10.2011 =
+* Bugfix : Fixed security vulnerability (TXH to Alain Schneider)
+
 = V1.8.3 - 07.08.2011 =
 * Changed : Support for simple custom permalink structures (i.e. /%category%/%postname%/)
 * Bugfix : Sub-Albums in Albums didn't create the correct link 
