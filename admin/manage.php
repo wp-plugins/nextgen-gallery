@@ -75,14 +75,16 @@ class nggManageGallery {
 				if ($ngg->options['deleteImg']) {
 					@unlink($image->imagePath);
 					@unlink($image->thumbPath);	
-					@unlink($image->imagePath . "_backup" );
+					@unlink($image->imagePath . '_backup' );
 				} 
-				$delete_pic = nggdb::delete_image ( $this->pid );
+				$result = nggdb::delete_image ( $this->pid );
             }
                                 
-			if($delete_pic)
+			if ($result) {
 				nggGallery::show_message( __('Picture','nggallery').' \''.$this->pid.'\' '.__('deleted successfully','nggallery') );
-				
+                do_action('ngg_delete_picture', $this->pid);
+			}
+            
 		 	$this->mode = 'edit'; // show pictures
 	
 		}
@@ -171,8 +173,11 @@ class nggManageGallery {
                 			$deleted = nggdb::delete_gallery( $id );
   						}
                         
-						if($deleted)
-							nggGallery::show_message(__('Gallery deleted successfully ', 'nggallery'));
+						if($deleted) {
+                            nggGallery::show_message(__('Gallery deleted successfully ', 'nggallery'));
+                            do_action('ngg_delete_gallery', $id);						  
+						}
+							
 					}
 					break;
 			}
@@ -190,6 +195,8 @@ class nggManageGallery {
 			$newgallery = esc_attr( $_POST['galleryname']);
 			if ( !empty($newgallery) )
 				nggAdmin::create_gallery($newgallery, $defaultpath);
+            
+            do_action( 'ngg_update_addgallery_page' );
 		}
 
 		if (isset ($_POST['TB_bulkaction']) && isset ($_POST['TB_ResizeImages']))  {
@@ -214,7 +221,7 @@ class nggManageGallery {
 			//save the new values for the next operation
 			$ngg->options['thumbwidth']  = (int)  $_POST['thumbwidth'];
 			$ngg->options['thumbheight'] = (int)  $_POST['thumbheight'];
-			$ngg->options['thumbfix']    = (bool) $_POST['thumbfix']; 
+			$ngg->options['thumbfix']    = isset ($_POST['thumbfix']) ? true : false; 
 			// What is in the case the user has no if cap 'NextGEN Change options' ? Check feedback
 			update_option('ngg_options', $ngg->options);
 			

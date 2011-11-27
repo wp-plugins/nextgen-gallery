@@ -296,12 +296,12 @@ class nggXMLRPC{
 			return $this->error;
 
 		if ( !$image = nggdb::find_image($id)  )
-			return(new IXR_Error(404, __("Invalid image ID")));
+			return(new IXR_Error(404, __( 'Invalid image ID' )));
 
         if ( !current_user_can( 'NextGEN Manage gallery' ) && !nggAdmin::can_manage_this_gallery($image->author) )
             return new IXR_Error( 401, __( 'Sorry, you must be able to edit this image' ) );
 
-		if ( !empty( $alttext ) )
+		if ( !empty( $id ) )
 			$result = nggdb::update_image($id, false, false, $description, $alttext, $exclude);
 		
 		if ( !$result )

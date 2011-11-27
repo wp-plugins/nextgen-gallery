@@ -173,7 +173,7 @@ jQuery(document).ready(
 	function()
 	{
         jQuery("#previewpic").nggAutocomplete( {
-            type: 'image',domain: "<?php echo home_url('index.php'); ?>/"
+            type: 'image',domain: "<?php echo home_url('index.php', is_ssl() ? 'https' : 'http'); ?>"
         });
         
 		jQuery('#selectContainer').sortable( {
@@ -368,7 +368,7 @@ function showDialog() {
 		</div>
 		
 		<!-- /#target-album -->
-		<div class="widget target-album widget-liquid-left">
+		<div class="widget target-album widget-left">
 
 		<?php
 			if ($this->currentID > 0){			
@@ -400,6 +400,7 @@ function showDialog() {
 	</div><!-- /#container -->
 </div><!-- /#wrap -->
 
+<?php if ($this->currentID > 0) : ?>
 <!-- #editalbum -->
 <div id="editalbum" style="display: none;" >
 	<form id="form-edit-album" method="POST" accept-charset="utf-8">
@@ -461,6 +462,7 @@ function showDialog() {
 	</form>
 </div>
 <!-- /#editalbum -->
+<?php endif; ?>
 
 <?php
 		
@@ -488,6 +490,7 @@ function showDialog() {
 	
 			$obj['id']   = $album->id;
 			$obj['name'] = $obj['title'] = $album->name;
+            $obj['type'] = 'album';
 			$class = 'album_obj';
 
 			// get the post name
@@ -512,6 +515,7 @@ function showDialog() {
 			$obj['id']    = $gallery->gid;
 			$obj['name']  = $gallery->name;
 			$obj['title'] = $gallery->title;
+            $obj['type']  = 'gallery';
 		
 			// get the post name
 			$post = get_post($gallery->pageid);
@@ -541,7 +545,7 @@ function showDialog() {
 							<p><strong>' . __('Name', 'nggallery') . ' : </strong>' . nggGallery::i18n( $obj['name'] ) . '</p>
 							<p><strong>' . __('Title', 'nggallery') . ' : </strong>' . nggGallery::i18n( $obj['title'] ) . '</p>
 							<p><strong>' . __('Page', 'nggallery'). ' : </strong>' . nggGallery::i18n( $obj['pagenname'] ) . '</p>
-							' . apply_filters('ngg_display_album_item_content', '', $obj['id']) . '
+							' . apply_filters('ngg_display_album_item_content', '', $obj) . '
 						</div>
 				</div>
 			   </div>'; 

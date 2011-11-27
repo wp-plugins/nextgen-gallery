@@ -1,5 +1,5 @@
 /* 
-** NextGEN Gallery Style for Wordpress 3.0
+** NextGEN Gallery Style for Wordpress 3.2
 */
 
 /* SETTINGS FOR Overview Gallery */
@@ -141,11 +141,6 @@ p#ngg-inlinebutton {
 	margin:0pt;
 	position:relative;
 	top:-25pt;
-}
-
-.ngg-tablenav .button-secondary {
-	padding:2px 8px;
-	vertical-align: top;
 }
 
 .fixed tbody th.column-cb {

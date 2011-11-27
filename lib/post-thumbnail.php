@@ -1,5 +1,5 @@
 <?php
-
+// see : http://wordpress.org/support/topic/plugin-nextgen-gallery-ngg-and-featured-image-issue?replies=14
 /**
  * nggPostThumbnail - Class for adding the post thumbnail feature
  * 
@@ -90,7 +90,7 @@ class nggPostThumbnail {
 		
 		$class = 'wp-post-image ngg-image-' . $image->pid . ' ';
         
-        // look up for the post thumbnial size and use them if defined
+        // look up for the post thumbnail size and use them if defined
         if ($size == 'post-thumbnail') {
             if ( is_array($_wp_additional_image_sizes) && isset($_wp_additional_image_sizes['post-thumbnail']) ) {
                 $size = array();
@@ -111,7 +111,7 @@ class nggPostThumbnail {
             $mode = isset($size[2]) ? $size[2] : '';
 
             // check fo cached picture
-            if ( ($ngg_options['imgCacheSinglePic']) && ($post->post_status == 'publish') )
+            if ( $post->post_status == 'publish' )
                 $img_src = $image->cached_singlepic_file( $width, $height, $mode );                
 		    
 		    // if we didn't use a cached image then we take the on-the-fly mode 
@@ -189,8 +189,7 @@ class nggPostThumbnail {
      			$width = absint( $_wp_additional_image_sizes['post-thumbnail']['width'] );
     			$height = absint( $_wp_additional_image_sizes['post-thumbnail']['height'] );
     		    // check fo cached picture
-    		    if ( ($ngg_options['imgCacheSinglePic']) )
-    		        $img_src = $image->cached_singlepic_file( $width, $height, 'crop' );                
+   		        $img_src = $image->cached_singlepic_file( $width, $height, 'crop' );                
             }
 
 		    // if we didn't use a cached image then we take the on-the-fly mode 

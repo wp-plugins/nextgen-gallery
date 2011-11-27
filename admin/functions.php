@@ -142,7 +142,7 @@ class nggAdmin{
 		$created_msg = '';
 		
 		// remove trailing slash at the end, if somebody use it
-		if (substr($galleryfolder, -1) == '/') $galleryfolder = substr($galleryfolder, 0, -1);
+		$galleryfolder = untrailingslashit($galleryfolder);
 		$gallerypath = WINABSPATH . $galleryfolder;
 		
 		if (!is_dir($gallerypath)) {
@@ -170,13 +170,13 @@ class nggAdmin{
 		$gallery_id = $wpdb->get_var("SELECT gid FROM $wpdb->nggallery WHERE path = '$galleryfolder' ");
 
 		if (!$gallery_id) {
-			$result = $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggallery (name, path, title, author) VALUES (%s, %s, %s, %s)", $galleryname, $galleryfolder, $galleryname , $user_ID) );
-			if (!$result) {
+            // now add the gallery to the database
+            $gallery_id = nggdb::add_gallery( $galleryname, $galleryfolder, '', 0, 0, $user_ID );
+			if (!$gallery_id) {
 				nggGallery::show_error(__('Database error. Could not add gallery!','nggallery'));
 				return;
 			}
 			$created_msg = _n( 'Gallery', 'Galleries', 1, 'nggallery' ) . ' <strong>' . $galleryname . '</strong> ' . __('successfully created!','nggallery') . '<br />';
-			$gallery_id  = $wpdb->insert_id;  // get index_id
 		}
 		
 		// Look for existing image list
@@ -212,7 +212,12 @@ class nggAdmin{
 		nggAdmin::do_ajax_operation( 'create_thumbnail' , $image_ids, __('Create new thumbnails','nggallery') );
 		
 		//TODO:Message will not shown, because AJAX routine require more time, message should be passed to AJAX
-		nggGallery::show_message( $created_msg . count($image_ids) .__(' picture(s) successfully added','nggallery') );
+		$message  = $created_msg . count($image_ids) .__(' picture(s) successfully added','nggallery');
+		$message .= ' [<a href="' . admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=' . $gallery_id . '" >';
+		$message .=  __('Edit gallery','nggallery');
+		$message .= '</a>]';
+		
+		nggGallery::show_message($message); 
 		
 		return;
 
@@ -363,7 +368,7 @@ class nggAdmin{
 			if ( ($ngg->options['imgBackup'] == 1) && (!file_exists($image->imagePath . '_backup')) )
 				@copy ($image->imagePath, $image->imagePath . '_backup');
 			
-			$file->resize($width, $height, 4);
+			$file->resize($width, $height);
 			$file->save($image->imagePath, $ngg->options['imgQuality']);
 			// read the new sizes
 			$size = @getimagesize ( $image->imagePath );
@@ -1032,7 +1037,7 @@ class nggAdmin{
 	 */
 	function swfupload_image($galleryID = 0) {
 
-		global $wpdb;
+		global $nggdb;
 		
 		if ($galleryID == 0)
 			return __('No gallery selected !', 'nggallery');
@@ -1056,15 +1061,15 @@ class nggAdmin{
 		if (!in_array( strtolower( $filepart['extension'] ), $ext))
 			return $_FILES[$key]['name'] . __('is no valid image file!', 'nggallery');
 
-		// get the path to the gallery	
-		$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");
-		if (!$gallerypath){
+		// get the path to the gallery
+        $gallery = $nggdb->find_gallery( (int) $galleryID );	
+		if ( empty($gallery->path) ){
 			@unlink($temp_file);		
 			return __('Failure in database, no gallery path set !', 'nggallery');
 		} 
 
 		// read list of images
-		$imageslist = nggAdmin::scandir( WINABSPATH . $gallerypath );
+		$imageslist = nggAdmin::scandir( WINABSPATH . $gallery->path );
 
 		// check if this filename already exist
 		$i = 0;
@@ -1072,11 +1077,11 @@ class nggAdmin{
 			$filename = $filepart['filename'] . '_' . $i++ . '.' . $filepart['extension'];
 		}
 		
-		$dest_file = WINABSPATH . $gallerypath . '/' . $filename;
+		$dest_file = WINABSPATH . $gallery->path . '/' . $filename;
 				
 		// save temp file to gallery
 		if ( !@move_uploaded_file($_FILES["Filedata"]['tmp_name'], $dest_file) ){
-			nggAdmin::check_safemode(WINABSPATH.$gallerypath);	
+			nggAdmin::check_safemode(WINABSPATH . $gallery->path);	
 			return __('Error, the file could not be moved to : ','nggallery').$dest_file;
 		} 
 		
@@ -1095,9 +1100,8 @@ class nggAdmin{
 	 */
 	function chmod($filename = '') {
 
-		$stat = @ stat(dirname($filename));
-		$perms = $stat['mode'] & 0007777;
-		$perms = $perms & 0000666;
+		$stat = @ stat( dirname($filename) );
+		$perms = $stat['mode'] & 0000666; // Remove execute bits for files
 		if ( @chmod($filename, $perms) )
 			return true;
 			

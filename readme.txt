@@ -2,8 +2,8 @@
 Contributors: alexrabe
 Donate link: http://alexrabe.de/donation/
 Tags: photos,flash,slideshow,images,gallery,media,admin,post,photo-albums,pictures,widgets,photo,picture,image,nextgen-gallery,nextgen gallery
-Requires at least: 3.1
-Tested up to: 3.2
+Requires at least: 3.2
+Tested up to: 3.3
 Stable tag: trunk
 
 NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with dozens of options and features.
@@ -129,6 +129,22 @@ To show the most recent added mages : **[recent max=x ]**
 **And at least request your question here :** http://wordpress.org/tags/nextgen-gallery?forum_id=10
 
 == Changelog == 
+
+= V1.9.0 - 27.11.2011 = 
+* NEW : Keep images transparency for PNG and GIF format
+* NEW : Switch to Plupload, support now HTML5 Upload (only with WordPress 3.3)
+* NEW : Added client side resize feature (only with WordPress 3.3)
+* NEW : Support for gallery templates in album shortcodes [ album id=x template="name" gallery="templatename" ]
+* NEW : Added new hook ngg_delete_picture
+* Changed : Updated to jQuery Cycle Version 2.9995
+* Changed : Always cache the single pictures, remove option
+* Bugfix : Couldn't use bulk operation for serach results
+* Bugfix : Bugfix for Edit thumbnails under IE 8 + 9
+* Bugfix : Allow empty altext in ngg.editImage
+* Bugfix : Various PHP notice fixes
+* Bugfix : Resize fix for Shutter effect and mobile Browser
+* Bugfix : FTP Import missing slug field into database
+* Bugfix : Check also EXIF field "DateTimeOriginal" for timestamp
 
 = V1.8.4 - 26.10.2011 =
 * Bugfix : Fixed security vulnerability (TXH to Alain Schneider)

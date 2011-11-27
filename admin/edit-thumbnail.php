@@ -65,9 +65,8 @@ if ( ($ngg_options['thumbfix'] == 1) ) {
 <script src="<?php echo NGGALLERY_URLPATH; ?>/admin/js/Jcrop/js/jquery.Jcrop.js"></script>
 <link rel="stylesheet" href="<?php echo NGGALLERY_URLPATH; ?>/admin/js/Jcrop/css/jquery.Jcrop.css" type="text/css" />
 
-<script language="JavaScript">
-<!--
-	
+<script type="text/javascript">
+//<![CDATA[	
 	var status = 'start';
 	var xT, yT, wT, hT, selectedCoords;
 	var selectedImage = "thumb<?php echo $id ?>";
@@ -108,9 +107,9 @@ if ( ($ngg_options['thumbfix'] == 1) ) {
 		}
 				
 		jQuery.ajax({
-		  url: "admin-ajax.php",
+		  url: ajaxurl,
 		  type : "POST",
-		  data:  {x: xT, y: yT, w: wT, h: hT, action: 'createNewThumb', id: <?php echo $id; ?>, rr: <?php echo $rr; ?>},
+          data:  {x: xT, y: yT, w: wT, h: hT, action: 'createNewThumb', id: <?php echo $id; ?>, rr: <?php echo str_replace(',','.',$rr); ?>},
 		  cache: false,
 		  success: function(data){
 					var d = new Date();
@@ -128,9 +127,8 @@ if ( ($ngg_options['thumbfix'] == 1) ) {
 		    }
 		});
 
-	}
-	
--->
+	};
+//]]>
 </script>
 
 <table width="98%" align="center" style="border:1px solid #DADADA">
@@ -161,13 +159,13 @@ if ( ($ngg_options['thumbfix'] == 1) ) {
 </table>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 	jQuery(document).ready(function(){
 		jQuery('#imageToEdit').Jcrop({
 			onChange: showPreview,
 			onSelect: showPreview,
-			aspectRatio: <?php echo round($WidthHtmlPrev/$HeightHtmlPrev, 3) ?>
+			aspectRatio: <?php echo str_replace(',', '.', round($WidthHtmlPrev/$HeightHtmlPrev, 3)); ?>
 		});
 	});
--->
+//]]>
 </script>

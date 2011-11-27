@@ -231,7 +231,7 @@ jQuery(document).ready( function() {
 
 <br style="clear: both;" />
 
-<form id="updategallery" class="nggform" method="POST" action="<?php echo $ngg->manage_page->base_page . '&amp;mode=edit&amp;s=' . $_GET['s']; ?>" accept-charset="utf-8">
+<form id="updategallery" class="nggform" method="POST" action="<?php echo $ngg->manage_page->base_page . '&amp;mode=edit&amp;s=' . get_search_query(); ?>" accept-charset="utf-8">
 <?php wp_nonce_field('ngg_updategallery') ?>
 <input type="hidden" name="page" value="manage-images" />
 
@@ -274,7 +274,8 @@ jQuery(document).ready( function() {
                                 if ( intval($gallery->previewpic) != 0) {
                                     if ( !array_key_exists ($gallery->previewpic, $picturelist )){
                                         $previewpic = $nggdb->find_image($gallery->previewpic);
-                                        echo '<option value="'.$previewpic->pid.'" selected="selected" >'.$previewpic->pid.' - '.$previewpic->filename.'</option>'."\n";                
+                                        if ($previewpic)
+                                            echo '<option value="'.$previewpic->pid.'" selected="selected" >'.$previewpic->pid.' - '.$previewpic->filename.'</option>'."\n";                
                                     }
                                 }
 								if(is_array($picturelist)) {
@@ -436,7 +437,7 @@ if($picturelist) {
 							<p>
 							<?php
 							$actions = array();
-							$actions['view']   = '<a class="thickbox" href="' . $picture->imageURL . '" title="' . esc_attr(sprintf(__('View "%s"'), $picture->filename)) . '">' . __('View', 'nggallery') . '</a>';
+							$actions['view']   = '<a class="shutter" href="' . $picture->imageURL . '" title="' . esc_attr(sprintf(__('View "%s"'), $picture->filename)) . '">' . __('View', 'nggallery') . '</a>';
 							$actions['meta']   = '<a class="ngg-dialog" href="' . NGGALLERY_URLPATH . 'admin/showmeta.php?id=' . $pid . '" title="' . __('Show Meta data','nggallery') . '">' . __('Meta', 'nggallery') . '</a>';
 							$actions['custom_thumb']   = '<a class="ngg-dialog" href="' . NGGALLERY_URLPATH . 'admin/edit-thumbnail.php?id=' . $pid . '" title="' . __('Customize thumbnail','nggallery') . '">' . __('Edit thumb', 'nggallery') . '</a>';							
 							$actions['rotate'] = '<a class="ngg-dialog" href="' . NGGALLERY_URLPATH . 'admin/rotate.php?id=' . $pid . '" title="' . __('Rotate','nggallery') . '">' . __('Rotate', 'nggallery') . '</a>';
@@ -461,8 +462,8 @@ if($picturelist) {
 					case 'thumbnail' :
                         $attributes = 'class="id column-thumbnail media-icon"' . $style;
 						?>
-						<td <?php echo $attributes ?>><a href="<?php echo $picture->imageURL; if(strpos($picture->imageURL, '?')) { echo '&'; } else { echo '?'; } echo mt_rand(); ?>" class="thickbox" title="<?php echo $picture->filename ?>">
-								<img class="thumb" src="<?php echo $picture->thumbURL; if(strpos($picture->thumbURL, '?')) { echo '&'; } else { echo '?'; } echo mt_rand(); ?>" id="thumb<?php echo $pid ?>" />
+						<td <?php echo $attributes ?>><a href="<?php echo add_query_arg('i', mt_rand(), $picture->imageURL); ?>" class="shutter" title="<?php echo $picture->filename ?>">
+								<img class="thumb" src="<?php echo add_query_arg('i', mt_rand(), $picture->thumbURL); ?>" id="thumb<?php echo $pid ?>" />
 							</a>
 						</td>
 						<?php						

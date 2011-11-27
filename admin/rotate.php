@@ -48,7 +48,7 @@ $preview_image		= home_url() . '/' . 'index.php?callback=image&amp;pid=' . $pict
 		var rotate_angle = jQuery('input[name=ra]:checked').val();
 		
 		jQuery.ajax({
-		  url: "admin-ajax.php",
+		  url: ajaxurl,
 		  type : "POST",
 		  data:  {action: 'rotateImage', id: <?php echo $id ?>, ra: rotate_angle},
 		  cache: false,

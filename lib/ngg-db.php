@@ -252,7 +252,7 @@ class nggdb {
                 // due to a browser bug we need to remove the key for associative array for json request 
                 // (see http://code.google.com/p/chromium/issues/detail?id=883)
                 if ($json) $key = $i++;               
-                $gallery[$key] = new nggImage( $value ); // keep in my each request requery 8 - 16 kb memory usage
+                $gallery[$key] = new nggImage( $value ); // keep in mind each request require 8-16 kb memory usage
                 
             }
         }

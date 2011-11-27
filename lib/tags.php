@@ -126,7 +126,7 @@ class nggTags {
 			}
 
 			// Test if term is also a category
-			if ( is_term($new_tag, 'category') ) {
+			if ( term_exists($new_tag, 'category') ) {
 				// Edit the slug to use the new term
 				$slug = sanitize_title($new_tag);
 				nggTags::edit_tag_slug( $new_tag, $slug );
