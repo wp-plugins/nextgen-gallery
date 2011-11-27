@@ -138,7 +138,7 @@ To show the most recent added mages : **[recent max=x ]**
 * NEW : Added new hook ngg_delete_picture
 * Changed : Updated to jQuery Cycle Version 2.9995
 * Changed : Always cache the single pictures, remove option
-* Bugfix : Couldn't use bulk operation for serach results
+* Bugfix : Couldn't use bulk operation for search results
 * Bugfix : Bugfix for Edit thumbnails under IE 8 + 9
 * Bugfix : Allow empty altext in ngg.editImage
 * Bugfix : Various PHP notice fixes
