@@ -8,8 +8,7 @@ function nggallery_manage_gallery_main() {
 	global $ngg, $nggdb, $wp_query;
 	
 	//Build the pagination for more than 25 galleries
-	if ( ! isset( $_GET['paged'] ) || $_GET['paged'] < 1 )
-		$_GET['paged'] = 1;
+    $_GET['paged'] = isset($_GET['paged']) && ($_GET['paged'] > 0) ? absint($_GET['paged']) : 1;
 	
     $items_per_page = 25;
     
@@ -218,10 +217,10 @@ if($gallerylist) {
         			<td class="title column-title">
         				<?php if (nggAdmin::can_manage_this_gallery($gallery->author)) { ?>
         					<a href="<?php echo wp_nonce_url( $ngg->manage_page->base_page . '&amp;mode=edit&amp;gid=' . $gid, 'ngg_editgallery')?>" class='edit' title="<?php _e('Edit'); ?>" >
-        						<?php echo nggGallery::i18n($name); ?>
+        						<?php echo esc_html( nggGallery::i18n($name) ); ?>
         					</a>
         				<?php } else { ?>
-        					<?php echo nggGallery::i18n($gallery->title); ?>
+        					<?php echo esc_html( nggGallery::i18n($gallery->title) ); ?>
         				<?php } ?>
                         <div class="row-actions"></div>
         			</td>
@@ -229,12 +228,12 @@ if($gallerylist) {
     			break;
     			case 'description' :
     			    ?>
-					<td <?php echo $attributes ?>><?php echo nggGallery::i18n($gallery->galdesc); ?>&nbsp;</td>
+					<td <?php echo $attributes ?>><?php echo esc_html( nggGallery::i18n($gallery->galdesc) ); ?>&nbsp;</td>
 					<?php 
     			break;
     			case 'author' :
     			    ?>
-					<td <?php echo $attributes ?>><?php echo $author_user->display_name; ?></td>
+					<td <?php echo $attributes ?>><?php echo esc_html( $author_user->display_name ); ?></td>
 					<?php 
     			break;
     			case 'page_id' :

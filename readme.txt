@@ -130,6 +130,13 @@ To show the most recent added mages : **[recent max=x ]**
 
 == Changelog == 
 
+= V1.9.1 - 10.12.2011 =
+* Bugfix : Security hardness for untrusted filenames/meta data (THX to Brian St. Pierre)
+* Bugfix : Fixed security vulnerability (TXH to Jon Cave)
+* Bugfix : Load piclens script via other function
+* Bugfix : IE7 script fix for add gallery 
+* Bugfix : IE7/IE8 width set correctly for edit album autocomplete field
+
 = V1.9.0 - 27.11.2011 = 
 * NEW : Keep images transparency for PNG and GIF format
 * NEW : Switch to Plupload, support now HTML5 Upload (only with WordPress 3.3)

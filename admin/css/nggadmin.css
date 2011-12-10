@@ -1,5 +1,5 @@
 /* 
-** NextGEN Gallery Style for Wordpress 3.2
+** NextGEN Gallery Style for Wordpress 3.3
 */
 
 /* SETTINGS FOR Overview Gallery */
@@ -243,6 +243,7 @@ div .groupItem
 	cursor: move;
 	width: 295px;
 	padding: 5px;
+    line-height: 1.5;
 }
 
 div .innerhandle {

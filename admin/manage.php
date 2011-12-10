@@ -23,7 +23,7 @@ class nggManageGallery {
         // Check for pagination request, avoid post process of other submit button, exclude search results
         if ( isset($_POST['post_paged']) && !isset($_GET['s'] ) ) {
             if ( $_GET['paged'] != $_POST['post_paged'] ) {		
-                $_GET['paged'] = $_POST['post_paged'];		
+                $_GET['paged'] = absint( $_POST['post_paged'] );		
                 return;		
             }		
         }                        
@@ -77,13 +77,12 @@ class nggManageGallery {
 					@unlink($image->thumbPath);	
 					@unlink($image->imagePath . '_backup' );
 				} 
-				$result = nggdb::delete_image ( $this->pid );
+				do_action('ngg_delete_picture', $this->pid);
+                $result = nggdb::delete_image ( $this->pid );
             }
                                 
-			if ($result) {
+			if ($result)
 				nggGallery::show_message( __('Picture','nggallery').' \''.$this->pid.'\' '.__('deleted successfully','nggallery') );
-                do_action('ngg_delete_picture', $this->pid);
-			}
             
 		 	$this->mode = 'edit'; // show pictures
 	
@@ -169,14 +168,12 @@ class nggManageGallery {
                						@rmdir( WINABSPATH . $gallery->path );
                 				}
                 			}
-                	
+                            do_action('ngg_delete_gallery', $id);                	
                 			$deleted = nggdb::delete_gallery( $id );
   						}
                         
-						if($deleted) {
+						if($deleted)
                             nggGallery::show_message(__('Gallery deleted successfully ', 'nggallery'));
-                            do_action('ngg_delete_gallery', $id);						  
-						}
 							
 					}
 					break;
@@ -265,6 +262,7 @@ class nggManageGallery {
 									@unlink($image->thumbPath);
 									@unlink($image->imagePath."_backup");	
 								} 
+                                do_action('ngg_delete_picture', $image->pid);
 								$delete_pic = nggdb::delete_image( $image->pid );
 							}
 						}
@@ -438,6 +436,8 @@ class nggManageGallery {
 				wp_cache_delete($this->gid, 'ngg_gallery');
                 nggGallery::show_message( __('New gallery page ID','nggallery'). ' ' . $gallery_pageid . ' -> <strong>' . $gallery_title . '</strong> ' .__('created','nggallery') );
 			}
+            
+            do_action('ngg_gallery_addnewpage', $this->gid);
 		}
 	}
     

@@ -264,13 +264,13 @@ class nggAdminPanel{
                     wp_enqueue_script( 'jquery-ui-autocomplete' ); 
                     wp_enqueue_script( 'jquery-ui-dialog' );
                     wp_enqueue_script( 'jquery-ui-sortable' );
-                    wp_enqueue_script( 'ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui-autocomplete'), '1.0');
+                    wp_enqueue_script( 'ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui-autocomplete'), '1.0.1');
                  } else {
                     // Due to script conflict with jQuery UI 1.8.6
                     wp_deregister_script( 'jquery-ui-sortable' );
                     // Package included sortable, dialog, autocomplete, tabs
                     wp_enqueue_script('jquery-ui', NGGALLERY_URLPATH .'admin/js/jquery-ui-1.8.6.min.js', array('jquery'), '1.8.6');
-                    wp_enqueue_script('ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui'), '1.0');
+                    wp_enqueue_script('ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui'), '1.0.1');
                 }                
 			break;
 			case "nggallery-options" :
@@ -416,6 +416,7 @@ class nggAdminPanel{
 
     /**
      * New wrapper for WordPress 3.3, so contextual help will be added to the admin bar
+     * Rework this see http://wpdevel.wordpress.com/2011/12/06/help-and-screen-api-changes-in-3-3/
      * 
      * @since 1.9.0
      * @param object $screen
@@ -424,8 +425,7 @@ class nggAdminPanel{
     function add_contextual_help($screen) {
         
         $help = $this->show_help('', $screen);
-        add_contextual_help( $screen, $help );
-        
+        //add_contextual_help( $screen, $help );
     }
 
 	/**

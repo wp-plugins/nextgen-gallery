@@ -116,7 +116,7 @@ class nggPostThumbnail {
 		    
 		    // if we didn't use a cached image then we take the on-the-fly mode 
 		    if ($img_src ==  false) 
-		        $img_src = home_url() . '/' . 'index.php?callback=image&amp;pid=' . $image->pid . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=crop';
+		        $img_src = trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $image->pid . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=crop';
                 
 		} else {
 			$img_src = $image->thumbURL;
@@ -194,7 +194,7 @@ class nggPostThumbnail {
 
 		    // if we didn't use a cached image then we take the on-the-fly mode 
 		    if ( $img_src == false ) 
-		        $img_src = home_url() . '/' . 'index.php?callback=image&amp;pid=' . $image->pid . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=crop';
+		        $img_src = trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $image->pid . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=crop';
 			
             $thumbnail_html = '<img width="266" src="'. $img_src . '" alt="'.$image->alttext.'" title="'.$image->alttext.'" />';
             

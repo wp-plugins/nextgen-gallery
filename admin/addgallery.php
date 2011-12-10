@@ -1,9 +1,6 @@
 <?php  
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 	
-	// sometimes a error feedback is better than a white screen
-	@ini_set('error_reporting', E_ALL ^ E_NOTICE);
-
 class nggAddGallery {
 
     /**
@@ -247,7 +244,7 @@ class nggAddGallery {
 		window.onload = function () {
 			ngg_swf_upload = new SWFUpload({
 				// Backend settings
-				upload_url : "<?php echo esc_attr( $swf_upload_link ); ?>",
+				upload_url : "<?php echo esc_js( $swf_upload_link ); ?>",
 				flash_url : "<?php echo NGGALLERY_URLPATH; ?>admin/js/swfupload.swf",
 				
 				// Button Settings
@@ -330,7 +327,7 @@ class nggAddGallery {
 		    jQuery("span.browsefiles").show().click(function(){
     		    jQuery("#file_browser").fileTree({
     		      script: "admin-ajax.php?action=ngg_file_browser&nonce=<?php echo wp_create_nonce( 'ngg-ajax' ) ;?>",
-                  root: jQuery("#galleryfolder").val(),
+                  root: jQuery("#galleryfolder").val()
     		    }, function(folder) {
     		        jQuery("#galleryfolder").val( folder );
     		    });
@@ -440,7 +437,7 @@ class nggAddGallery {
 						if ( !nggAdmin::can_manage_this_gallery($gallery->author) )
 							continue;
 						$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
-						echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . $name . '</option>' . "\n";
+						echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . esc_attr( $name ). '</option>' . "\n";
 					}
 				?>
 				</select>
@@ -522,7 +519,7 @@ class nggAddGallery {
 								continue;
 						
 						$name = ( empty($gallery->title) ) ? $gallery->name : $gallery->title;
-						echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . $name . '</option>' . "\n";
+						echo '<option value="' . $gallery->gid . '" >' . $gallery->gid . ' - ' . esc_attr( $name ) . '</option>' . "\n";
 					}					?>
 				</select>
 				<br /><?php echo $this->maxsize; ?>

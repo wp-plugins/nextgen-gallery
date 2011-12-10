@@ -98,6 +98,9 @@ class nggManageAlbum {
 			$result = nggdb::add_album( $_POST['newalbum'] );
             $this->currentID = ($result) ? $result : 0 ;
 			
+            //hook for other plugins
+            do_action('ngg_add_album', $this->currentID);
+            
 			if ($result) 
 				nggGallery::show_message(__('Update Successfully','nggallery'));
 		} 
@@ -114,6 +117,10 @@ class nggManageAlbum {
 			} else {
 				$wpdb->query("UPDATE $wpdb->nggalbum SET sortorder = '0' WHERE id = $this->currentID ");
 			}
+			
+            //hook for other plugins
+            do_action('ngg_update_album_sortorder', $this->currentID);
+			
 			nggGallery::show_message(__('Update Successfully','nggallery'));
 
 		}
@@ -124,9 +131,13 @@ class nggManageAlbum {
 				wp_die(__('Cheatin&#8217; uh?'));
 				
 			$result = nggdb::delete_album( $this->currentID );
+
+            //hook for other plugins
+            do_action('ngg_delete_album', $this->currentID);
             
+            // jump back to main selection
             $this->currentID = 0;
-            
+
 			if ($result) 
 				nggGallery::show_message(__('Album deleted','nggallery'));
 		}
@@ -173,7 +184,7 @@ jQuery(document).ready(
 	function()
 	{
         jQuery("#previewpic").nggAutocomplete( {
-            type: 'image',domain: "<?php echo home_url('index.php', is_ssl() ? 'https' : 'http'); ?>"
+            type: 'image',domain: "<?php echo home_url('index.php', is_ssl() ? 'https' : 'http'); ?>",width: "95%"
         });
         
 		jQuery('#selectContainer').sortable( {
@@ -288,7 +299,7 @@ function showDialog() {
 						if( is_array($this->albums) ) {
 							foreach($this->albums as $album) {
 								$selected = ($this->currentID == $album->id) ? 'selected="selected" ' : '';
-								echo '<option value="' . $album->id . '" ' . $selected . '>' . $album->id . ' - ' . $album->name . '</option>'."\n";
+								echo '<option value="' . $album->id . '" ' . $selected . '>' . $album->id . ' - ' . esc_attr( $album->name ) . '</option>'."\n";
 							}
 						}
 					?>
@@ -375,7 +386,7 @@ function showDialog() {
 				$album = $this->albums[$this->currentID];
 				?>
 				<div class="widget-top">
-					<h3><?php esc_html_e('Album ID', 'nggallery');  ?> <?php echo $album->id . ' : ' . $album->name; ?> </h3>
+					<h3><?php esc_html_e('Album ID', 'nggallery');  ?> <?php echo $album->id . ' : ' . esc_html( $album->name ); ?> </h3>
 				</div>
 				<div id="galleryContainer" class="widget-holder target">
 				<?php
@@ -430,7 +441,7 @@ function showDialog() {
                                 echo '<option value="0" selected="selected">' . __('No picture', 'nggallery') . '</option>';
                             else {
                                 $picture = nggdb::find_image($album->previewpic);
-                                echo '<option value="' . $picture->pid . '" selected="selected" >'. $picture->pid . ' - ' . ( empty($picture->alltext) ? $picture->filename : $picture->alltext ) .' </option>'."\n";
+                                echo '<option value="' . $picture->pid . '" selected="selected" >'. $picture->pid . ' - ' . ( empty($picture->alltext) ? esc_attr( $picture->filename ) : esc_attr( $picture->alltext ) ) .' </option>'."\n";
                             }
 						?>
 					</select>
@@ -501,7 +512,7 @@ function showDialog() {
 			if ( $this->num_albums < 50 ) {	
 				if ($album->previewpic != 0) {
 					$image = $nggdb->find_image( $album->previewpic ); 
-    				$preview_image = ( !is_null($image->thumbURL) )  ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
+    				$preview_image = ( !is_null($image->thumbURL) )  ? '<div class="inlinepicture"><img src="' . esc_url( $image->thumbURL ). '" /></div>' : '';
                 }
 			}
 			
@@ -525,7 +536,7 @@ function showDialog() {
 			if ( $this->num_galleries < 50 ) {
 				// set image url
 				$image = $nggdb->find_image( $gallery->previewpic );
-				$preview_image = isset($image->thumbURL) ? '<div class="inlinepicture"><img src="' . $image->thumbURL . '" /></div>' : '';
+				$preview_image = isset($image->thumbURL) ? '<div class="inlinepicture"><img src="' . esc_url( $image->thumbURL ) . '" /></div>' : '';
 			}
 			
 			$prefix = '';
@@ -538,13 +549,13 @@ function showDialog() {
 				<div class="innerhandle">
 					<div class="item_top ' . $class . '">
 						<a href="#" class="min" title="close">[-]</a>
-						ID: ' . $obj['id'] . ' | ' . wp_html_excerpt( nggGallery::i18n( $obj['title'] ) , 25) . '
+						ID: ' . $obj['id'] . ' | ' . wp_html_excerpt( esc_html ( nggGallery::i18n( $obj['title'] ) ) , 25) . '
 					</div>
 					<div class="itemContent">
 							' . $preview_image . '
-							<p><strong>' . __('Name', 'nggallery') . ' : </strong>' . nggGallery::i18n( $obj['name'] ) . '</p>
-							<p><strong>' . __('Title', 'nggallery') . ' : </strong>' . nggGallery::i18n( $obj['title'] ) . '</p>
-							<p><strong>' . __('Page', 'nggallery'). ' : </strong>' . nggGallery::i18n( $obj['pagenname'] ) . '</p>
+							<p><strong>' . __('Name', 'nggallery') . ' : </strong>' . esc_html ( nggGallery::i18n( $obj['name'] ) ). '</p>
+							<p><strong>' . __('Title', 'nggallery') . ' : </strong>' . esc_html ( nggGallery::i18n( $obj['title'] ) ) . '</p>
+							<p><strong>' . __('Page', 'nggallery'). ' : </strong>' . esc_html ( nggGallery::i18n( $obj['pagenname'] ) ) . '</p>
 							' . apply_filters('ngg_display_album_item_content', '', $obj) . '
 						</div>
 				</div>
@@ -583,4 +594,3 @@ function showDialog() {
 	}
 	
 }
-?>

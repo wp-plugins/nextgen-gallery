@@ -726,6 +726,7 @@ function nggCreateImageBrowser($picturelist, $template = '') {
     
     // let's get the meta data
     $meta = new nggMeta($act_pid);
+    $meta->sanitize();
     $exif = $meta->get_EXIF();
     $iptc = $meta->get_IPTC();
     $xmp  = $meta->get_XMP();
@@ -802,7 +803,7 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
     
     // if we didn't use a cached image then we take the on-the-fly mode 
     if (!$picture->thumbnailURL) 
-        $picture->thumbnailURL = home_url() . '/' . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=' . $mode;
+        $picture->thumbnailURL = trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=' . $mode;
 
     // add more variables for render output
     $picture->imageURL = ( empty($link) ) ? $picture->imageURL : $link;
@@ -821,6 +822,7 @@ function nggSinglePicture($imageID, $width = 250, $height = 250, $mode = '', $fl
 
     // let's get the meta data
     $meta = new nggMeta($imageID);
+    $meta->sanitize();
     $exif = $meta->get_EXIF();
     $iptc = $meta->get_IPTC();
     $xmp  = $meta->get_XMP();

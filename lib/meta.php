@@ -21,6 +21,8 @@ class nggMeta{
 	var $exif_array 	= 	false;	// EXIF data array
 	var $iptc_array 	= 	false;	// IPTC data array
 	var $xmp_array  	= 	false;	// XMP data array
+    
+    var $sanitize       =   false;  // sanitize meta data on request
 
  	/**
  	 * nggMeta::nggMeta()
@@ -92,6 +94,10 @@ class nggMeta{
 			if ( empty($value) )
 				unset($meta[$key]);	
 		}
+
+        // on request sanitize the output
+		if ( $this->sanitize == true )	
+            array_walk( $meta , create_function('&$value', '$value = esc_html($value);')); 
 		
 		return $meta;
 	}
@@ -174,7 +180,11 @@ class nggMeta{
 		  $value = isset($this->exif_array[$object]) ? $this->exif_array[$object] : false;
           return $value;
 		}
-				
+        
+        // on request sanitize the output
+		if ( $this->sanitize == true )	
+            array_walk( $this->exif_array , create_function('&$value', '$value = esc_html($value);')); 
+                
 		return $this->exif_array;
 	
 	}
@@ -236,7 +246,7 @@ class nggMeta{
 			// var_dump($this->iptc_data);
 			$meta = array();
 			foreach ($iptcTags as $key => $value) {
-				if ($this->iptc_data[$key])
+				if (isset ( $this->iptc_data[$key] ) )
 					$meta[$value] = trim(utf8_encode(implode(", ", $this->iptc_data[$key])));
 	
 			}
@@ -245,7 +255,11 @@ class nggMeta{
 		
 		// return one element if requested	
 		if ($object)
-			return $this->iptc_array[$object];			
+			return $this->iptc_array[$object];	
+
+        // on request sanitize the output
+		if ( $this->sanitize == true )	
+            array_walk( $this->iptc_array , create_function('&$value', '$value = esc_html($value);'));             		
 		
 		return $this->iptc_array;
 	}
@@ -385,6 +399,10 @@ class nggMeta{
 		if ($object != false )
 			return isset($this->xmp_array[$object]) ? $this->xmp_array[$object] : false;		 
 		
+        // on request sanitize the output
+		if ( $this->sanitize == true )	
+            array_walk( $this->xmp_array , create_function('&$value', '$value = esc_html($value);')); 
+        
 		return $this->xmp_array;
 	}
 	  
@@ -550,6 +568,15 @@ class nggMeta{
 		
 		return $meta;		
 	}
+    
+    /**
+     * If needed sanitize each value before output 
+     * 
+     * @return void
+     */
+    function sanitize () {
+        $this->sanitize = true;
+    }
 
 }
 
