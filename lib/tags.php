@@ -311,7 +311,10 @@ class nggTags {
 		$new_slugarray = array_map('sanitize_title', $taglist);
 		$sluglist   = "'" . implode("', '", $new_slugarray) . "'";
 		
-		// first get all $term_ids with this tag
+		//Treat % as a litteral in the database, for unicode support
+		$sluglist=str_replace("%","%%",$sluglist);
+
+		// first get all $term_ids with this tag		
 		$term_ids = $wpdb->get_col( $wpdb->prepare("SELECT term_id FROM $wpdb->terms WHERE slug IN ($sluglist) ORDER BY term_id ASC "));
 		$picids = get_objects_in_term($term_ids, 'ngg_tag');
 

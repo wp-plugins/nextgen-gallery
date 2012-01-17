@@ -1,6 +1,15 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+= V1.9.2 - 17.01.2012 =
+* NEW : Added more XMLRPC commands (THX to Vladimir Vinogradsky)
+* Changed : Rework Post-thumbnail function (THX to Kristian Edlund)
+* Bugfix : Check first for valid images on unzip (only Mac OS zip-files)
+* Bugfix : Increase z-index for twenty eleven theme
+* Bugfix : Support non latin chars in tagcloud
+* Bugfix : Allow other tinymce intance
+* Bugfix : Better support for WPML translation
+
 = V1.9.1 - 10.12.2011 =
 * Bugfix : Security hardness for untrusted filenames/meta data (THX to Brian St. Pierre)
 * Bugfix : Fixed security vulnerability (TXH to Jon Cave)

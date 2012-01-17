@@ -68,7 +68,7 @@ class nggManageAlbum {
 	function controller() {
 		global $nggdb;
 
-		$this->currentID = isset($_POST['act_album']) ? (int) $_POST['act_album'] : 0 ;
+		$this->currentID = isset($_REQUEST['act_album']) ? (int) $_REQUEST['act_album'] : 0 ;
 
 		if (isset ($_POST['update']) || isset( $_POST['delete'] ) || isset( $_POST['add'] ) )
 			$this->processor();

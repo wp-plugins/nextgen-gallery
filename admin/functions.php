@@ -797,17 +797,19 @@ class nggAdmin{
             $p_header['filename'] = substr ( $p_header['filename'], 0, strpos($p_header['filename'], chr(0) ));        
         // check for extension
 		$info = pathinfo($p_header['filename']);
-        // sanitize the file name before we do further processing
-        $info['basename'] = sanitize_file_name( $info['basename'] );
-        $p_header['filename'] = $info['dirname'] . '/' . $info['basename'];
 		// check for extension
 		$ext = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif') ); 
 		if ( in_array( strtolower($info['extension']), $ext) ) {
 			// For MAC skip the ".image" files
 			if ($info['basename']{0} ==  '.' ) 
 				return 0;
-			else 
-				return 1;
+			else {
+                // sanitize the file name before we do further processing
+                $info['basename'] = sanitize_file_name( $info['basename'] );
+                $p_header['filename'] = $info['dirname'] . '/' . $info['basename'];
+                return 1;
+			}
+				
 		}
 		// ----- all other files are skipped
 		else {

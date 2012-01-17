@@ -567,10 +567,10 @@ function nggCreateAlbum( $galleriesID, $template = 'extend', $album = 0) {
         }
         
         // description can contain HTML tags
-        $galleries[$key]->galdesc = html_entity_decode ( nggGallery::i18n( stripslashes($galleries[$key]->galdesc) ) ) ;
+        $galleries[$key]->galdesc = html_entity_decode ( nggGallery::i18n( stripslashes($galleries[$key]->galdesc), 'gal_' . $galleries[$key]->gid . '_description') ) ;
 
         // i18n
-        $galleries[$key]->title = html_entity_decode ( nggGallery::i18n( stripslashes($galleries[$key]->title) ) ) ;
+        $galleries[$key]->title = html_entity_decode ( nggGallery::i18n( stripslashes($galleries[$key]->title), 'gal_' . $galleries[$key]->gid . '_title') ) ;
         
         // apply a filter on gallery object before the output
         $galleries[$key] = apply_filters('ngg_album_galleryobject', $galleries[$key]);
@@ -716,9 +716,9 @@ function nggCreateImageBrowser($picturelist, $template = '') {
     $picture->next_pid = $next_pid;
     $picture->number = $key + 1;
     $picture->total = $total;
-    $picture->linktitle = htmlspecialchars( stripslashes($picture->description) );
-    $picture->alttext = html_entity_decode( stripslashes($picture->alttext) );
-    $picture->description = html_entity_decode( stripslashes($picture->description) );
+    $picture->linktitle = ( empty($picture->description) ) ? ' ' : htmlspecialchars ( stripslashes(nggGallery::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
+    $picture->alttext = ( empty($picture->alttext) ) ?  ' ' : html_entity_decode ( stripslashes(nggGallery::i18n($picture->alttext, 'pic_' . $picture->pid . '_alttext')) );
+    $picture->description = ( empty($picture->description) ) ? ' ' : html_entity_decode ( stripslashes(nggGallery::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
     $picture->anchor = 'ngg-imagebrowser-' . $picture->galleryid . '-' . $current_page;
     
     // filter to add custom content for the output
