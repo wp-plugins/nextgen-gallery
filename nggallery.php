@@ -4,11 +4,11 @@ Plugin Name: NextGEN Gallery
 Plugin URI: http://alexrabe.de/?page_id=80
 Description: A NextGENeration Photo Gallery for WordPress
 Author: Alex Rabe
-Version: 1.9.2
+Version: 1.9.3
 
 Author URI: http://alexrabe.de/
 
-Copyright 2007-2011 by Alex Rabe & NextGEN DEV-Team
+Copyright 2007-2012 by Alex Rabe & NextGEN DEV-Team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,9 +34,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 class nggLoader {
 	
-	var $version     = '1.9.2';
+	var $version     = '1.9.3';
 	var $dbversion   = '1.8.0';
-	var $minium_WP   = '3.1';
+	var $minimum_WP  = '3.2';
 	var $donators    = 'http://nextgen.boelinger.com/donators.php';
 	var $options     = '';
 	var $manage_page;
@@ -162,14 +162,14 @@ class nggLoader {
 		global $wp_version;
 			
 		// Check for WP version installation
-		$wp_ok  =  version_compare($wp_version, $this->minium_WP, '>=');
+		$wp_ok  =  version_compare($wp_version, $this->minimum_WP, '>=');
 		
 		if ( ($wp_ok == FALSE) ) {
 			add_action(
 				'admin_notices', 
 				create_function(
 					'', 
-					'global $ngg; printf (\'<div id="message" class="error"><p><strong>\' . __(\'Sorry, NextGEN Gallery works only under WordPress %s or higher\', "nggallery" ) . \'</strong></p></div>\', $ngg->minium_WP );'
+					'global $ngg; printf (\'<div id="message" class="error"><p><strong>\' . __(\'Sorry, NextGEN Gallery works only under WordPress %s or higher\', "nggallery" ) . \'</strong></p></div>\', $ngg->minimum_WP );'
 				)
 			);
 			return false;
@@ -362,7 +362,7 @@ class nggLoader {
 			wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.2');
         else {
             wp_register_script('jquery-cycle', NGGALLERY_URLPATH .'js/jquery.cycle.all.min.js', array('jquery'), '2.9995');
-            wp_enqueue_script('ngg-slideshow', NGGALLERY_URLPATH .'js/ngg.slideshow.min.js', array('jquery-cycle'), '1.05'); 
+            wp_enqueue_script('ngg-slideshow', NGGALLERY_URLPATH .'js/ngg.slideshow.min.js', array('jquery-cycle'), '1.06'); 
                     
         }   
             

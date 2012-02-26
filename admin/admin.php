@@ -260,18 +260,10 @@ class nggAdminPanel{
     			wp_enqueue_script( 'shutter' ); 
 			break;
 			case "nggallery-manage-album" :
-                if ( version_compare( $wp_version, '3.0.999', '>' ) ) {
-                    wp_enqueue_script( 'jquery-ui-autocomplete' ); 
-                    wp_enqueue_script( 'jquery-ui-dialog' );
-                    wp_enqueue_script( 'jquery-ui-sortable' );
-                    wp_enqueue_script( 'ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui-autocomplete'), '1.0.1');
-                 } else {
-                    // Due to script conflict with jQuery UI 1.8.6
-                    wp_deregister_script( 'jquery-ui-sortable' );
-                    // Package included sortable, dialog, autocomplete, tabs
-                    wp_enqueue_script('jquery-ui', NGGALLERY_URLPATH .'admin/js/jquery-ui-1.8.6.min.js', array('jquery'), '1.8.6');
-                    wp_enqueue_script('ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui'), '1.0.1');
-                }                
+                wp_enqueue_script( 'jquery-ui-autocomplete' ); 
+                wp_enqueue_script( 'jquery-ui-dialog' );
+                wp_enqueue_script( 'jquery-ui-sortable' );
+                wp_enqueue_script( 'ngg-autocomplete', NGGALLERY_URLPATH .'admin/js/ngg.autocomplete.js', array('jquery-ui-autocomplete'), '1.0.1');               
 			break;
 			case "nggallery-options" :
 				wp_enqueue_script( 'jquery-ui-tabs' );
@@ -535,5 +527,3 @@ function wpmu_enable_function($value) {
 	// if this is not WPMU, enable it !
 	return true;
 }
-
-?>

@@ -1,6 +1,13 @@
 NextGEN Gallery
 by Alex Rabe & NextGEN DEV Team
 
+= V1.9.3 - 26.02.2012 =
+* Bugfix : Ensure to set the slug for "all" albums
+* Bugfix : Updated german translation ( THX to Roger Hunziker )
+* Bugfix : Ensure error checking on IPTC array (THX to Kristian Edlund)
+* Bugfix : Handle IE8 cached images better in slideshow
+* Bugfix : Show album preview image if selected  (THX to Kristian Edlund)
+
 = V1.9.2 - 17.01.2012 =
 * NEW : Added more XMLRPC commands (THX to Vladimir Vinogradsky)
 * Changed : Rework Post-thumbnail function (THX to Kristian Edlund)
