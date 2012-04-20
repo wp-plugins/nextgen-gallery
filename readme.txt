@@ -6,11 +6,11 @@ Requires at least: 3.2
 Tested up to: 3.3
 Stable tag: trunk
 
-NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with dozens of options and features.
+NextGEN Gallery is a fullly integrated Image Gallery plugin for WordPress with dozens of options and features.
 
 == Description ==
 
-NextGEN Gallery is a full integrated Image Gallery plugin for WordPress with a slideshow option. Before I started writing the plugin I studied all the existing image and gallery plugins for WordPress. 
+NextGEN Gallery is a fully integrated Image Gallery plugin for WordPress with a slideshow option. Before I started writing the plugin I studied all the existing image and gallery plugins for WordPress. 
 Some of them are really good and well designed, but the gap I filled was a simple administration system at the back end which can also handle multiple galleries.
 
 [Demonstration](http://nextgen-gallery.com/) |
