@@ -6,7 +6,7 @@ Requires at least: 3.2
 Tested up to: 3.3
 Stable tag: trunk
 
-NextGEN Gallery is a fullly integrated Image Gallery plugin for WordPress with dozens of options and features.
+NextGEN Gallery is a fully integrated Image Gallery plugin for WordPress with dozens of options and features.
 
 == Description ==
 
