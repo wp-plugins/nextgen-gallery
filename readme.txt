@@ -14,7 +14,7 @@ NextGEN Gallery is the most popular photo gallery plugin for WordPress, and one 
 
 It provides a powerful engine for uploading and managing galleries of images, with the ability to batch upload, import meta data, add/delete/rearrange/sort images, edit thumbnails, group galleries into albums, and more. It also provides two front-end display styles (slideshows and thumbnail galleries), both of which come with a wide array of options for controlling size, style, timing, transitions, controls, lightbox effects, and more. 
 
-<a>*NextGEN Gallery is now proudly maintained by Photocrati Media. Special thanks to Alex Rabe who created and maintained the plugin from 2007 through 2011.*</a><br>
+*NextGEN Gallery is now proudly maintained by <a href='http://www.photocrati.com'>Photocrati Media</a>. Special thanks to Alex Rabe who created and maintained the plugin from 2007 through 2011.*
 
 
 = Features =
