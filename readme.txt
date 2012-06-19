@@ -56,9 +56,9 @@ It provides a powerful engine for uploading and managing galleries of images, wi
 
 == Credits ==
 
-<a>Copyright:</a><br>
-<a>Photocrati Media 2012</a><br>
-<a>Alex Rabe 2007-2011</a>
+Copyright:<br>
+Photocrati Media 2012<br>
+Alex Rabe 2007-2011
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
