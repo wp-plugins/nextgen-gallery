@@ -71,7 +71,7 @@ function nggShowSlideshow($galleryID, $width, $height) {
     // add now the script code
     $out .= "\n".'<script type="text/javascript" defer="defer">';
     // load script via jQuery afterwards
-    // $out .= "\n".'jQuery.getScript( "'  . NGGALLERY_URLPATH . 'admin/js/swfobject.js' . '", function() {} );';
+    // $out .= "\n".'jQuery.getScript( "' . esc_js( includes_url('js/swfobject.js') ) . '", function() {} );';
     if ($ngg_options['irXHTMLvalid']) $out .= "\n".'<!--';
     if ($ngg_options['irXHTMLvalid']) $out .= "\n".'//<![CDATA[';
     $out .= $swfobject->javascript();

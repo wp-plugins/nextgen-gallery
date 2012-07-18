@@ -1,5 +1,13 @@
 NextGEN Gallery
-by Alex Rabe & NextGEN DEV Team
+by Photocrati Media
+
+= V1.9.5 - 07.18.2012 =
+* Changed: Branding changes following Photocrati acquisition (removed donation messages and updated links)
+* Secured: Use WordPress-bundled JavaScript libraries for swfobject and swfupload instead of bundling our own
+* Bugfix: Adjusted thickbox effect styling to ensure that the lightbox is always displayed in the foreground
+* Bugfix: Fixed compatibility issues with Contact Form 7 and other plugins by following WordPress Plugin conventions
+* Bugfix: Fixed network-wide activation in WordPress 3.4
+* Bugfix: Plugin is no longer dependent on it's folder name
 
 = V1.9.3 - 26.02.2012 =
 * Bugfix : Ensure to set the slug for "all" albums

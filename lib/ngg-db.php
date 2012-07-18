@@ -4,7 +4,7 @@ if ( !class_exists('nggdb') ) :
  * NextGEN Gallery Database Class
  * 
  * @author Alex Rabe, Vincent Prat
- * @copyright 2008-2011
+ * 
  * @since 1.0.0
  */
 class nggdb {
