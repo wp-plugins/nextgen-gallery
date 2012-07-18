@@ -4,8 +4,8 @@
  * Image METADATA PHP class for the WordPress plugin NextGEN Gallery
  * nggmeta.lib.php
  * 
- * @author 		Alex Rabe 
- * @copyright 	Copyright 2007-2012
+ * @author Alex Rabe
+ * 
  * 
  */
 	  

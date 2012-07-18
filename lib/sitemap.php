@@ -2,9 +2,9 @@
 /**
 * Main PHP Class for XML Image Sitemaps
 * 
-* @author 		Alex Rabe 
+* @author Alex Rabe
 * @version      1.0
-* @copyright 	Copyright 2011
+* 
 * 
 */
 class nggSitemaps {
