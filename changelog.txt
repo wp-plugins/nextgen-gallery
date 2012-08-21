@@ -1,6 +1,13 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V1.9.6 - 07.21.2012 =
+* Changed: Implemented workaround for bug found in WordPress SEO, resulting in no images being added to sitemap
+* Bugfix: Fixed an issue with users not being able to dismiss the "Photocrati Acquisition Notice"
+* Bugfix: Adjusted Javascript for activating social media pages to load on NextGEN Gallery pages only.
+* Bugfix: Fixed compatibility issue with Simple Facebook Connect
+* Bugfix: Using correct Facebook Page ID in Like button
+
 = V1.9.5 - 07.18.2012 =
 * Changed: Branding changes following Photocrati acquisition (removed donation messages and updated links)
 * Secured: Use WordPress-bundled JavaScript libraries for swfobject and swfupload instead of bundling our own
