@@ -18,7 +18,9 @@
 
 #ngg_facebook_like {
 	position: absolute;
-	right: -368px;
+	right: 0px;
+	width: 81px;
+	overflow: hidden;
 }
 
 #ngg_social_media .twitter-follow-button {

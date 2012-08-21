@@ -186,6 +186,22 @@ class nggAdminPanel{
 		// no need to go on if it's not a plugin page
 		if( !isset($_GET['page']) )
 			return;
+			
+		// If we're on a NextGen Page
+		if (preg_match("/ngg|nextgen-gallery/", $_GET['page'])) {
+			wp_register_script('ngg_social_media', path_join(
+				NGGALLERY_URLPATH,
+				'admin/js/ngg_social_media.js'
+			), array('jquery'));
+
+			wp_register_style('ngg_social_media', path_join(
+				NGGALLERY_URLPATH,
+				'admin/css/ngg_social_media.css'
+			));
+
+			wp_enqueue_style('ngg_social_media');
+			wp_enqueue_script('ngg_social_media');
+		}
 
 		wp_register_script('ngg-ajax', NGGALLERY_URLPATH . 'admin/js/ngg.ajax.js', array('jquery'), '1.4.1');
 		wp_localize_script('ngg-ajax', 'nggAjaxSetup', array(

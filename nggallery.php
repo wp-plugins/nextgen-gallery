@@ -5,7 +5,7 @@ Plugin URI: http://www.nextgen-gallery.com/
 Description: A NextGENeration Photo Gallery for WordPress
 Author: Photocrati
 Author URI: http://www.photocrati.com/
-Version: 1.9.5
+Version: 1.9.6
 
 Copyright (c) 2007-2011 by Alex Rabe & NextGEN DEV-Team
 Copyright (c) 2012 Photocrati Media
@@ -45,7 +45,7 @@ if (!class_exists('E_Clean_Exit')) {
 if (!class_exists('nggLoader')) {
 	class nggLoader {
 
-		var $version     = '1.9.5';
+		var $version     = '1.9.6';
 		var $dbversion   = '1.8.0';
 		var $minimum_WP  = '3.2';
 		var $donators    = 'http://www.nextgen-gallery.com/donators.php';
@@ -104,9 +104,6 @@ if (!class_exists('nggLoader')) {
 
 			// Handle upload requests
 			add_action('init', array(&$this, 'handle_upload_request'));
-
-			// Adds scripts used for social media buttons
-			add_action('admin_init', array(&$this, 'enqueue_social_media_resources'));
 
 			// Display "Photocrati Acquisition Announcement"
 			add_action('admin_init', array(&$this, 'display_update_notice'));
@@ -575,41 +572,7 @@ if (!class_exists('nggLoader')) {
 		 */
 		function get_notice_flag()
 		{
-			return $this->update_notice_setting.$this->version;
-		}
-
-
-		/**
-		 * Hides the update notice
-		 */
-		function hide_news_notice()
-		{
-			if (wp_verify_nonce($_POST['nonce'])) {
-				update_user_meta(get_current_user_id(), $this->get_notice_flag(), -1);
-				echo "-1\n";
-			}
-			else
-				echo "1\n";
-		}
-
-
-		/**
-		 * Enqueues JS required for Social Media Buttons
-		 */
-		function enqueue_social_media_resources()
-		{
-			wp_register_script('ngg_social_media', path_join(
-				NGGALLERY_URLPATH,
-				'admin/js/ngg_social_media.js'
-			), array('jquery'));
-
-			wp_register_style('ngg_social_media', path_join(
-				NGGALLERY_URLPATH,
-				'admin/css/ngg_social_media.css'
-			));
-
-			wp_enqueue_style('ngg_social_media');
-			wp_enqueue_script('ngg_social_media');
+			return str_replace('.', '', $this->update_notice_setting.$this->version);
 		}
 
 
@@ -620,13 +583,21 @@ if (!class_exists('nggLoader')) {
 		{
 			if (is_admin() &&
 				current_user_can('administrator') &&
-				get_user_meta(get_current_user_id(), $this->get_notice_flag(), TRUE) != -1) {
+				!(get_user_setting($this->get_notice_flag(), FALSE))) {
 
 				// Register a new script
+				wp_register_style('ngg_social_media', path_join(
+					NGGALLERY_URLPATH,
+					'admin/css/ngg_social_media.css'
+				));
+				wp_register_script('ngg_social_media', path_join(
+					NGGALLERY_URLPATH,
+					'admin/js/ngg_social_media.js'
+				), array('jquery'));
 				wp_register_script('ngg_news_notice', path_join(
 					NGGALLERY_URLPATH,
 					'admin/js/ngg_news_notice.js'
-				), array('wp-pointer'));
+				), array('wp-pointer', 'ngg_social_media'));
 
 				// Get the announcement notice content
 				ob_start();
@@ -640,6 +611,7 @@ if (!class_exists('nggLoader')) {
 				// Display the pointer
 				wp_enqueue_style( 'wp-pointer' );
 				wp_enqueue_script( 'utils' ); // for user settings
+				wp_enqueue_style('ngg_social_media');
 				wp_enqueue_script('ngg_news_notice');
 				wp_localize_script('ngg_news_notice', 'nggAdmin', array(
 					'content'	=>	$content,
