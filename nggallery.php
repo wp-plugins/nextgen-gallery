@@ -5,7 +5,7 @@ Plugin URI: http://www.nextgen-gallery.com/
 Description: A NextGENeration Photo Gallery for WordPress
 Author: Photocrati
 Author URI: http://www.photocrati.com/
-Version: 1.9.6
+Version: 1.9.7
 
 Copyright (c) 2007-2011 by Alex Rabe & NextGEN DEV-Team
 Copyright (c) 2012 Photocrati Media
@@ -45,14 +45,13 @@ if (!class_exists('E_Clean_Exit')) {
 if (!class_exists('nggLoader')) {
 	class nggLoader {
 
-		var $version     = '1.9.6';
-		var $dbversion   = '1.8.0';
-		var $minimum_WP  = '3.2';
+		var $version     = '1.9.7';
+		var $dbversion   = '1.8.1';
+		var $minimum_WP  = '3.4';
 		var $donators    = 'http://www.nextgen-gallery.com/donators.php';
 		var $options     = '';
 		var $manage_page;
 		var $add_PHP5_notice = false;
-		var $update_notice_setting = 'ngg_show_update_notice';
 
 		function nggLoader() {
 
@@ -104,13 +103,6 @@ if (!class_exists('nggLoader')) {
 
 			// Handle upload requests
 			add_action('init', array(&$this, 'handle_upload_request'));
-
-			// Display "Photocrati Acquisition Announcement"
-			add_action('admin_init', array(&$this, 'display_update_notice'));
-
-			// AJAX action to hide news notice
-			add_action('wp_ajax_hide_news_notice', array(&$this, 'hide_news_notice'));
-
 		}
 
 		function start_plugin() {
@@ -147,8 +139,8 @@ if (!class_exists('nggLoader')) {
 				add_action('parse_request',  array(&$this, 'check_request') );
 
 				// Add the script and style files
-				add_action('template_redirect', array(&$this, 'load_scripts') );
-				add_action('template_redirect', array(&$this, 'load_styles') );
+				add_action('wp_enqueue_scripts', array(&$this, 'load_scripts') );
+				add_action('wp_enqueue_scripts', array(&$this, 'load_styles') );
 
 			}
 		}
@@ -565,62 +557,6 @@ if (!class_exists('nggLoader')) {
 			if ( isset( $_GET['test-footer'] ) )
 				add_action( 'wp_footer', create_function('', 'echo \'<!--wp_footer-->\';'), 99999 );
 		}
-
-		/**
-		 * Gets the notice flag
-		 * @return string
-		 */
-		function get_notice_flag()
-		{
-			return str_replace('.', '', $this->update_notice_setting.$this->version);
-		}
-
-
-		/**
-		* Displays the latest update notice to an Administrator
-		*/
-		function display_update_notice()
-		{
-			if (is_admin() &&
-				current_user_can('administrator') &&
-				!(get_user_setting($this->get_notice_flag(), FALSE))) {
-
-				// Register a new script
-				wp_register_style('ngg_social_media', path_join(
-					NGGALLERY_URLPATH,
-					'admin/css/ngg_social_media.css'
-				));
-				wp_register_script('ngg_social_media', path_join(
-					NGGALLERY_URLPATH,
-					'admin/js/ngg_social_media.js'
-				), array('jquery'));
-				wp_register_script('ngg_news_notice', path_join(
-					NGGALLERY_URLPATH,
-					'admin/js/ngg_news_notice.js'
-				), array('wp-pointer', 'ngg_social_media'));
-
-				// Get the announcement notice content
-				ob_start();
-				require(path_join(
-					NGGALLERY_ABSPATH,
-					implode(DIRECTORY_SEPARATOR, array('admin', 'templates', 'latest_news_notice.php'))
-				));
-				$content = ob_get_contents();
-				ob_end_clean();
-
-				// Display the pointer
-				wp_enqueue_style( 'wp-pointer' );
-				wp_enqueue_script( 'utils' ); // for user settings
-				wp_enqueue_style('ngg_social_media');
-				wp_enqueue_script('ngg_news_notice');
-				wp_localize_script('ngg_news_notice', 'nggAdmin', array(
-					'content'	=>	$content,
-					'setting'	=>	$this->get_notice_flag(),
-					'nonce'		=> wp_create_nonce()
-				));
-			}
-		}
-
 
 		/**
 		* Handles upload requests
