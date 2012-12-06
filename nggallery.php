@@ -5,7 +5,7 @@ Plugin URI: http://www.nextgen-gallery.com/
 Description: A NextGENeration Photo Gallery for WordPress
 Author: Photocrati
 Author URI: http://www.photocrati.com/
-Version: 1.9.7
+Version: 1.9.8
 
 Copyright (c) 2007-2011 by Alex Rabe & NextGEN DEV-Team
 Copyright (c) 2012 Photocrati Media
@@ -45,7 +45,7 @@ if (!class_exists('E_Clean_Exit')) {
 if (!class_exists('nggLoader')) {
 	class nggLoader {
 
-		var $version     = '1.9.7';
+		var $version     = '1.9.8';
 		var $dbversion   = '1.8.1';
 		var $minimum_WP  = '3.4';
 		var $donators    = 'http://www.nextgen-gallery.com/donators.php';
@@ -455,6 +455,37 @@ if (!class_exists('nggLoader')) {
 			}
 		}
 
+		/**
+		 * Removes all transients created by NextGEN. Called during activation
+		 * and deactivation routines
+		 */
+		function remove_transients()
+		{
+			global $wpdb, $_wp_using_ext_object_cache;
+
+			// Fetch all transients
+			$query = "
+				SELECT option_name FROM {$wpdb->options}
+				WHERE option_name LIKE '_transient_ngg_%'
+			";
+			$transient_names = $wpdb->get_col($query);;
+
+			// Delete all transients in the database
+			$query = "
+				DELETE FROM {$wpdb->options}
+				WHERE option_name LIKE '_transient_ngg_%'
+			";
+			$wpdb->query($query);
+
+			// If using an external caching mechanism, delete the cached items
+			if ($_wp_using_ext_object_cache) {
+				foreach ($transient_names as $transient) {
+					wp_cache_delete($transient, 'transient');
+					wp_cache_delete(substr($transient, 11), 'transient');
+				}
+			}
+		}
+
 		function activate() {
 			global $wpdb;
 			//Starting from version 1.8.0 it's works only with PHP5.2
@@ -463,6 +494,9 @@ if (!class_exists('nggLoader')) {
 					wp_die("Sorry, but you can't run this plugin, it requires PHP 5.2 or higher.");
 					return;
 			}
+
+			// Clean up transients
+			$this->remove_transients();
 
 			include_once (dirname (__FILE__) . '/admin/install.php');
 
@@ -496,9 +530,15 @@ if (!class_exists('nggLoader')) {
 			// remove & reset the init check option
 			delete_option( 'ngg_init_check' );
 			delete_option( 'ngg_update_exists' );
+
+			// Clean up transients
+			$this->remove_transients();
 		}
 
 		function uninstall() {
+			// Clean up transients
+			$this->remove_transients();
+
 			include_once (dirname (__FILE__) . '/admin/install.php');
 			nggallery_uninstall();
 		}
