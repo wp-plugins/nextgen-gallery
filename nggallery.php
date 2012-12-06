@@ -466,14 +466,14 @@ if (!class_exists('nggLoader')) {
 			// Fetch all transients
 			$query = "
 				SELECT option_name FROM {$wpdb->options}
-				WHERE option_name LIKE '_transient_ngg_%'
+				WHERE option_name LIKE '%_transient_ngg_request%'
 			";
 			$transient_names = $wpdb->get_col($query);;
 
 			// Delete all transients in the database
 			$query = "
 				DELETE FROM {$wpdb->options}
-				WHERE option_name LIKE '_transient_ngg_%'
+				WHERE option_name LIKE '%_transient_ngg_request%'
 			";
 			$wpdb->query($query);
 
