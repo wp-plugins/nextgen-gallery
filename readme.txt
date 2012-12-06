@@ -194,6 +194,12 @@ Yes, NextGEN Gallery has been translated into dozens of languages - <a href="htt
 
 == Changelog == 
 
+= V1.9.8 - 12.05.2012 =
+* Secured: Removed bundled version of swfupload. See fix below for SCM information.
+* Changed: All transients created by NextGEN are flushed when the plugin is activated.
+* Fixed:   Our primary SCM is conducted at http://bitbucket.org/photocrati/nextgen-gallery, but was not synchronizing correctly with the WordPress Plugin SVN Repository
+* Fixed:   The transient adjustment fixes: http://wordpress.org/support/topic/plugin-nextgen-gallery-_transient_ngg_request-entry-in-wp_options
+
 = V1.9.7 - 11.13.2012 =
 * Secured: Removed bundled version of swfupload; using WordPress-bundled version instead for WordPress 3.2 instances
 * Changed: Using JQuery UI for the image sorting interface (thanks Tomás Soler)
