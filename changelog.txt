@@ -1,6 +1,12 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V1.9.9 - 12.14.2012 =
+* NEW:	   JW ImageRotator v3.17 is now bundled with the plugin and used by default.
+* Changed: Removed database upgrade code for versions of NextGEN Gallery earlier than 1.9.3
+* Fixed:   Compatibility with WordPress v3.5 ( wpdb->prepare() warnings )
+* Fixed:   Sorting by filename now produces expected results using a natural sorting algorithm
+
 = V1.9.8 - 12.05.2012 =
 * Secured: Removed bundled version of swfupload. See fix below for SCM information.
 * Changed: All transients created by NextGEN are flushed when the plugin is activated.

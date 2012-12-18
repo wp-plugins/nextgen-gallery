@@ -644,14 +644,16 @@ class nggOptions {
 				</tr>
  			    </table>
     			<h3 class="expert" ><?php _e('Settings for the JW Image Rotator','nggallery') ?></h3>
-            	<p><?php _e('The settings are only used in the JW Image Rotator Version', 'nggallery') ?> 3.17 .
-            	   <?php _e('See more information for the Flash Player on the web page', 'nggallery') ?> <a href="http://www.longtailvideo.com/players/jw-image-rotator/" target="_blank" >JW Image Rotator from Jeroen Wijering</a>.
-            	</p>
+				<p>
+					NextGEN Galery flash slideshows use the JW Image Rotator Version 3.17 by <a target='_blank' href='http://www.longtailvideo.com/players/jw-image-rotator/'>Long Tail Video</a>.
+					This file is bundled with NextGEN Gallery 1.9.9 and above. Press the button below to search for it automatically. For earlier versions of NextGEN Gallery, you'll need to
+					upload the file manually to the <a href='http://codex.wordpress.org/Uploading_Files' target='_blank'>WordPress Uploads directory</a>.
+				</p>
             	<?php if (empty($ngg->options['irURL']) && ($ngg->options['enableIR'] == '1')) { ?>
         			<div id="message" class="error inline">
         			<p>
-        				<?php _e('The path to imagerotator.swf is not defined, the slideshow will not work.','nggallery'); ?><br />
-        				<?php _e('If you would like to use the JW Image Rotatator, please download the player <a href="http://www.longtailvideo.com/players/jw-image-rotator/" target="_blank" >here</a> and upload it to your Upload folder (Default is wp-content/uploads).','nggallery'); ?>
+        				<?php _e('The path to JW Image Rotator is not defined, the slideshow will not work.','nggallery'); ?><br />
+        				Press the button below to search for the file.
         			</p>
         			</div>
             	<?php }?>
@@ -662,11 +664,11 @@ class nggOptions {
                     <span class="setting-description"><?php _e('Integrate the flash based slideshow for all flash supported devices','nggallery') ?></span></td>
 				</tr>
 				<tr>
-					<th><?php _e('Path to the Imagerotator (URL)','nggallery') ?></th>
+					<th><?php _e('Path to the JW Image Rotator (URL)','nggallery') ?></th>
 					<td>
 						<input type="text" size="50" id="irURL" name="irURL" value="<?php echo $ngg->options['irURL']; ?>" />
 						<input type="submit" name="irDetect" class="button-secondary"  value="<?php _e('Search now','nggallery') ;?> &raquo;"/>
-						<br /><span class="setting-description"><?php _e('Press the button to search automatically for the imagerotator, if you uploaded it to wp-content/uploads or a subfolder','nggallery') ?></span>
+						<br /><span class="setting-description"><?php _e('Press the button below to search for the JW Image Rotator','nggallery') ?></span>
 					</td>
 				</tr>
 				<tr>
