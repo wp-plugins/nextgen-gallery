@@ -1,6 +1,105 @@
 <?php
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
+/**
+ * Rebuild slugs for albums, galleries and images via AJAX request
+ *
+ * @sine 1.7.0
+ * @access internal
+ */
+class ngg_rebuild_unique_slugs {
+
+	function start_rebuild() {
+        global $wpdb;
+
+        $total = array();
+        // get the total number of images
+		$total['images'] = intval( $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggpictures") );
+        $total['gallery'] = intval( $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggallery") );
+        $total['album'] = intval( $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->nggalbum") );
+
+		$messages = array(
+			'images' => __( 'Rebuild image structure : %s / %s images', 'nggallery' ),
+			'gallery' => __( 'Rebuild gallery structure : %s / %s galleries', 'nggallery' ),
+            'album' => __( 'Rebuild album structure : %s / %s albums', 'nggallery' ),
+		);
+
+?>
+<?php
+
+        foreach ( array_keys( $messages ) as $key ) {
+
+    		$message = sprintf( $messages[ $key ] ,
+    			"<span class='ngg-count-current'>0</span>",
+    			"<span class='ngg-count-total'>" . $total[ $key ] . "</span>"
+    		);
+
+    		echo "<div class='$key updated'><p class='ngg'>$message</p></div>";
+        }
+
+		$ajax_url = add_query_arg( 'action', 'ngg_rebuild_unique_slugs', admin_url( 'admin-ajax.php' ) );
+?>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+	var ajax_url = '<?php echo $ajax_url; ?>',
+		_action = 'images',
+		images = <?php echo $total['images']; ?>,
+		gallery = <?php echo $total['gallery']; ?>,
+        album = <?php echo $total['album']; ?>,
+        total = 0,
+        offset = 0,
+		count = 50;
+
+	var $display = $('.ngg-count-current');
+    $('.finished, .gallery, .album').hide();
+    total = images;
+
+	function call_again() {
+		if ( offset > total ) {
+		    offset = 0;
+            // 1st run finished
+            if (_action == 'images') {
+                _action = 'gallery';
+                total = gallery;
+                $('.images, .gallery').toggle();
+                $display.html(offset);
+                call_again();
+                return;
+            }
+            // 2nd run finished
+            if (_action == 'gallery') {
+                _action = 'album';
+                total = album;
+                $('.gallery, .album').toggle();
+                $display.html(offset);
+                call_again();
+                return;
+            }
+            // 3rd run finished, exit now
+            if (_action == 'album') {
+    			$('.ngg')
+    				.html('<?php _e( 'Done.', 'nggallery' ); ?>')
+    				.parent('div').hide();
+                $('.finished').show();
+    			return;
+            }
+		}
+
+		$.post(ajax_url, {'_action': _action, 'offset': offset}, function(response) {
+			$display.html(offset);
+
+			offset += count;
+			call_again();
+		});
+	}
+
+	call_again();
+});
+</script>
+<?php
+	}
+}
+
 class nggOptions {
 
     /**
@@ -99,7 +198,6 @@ class nggOptions {
 
     	if ( isset($_POST['createslugs']) ) {
     		check_admin_referer('ngg_settings');
-            include_once (dirname (__FILE__) . '/upgrade.php');
             ngg_rebuild_unique_slugs::start_rebuild();
     	}
 
