@@ -99,13 +99,16 @@ class nggAdminPanel{
 				$jquery_url = includes_url('js/jquery/jquery.js');
 				$html = implode('', array(
 					"<script type='text/javascript' src='{$jquery_url}'></script>\n",
-					"<script type='text/javascript'>window.onerror = function(msg, url, line){
-						console.log(msg);
-						if (window.location.search.length > 0) {
-							window.location.search += '&skipjs[{$skipjs_count}]='+url;
-						}
-						else {
-							window.location.search = '?skipjs[{$skipjs_count}]='+url;
+					"<script type='text/javascript'>
+					window.onerror = function(msg, url, line){
+						if (url.match(/\.js$|\.js\?/)) {
+							if (window.location.search.length > 0) {
+								if (window.location.search.indexOf(url) == -1)
+									window.location.search += '&skipjs[{$skipjs_count}]='+url;
+							}
+							else {
+								window.location.search = '?skipjs[{$skipjs_count}]='+url;
+							}
 						}
 						return true;
 					};</script>\n",

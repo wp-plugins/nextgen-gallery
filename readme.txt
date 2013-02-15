@@ -202,6 +202,9 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V1.9.12 - 02.15.2013 =
+* Fixed:   jQuery Conflict Detection was trying to dequeue irremovable scripts
+
 = V1.9.11 - 02.12.2013 =
 * NEW: Added the ability to detect JQuery conflicts on NGG Admin Pages and auto-resolve
 * Changed: Added "nggalbum" shortcode. Use this when Jetpack is installed.
