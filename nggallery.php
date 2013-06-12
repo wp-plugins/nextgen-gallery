@@ -5,7 +5,7 @@ Plugin URI: http://www.nextgen-gallery.com/
 Description: A NextGENeration Photo Gallery for WordPress
 Author: Photocrati
 Author URI: http://www.photocrati.com/
-Version: 1.9.12
+Version: 1.9.13
 
 Copyright (c) 2007-2011 by Alex Rabe & NextGEN DEV-Team
 Copyright (c) 2012 Photocrati Media
