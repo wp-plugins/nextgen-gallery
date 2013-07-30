@@ -1,6 +1,25 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V2.0 - 07.30.2013 =
+* NEW:	   Improved user experience throughout the plugin, settings and usage.
+* NEW:     Plupload queue uploader that allows for bulk and zip uploads within the same interface.
+* NEW:     Complete redesign of the NextGEN options panel
+* NEW:     Added new interface for adding galleries from pages and posts.
+* NEW:     Galleries are now mobile friendly and responsive, which is most noticeable with a responsive theme.
+* NEW:     Streamlined functionality for displaying galleries based on tags.
+* NEW:     Architecture based on Pope Framework (http://bitbucket.org/photocrati/pope-framework)
+* NEW:     New shortcode, “ngg_images”, and corresponding Attach to Post interface
+* NEW:     Galleries have now global and instance settings
+* NEW:     Support for FastCGI environments
+* Changed: Replaces shortcodes with placeholder images, however still supports legacy shortcodes.
+* Changed: Introduced new Growl-like notifications
+* Changed: The container and it’s images are centered for slideshows
+* Changed: NextGEN styles now override vs replace default styles
+* Changed: NextGEN legacy templates have been deprecated (but still function)
+* FIXED:   The ability to use NextGEN image as a Featured Image.
+* FIXED:   Many bugs and annoyances, such as PHP warnings, errors, etc.
+
 = V1.9.13 - 06.11.2013 =
 * NEW:     Slideshows are now centered to their content area     
 * Secured: Ensure that only logged in users can upload images
@@ -31,6 +50,7 @@ by Photocrati Media
 * Fixed:   Deleted galleries within an album are handed gracefully without warning messages
 * Fixed:   Correct use of register_uninstall_hook
 * Fixed:   CSS and usability issues with the TinyMCE window used to display galleries
+* Fixed:   Inability to generate new image slugs
 
 = V1.9.9 - 12.14.2012 =
 * NEW:	   JW ImageRotator v3.17 is now bundled with the plugin and used by default.
