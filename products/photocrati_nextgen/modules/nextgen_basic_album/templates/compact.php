@@ -17,7 +17,7 @@
                    href="<?php echo $gallery->pagelink; ?>"
                     ><?php echo $gallery->title; ?></a>
             </h4>
-            <?php if ($gallery->counter > 0) { ?>
+            <?php if (isset($gallery->counter) && $gallery->counter > 0) { ?>
                 <p><strong><?php echo $gallery->counter; ?></strong>&nbsp;<?php _e('Photos', 'nggallery'); ?></p>
             <?php } ?>
         </div>

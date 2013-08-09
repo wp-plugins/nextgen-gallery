@@ -76,11 +76,9 @@
         <?php if ($flash_xhtml_validation): ?>
         <!--
         <?php endif ?>
-        (function($){
-            $(document).on('lazy_resources_loaded', function(){
-                <?php echo $swfobject->javascript(); ?>
-            });
-        })(jQuery);
+		jQuery(function($){
+			<?php echo $swfobject->javascript(); ?>
+		});
         <?php if ($flash_xhtml_validation): ?>
         -->
         <?php endif ?>
@@ -190,19 +188,16 @@
 	?>
 	<script type="text/javascript">
 	jQuery('#<?php echo_h($anchor)?>-image-list').hide().removeClass('ngg-slideshow-nojs');
-
-    (function($){
-        $(document).on('lazy_resources_loaded', function(){
-            jQuery('#<?php echo_h($anchor); ?>').nggShowSlideshow({
-                id: '<?php echo_h($displayed_gallery_id); ?>',
-                fx: '<?php echo_h($cycle_effect); ?>',
-                width: <?php echo_h($gallery_width); ?>,
-                height: <?php echo_h($gallery_height); ?>,
-                domain: '<?php echo_h(trailingslashit(home_url())); ?>',
-                timeout: <?php echo_h(intval($cycle_interval) * 1000); ?>
-            });
-        });
-    })(jQuery);
+	jQuery(function($){
+		jQuery('#<?php echo_h($anchor); ?>').nggShowSlideshow({
+			id: '<?php echo_h($displayed_gallery_id); ?>',
+			fx: '<?php echo_h($cycle_effect); ?>',
+			width: <?php echo_h($gallery_width); ?>,
+			height: <?php echo_h($gallery_height); ?>,
+			domain: '<?php echo_h(trailingslashit(home_url())); ?>',
+			timeout: <?php echo_h(intval($cycle_interval) * 1000); ?>
+		});
+	});
 	</script>
 <?php endif ?>
 <?php $this->end_element(); ?>

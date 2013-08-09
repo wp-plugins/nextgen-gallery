@@ -232,3 +232,57 @@ function nggShowRelatedImages($type = '', $maxImages = 0) {
 function the_related_images($type = 'tags', $maxNumbers = 7) {
     echo nggShowRelatedImages($type, $maxNumbers);
 }
+
+/**
+ * Wrapper to I_Displayed_Gallery_Renderer->display_images(); this will display
+ * a basic thumbnails gallery
+ *
+ * @param int $galleryID Gallery ID
+ * @param string $template Path to template file
+ * @param bool $images_per_page Basic thumbnails setting
+ */
+function nggShowGallery($galleryID, $template = '', $images_per_page = FALSE)
+{
+    $args = array(
+        'source' => 'galleries',
+        'container_ids' => $galleryID
+    );
+
+    if (apply_filters('ngg_show_imagebrowser_first', FALSE, $galleryID))
+        $args['display_type'] = NEXTGEN_GALLERY_NEXTGEN_BASIC_IMAGEBROWSER;
+    else
+        $args['display_type'] = NEXTGEN_GALLERY_BASIC_THUMBNAILS;
+
+    if (!empty($template))
+        $args['template'] = $template;
+    if (!empty($images_per_page))
+        $args['images_per_page'] = $images_per_page;
+
+    echo C_Component_Registry::get_instance()
+                             ->get_utility('I_Displayed_Gallery_Renderer')
+                             ->display_images($args);
+}
+
+
+/**
+ * Wrapper to I_Displayed_Gallery_Renderer->display_images(); this will display
+ * a basic slideshow gallery
+ *
+ * @param int $galleryID Gallery ID
+ * @param int $width Gallery width
+ * @param int $height Gallery height
+ */
+function nggShowSlideshow($galleryID, $width, $height)
+{
+    $args = array(
+        'source'         => 'galleries',
+        'container_ids'  => $galleryID,
+        'gallery_width'  => $width,
+        'gallery_height' => $height,
+        'display_type'   => NEXTGEN_GALLERY_BASIC_SLIDESHOW
+    );
+
+    echo C_Component_Registry::get_instance()
+                             ->get_utility('I_Displayed_Gallery_Renderer')
+                             ->display_images($args);
+}

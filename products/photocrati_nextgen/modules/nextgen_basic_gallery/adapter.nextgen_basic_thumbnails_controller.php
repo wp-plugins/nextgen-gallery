@@ -19,7 +19,12 @@ class A_NextGen_Basic_Thumbnails_Controller extends Mixin_NextGen_Basic_Gallery_
 	function index_action($displayed_gallery, $return=FALSE)
     {  
         $display_settings = $displayed_gallery->display_settings;
-        $current_page = (int)$this->param('page', $displayed_gallery->id(), 1);
+
+        if(!$display_settings['disable_pagination'])
+            $current_page = (int)$this->param('page', $displayed_gallery->id(), 1);
+        else
+            $current_page = 1;
+
         $offset = $display_settings['images_per_page'] * ($current_page - 1);
         $storage = $this->object->get_registry()->get_utility('I_Gallery_Storage');
         $total = $displayed_gallery->get_entity_count();
@@ -164,6 +169,8 @@ class A_NextGen_Basic_Thumbnails_Controller extends Mixin_NextGen_Basic_Gallery_
 	 */
 	function enqueue_frontend_resources($displayed_gallery)
 	{
+		$this->call_parent('enqueue_frontend_resources', $displayed_gallery);
+
         wp_enqueue_style('nextgen_basic_thumbnails_style', $this->get_static_url('photocrati-nextgen_basic_gallery#thumbnails/nextgen_basic_thumbnails.css'));
 
 		if ($displayed_gallery->display_settings['show_piclens_link'])
@@ -174,10 +181,7 @@ class A_NextGen_Basic_Thumbnails_Controller extends Mixin_NextGen_Basic_Gallery_
 
 		wp_enqueue_style('nextgen_pagination_style', $this->get_static_url('photocrati-nextgen_pagination#style.css'));
 
-        $cssfile = C_NextGen_Settings::get_instance()->CSSfile;
-        wp_enqueue_style('nggallery', NEXTGEN_GALLERY_NGGLEGACY_MOD_URL.'/css/'.$cssfile);
-
-        $this->call_parent('enqueue_frontend_resources', $displayed_gallery);
+		$this->enqueue_ngg_styles();
 	}
 
 	/**

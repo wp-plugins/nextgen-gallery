@@ -73,6 +73,10 @@ if (!class_exists('C_Photocrati_Installer'))
 				// The cache should be flushed
 				C_Photocrati_Cache::flush();
 
+				// Delete auto-update cache
+				update_option('photocrati_auto_update_admin_update_list', null);
+				update_option('photocrati_auto_update_admin_check_date', '');
+
 				foreach ($modules as $module_name) {
 					if (($handler = self::get_handler_instance(array_shift(explode('|', $module_name))))) {
 						if (method_exists($handler, 'install')) $handler->install($reset);

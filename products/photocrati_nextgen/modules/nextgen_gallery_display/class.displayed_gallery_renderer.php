@@ -245,6 +245,7 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
 		elseif (!$controller->cachable) $lookup = FALSE;
 
 		// Try cache lookup, if we're to do so
+		$key = null;
 		$html = FALSE;
 		if ($lookup) {
 			// Some settings affect display types
@@ -277,7 +278,8 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
 			$current_mode = $controller->get_render_mode();
 			$controller->set_render_mode($mode);
 			$html = $controller->index_action($displayed_gallery, TRUE);
-			C_Photocrati_Cache::set($key, $html);
+			if ($key != null) 
+				C_Photocrati_Cache::set($key, $html);
 			$controller->set_render_mode($current_mode);
 		}
 

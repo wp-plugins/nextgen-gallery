@@ -476,7 +476,7 @@ class Mixin_Routing_App extends Mixin
 		$id					= $id ? preg_quote($id,'#') : "[^/]+";
 		$param_prefix		= preg_quote($settings->router_param_prefix,'#');
 		$param_sep			= preg_quote($settings->router_param_separator,'#');
-		$param_regex		= "#/((?<id>{$id}){$param_sep})?({$param_prefix}[-_]?)?{$quoted_key}{$param_sep}(?<value>[^/\?]+)/?#i";
+		$param_regex		= "#/((?P<id>{$id}){$param_sep})?({$param_prefix}[-_]?)?{$quoted_key}{$param_sep}(?P<value>[^/\?]+)/?#i";
 		$found				= FALSE;
 		$sources			= $url ? array('custom' => $url) : $this->object->get_parameter_sources();
 
@@ -535,7 +535,7 @@ class Mixin_Routing_App extends Mixin
 			$retval = $this->object->get_routed_url();
 		}
 
-		return $retval;
+		return trailingslashit($retval);
 	}
 
 	/**

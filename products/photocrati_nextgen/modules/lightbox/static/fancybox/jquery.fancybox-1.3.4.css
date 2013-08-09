@@ -359,6 +359,8 @@
 .fancybox-ie #fancybox-bg-nw { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_nw.png', sizingMethod='scale'); }
 
 /* Note: Prevents issues with "style resets" or themes that apply 'box-sizing: border-box' to everything */
-#fancybox-wrap, #fancybox-content {
+#fancybox-wrap, #fancybox-content, #fancybox-outer {
     box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
 }

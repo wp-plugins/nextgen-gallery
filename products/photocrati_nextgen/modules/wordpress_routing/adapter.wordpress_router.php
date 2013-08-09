@@ -3,6 +3,7 @@
 class A_WordPress_Router extends Mixin
 {
 	var $_site_url = FALSE;
+    var $_home_url = FALSE;
 
 	function initialize()
 	{
@@ -56,17 +57,33 @@ class A_WordPress_Router extends Mixin
 	}
 
 
-	function get_base_url()
+	function get_base_url($site_url = FALSE)
 	{
-		if (!$this->_site_url) {
-			$this->_site_url = site_url();
-			if (!get_option('permalink_structure')) {
-				$this->_site_url = $this->object->join_paths(
-					$this->_site_url, '/index.php'
-				);
-			}
-		}
+        $retval = NULL;
+        if ($site_url)
+        {
+            if (!$this->_site_url) {
+                $this->_site_url = site_url();
+                if (!get_option('permalink_structure')) {
+                    $this->_site_url = $this->object->join_paths(
+                        $this->_site_url, '/index.php'
+                    );
+                }
+            }
+            $retval = $this->_site_url;
+        }
+        else {
+            if (!$this->_home_url) {
+                $this->_home_url = home_url();
+                if (!get_option('permalink_structure')) {
+                    $this->_home_url = $this->object->join_paths(
+                        $this->_home_url, '/index.php'
+                    );
+                }
+            }
+            $retval = $this->_home_url;
+        }
 
-		return $this->_site_url;
+		return $retval;
 	}
 }

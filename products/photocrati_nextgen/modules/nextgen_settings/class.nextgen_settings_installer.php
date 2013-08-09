@@ -17,12 +17,11 @@ class C_NextGen_Settings_Installer
 			'datamapper_driver'     => 'custom_table_datamapper',
 			'gallerystorage_driver' => 'ngglegacy_gallery_storage',
 			'maximum_entity_count'  => 500,
-			'router_param_slug'     => 'nggallery',
-			'resource_minifier'     => FALSE
+			'router_param_slug'     => 'nggallery'
 		);
 
 		$this->_local_settings = array(
-			'gallerypath'	 => 'wp-content/galleries',
+			'gallerypath'	 => 'wp-content/gallery/',
 			'deleteImg'      => True,              // delete Images
 			'swfUpload'      => True,              // activate the batch upload
 			'usePermalinks'  => False,             // use permalinks for parameters

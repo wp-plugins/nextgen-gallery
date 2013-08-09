@@ -9,6 +9,7 @@ max-width: 100%;
 .ngg-gallery-singlepic-image img {
 margin: 0;
 max-width: 100%;
+border: none;
 }
 
 .ngg-singlepic {

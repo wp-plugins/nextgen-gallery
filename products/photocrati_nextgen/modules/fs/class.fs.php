@@ -129,7 +129,7 @@ class Mixin_Fs_Instance_Methods extends Mixin
         if (!$module)
             list($path, $module) = $this->object->parse_formatted_path($path);
 
-		if (file_exists($path))
+		if (@file_exists($path))
         {
             $retval = $path;
         }
@@ -141,7 +141,7 @@ class Mixin_Fs_Instance_Methods extends Mixin
 
             // See if the file is located under one of the search paths directly
             foreach ($search_paths as $dir) {
-                if (file_exists($this->join_paths($dir, $path))) {
+                if (@file_exists($this->join_paths($dir, $path))) {
                     $retval = $this->join_paths($dir, $path);
                     break;
                 }
@@ -218,7 +218,7 @@ class Mixin_Fs_Instance_Methods extends Mixin
 	{
 		$retval = NULL;
 
-		$results = file_exists($this->join_paths($base_path, $file));
+		$results = @file_exists($this->join_paths($base_path, $file));
 
 		// Must be located in a sub-directory
 		if (!$results)
@@ -272,21 +272,49 @@ class Mixin_Fs_Instance_Methods extends Mixin
 	{
 		$segments = array();
 		$retval = array();
+        $protocol = NULL;
 		$params = func_get_args();
 		$this->_flatten_array($params, $segments);
 
+        // if a protocol exists strip it from the string and store it for later
+        $pattern = "#^[a-zA-Z].+://#i";
+        preg_match($pattern, $segments[0], $matches);
+        if (!empty($matches)) {
+            $protocol = reset($matches);
+            $segments[0] = preg_replace($pattern, '', $segments[0], 1);
+        }
+
 		foreach ($segments as $segment) {
             $segment = trim($segment, '/\\');
-            if (!empty($segment))
-                $retval = array_unique(array_merge($retval, preg_split('/[\/\\\]/', $segment)));
+            $pieces = array_values(array_filter(preg_split('/[\/\\\\]/', $segment)));
+
+            // determine if each piece should be appended to $retval
+            foreach ($pieces as $ndx => $val) {
+                $one = array_search($val, $retval);
+                $two = array_search($val, $pieces);
+                $one = (FALSE === $one ? 0 : count($one) + 1);
+                $two = (FALSE === $two ? 0 : count($two) + 1);
+                if (!empty($protocol)) {
+                    if (@$retval[$ndx] !== $val || $two >= $one)
+                        $retval[] = $val;
+                }
+                else {
+                    if (@$retval[$ndx] !== $val && $two >= $one)
+                        $retval[] = $val;
+                }
+            }
+
 		}
 
-		$retval = implode('/', $retval);
+		$retval = $protocol . implode('/', $retval);
 
-        if ('WINNT' !== PHP_OS
+        if ((empty($protocol) && 'WINNT' !== PHP_OS)
             && strpos($retval, '/') !== 0
-            && !preg_match("#^http(s)?://#", $retval) && !file_exists($retval))
+            && is_null($protocol)
+            && !@file_exists($retval))
+        {
             $retval = '/' . $retval;
+        }
 
 		return $retval;
 	}

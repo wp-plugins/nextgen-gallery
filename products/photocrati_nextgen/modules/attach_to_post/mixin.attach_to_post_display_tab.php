@@ -194,7 +194,7 @@ class Mixin_Attach_To_Post_Display_Tab extends Mixin
 		$retval = array();
 
 		// Get all display setting forms
-		$form_manager = $this->get_registry()->get_utility('I_Form_Manager');
+        $form_manager = C_Form_Manager::get_instance();
 		$forms		  = $form_manager->get_forms(
 			NEXTGEN_DISPLAY_SETTINGS_SLUG, TRUE
 		);

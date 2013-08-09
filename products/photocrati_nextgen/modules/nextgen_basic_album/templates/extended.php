@@ -11,7 +11,7 @@
                 </div>
                 <div class="ngg-description">
                     <p><?php echo $gallery->galdesc; ?></p>
-                    <?php if ($gallery->counter > 0) { ?>
+                    <?php if (isset($gallery->counter) && $gallery->counter > 0) { ?>
                         <p><strong><?php echo $gallery->counter; ?></strong>&nbsp;<?php _e('Photos', 'nggallery'); ?></p>
                     <?php } ?>
                 </div>

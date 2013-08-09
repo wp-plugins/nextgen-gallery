@@ -11,7 +11,7 @@ class A_MVC_Router extends Mixin
 	function get_static_url($path, $module=FALSE)
 	{
 		// Determine the base url
-		$base_url = $this->object->get_base_url();
+		$base_url = $this->object->get_base_url(TRUE);
 		$base_url = $this->object->remove_url_segment('/index.php', $base_url);
 
 		// Find the module directory

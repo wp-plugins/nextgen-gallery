@@ -142,6 +142,14 @@ class Mixin_Display_Type_Controller extends Mixin
 
         $this->object->enqueue_lightbox_resources($displayed_gallery);
 	}
+
+	function enqueue_ngg_styles()
+	{
+		wp_enqueue_style(
+			'nggallery',
+			C_NextGen_Style_Manager::get_instance()->get_selected_stylesheet_url()
+		);
+	}
 	
 	function get_render_mode()
 	{

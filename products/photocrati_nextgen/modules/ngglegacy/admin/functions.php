@@ -813,7 +813,7 @@ class nggAdmin{
 		if ( $galleryID == '0' ) {
 			//cleanup and take the zipfile name as folder name
 			$foldername = sanitize_title(strtok ($filename, '.'));
-			$foldername = $defaultpath . $foldername;
+			$foldername = rtrim($defaultpath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($foldername, DIRECTORY_SEPARATOR);
 		} else {
 			// get foldername if selected
 			$foldername = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$galleryID' ");

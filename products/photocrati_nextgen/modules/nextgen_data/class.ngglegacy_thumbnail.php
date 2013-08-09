@@ -865,7 +865,17 @@ class C_NggLegacy_Thumbnail {
 
         // attempt adding a new word until the width is too large; then start a new line and start again
         foreach ($words as $word) {
-            $TextSize = $this->ImageTTFBBoxDimensions($wmSize, 0, $wmFontPath, $line . $word);
+            // sanitize the text being input; imagettftext() can be sensitive
+            $TextSize = $this->ImageTTFBBoxDimensions(
+                $wmSize,
+                0,
+                $wmFontPath,
+                $line . preg_replace(
+                    '~^(&([a-zA-Z0-9]);)~',
+                    htmlentities('${1}'),
+                    mb_convert_encoding($word, "HTML-ENTITIES", "UTF-8")
+                )
+            );
 
             if ($watermark_image_width == 0)
                 $watermark_image_width = $TextSize['width'];

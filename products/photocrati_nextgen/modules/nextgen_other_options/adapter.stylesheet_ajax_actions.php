@@ -15,25 +15,16 @@ class A_Stylesheet_Ajax_Actions extends Mixin
 
 		if ($this->object->_authorized_for_stylesheet_action()) {
 
-			// Ensure we have a CSS file to open
-			$found = FALSE;
-			if (($cssfile = $this->object->param('cssfile'))) {
-				$alt_filename	= path_join(TEMPLATEPATH, $cssfile);
-				$filename		= path_join(
-					NGGALLERY_ABSPATH,
-					implode(DIRECTORY_SEPARATOR, array('css', $cssfile))
-				);
-				if (file_exists($alt_filename)) $found = $alt_filename;
-				elseif (file_exists($filename)) $found = $filename;
+			$styles 	= C_NextGen_Style_Manager::get_instance();
+			$abspath	= $styles->find_selected_stylesheet_abspath($this->object->param('cssfile'));
+			$writepath	= $styles->get_selected_stylesheet_saved_abspath($this->object->param('cssfile'));
+			if (is_readable($abspath)) {
+				$retval['contents'] = file_get_contents($abspath);
+				$retval['writable'] = is_writable($abspath);
+				$retval['abspath']  = $abspath;
+				$retval['writepath']= $writepath;
 			}
-
-			// Did we find the CSS stylesheet?
-			if ($found != FALSE) {
-				$retval['contents'] = file_get_contents($found);
-				$retval['writable']	= is_writable($found);
-			}
-			else $retval['error'] = "Could not find CSS stylesheet";
-
+			else $retval['error'] = "Could not find stylesheet";
 		}
 		else {
 			$retval['error'] = 'Unauthorized';

@@ -45,10 +45,6 @@ class Mixin_Attach_To_Post extends Mixin
 	{
 		$this->call_parent('enqueue_backend_resources');
 
-        // wp_auth_check_load invokes functions not defined yet
-        remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
-		do_action('admin_enqueue_scripts');
-
         // Enqueue frame event publishing
 		wp_enqueue_script('frame_event_publisher');
 
@@ -235,7 +231,7 @@ class Mixin_Attach_To_Post extends Mixin
 	 */
 	function _render_ngg_page_in_frame($page, $tab_id = null)
 	{
-		$frame_url = real_site_url("/wp-admin/admin.php?page={$page}&attach_to_post");
+		$frame_url = admin_url("/admin.php?page={$page}&attach_to_post");
 		$frame_url = esc_url($frame_url);
 
 		if ($tab_id) {

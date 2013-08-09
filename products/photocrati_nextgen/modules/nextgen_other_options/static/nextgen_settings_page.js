@@ -1,6 +1,6 @@
 jQuery(function($){
 
-    $('.select2').select2();
+    $('select.select2').select2();
     $('label.tooltip, span.tooltip').tooltip();
 
 	/**** LIGHTBOX EFFECT TAB ****/
@@ -113,7 +113,7 @@ jQuery(function($){
 			if (typeof res !== 'object') res = JSON.parse(res);
 			$('#cssfile_contents').val(res.error ? res.error : res.contents);
 			var status = $('#writable_identicator');
-			if (res.writable) status.text(status.attr('writable_label'));
+			if (res.writable) status.text(status.attr('writable_label')+' '+res.writepath);
 			else status.text(status.attr('readonly_label'));
 		});
 	}).change();

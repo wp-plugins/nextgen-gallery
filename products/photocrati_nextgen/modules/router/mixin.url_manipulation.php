@@ -146,7 +146,7 @@ class Mixin_Url_Manipulation extends Mixin
 		$retval		 = $request_uri ? $request_uri : '/';
 		$settings	 = C_NextGen_Global_Settings::get_instance();
 		$sep		 = preg_quote($settings->router_param_separator, '#');
-		$param_regex = "#((?<id>\w+){$sep})?(?<key>\w+){$sep}(?<value>.+)/?$#";
+		$param_regex = "#((?P<id>\w+){$sep})?(?<key>\w+){$sep}(?P<value>.+)/?$#";
 		$slug		 = $settings->router_param_slug && $remove_slug ? '/' . preg_quote($settings->router_param_slug,'#') : '';
 		$slug_regex	 = '#'.$slug.'/?$#';
 

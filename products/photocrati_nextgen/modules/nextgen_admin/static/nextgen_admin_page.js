@@ -63,11 +63,5 @@ jQuery(function($){
 	});
 
     $('input.nextgen_settings_field_colorpicker').wpColorPicker();
+    $('#ngg_page_content').css('visibility', 'visible');
 });
-
-(function($){
-    $(window).on('lazy_resources_loaded', function(){
-        $('#ngg_page_content').css('visibility', 'visible');
-    });
-
-})(jQuery);

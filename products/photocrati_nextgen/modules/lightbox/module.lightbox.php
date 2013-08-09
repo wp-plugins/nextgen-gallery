@@ -31,14 +31,17 @@ class M_Lightbox extends C_Base_Module
     function initialize()
     {
         parent::initialize();
+        add_action('init', array(&$this, 'add_all_lightbox_forms'));
+    }
 
-        // Add a configuration form to each library
+    /**
+     * Adds a configuration form to each library
+     */
+    function add_all_lightbox_forms()
+    {
         foreach ($this->get_registry()->get_utility('I_Lightbox_Library_Mapper')->find_all() as $lib) {
-            $this->get_registry()
-                 ->add_adapter('I_Form', 'A_Lightbox_Library_Form', $lib->name);
-            $this->get_registry()
-                 ->get_utility('I_Form_Manager')
-                 ->add_form(NEXTGEN_LIGHTBOX_ADVANCED_OPTIONS_SLUG, $lib->name);
+            $this->get_registry()->add_adapter('I_Form', 'A_Lightbox_Library_Form', $lib->name);
+            C_Form_Manager::get_instance()->add_form(NEXTGEN_LIGHTBOX_ADVANCED_OPTIONS_SLUG, $lib->name);
         }
     }
 

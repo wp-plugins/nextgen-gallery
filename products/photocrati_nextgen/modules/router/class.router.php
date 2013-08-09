@@ -57,10 +57,10 @@ class Mixin_Router extends Mixin
 	 * @param string $uri
 	 * @return string
 	 */
-	function get_url($uri='/', $with_qs=TRUE)
+	function get_url($uri='/', $with_qs=TRUE, $site_url = FALSE)
 	{
 		$retval = $this->object->join_paths(
-			$this->object->get_base_url(),
+			$this->object->get_base_url($site_url),
 			$uri
 		);
 		if ($with_qs) {
@@ -102,7 +102,7 @@ class Mixin_Router extends Mixin
 		$fs = $this->get_registry()->get_utility('I_Fs');
 		$path = $fs->find_abspath($path, $module);
 
-		$base_url = $this->object->get_base_url();
+		$base_url = $this->object->get_base_url(TRUE);
 		$base_url = $this->object->remove_url_segment('/index.php', $base_url);
 
 		$path = str_replace(
@@ -134,9 +134,11 @@ class Mixin_Router extends Mixin
 
 	/**
 	 * Gets the base url for the router
+     *
+     * @param bool $site_url Unused
 	 * @return string
 	 */
-	function get_base_url()
+	function get_base_url($site_url = FALSE)
 	{
 		$protocol = $this->object->is_https()? 'https://' : 'http://';
 		$retval = "{$protocol}{$_SERVER['SERVER_NAME']}{$this->object->context}";
@@ -176,7 +178,7 @@ class Mixin_Router extends Mixin
 	 */
 	function get_querystring()
 	{
-		return $_SERVER['QUERY_STRING'];
+		return isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : null ;
 	}
 
 

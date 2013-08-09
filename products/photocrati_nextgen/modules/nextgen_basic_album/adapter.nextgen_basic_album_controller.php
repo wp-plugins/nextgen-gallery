@@ -120,7 +120,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin
             }
         }
         else {
-            return $this->object->render_partial('photocrati-nextgen_gallery_display#no_images_found');
+            return $this->object->render_partial('photocrati-nextgen_gallery_display#no_images_found', array(), $return);
         }
     }
 
@@ -258,8 +258,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin
         wp_enqueue_style('nextgen_basic_album_style', $this->object->get_static_url('photocrati-nextgen_basic_album#nextgen_basic_album.css'));
         wp_enqueue_script('jquery.dotdotdot', $this->object->get_static_url('photocrati-nextgen_basic_album#jquery.dotdotdot-1.5.7-packed.js'), array('jquery'));
 
-		$cssfile = C_NextGen_Settings::get_instance()->get('CSSFile');
-		wp_enqueue_style('nggallery', NEXTGEN_GALLERY_NGGLEGACY_MOD_URL.'/css/'.$cssfile);
+		$this->enqueue_ngg_styles();
 
     }
 

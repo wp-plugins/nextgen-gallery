@@ -75,6 +75,15 @@ class C_Lightbox_Installer
 	 */
 	function install()
 	{
+        // Install "None" option
+        $this->install_lightbox(
+            'none',
+            'No lightbox',
+            '',
+            array(),
+            array()
+        );
+
 		$this->install_lightbox(
 			'lightbox',
             'Lightbox',

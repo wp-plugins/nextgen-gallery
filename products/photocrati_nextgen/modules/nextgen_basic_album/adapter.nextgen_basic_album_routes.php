@@ -27,7 +27,7 @@ class A_NextGen_Basic_Album_Routes extends Mixin
 		// If we're viewing an album, rewrite the urls
 		$regex = "/photocrati-nextgen_basic_\w+_album/";
 		if (preg_match($regex, $display_type)) {
-//            $app->rewrite("{$slug}{*}/page/{\\d}",        "{$slug}{1}/page--{2}", FALSE, TRUE);
+			$app->rewrite("{$slug}/pid--{*}",		      "{$slug}/pid--{1}", FALSE, TRUE); // avoid conflicts with imagebrowser
 			$app->rewrite("{$slug}/{\\w}",                "{$slug}/album--{1}");
 			$app->rewrite("{$slug}/{\\w}/{\\w}",          "{$slug}/album--{1}/gallery--{2}");
 			$app->rewrite("{$slug}/{\\w}/{\\w}/{\\w}{*}", "{$slug}/album--{1}/gallery--{2}/{3}{4}");

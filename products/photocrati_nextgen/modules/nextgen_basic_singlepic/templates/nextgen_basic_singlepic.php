@@ -14,6 +14,9 @@
     
     $width = isset($settings['width']) ? $settings['width'] : null;
     $height = isset($settings['height']) ? $settings['height'] : null;
+    
+    $width = intval($width);
+    $height = intval($height);
 		
 		if ($width != null && $height != null)
 		{

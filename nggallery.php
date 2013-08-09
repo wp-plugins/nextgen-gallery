@@ -4,7 +4,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 /**
  * Plugin Name: NextGEN Gallery by Photocrati
  * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 7 million downloads.
- * Version: 2.0.0
+ * Version: 2.0.7
  * Author: Photocrati Media
  * Plugin URI: http://www.nextgen-gallery.com
  * Author URI: http://www.photocrati.com
@@ -77,6 +77,9 @@ class C_NextGEN_Bootstrap
 
 	function _load_non_pope()
 	{
+		// Load WordPress pluggables for plugin compatibility
+		include_once(path_join(ABSPATH, 'wp-includes/pluggable.php'));
+
 		// Load caching component
 		include_once('non_pope/class.photocrati_cache.php');
 		C_Photocrati_Cache::$enabled = TRUE;
@@ -99,6 +102,13 @@ class C_NextGEN_Bootstrap
 
 		// Load the installer
 		include_once('non_pope/class.photocrati_installer.php');
+
+		// Load the resource manager
+		include_once('non_pope/class.photocrati_resource_manager.php');
+		C_Photocrati_Resource_Manager::init();
+
+		// Load the style manager
+		include_once('non_pope/class.nextgen_style_manager.php');
 	}
 
 	/**
@@ -117,9 +127,6 @@ class C_NextGEN_Bootstrap
 		require_once(path_join(NEXTGEN_GALLERY_PLUGIN_DIR, implode(
 			DIRECTORY_SEPARATOR, array('pope','lib','autoload.php')
 		)));
-
-		// Include some extra helpers
-		require_once(path_join(NEXTGEN_GALLERY_PLUGIN_DIR, 'wordpress_helpers.php'));
 
 		// Get the component registry
 		$this->_registry = C_Component_Registry::get_instance();
@@ -172,6 +179,14 @@ class C_NextGEN_Bootstrap
 		add_filter('pre_update_option_'.$this->_settings_option_name, array(&$this, 'persist_settings'));
 		add_filter('pre_update_site_option_'.$this->_settings_option_name, array(&$this, 'persist_settings'));
 
+		// This plugin uses jQuery extensively
+		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_jquery'));
+
+		// If the selected stylesheet is using an unsafe path, then notify the user
+		if (C_NextGen_Style_Manager::get_instance()->is_directory_unsafe()) {
+			add_action('all_admin_notices', array(&$this, 'display_stylesheet_notice'));
+		}
+
 		// Update modules
 		add_action('init', array(&$this, 'update'), PHP_INT_MAX);
 
@@ -192,6 +207,35 @@ class C_NextGEN_Bootstrap
 		return $settings;
 	}
 
+	/**
+	 * Enqueues jQuery
+	 */
+	function enqueue_jquery()
+	{
+		wp_enqueue_script('jquery');
+	}
+
+	/**
+	 * Displays a notice to the user that the current stylesheet location is unsafe
+	 */
+	function display_stylesheet_notice()
+	{
+		$styles		= C_NextGen_Style_Manager::get_instance();
+		$filename	= $styles->get_selected_stylesheet();
+		$abspath	= $styles->find_selected_stylesheet_abspath();
+		$newpath	= $styles->get_selected_stylesheet_saved_abspath();
+
+		echo "<div class='updated error'>
+			<h3>WARNING: NextGEN Gallery Stylesheet NOT Upgrade-safe</h3>
+			<p>
+			<strong>{$filename}</strong> is currently stored in <strong>{$abspath}</strong>, which isn't upgrade-safe. Please move the stylesheet to
+			<strong>{$newpath}</strong> to ensure that your customizations persist after updates.
+		</p></div>";
+	}
+
+	/**
+	 * Updates all modules
+	 */
 	function update()
 	{
 		$this->_load_pope();
@@ -245,7 +289,7 @@ class C_NextGEN_Bootstrap
 		define('NEXTGEN_GALLERY_MODULE_URL', path_join(NEXTGEN_GALLERY_PRODUCT_URL, 'photocrati_nextgen/modules'));
 		define('NEXTGEN_GALLERY_PLUGIN_CLASS', path_join(NEXTGEN_GALLERY_PLUGIN_DIR, 'module.NEXTGEN_GALLERY_PLUGIN.php'));
 		define('NEXTGEN_GALLERY_PLUGIN_STARTED_AT', microtime());
-		define('NEXTGEN_GALLERY_PLUGIN_VERSION', '2.0.0');
+		define('NEXTGEN_GALLERY_PLUGIN_VERSION', '2.0.7');
 	}
 
 

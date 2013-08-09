@@ -10,16 +10,15 @@
 			<?php foreach ($stylesheets as $value => $p): ?>
 				<option
 					value="<?php echo esc_attr($value)?>"
-					description="<?php echo esc_attr($p['Description'])?>"
-					author="<?php echo esc_attr($p['Author'])?>"
-					version="<?php echo esc_attr($p['Version'])?>"
+					description="<?php echo esc_attr($p['description'])?>"
+					author="<?php echo esc_attr($p['author'])?>"
+					version="<?php echo esc_attr($p['version'])?>"
 					<?php selected($value, $activated_stylesheet)?>
-				><?php echo_h($p['Name'])?></option>
+				><?php echo_h($p['name'])?></option>
 			<?php endforeach ?>
 			</select>
             <p class="description">
-                The appearance of your galleries can be customized through the use of stylesheets, found in:<br/>
-                <strong><?php echo_h($stylesheet_directory) ?></strong><br/>
+				Place any custom stylesheets in <strong>wp-content/ngg_styles</strong><br/>
                 All stylesheets must contain a <a href='#' onclick='javascript:alert("/*\nCSS Name: Example\nDescription: This is an example stylesheet\nAuthor: John Smith\nVersion: 1.0\n*/");'>file header</a>
             </p>
 		</td>
@@ -46,7 +45,8 @@
 				class="description"
 				writable_label="<?php echo esc_attr($writable_label)?>"
 				readonly_label="<?php echo esc_attr($readonly_label)?>"
-				id="writable_identicator"></p>
+				id="writable_identicator">
+			</p>
 			<textarea id="cssfile_contents" name="cssfile_contents"></textarea>
 		</td>
 	</tr>

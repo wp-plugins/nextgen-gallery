@@ -24,8 +24,8 @@
             });
         }
 
-        $(window).on('lazy_resources_loaded', function(){
-            $(function(){
+
+		$(function(){
                 // Show the page content
                 $('#ngg_page_content').css('visibility', 'visible');
 
@@ -219,6 +219,5 @@
 
                 window.init_plupload();
             });
-        });
     })(jQuery);
 </script>

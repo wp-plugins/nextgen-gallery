@@ -14,7 +14,7 @@ class A_Lightbox_Manager_Form extends Mixin
 
 	function render()
 	{
-        $form_manager = $this->object->get_registry()->get_utility('I_Form_Manager');
+        $form_manager = C_Form_Manager::get_instance();
 		$mapper       = $this->object->get_registry()->get_utility('I_Lightbox_Library_Mapper');
 
         // retrieve and render the settings forms for each library

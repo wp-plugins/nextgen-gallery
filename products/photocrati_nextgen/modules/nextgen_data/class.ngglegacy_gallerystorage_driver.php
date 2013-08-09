@@ -22,18 +22,18 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 		// append the slug
 		if ($gallery) {
 			if (is_object($gallery) && isset($gallery->slug)) {
-				$retval = path_join($retval, $gallery->slug);
+				$retval = $fs->join_paths($retval, $gallery->slug);
 			}
 			else {
 				$gallery = $this->object->_get_gallery_id($gallery);
 				$gallery = $this->object->_gallery_mapper->find($gallery);
-				if ($gallery) $retval = path_join($retval, $gallery->slug);
+				if ($gallery) $retval = $fs->join_paths($retval, $gallery->slug);
 			}
 		}
 
 		// We need to make this an absolute path
 		if (strpos($retval, $fs->get_document_root()) === FALSE)
-            $retval = path_join($fs->get_document_root(), $retval);
+            $retval = $fs->join_paths($fs->get_document_root(), $retval);
 
 		return $retval;
 	}
@@ -57,7 +57,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 
 		// If a path was stored in the entity, then use that
 		if ($gallery && isset($gallery->path)) {
-			$retval = path_join($fs->get_document_root(), $gallery->path);
+			$retval = $fs->join_paths($fs->get_document_root(), $gallery->path);
 		}
         elseif ($gallery) {
             // fallback to the upload abspath
@@ -76,6 +76,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 	function get_image_abspath($image, $size='full', $check_existance=FALSE)
 	{
 		$retval = NULL;
+        $fs = $this->get_registry()->get_utility('I_Fs');
 
         // Ensure that we have a size
 		if (!$size) {
@@ -98,7 +99,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 					case 'full':
 					case 'original':
 					case 'image':
-						$retval = path_join($gallery_path, $image->filename);
+						$retval = $fs->join_paths($gallery_path, $image->filename);
 						break;
 
 					case 'thumbnails':
@@ -114,13 +115,13 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 					//subdirectory of the same name within the gallery folder
 					// gallery folder, but with the size appended to the filename
 					default:
-						$image_path = path_join($gallery_path, $folder);
+						$image_path = $fs->join_paths($gallery_path, $folder);
 
 						// NGG 2.0 stores relative filenames in the meta data of
 						// an image. It does this because it uses filenames
 						// that follow conventional WordPress naming scheme.
 						if (isset($image->meta_data) && isset($image->meta_data[$size]) && isset($image->meta_data[$size]['filename'])) {
-							$image_path = path_join($image_path, $image->meta_data[$size]['filename']);
+							$image_path = $fs->join_paths($image_path, $image->meta_data[$size]['filename']);
 						}
 
 						// NGG Legacy does not store relative filenames in the
@@ -129,7 +130,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 						// WordPress conventions, NGG legacy does follow it's
 						// own naming schema consistently so we can guess the path
 						else {
-							$image_path = path_join($image_path, "{$prefix}_{$image->filename}");
+							$image_path = $fs->join_paths($image_path, "{$prefix}_{$image->filename}");
 						}
 
 						// Should we check whether the image actually exists?
@@ -161,7 +162,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 			'',
 			$this->object->get_image_abspath($image, $size)
 		);
-		return $router->get_url($request_uri, FALSE);
+        return $router->remove_url_segment('/index.php', $router->get_url($request_uri, FALSE, TRUE));
 	}
 
 	/**
@@ -596,6 +597,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
         $new_image_pids = array();
 
         $settings = C_NextGen_Settings::get_instance();
+        $fs = $this->get_registry()->get_utility('I_Fs');
 
         // move_images() is a wrapper to this function so we implement both features here
         $func = $move ? 'rename' : 'copy';
@@ -682,7 +684,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
                     $prefix = 'copy_' . ($prefix_count++) . '_';
                     $new_path = $prefix . $new_path;
                 }
-                $new_path = path_join($gallery->path, $new_path);
+                $new_path = $fs->join_paths($gallery->path, $new_path);
 
                 // Copy files
                 if (!@$func($orig_path, $new_path))

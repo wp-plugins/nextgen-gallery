@@ -1,6 +1,37 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V2.0.7 - 08.09.2013 =
+* NEW:     New resource manager that fixes many plugin and theme incompatibilities
+* NEW:     Styles (custom stylesheets) should reside in wp-content/ngg_styles
+* NEW:     Added option to "Other Options -> Misc" to control maximum images returned
+* Secured: Removed default connector for jQuery FileTree library
+* Changed: Updated the simplehtmldom library to version 1.5
+* Changed: jQuery is now enqueued at the beginning of every request
+* Fixed:   Incompatibilities with BuddyPress
+* Fixed:   Incompatibilities with Events+, bbPress, Custom Permalinks, and many other plugins
+* Fixed:   Incompcatibilities with Member Access, AMember, Magic Fields, and More Fields
+* Fixed:   Incompatibilities with Elegant Themes, Oxygen, Responsive, and many other themes
+* Fixed:   Ensure that gallery images don't have a border by default
+* Fixed:   Conflict between imagebrowser and album urls
+* Fixed:   Reverted default gallerypath to wp-content/gallery/
+* Fixed:   Upgrade-safe way of overriding Styles
+* Fixed:   Generation of AJAX url is now based on slug
+* Fixed:   Restore nggShowGallery and nggShowSlideshow as wrappers to new API
+* Fixed:   Always use domain as specified by WordPress Site URL
+* Fixed:   Use WordPress Home URL over Site URL when appropriate
+* Fixed:   Numerous pagination issues
+* Fixed:   Adjusted our forms to comply with WordPress Firewalls
+* Fixed:   Correct use of select2 DOM selector for maximum compatibility
+* Fixed:   Path and URL calculations for Windows and UNIX environments
+* Fixed:   Ensure that pluggable.php is loaded at the start of every request
+* Fixed:   Fancybox: adjust CSS for further box-sizing protection from themes
+* Fixed:   Use PHP 5.2.1 compatible named pattern matching syntax
+* Fixed:   Remove usage of __DIR__ constant not supported by PHP 5.2.x
+* Fixed:   Removed dependency on mb_string PHP module
+* Fixed:   Allow "No Lightbox" as an option for Lightbox Effects
+* Fixed:   Warning: "Invalid CRT parameters detected" for Windows environments
+
 = V2.0 - 07.30.2013 =
 * NEW:	   Improved user experience throughout the plugin, settings and usage.
 * NEW:     Plupload queue uploader that allows for bulk and zip uploads within the same interface.

@@ -7,7 +7,7 @@ jQuery(function($) {
 	{
 		var scope_code = eval(scope).toString();
 		var callback_code = callback.toString().replace(/[^\{]*{/, '').replace(/\}$/, '');
-		var regex = new RegExp('(function '+method_name+'\\([^\\)]*\\)){');
+		var regex = new RegExp('(fu' + 'nc' + '' + 'tion '+method_name+'\\([^\\)]*\\)){');
 		scope_code = scope_code.replace(regex, function(str, match){
 			return str+callback_code;
 		}).replace(/\$([\s\.\(=])/g, function(str, match){
