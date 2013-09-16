@@ -85,7 +85,7 @@ class C_Photocrati_Cache
 	/**
 	 * Flush the entire cache
 	 */
-	static function flush($group=NULL)
+	static function flush($group=NULL, $expired_only=FALSE)
 	{
 		$retval = 0;
 
@@ -94,21 +94,23 @@ class C_Photocrati_Cache
 			// Delete all caches
 			if ($group == 'all') {
 				foreach (self::$_instances as $cache) {
-					$retval += self::flush($cache->group);
+					$retval += self::flush($cache->group, $expired_only);
 				}
 			}
 
 			// Delete items from a single cache in particular
 			else {
-				foreach (self::get_key_list($group) as $key) {
-					self::delete($key, FALSE, $group);
+				$cache = self::get_instance($group);
+				foreach (($expired_only ? self::get_expired_key_list($group) : self::get_key_list($group)) as $key) {
+					$cache->delete($key, $expired_only);
 				}
 
 				// Delete list of cached items
-				global $wpdb;
-				$cache = self::get_instance($group);
-				$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%'.$cache->group.'%');
-				$retval = $wpdb->query($sql);
+				if (!$expired_only) {
+					global $wpdb;
+					$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%'.$cache->group.'%');
+					$retval = $wpdb->query($sql);
+				}
 			}
 		}
 
@@ -120,7 +122,16 @@ class C_Photocrati_Cache
 		global $wpdb;
 
 		$cache = self::get_instance($group);
-		$sql = $wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", '%'.$cache->group.'%');
+		$sql = $wpdb->prepare("SELECT REPLACE(option_name, %s, '') FROM {$wpdb->options} WHERE option_name LIKE %s", $cache->group, '%'.$cache->group.'%');
+		return $wpdb->get_col($sql);
+	}
+
+	static function get_expired_key_list($group=NULL)
+	{
+		global $wpdb;
+
+		$cache = self::get_instance($group);
+		$sql = $wpdb->prepare("SELECT REPLACE(option_name, %s, '') FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d", $cache->group, '%'.$cache->group.'%', time());
 		return $wpdb->get_col($sql);
 	}
 
@@ -156,7 +167,7 @@ class C_Photocrati_Cache
 			if (is_array($key)) $key = self::generate_key($key);
 			if (self::$force_update OR $this->lookup($key, FALSE) === FALSE) {
 				set_transient($key, $value, $ttl);
-				update_option($this->group.$key, 1);
+				update_option($this->group.$key, time()+$ttl);
 				$retval = $key;
 			}
 		}
