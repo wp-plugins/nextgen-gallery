@@ -3,7 +3,7 @@ Contributors: photocrati
 Tags:gallery,image,images,photo,photos,picture,pictures,slideshow,flash,media,thumbnails,photo-albums,nextgen-gallery,nextgen
 Requires at least: 3.6
 Tested up to: 3.6
-Stable tag: trunk
+Stable tag: 2.0.21
 License: GPLv2
 
 The most popular WordPress gallery plugin and one of the most popular plugins of all time with over 7.5 million downloads.
