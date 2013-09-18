@@ -195,8 +195,26 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.27 - 09.18.2013 =
+* Fixed:   Reduce performance impact of purging displayed gallery transients
+
 = V2.0.25 - 09.18.2013 =
 * Reverting to the 2.0.21 codebase, due to major performance issues in 2.0.23 and 2.0.24
+
+= V2.0.23 - 09.16.2013 =
+* NEW:     WP-Cron job to periodically clean-up displayed gallery transients
+* NEW:     Added "excluded_container_ids" as parameter for ngg_images shortcode
+* Fixed:   Lightbox effect is honoured by all display types
+* Fixed:   Highslide displays images from the correct displayed galleries
+* Fixed:   Ensure that sub-albums display correctly when the word "album" is part of a slug
+* Fixed:   Ensure that sub-albums display correctly when numerical slugs are used
+* Fixed:   Related images heading only added when Related Images functionality is enabled
+* Fixed:   PHP Warning about undefined index when viewing basic albums
+* Fixed:   AJAX handling is third-party compatible
+* Fixed:   Image date is no longer overwritten when an image is modified
+* Fixed:   Fixed issue with displayed galleries using source='tags'
+* Fixed:   Problem with transient cache not getting flushed properly from Other Options page
+* Fixed:   Use correct gallery/transient ID when ajax pagination is used
 
 = V2.0.21 - 09.09.2013 =
 * NEW:	   Multisite support

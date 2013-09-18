@@ -58,12 +58,23 @@ class Mixin_Gallery_Image_Mapper extends Mixin
 
     function _save_entity($entity)
     {
+    	$exists = false;
+			$primary_key = $this->object->get_primary_key_column();
+			if (isset($entity->$primary_key)) {
+				$exists = true;
+			}
         // If successfully saved, then import metadata and
         $retval = $this->call_parent('_save_entity', $entity);
         if ($retval) {
             include_once(NGGALLERY_ABSPATH.'/admin/functions.php');
-            $image_id = $this->get_id($entity);;
-            nggAdmin::import_MetaData($image_id);
+            $image_id = $this->get_id($entity);
+
+            if ($exists) {
+            	// do nothing...
+            }
+            else {
+            	nggAdmin::import_MetaData($image_id);
+            }
 			C_Photocrati_Cache::flush();
         }
         return $retval;

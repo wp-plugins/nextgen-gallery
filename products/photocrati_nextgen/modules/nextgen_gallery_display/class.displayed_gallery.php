@@ -281,14 +281,29 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 			// Container ids are tags
 			if ($source_obj->name == 'tags') {
 				$term_ids = $this->object->get_term_ids_for_tags($this->object->container_ids);
-                if ($term_ids) {
-				    $mapper->where(array("{$image_key} IN %s",get_objects_in_term($term_ids, 'ngg_tag')));
-                }
+                $mapper->where(array("{$image_key} IN %s",get_objects_in_term($term_ids, 'ngg_tag')));
 			}
 
 			// Container ids are gallery ids
 			else {
 				$mapper->where(array("galleryid IN %s", $this->object->container_ids));
+			}
+		}
+
+		// Filter based on excluded container ids
+		if ($this->object->excluded_container_ids) {
+
+			// Container ids are tags
+			if ($source_obj->name == 'tags') {
+				$term_ids = $this->object->get_term_ids_for_tags($this->object->excluded_container_ids);
+				if ($term_ids) {
+					$mapper->where(array("{$image_key} NOT IN %s",get_objects_in_term($term_ids, 'ngg_tag')));
+				}
+			}
+
+			// Container ids are gallery ids
+			else {
+				$mapper->where(array("galleryid NOT IN %s", $this->object->excluded_container_ids));
 			}
 		}
 
@@ -565,7 +580,7 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 		              		unset($counts[$id]);
                 		}
                 	}
-                	
+
                 	$retval[] = $gallery;
                 }
             }
@@ -875,7 +890,9 @@ class Mixin_Displayed_Gallery_Instance_Methods extends Mixin
 
 		$group = 'displayed_galleries';
 		$key = C_Photocrati_Cache::generate_key($this->object->get_entity(), $group);
-		C_Photocrati_Cache::set($key, $this->object->get_entity(), $group);
+		if (is_null(C_Photocrati_Cache::get($key, NULL, $group))) {
+			C_Photocrati_Cache::set($key, $this->object->get_entity(), $group, 1800);
+		}
 
         return $key;
     }

@@ -50,11 +50,11 @@ class Mixin_Routing_App extends Mixin
 		);
 
 		// We treat wildcards much differently then normal rewrites
-		if (preg_match("/\{[\.\\\*]/", $src)) {
+		if (preg_match("/\\{[\.\\\*]/", $src)) {
 			$pattern  = str_replace('{*}',	'(.*?)',  $src);
 			$pattern  = str_replace('{.*}', '(.*?)',	 $pattern);
-			$pattern  = str_replace('{\w}', '([\w-_]*)', $pattern);
-			$pattern  = str_replace('{\d}', '(\d*)', $pattern);
+			$pattern  = str_replace('{\\w}', '([\\w-_]*)', $pattern);
+			$pattern  = str_replace('{\\d}', '(\\d*)', $pattern);
 			$src = '#'.(strpos($src, '/') === 0 ? '^':'').$pattern.'/?$#';
 			$definition['wildcards'] = TRUE;
 		}

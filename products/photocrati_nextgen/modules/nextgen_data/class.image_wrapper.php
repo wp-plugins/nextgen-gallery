@@ -13,6 +13,7 @@ class C_Image_Wrapper
     public $_orig_image_id; // original image ID
     public $_cache_overrides; // allow for forcing variable values
     public $_legacy = FALSE;
+    public $_displayed_gallery; // cached object
 
     /**
      * Constructor. Converts the image class into an array and fills from defaults any missing values
@@ -86,6 +87,7 @@ class C_Image_Wrapper
         $this->_cache = (array) apply_filters('ngg_image_object', (object) $image, $image[$id_field]);
         $this->_orig_image_id = $image[$id_field];
         $this->_legacy = $legacy;
+        $this->_displayed_gallery = $displayed_gallery;
     }
 
     public function __set($name, $value)
@@ -401,27 +403,8 @@ class C_Image_Wrapper
     */
     function get_thumbcode($gallery_name = '')
     {
-        $settings = $this->get_settings();
-
-        // clean up the name
-        $gallery_name = sanitize_title($gallery_name);
-
-        // get the effect code
-        if ('none' != $settings->get('thumbEffect'))
-        {
-            $this->_cache['thumbcode'] = stripslashes($settings->get('thumbCode'));
-        }
-
-        // for highslide to a different approach
-        if ('highslide' == $settings->get('thumbEffect'))
-        {
-            $this->_cache['thumbcode'] = str_replace('%GALLERY_NAME%', "'{$gallery_name}'", $this->_cache['thumbcode']);
-        }
-        else {
-            $this->_cache['thumbcode'] = str_replace('%GALLERY_NAME%', $gallery_name, $this->_cache['thumbcode']);
-        }
-
-        return apply_filters('ngg_get_thumbcode', $this->_cache['thumbcode'], $this);
+        $controller = C_Component_Registry::get_instance()->get_utility('I_Display_Type_Controller');
+        return $controller->get_effect_code($this->_displayed_gallery);
     }
 
     /**
