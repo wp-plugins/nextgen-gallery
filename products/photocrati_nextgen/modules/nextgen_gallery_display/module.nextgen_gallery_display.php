@@ -149,8 +149,7 @@ class M_Gallery_Display extends C_Base_Module
           'template' => $view->get_template_abspath('photocrati-nextgen_gallery_display#related'),
           'show_all_in_lightbox' => FALSE,
           'show_slideshow_link' => FALSE,
-          'disable_pagination' => TRUE,
-          'display_no_images_error' => FALSE
+          'disable_pagination' => TRUE
       ));
 
       return apply_filters('ngg_show_related_gallery_content', $retval, $taglist);
@@ -158,15 +157,8 @@ class M_Gallery_Display extends C_Base_Module
 
 	function _render_related_images($content)
 	{
-    $settings = C_NextGen_Settings::get_instance();
-      
-		if ($settings->get('activateTags')) {
-			$related = $this->_render_related_string();
-			
-			if ($related != null) {
-		    $heading = $settings->relatedHeading;
-				$content .= $heading . $related;
-			}
+		if (C_NextGen_Settings::get_instance()->get('activateTags')) {			
+			$content .= $this->_render_related_string();
 		}
 		
 		return $content;

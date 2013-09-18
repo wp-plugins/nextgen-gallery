@@ -98,8 +98,7 @@ class A_NextGen_Basic_ImageBrowser_Controller extends Mixin
         $picture_list_pos = $key + 1;
 
         // our image to display
-        $picture = new C_Image_Wrapper($imap->find($numeric_pid), $displayed_gallery, TRUE);
-        $picture = apply_filters('ngg_image_object', $picture, $numeric_pid);
+        $picture = new C_Image_Wrapper($imap->find($numeric_pid), NULL, TRUE);
 
         // determine URI to the next & previous images
         $back_pid = ($key >= 1) ? $picture_array[$key - 1] : end($picture_array);

@@ -20,20 +20,15 @@ class A_NextGen_Basic_Thumbnails_Controller extends Mixin_NextGen_Basic_Gallery_
     {  
         $display_settings = $displayed_gallery->display_settings;
 
-        // If these options are on we must use the transient_id to identify the gallery
-        if ($display_settings['show_piclens_link'] || $display_settings['ajax_pagination'])
-            $gallery_id = $displayed_gallery->transient_id;
-        else
-            $gallery_id = $displayed_gallery->id();
-
-        if (!$display_settings['disable_pagination'])
-            $current_page = (int)$this->param('page', $gallery_id, 1);
+        if(!$display_settings['disable_pagination'])
+            $current_page = (int)$this->param('page', $displayed_gallery->id(), 1);
         else
             $current_page = 1;
 
         $offset = $display_settings['images_per_page'] * ($current_page - 1);
         $storage = $this->object->get_registry()->get_utility('I_Gallery_Storage');
         $total = $displayed_gallery->get_entity_count();
+        $gallery_id = $displayed_gallery->id();
 
         // Get the images to be displayed
         if ($display_settings['images_per_page'] > 0 && $display_settings['show_all_in_lightbox'])
@@ -80,6 +75,9 @@ class A_NextGen_Basic_Thumbnails_Controller extends Mixin_NextGen_Basic_Gallery_
 			} else {
                 list($pagination_prev, $pagination_next, $pagination) = array(NULL, NULL, NULL);
             }
+
+            if ($display_settings['show_piclens_link'] || $display_settings['ajax_pagination'])
+                $gallery_id = $displayed_gallery->transient_id;
 
 			$thumbnail_size_name = 'thumbnail';
 
@@ -163,7 +161,7 @@ class A_NextGen_Basic_Thumbnails_Controller extends Mixin_NextGen_Basic_Gallery_
                 return $this->object->render_view('photocrati-nextgen_basic_gallery#thumbnails/index', $params, $return);
             }
 		}
-		else if ($display_settings['display_no_images_error']) {
+		else {
 			return $this->object->render_partial("photocrati-nextgen_gallery_display#no_images_found", array(), $return);
 		}
 	}

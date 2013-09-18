@@ -57,14 +57,11 @@ class A_NextGen_Basic_Album_Controller extends Mixin
 		else if (($album = $this->param('album'))) {
 
 			// Are we to display a sub-album?
+            if (!is_numeric($album))
             {
                 $mapper = $this->object->get_registry()->get_utility('I_Album_Mapper');
                 $result = array_pop($mapper->select()->where(array('slug = %s', $album))->limit(1)->run_query());
-                $album_sub = $result ? $result->{$result->id_field} : null;
-                
-                if ($album_sub != null) {
-                	$album = $album_sub;
-                }
+				$album = $result->{$result->id_field};
             }
             $displayed_gallery->entity_ids = array();
 			$displayed_gallery->sortorder = array();
@@ -153,7 +150,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin
         $storage      = $this->object->get_registry()->get_utility('I_Gallery_Storage');
         $image_gen    = $this->object->get_registry()->get_utility('I_Dynamic_Thumbnails_Manager');
 
-        if (empty($displayed_gallery->display_settings['override_thumbnail_settings']))
+        if (!$displayed_gallery->display_settings['override_thumbnail_settings'])
         {
             // legacy templates expect these dimensions
             $image_gen_params = array(
@@ -226,9 +223,6 @@ class A_NextGen_Basic_Album_Controller extends Mixin
                          || $displayed_gallery->container_ids === array('')) {
                         $pagelink = $this->object->set_param_for($pagelink, 'album', 'all');
                     }
-                    else {
-                        $pagelink = $this->object->set_param_for($pagelink, 'album', 'album');
-                    }
                     $gallery->pagelink = $this->object->set_param_for(
                         $pagelink,
                         'gallery',
@@ -260,18 +254,15 @@ class A_NextGen_Basic_Album_Controller extends Mixin
 	function prettify_pagelink($pagelink)
 	{
 		$param_separator = C_NextGen_Settings::get_instance()->get('router_param_separator');
-
 		$regex = implode('', array(
 			'#',
 			'/(gallery|album)',
-			preg_quote($param_separator, '#'),
+			preg_quote($param_separator),
 			'([^/?]+)',
 			'#'
 		));
-		
-		$pagelink = preg_replace($regex, '/\2', $pagelink);
-		
-		return $pagelink;
+
+		return preg_replace($regex, '/\2', $pagelink);
 	}
 
 

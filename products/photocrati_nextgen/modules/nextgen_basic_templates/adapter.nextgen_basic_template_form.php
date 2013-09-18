@@ -133,20 +133,14 @@ class A_NextGen_Basic_Template_Form extends Mixin
 
         // create the 'gallery' object
         $gallery = new stdclass;
-        $gallery->ID = $displayed_gallery->id();
+        $gallery->ID = $orig_gallery->$gallery_key;
         $gallery->show_slideshow = FALSE;
         $gallery->show_piclens = FALSE;
         $gallery->name = stripslashes($orig_gallery->name);
         $gallery->title = stripslashes($orig_gallery->title);
         $gallery->description = html_entity_decode(stripslashes($orig_gallery->galdesc));
         $gallery->pageid = $orig_gallery->pageid;
-
-        if ($displayed_gallery->display_settings['ajax_pagination'])
-            $gallery_id = $displayed_gallery->transient_id;
-        else
-            $gallery_id = $displayed_gallery->id();
-
-        $gallery->anchor = 'ngg-gallery-' . $gallery_id . '-' . $current_page;
+        $gallery->anchor = 'ngg-gallery-' . $orig_gallery->$gallery_key . '-' . $current_page;
         $gallery->displayed_gallery = &$displayed_gallery;
         $gallery->columns = @intval($displayed_gallery->display_settings['number_of_columns']);
         $gallery->imagewidth = ($gallery->columns > 0) ? 'style="width:' . floor(100 / $gallery->columns) . '%;"' : '';

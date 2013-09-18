@@ -8,19 +8,18 @@ class C_NextGen_Settings_Installer
 	function __construct()
 	{
 		$this->blog_settings = C_NextGen_Settings::get_instance();
-		$this->site_settings = C_NextGen_Global_Settings::get_instance();
+        $this->site_settings = C_NextGen_Global_Settings::get_instance();
 
 		$this->_global_settings = array(
 			'gallerypath' => 'wp-content/blogs.dir/%BLOG_ID%/files/',
 			'wpmuCSSfile' => 'nggallery.css',
 			'wpmuStyle'   => FALSE,
-			'wpmuRoles'   => FALSE,
-			'wpmuImportFolder' => FALSE,
-			'wpmuZipUpload'    => FALSE,
+            'wpmuRoles'   => FALSE,
+            'wpmuImportFolder' => FALSE,
+            'wpmuZipUpload'    => FALSE,
 			'datamapper_driver'     => 'custom_table_datamapper',
 			'gallerystorage_driver' => 'ngglegacy_gallery_storage',
-			'maximum_entity_count'  => 500,
-			'router_param_slug'     => 'nggallery'
+			'maximum_entity_count'  => 500
 		);
 
 		$this->_local_settings = array(
@@ -38,7 +37,6 @@ class C_NextGen_Settings_Installer
 			'activateTags' => 0,  // append related images
 			'appendType'   => 'tags', // look for category or tags
 			'maxImages'    => 7,      // number of images toshow
-			'relatedHeading'   => __('<h3>Related Images:</h3>', 'nggallery'), // subheading for related images
 
 			// Thumbnail Settings
 			'thumbwidth'   => 120,  // Thumb Width
@@ -127,22 +125,22 @@ class C_NextGen_Settings_Installer
 			$this->blog_settings->set_default_value($key, $value);
 		}
 
-		if (is_multisite())
-		{
-			// If this is already network activated we just need to use the existing setting
-			// Note: attempting to use C_NextGen_Global_Settings here may result in an infinite loop,
-			// so get_site_option() is used to check
-			if ($options = get_site_option('ngg_options'))
-				$gallerypath = $options['gallerypath'];
-			else
-				$gallerypath = $this->_global_settings['gallerypath'];
+        if (is_multisite())
+        {
+            // If this is already network activated we just need to use the existing setting
+            // Note: attempting to use C_NextGen_Global_Settings here may result in an infinite loop,
+            // so get_site_option() is used to check
+            if ($options = get_site_option('ngg_options'))
+                $gallerypath = $options['gallerypath'];
+            else
+                $gallerypath = $this->_global_settings['gallerypath'];
 
-			$gallerypath = $this->gallerypath_replace($gallerypath);
+            $gallerypath = $this->gallerypath_replace($gallerypath);
 
-			// a gallerypath setting has already been set, so we explicitly set a default AND set a new value
-			$this->blog_settings->set_default_value('gallerypath', $gallerypath);
-			$this->blog_settings->set('gallerypath', $gallerypath);
-		}
+            // a gallerypath setting has already been set, so we explicitly set a default AND set a new value
+            $this->blog_settings->set_default_value('gallerypath', $gallerypath);
+            $this->blog_settings->set('gallerypath', $gallerypath);
+        }
 	}
 
 	function install($reset=FALSE)
@@ -151,20 +149,20 @@ class C_NextGen_Settings_Installer
 		$this->install_local_settings($reset);
 	}
 
-	function get_global_defaults()
-	{
-		return $this->_global_settings;
-	}
+    function get_global_defaults()
+    {
+        return $this->_global_settings;
+    }
 
-	function get_local_defaults()
-	{
-		return $this->_local_settings;
-	}
+    function get_local_defaults()
+    {
+        return $this->_local_settings;
+    }
 
-	function gallerypath_replace($gallerypath)
-	{
-		$gallerypath = str_replace('%BLOG_NAME%', get_bloginfo('name'),  $gallerypath);
-		$gallerypath = str_replace('%BLOG_ID%',   get_current_blog_id(), $gallerypath);
-		return $gallerypath;
-	}
+    function gallerypath_replace($gallerypath)
+    {
+        $gallerypath = str_replace('%BLOG_NAME%', get_bloginfo('name'),  $gallerypath);
+        $gallerypath = str_replace('%BLOG_ID%',   get_current_blog_id(), $gallerypath);
+        return $gallerypath;
+    }
 }

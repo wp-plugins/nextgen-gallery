@@ -1,4 +1,3 @@
-// Apply default settings
 var galleryOptions = {
     align: 'center',
     dimmingOpacity: 0.8,
@@ -8,22 +7,10 @@ var galleryOptions = {
     numberPosition: 'caption',
     slideshowGroup: 'gallery',
     transitions: ['expand', 'crossfade'],
-    wrapperClassName: 'dark borderless floating-caption',
-    graphicsDir: nextgen_highslide_graphics_dir + '/'
+    wrapperClassName: 'dark borderless floating-caption'
 };
 
-hs.align            = galleryOptions['align'];
-hs.dimmingOpacity   = galleryOptions['dimmingOpacity'];
-hs.fadeInOut        = galleryOptions['fadeInOut'];
-hs.marginBottom     = galleryOptions['marginBottom'];
-hs.marginLeft       = galleryOptions['marginLeft'];
-hs.numberPosition   = galleryOptions['numberPosition'];
-hs.transitions      = galleryOptions['transitions'];
-hs.showCredits      = galleryOptions['showCredits'];
-hs.graphicsDir      = galleryOptions['graphicsDir'];
-hs.wrapperClassName = galleryOptions['wrapperClassName'];
-
-// Enable slideshows
+hs.graphicsDir = nextgen_highslide_graphics_dir + '/';
 hs.addSlideshow({
     fixedControls: true,
     interval: 5000,

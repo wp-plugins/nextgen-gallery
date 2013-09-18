@@ -85,7 +85,7 @@ class C_Photocrati_Cache
 	/**
 	 * Flush the entire cache
 	 */
-	static function flush($group=NULL, $expired_only=FALSE)
+	static function flush($group=NULL)
 	{
 		$retval = 0;
 
@@ -94,75 +94,34 @@ class C_Photocrati_Cache
 			// Delete all caches
 			if ($group == 'all') {
 				foreach (self::$_instances as $cache) {
-					$retval += self::flush($cache->group, $expired_only);
+					$retval += self::flush($cache->group);
 				}
 			}
 
 			// Delete items from a single cache in particular
 			else {
+				foreach (self::get_key_list($group) as $key) {
+					self::delete($key, FALSE, $group);
+				}
+
+				// Delete list of cached items
+				global $wpdb;
 				$cache = self::get_instance($group);
-
-				// Determine if the object cache is external, and not stored in the DB
-				// If it's external, we have to delete each transient, one by one
-				global $_wp_using_ext_object_cache, $wpdb;
-				if ($_wp_using_ext_object_cache) {
-					$keys = ($expired_only ? self::get_expired_key_list($group) : self::get_key_list($group));
-					foreach ($keys as $key) $cache->delete($key, FALSE);
-					$sql = $wpdb->prepare("DELETE FROM wp_options WHERE option_name LIKE %s", "%%{$cache->group}%%");
-					if ($expired_only) $sql .= " AND option_value < ".time();
-					$retval = $wpdb->query($sql);
-				}
-
-				// Transients are stored in the database
-				else {
-					$keys = ($expired_only ? self::get_expired_key_list($group) : self::get_key_list($group));
-					if ($keys) {
-						$all_keys = array();
-						foreach ($keys as $value) {
-							$all_keys[] = "'{$cache->group}{$value}'";
-							$all_keys[] = "'_transient_timeout_{$value}'";
-							$all_keys[] = "'_transient_{$value}'";
-						}
-						unset($keys);
-						$all_keys = implode(',', $all_keys);
-						$sql = "DELETE FROM {$wpdb->options} WHERE option_name IN (". $all_keys. ')';
-						$retval = $wpdb->query($sql);
-					}
-				}
+				$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%'.$cache->group.'%');
+				$retval = $wpdb->query($sql);
 			}
 		}
 
 		return $retval;
 	}
 
-	static function get_key_list($group=NULL, $strip_group_name=TRUE, $expired_only=FALSE)
+	static function get_key_list($group=NULL)
 	{
 		global $wpdb;
 
 		$cache = self::get_instance($group);
-
-		$sql = '';
-		if ($strip_group_name) {
-			$sql = $wpdb->prepare(
-				"SELECT REPLACE(option_name, %s, '') FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$cache->group, '%'.$cache->group.'%'
-			);
-		}
-		else {
-			$sql = $wpdb->prepare(
-				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
-				'%'.$cache->group.'%'
-			);
-		}
-
-		if ($expired_only) $sql .= " AND option_value < ".time();
-
+		$sql = $wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", '%'.$cache->group.'%');
 		return $wpdb->get_col($sql);
-	}
-
-	static function get_expired_key_list($group=NULL, $strip_group_name=TRUE)
-	{
-		return self::get_key_list($group, $strip_group_name, TRUE);
 	}
 
 
@@ -197,7 +156,7 @@ class C_Photocrati_Cache
 			if (is_array($key)) $key = self::generate_key($key);
 			if (self::$force_update OR $this->lookup($key, FALSE) === FALSE) {
 				set_transient($key, $value, $ttl);
-				update_option($this->group.$key, time()+$ttl);
+				update_option($this->group.$key, 1);
 				$retval = $key;
 			}
 		}
