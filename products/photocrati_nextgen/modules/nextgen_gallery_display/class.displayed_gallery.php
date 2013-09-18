@@ -890,7 +890,9 @@ class Mixin_Displayed_Gallery_Instance_Methods extends Mixin
 
 		$group = 'displayed_galleries';
 		$key = C_Photocrati_Cache::generate_key($this->object->get_entity(), $group);
-		C_Photocrati_Cache::set($key, $this->object->get_entity(), $group, 1800);
+		if (is_null(C_Photocrati_Cache::get($key, NULL, $group))) {
+			C_Photocrati_Cache::set($key, $this->object->get_entity(), $group, 1800);
+		}
 
         return $key;
     }

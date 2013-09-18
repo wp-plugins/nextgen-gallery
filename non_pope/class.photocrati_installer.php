@@ -104,6 +104,9 @@ if (!class_exists('C_Photocrati_Installer'))
 				// The cache should be flushed
 				C_Photocrati_Cache::flush();
 
+				// Remove the cron schedule. It will be re-added later.
+				wp_clear_scheduled_hook('ngg_delete_expired_transients');
+
 				// Delete auto-update cache
 				update_option('photocrati_auto_update_admin_update_list', null);
 				update_option('photocrati_auto_update_admin_check_date', '');

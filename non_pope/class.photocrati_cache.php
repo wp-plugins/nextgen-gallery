@@ -101,15 +101,33 @@ class C_Photocrati_Cache
 			// Delete items from a single cache in particular
 			else {
 				$cache = self::get_instance($group);
-				foreach (($expired_only ? self::get_expired_key_list($group) : self::get_key_list($group)) as $key) {
-					$cache->delete($key, $expired_only);
+
+				// Determine if the object cache is external, and not stored in the DB
+				// If it's external, we have to delete each transient, one by one
+				global $_wp_using_ext_object_cache, $wpdb;
+				if ($_wp_using_ext_object_cache) {
+					$keys = ($expired_only ? self::get_expired_key_list($group) : self::get_key_list($group));
+					foreach ($keys as $key) $cache->delete($key, FALSE);
+					$sql = $wpdb->prepare("DELETE FROM wp_options WHERE option_name LIKE %s", "%%{$cache->group}%%");
+					if ($expired_only) $sql .= " AND option_value < ".time();
+					$retval = $wpdb->query($sql);
 				}
 
-				// Delete list of cached items
-				if (!$expired_only) {
-					global $wpdb;
-					$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%'.$cache->group.'%');
-					$retval = $wpdb->query($sql);
+				// Transients are stored in the database
+				else {
+					$keys = ($expired_only ? self::get_expired_key_list($group) : self::get_key_list($group));
+					if ($keys) {
+						$all_keys = array();
+						foreach ($keys as $value) {
+							$all_keys[] = "'{$cache->group}{$value}'";
+							$all_keys[] = "'_transient_timeout_{$value}'";
+							$all_keys[] = "'_transient_{$value}'";
+						}
+						unset($keys);
+						$all_keys = implode(',', $all_keys);
+						$sql = "DELETE FROM {$wpdb->options} WHERE option_name IN (". $all_keys. ')';
+						$retval = $wpdb->query($sql);
+					}
 				}
 			}
 		}
@@ -117,22 +135,34 @@ class C_Photocrati_Cache
 		return $retval;
 	}
 
-	static function get_key_list($group=NULL)
+	static function get_key_list($group=NULL, $strip_group_name=TRUE, $expired_only=FALSE)
 	{
 		global $wpdb;
 
 		$cache = self::get_instance($group);
-		$sql = $wpdb->prepare("SELECT REPLACE(option_name, %s, '') FROM {$wpdb->options} WHERE option_name LIKE %s", $cache->group, '%'.$cache->group.'%');
+
+		$sql = '';
+		if ($strip_group_name) {
+			$sql = $wpdb->prepare(
+				"SELECT REPLACE(option_name, %s, '') FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$cache->group, '%'.$cache->group.'%'
+			);
+		}
+		else {
+			$sql = $wpdb->prepare(
+				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+				'%'.$cache->group.'%'
+			);
+		}
+
+		if ($expired_only) $sql .= " AND option_value < ".time();
+
 		return $wpdb->get_col($sql);
 	}
 
-	static function get_expired_key_list($group=NULL)
+	static function get_expired_key_list($group=NULL, $strip_group_name=TRUE)
 	{
-		global $wpdb;
-
-		$cache = self::get_instance($group);
-		$sql = $wpdb->prepare("SELECT REPLACE(option_name, %s, '') FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d", $cache->group, '%'.$cache->group.'%', time());
-		return $wpdb->get_col($sql);
+		return self::get_key_list($group, $strip_group_name, TRUE);
 	}
 
 

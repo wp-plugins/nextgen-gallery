@@ -195,6 +195,9 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.24 - 09.18.2013 =
+* Fixed:   Reduce performance impact of purging displayed gallery transients
+
 = V2.0.23 - 09.16.2013 =
 * NEW:     WP-Cron job to periodically clean-up displayed gallery transients
 * NEW:     Added "excluded_container_ids" as parameter for ngg_images shortcode
