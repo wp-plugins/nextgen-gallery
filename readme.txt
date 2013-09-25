@@ -199,6 +199,22 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.30 - 09.25.2013 =
+* NEW:     Restored the ability to use imagebrowser display type instead of a lightbox effect
+* Changed: Displayed galleries are no longer rendered in RSS feeds
+* Changed: Removed "Plugin Check" widget from overview page
+* Fixed:   Silence PHP warnings/errors in an output buffer for AJAX actions
+* Fixed:   Compatibility issue with WordPress SEO and broken site maps (and large error_logs)
+* Fixed:   Compatibility issue with AJAX Event Calendar (and possibly others)
+* Fixed:   Adjusted Photocrati Resource Manager to be third-party friendly
+* Fixed:   Fixed empty result set for displayed galleries selecting 'All' tags
+* Fixed:   URL generation for imagebrowser pagination links
+* Fixed:   Ensure that image meta is imported on creation
+* Fixed:   Ensure that transients are removed when an external object cache is used
+* Fixed:   Don't load pluggable.php. This will fix plugin conflicts
+* Fixed:   In Attach to Post interface, galleries created in one tab weren't showing in another
+* Fixed:   Don't output frame events cookie for XML-RPC requests
+
 = V2.0.27 - 09.18.2013 =
 * Fixed:   Reduce performance impact of purging displayed gallery transients
 
