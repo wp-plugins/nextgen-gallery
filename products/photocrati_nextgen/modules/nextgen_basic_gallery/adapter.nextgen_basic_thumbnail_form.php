@@ -158,7 +158,7 @@ class A_NextGen_Basic_Thumbnail_Form extends Mixin_Display_Type_Form
         return $this->_render_radio_field(
             $display_type,
             'ajax_pagination',
-            'Enable Ajax pagination',
+            'Enable AJAX pagination',
             $display_type->settings['ajax_pagination'],
             'Browse images without reloading the page.'
         );

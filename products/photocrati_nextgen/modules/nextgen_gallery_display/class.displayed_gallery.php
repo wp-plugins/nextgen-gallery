@@ -728,7 +728,7 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 
 		// Convert container ids to a string suitable for WHERE IN
 		$container_ids = array();
-		if (!in_array('All', $tags)) {
+        if (!in_array('all', array_map('strtolower', $tags))) {
 			foreach ($tags as $container) {
 				$container_ids[]= "'{$container}'";
 			}
@@ -736,18 +736,14 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 		}
 
 		// Construct query
-		$query = $wpdb->prepare("
-			SELECT {$wpdb->term_taxonomy}.term_id FROM {$wpdb->term_taxonomy}
-			INNER JOIN {$wpdb->terms} ON {$wpdb->term_taxonomy}.term_id = {$wpdb->terms}.term_id
-			WHERE {$wpdb->term_taxonomy}.term_id = {$wpdb->terms}.term_id
-			AND taxonomy = %s
-		", 'ngg_tag');
-
-		// Filter by selected tags
-		if ($container_ids) $query .= "AND (slug IN ({$container_ids}) OR name IN ({$container_ids}))";
-
-		// Add order by clause
-		$query .= "ORDER BY {$wpdb->terms}.term_id";
+        $query = "SELECT {$wpdb->term_taxonomy}.term_id FROM {$wpdb->term_taxonomy}
+                  INNER JOIN {$wpdb->terms} ON {$wpdb->term_taxonomy}.term_id = {$wpdb->terms}.term_id
+                  WHERE {$wpdb->term_taxonomy}.term_id = {$wpdb->terms}.term_id
+                  AND {$wpdb->term_taxonomy}.taxonomy = %s";
+        if (!empty($container_ids))
+            $query .= " AND ({$wpdb->terms}.slug IN ({$container_ids}) OR {$wpdb->terms}.name IN ({$container_ids}))";
+        $query .= " ORDER BY {$wpdb->terms}.term_id";
+        $query = $wpdb->prepare($query, 'ngg_tag');
 
 		// Get all term_ids for each image tag slug
 		$term_ids = array();

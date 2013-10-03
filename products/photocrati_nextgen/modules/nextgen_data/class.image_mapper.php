@@ -111,7 +111,7 @@ class Mixin_Gallery_Image_Mapper extends Mixin
 	{
 		// If not set already, we'll add an exclude property. This is used
 		// by NextGEN Gallery itself, as well as the Attach to Post module
-		$this->object->_set_default_value($entity, 'exclude', FALSE);
+		$this->object->_set_default_value($entity, 'exclude', 0);
 
 		// Ensure that the object has a description attribute
 		$this->object->_set_default_value($entity, 'description', '');

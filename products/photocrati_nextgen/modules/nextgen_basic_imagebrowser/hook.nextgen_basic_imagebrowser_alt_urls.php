@@ -28,7 +28,10 @@ class Hook_NextGen_Basic_Imagebrowser_Alt_URLs extends Hook {
             else
                 $url = $application->get_routed_url(TRUE);
 
-            $retval = $controller->set_param_for($url, 'pid', $image->image_slug);
+            $url = $controller->set_param_for($url, 'pid', $image->image_slug);
+            $url = $controller->remove_param_for($url, 'show');
+
+            $retval = $url;
 
             $this->object->set_method_property(
                 $this->method_called,

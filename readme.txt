@@ -199,6 +199,19 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.31 - 10.03.2013 =
+* NEW:     Restored AJAX pagination for NextGEN Basic ImageBrowser display type
+* Fixed:   Compatibility with WordPress Local SEO by Yoast
+* Fixed:   Inability to upload images if image_slug field was missing in database
+* Fixed:   Integration of NextGEN Basic Thumbnail and NextGEN Basic Slideshow display types
+* Fixed:   Photocrati Resource Manager further adjusted to be third-party friendly
+* Fixed:   Added the ability to find legacy templates in both the child/parent theme directories
+* Fixed:   JavaScript errors in Attach to Post interface
+* Fixed:   Router can handle port numbers in urls
+* Fixed:   Carousel template was linking to NextGEN Basic ImageBrowser view
+* Fixed:   SQL query generated for displayed galleries using tags as source
+* Fixed:   3rd party compat: raise & never lower pcre.backtrack_limit
+
 = V2.0.30 - 09.25.2013 =
 * NEW:     Restored the ability to use imagebrowser display type instead of a lightbox effect
 * Changed: Displayed galleries are no longer rendered in RSS feeds

@@ -421,6 +421,8 @@ class C_Image_Wrapper
                 $retval = '';
         }
 
+        $retval .= ' data-image-id="' . $this->__get('id') . '"';
+
         $this->_cache['thumbcode'] = $retval;
         return $retval;
     }
