@@ -1,8 +1,8 @@
 === NextGEN Gallery ===
 Contributors: photocrati
 Tags:gallery,image,images,photo,photos,picture,pictures,slideshow,flash,media,thumbnails,photo-albums,nextgen-gallery,nextgen
-Requires at least: 3.6
-Tested up to: 3.6
+Requires at least: 3.6.1
+Tested up to: 3.7.1
 Stable tag: trunk
 License: GPLv2
 
@@ -210,7 +210,7 @@ For more information, feel free to visit the official website for the NextGEN Ga
 * NEW:     Variant support for displayed gallery sources. Random images is limited to 5 variations
 * Fixed:   Excessive creation of transients for random galleries
 * Fixed:   Many issues prohibiting the ability to upload images
-* Fixed:   Ability to create albums and upload images in Vladimir's Lightroom plugin
+* Fixed:   Compatibility with NextGEN Gallery Export Plugin for Adobe Lightroom (thanks Vladimir!)
 * Fixed:   Sorting in the Attach to Post interface
 * Fixed:   HTML allowed in gallery/album descriptions
 * Fixed:   Requests for galleries within albums that have numeric names are broken

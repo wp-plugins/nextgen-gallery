@@ -11,7 +11,7 @@ if (!class_exists('nggLoader')) {
 
 		var $version     = NEXTGEN_GALLERY_PLUGIN_VERSION;
 		var $dbversion   = '1.8.1';
-		var $minimum_WP  = '3.6';
+		var $minimum_WP  = '3.6.1';
 		var $donators    = 'http://www.nextgen-gallery.com/donators.php';
 		var $options     = '';
 		var $manage_page;
