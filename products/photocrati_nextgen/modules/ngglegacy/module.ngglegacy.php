@@ -7,13 +7,13 @@
  ***/
 
 define(
-	'NEXTGEN_GALLERY_NGGLEGACY_MOD_DIR',
-	path_join(NEXTGEN_GALLERY_MODULE_DIR, basename(dirname(__FILE__)))
+	'NGG_LEGACY_MOD_DIR',
+	path_join(NGG_MODULE_DIR, basename(dirname(__FILE__)))
 );
 
 define(
-	'NEXTGEN_GALLERY_NGGLEGACY_MOD_URL',
-	path_join(NEXTGEN_GALLERY_MODULE_URL, basename(dirname(__FILE__)))
+	'NGG_LEGACY_MOD_URL',
+	path_join(NGG_MODULE_URL, basename(dirname(__FILE__)))
 );
 
 class M_NggLegacy extends C_Base_Module
@@ -24,7 +24,7 @@ class M_NggLegacy extends C_Base_Module
 			'photocrati-nextgen-legacy',
 			'NextGEN Legacy',
 			'Embeds the original version of NextGEN 1.9.3 by Alex Rabe',
-			'0.3',
+			'0.7',
 			'http://www.nextgen-gallery.com',
 			'Photocrati Media',
 			'http://www.photocrati.com'

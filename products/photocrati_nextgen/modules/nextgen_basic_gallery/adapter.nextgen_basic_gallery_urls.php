@@ -23,12 +23,12 @@ class A_NextGen_Basic_Gallery_Urls extends Mixin
     function create_parameter_segment($key, $value, $id=NULL, $use_prefix=FALSE)
 	{
 		if ($key == 'show') {
-            if ($value == NEXTGEN_GALLERY_BASIC_SLIDESHOW) $value = 'slideshow';
-            elseif ($value == NEXTGEN_GALLERY_BASIC_THUMBNAILS) $value = 'thumbnails';
-            elseif ($value == NEXTGEN_GALLERY_NEXTGEN_BASIC_IMAGEBROWSER) $value = 'imagebrowser';
+            if ($value == NGG_BASIC_SLIDESHOW) $value = 'slideshow';
+            elseif ($value == NGG_BASIC_THUMBNAILS) $value = 'thumbnails';
+            elseif ($value == NGG_BASIC_IMAGEBROWSER) $value = 'imagebrowser';
             return '/'.$value;
         }
-        elseif ($key == 'page') {
+        elseif ($key == 'nggpage') {
 			return 'page/'.$value;
 		}
 		else

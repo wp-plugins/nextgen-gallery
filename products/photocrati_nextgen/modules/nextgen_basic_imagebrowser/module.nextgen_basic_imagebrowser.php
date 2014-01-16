@@ -7,7 +7,7 @@
 ***/
 
 define(
-	'NEXTGEN_GALLERY_NEXTGEN_BASIC_IMAGEBROWSER',
+	'NGG_BASIC_IMAGEBROWSER',
 	'photocrati-nextgen_basic_imagebrowser'
 );
 
@@ -19,7 +19,7 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
 			'photocrati-nextgen_basic_imagebrowser',
 			'NextGEN Basic ImageBrowser',
 			'Provides the NextGEN Basic ImageBrowser Display Type',
-            '0.5',
+            '0.6',
 			'http://www.nextgen-gallery.com',
 			'Photocrati Media',
 			'http://www.photocrati.com'
@@ -96,7 +96,7 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
     {
         $params['gallery_ids']  = $this->_get_param('id', NULL, $params);
         $params['source']       = $this->_get_param('source', 'galleries', $params);
-        $params['display_type'] = $this->_get_param('display_type', NEXTGEN_GALLERY_NEXTGEN_BASIC_IMAGEBROWSER, $params);
+        $params['display_type'] = $this->_get_param('display_type', NGG_BASIC_IMAGEBROWSER, $params);
 
         unset($params['id']);
 

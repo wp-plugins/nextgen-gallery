@@ -337,7 +337,7 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
 			$current_mode = $controller->get_render_mode();
 			$controller->set_render_mode($mode);
 			$html = $controller->index_action($displayed_gallery, TRUE);
-			if ($key != null) $cache->update($key, $html);
+			if ($key != null) $cache->update($key, $html, NGG_RENDERING_CACHE_TTL);
 			$controller->set_render_mode($current_mode);
 		}
 

@@ -1,6 +1,33 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V2.0.46 - 01.16.2013 =
+* NEW:     Re-introduced the Reset button
+* NEW:     Tooltip added for Page Link to functionality
+* NEW:     Displayed Gallery Triggers moved from NextGEN Pro to NextGEN Gallery (not in use)
+* NEW:     Added NGG_Store, a client-side persistence layer (not in use)
+* NEW:     Added NGG_CRON_SCHEDULE constant. Set to the number of seconds between the execution of NextGEN Gallery cron jobs
+* NEW:     Added NGG_RENDERING_CACHE_TTL constant. TTL measured in seconds.
+* NEW:     Added NGG_DISPLAYED_GALLERY_CACHE_TTL constant. TTL measured in seconds.
+* NEW:     Added Font Awesome, available for NextGEN Gallery extensions
+* Changed: Transients are removed every 30 minutes instead of 60 minutes
+* Changed: Admin Page & Form components refactored to allow custom POST processing
+* Fixed:   Database query performance. No more joins to the WP options table
+* Fixed:   Lightboxes storing absolute paths for static resources
+* Fixed:   Displayed gallery cache not regularly flushed
+* Fixed:   SQL query performance problems. Honor max_packet_allowed variable for MySQL
+* Fixed:   Corrupted MediaRSS feeds
+* Fixed:   Padding on Gallery Settings and Other Options pages
+* Fixed:   Compatibility with Headway Themes
+* Fixed:   Routing issues on subdirectory installs
+* Fixed:   Third-party incompatibilities caused by the Photocrati Resource Manager
+* Fixed:   Compatibility with web servers which don't provide PHP a document root
+* Fixed:   Importing galleries using the Attach to Post Interface
+* Fixed:   Gallery path calculations on Windows web servers
+* Fixed:   Apply maximum entity count to existing displayed galleries
+* Fixed:   NextGEN Gallery Thumbnail Widget shouldn't use ImageBrowser effect
+* Fixed:   Interface tweaks for WordPress 3.8
+
 = V2.0.40 - 11.26.2013 =
 * NEW:     Added the ability to apply lightbox effects to non-NGG images
 * NEW:     Added NGG_HIDE_STRICT_ERRORS constant. Define and set to TRUE to hide strict errors

@@ -6,7 +6,7 @@
  }
  */
 
-define('NEXTGEN_GALLERY_ATTACH_TO_POST_SLUG', 'ngg_attach_to_post');
+define('NGG_ATTACH_TO_POST_SLUG', 'ngg_attach_to_post');
 
 class M_Attach_To_Post extends C_Base_Module
 {
@@ -23,7 +23,7 @@ class M_Attach_To_Post extends C_Base_Module
 			'photocrati-attach_to_post',
 			'Attach To Post',
 			'Provides the "Attach to Post" interface for displaying galleries and albums',
-			'0.8',
+			'0.9',
 			'http://www.nextgen-gallery.com',
 			'Photocrati Media',
 			'http://www.photocrati.com',

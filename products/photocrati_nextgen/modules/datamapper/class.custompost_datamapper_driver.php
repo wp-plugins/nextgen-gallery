@@ -254,16 +254,21 @@ class Mixin_CustomPost_DataMapper_Driver extends Mixin
 	function convert_post_to_entity($post, $model=FALSE)
 	{
 		$entity = new stdClass();
-		foreach ($post as $key => $value) {
-			if ($key == 'post_content') {
-				$post_content = $this->object->unserialize($value);
-				if ($post_content) {
-					foreach ($post_content as $key2 => $value2) {
-						$entity->$key2 = $value2;
-					}
+
+		// Unserialize the post content field
+		if (is_string($post->post_content)) {
+			if (($post_content = $this->object->unserialize($post->post_content))) {
+				foreach ($post_content as $key => $value) {
+					$post->$key = $value;
 				}
 			}
-			else $entity->$key = $value;
+
+		}
+		unset($post->post_content);
+
+		// Copy all fields to the entity
+		foreach ($post as $key => $value) {
+			$entity->$key = $value;
 		}
         $this->object->_convert_to_entity($entity);
 		return $model? $this->object->convert_to_model($entity) : $entity;
@@ -282,10 +287,12 @@ class Mixin_CustomPost_DataMapper_Driver extends Mixin
 		if (!($entity instanceof stdClass)) $post = $entity->get_entity();
 
 		// Create the post content
+		$post_content = clone $post;
+		foreach ($this->object->_table_columns as $column) unset($post_content->$column);
 		unset($post->id_field);
 		unset($post->post_content_filtered);
 		unset($post->post_content);
-		$post->post_content = $this->object->serialize($post);
+		$post->post_content = $this->object->serialize($post_content);
 		$post->post_content_filtered = $post->post_content;
 		$post->post_type = $this->object->get_object_name();
 
@@ -374,8 +381,9 @@ class Mixin_CustomPost_DataMapper_Driver extends Mixin
 				$post_id,
 				$entity instanceof stdClass ? $entity : $entity->get_entity()
 			);
-		}
 
+			$entity->$primary_key = $post_id;
+		}
 		$entity->id_field = $primary_key;
 
 		return $post_id;
@@ -431,10 +439,11 @@ class Mixin_CustomPost_DataMapper_Driver extends Mixin
 
 		// Execute the query
 		$query = new WP_Query();
+		if (isset($this->object->debug)) $this->object->_query_args['debug'] = TRUE;
 		$query->query_vars = $this->object->_query_args;
 		add_action('pre_get_posts', array(&$this, 'set_query_args'), PHP_INT_MAX-1, 1);
 		foreach ($query->get_posts() as $row) {
-			$retval[] = $this->object->convert_post_to_entity($this->scrub_result($row), $model);
+			$retval[] = $this->object->convert_post_to_entity($row, $model);
 		}
 		remove_action('pre_get_posts', array(&$this, 'set_query_args'), PHP_INT_MAX-1, 1);
 

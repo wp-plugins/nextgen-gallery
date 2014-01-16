@@ -27,7 +27,7 @@ class C_Ajax_Controller extends C_MVC_Controller
 		}
 
 		// If no retval has been set, then return an error
-		if (!$retval)
+		if (is_null($retval))
 			$retval = array('error' => 'Not a valid AJAX action');
 
 		// Flush the buffer

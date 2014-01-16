@@ -23,7 +23,7 @@ jQuery(function($){
               var params = self.get_querystring_params_from_url($this.attr('href'));
               params['action']                   = 'get_displayed_gallery_page';
               params['displayed_gallery_id']     = gallery_id;
-              params['page']                     = $this.data('pageid');
+              params['nggpage']                  = $this.data('pageid');
               params['ajax_pagination_referrer'] = document.URL;
 
               $.get(photocrati_ajax.url, params, function(response){

@@ -34,6 +34,32 @@ class C_Fs extends C_Component
 	{
 		parent::initialize();
 		$this->_document_root = $this->set_document_root($_SERVER['DOCUMENT_ROOT']);
+
+        // DOCUMENT_ROOT isnt set by some web servers (namely IIS)
+        if (empty($_SERVER['DOCUMENT_ROOT']))
+        {
+            if (!empty($_SERVER['SCRIPT_FILENAME']))
+            {
+                $root = str_replace(
+                    '\\',
+                    '/',
+                    substr($_SERVER['SCRIPT_FILENAME'], 0, 0 - strlen($_SERVER['PHP_SELF']))
+                );
+            }
+            else if (!empty($_SERVER['PATH_TRANSLATED']))
+            {
+                $root = str_replace(
+                    '\\',
+                    '/',
+                    substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0 - strlen($_SERVER['PHP_SELF']))
+                );
+            }
+        }
+        else {
+            $root = $_SERVER['DOCUMENT_ROOT'];
+        }
+
+        $this->_document_root = $this->set_document_root($root);
 	}
 }
 

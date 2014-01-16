@@ -136,6 +136,10 @@ class A_NextGen_Basic_ImageBrowser_Controller extends Mixin_NextGen_Basic_Galler
         );
         $meta_results['exif'] = ($meta_results['exif'] == false) ? $meta_results['db'] : $meta_results['exif'];
 
+        // disable triggers IF we're rendering inside of an ajax-pagination request; var set in common.js
+        if (!empty($_POST['ajax_referrer']))
+            $displayed_gallery->display_settings['ngg_triggers_display'] = 'never';
+
         if (!empty($display_settings['template']))
         {
             $this->object->add_mixin('Mixin_NextGen_Basic_Templates');

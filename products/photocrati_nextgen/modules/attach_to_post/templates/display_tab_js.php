@@ -1491,8 +1491,8 @@ jQuery(function($){
 			this.display_types = new Ngg.DisplayTab.Models.Display_Type_Collection(
 				<?php echo $display_types ?>
 			);
-			this.display_type_order_base = <?php echo NEXTGEN_DISPLAY_PRIORITY_BASE; ?>;
-			this.display_type_order_step = <?php echo NEXTGEN_DISPLAY_PRIORITY_STEP; ?>;
+			this.display_type_order_base = <?php echo NGG_DISPLAY_PRIORITY_BASE; ?>;
+			this.display_type_order_step = <?php echo NGG_DISPLAY_PRIORITY_STEP; ?>;
 			this.entities = new Ngg.DisplayTab.Models.Entity_Collection();
 			this.entities.extra_data.displayed_gallery = this.displayed_gallery;
 			this.image_key = "<?php echo $image_primary_key ?>";

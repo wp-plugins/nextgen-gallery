@@ -24,7 +24,6 @@
             });
         }
 
-
 		$(function(){
                 // Show the page content
                 $('#ngg_page_content').css('visibility', 'visible');

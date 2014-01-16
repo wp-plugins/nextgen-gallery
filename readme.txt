@@ -2,17 +2,17 @@
 Contributors: photocrati
 Tags:gallery,image,images,photo,photos,picture,pictures,slideshow,flash,media,thumbnails,photo-albums,nextgen-gallery,nextgen
 Requires at least: 3.6.1
-Tested up to: 3.8
+Tested up to: 3.7.1
 Stable tag: trunk
 License: GPLv2
 
-The most popular WordPress gallery plugin and one of the most popular plugins of all time with over 7.5 million downloads.
+The most popular WordPress gallery plugin and one of the most popular plugins of all time with over 9 million downloads.
 
 == Description ==
 
 = WordPress Gallery Plugin =
 
-NextGEN Gallery is the most popular **WordPress gallery plugin**, and one of the most popular WordPress plugins of all time, with over 7.5 million downloads.
+NextGEN Gallery is the most popular **WordPress gallery plugin**, and one of the most popular WordPress plugins of all time, with over 9 million downloads.
 
 It provides a powerful engine for uploading and managing galleries of images, with the ability to batch upload, import meta data, add/delete/rearrange/sort images, edit thumbnails, group galleries into albums, and more. It also provides two front-end display styles (slideshows and thumbnail galleries), both of which come with a wide array of options for controlling size, style, timing, transitions, controls, lightbox effects, and more.
 
@@ -199,10 +199,37 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.46 - 01.16.2013 =
+* NEW:     Re-introduced the Reset button
+* NEW:     Tooltip added for Page Link to functionality
+* NEW:     Displayed Gallery Triggers moved from NextGEN Pro to NextGEN Gallery (not in use)
+* NEW:     Added NGG_Store, a client-side persistence layer (not in use)
+* NEW:     Added NGG_CRON_SCHEDULE constant. Set to the number of seconds between the execution of NextGEN Gallery cron jobs
+* NEW:     Added NGG_RENDERING_CACHE_TTL constant. TTL measured in seconds.
+* NEW:     Added NGG_DISPLAYED_GALLERY_CACHE_TTL constant. TTL measured in seconds.
+* NEW:     Added Font Awesome, available for NextGEN Gallery extensions
+* Changed: Transients are removed every 30 minutes instead of 60 minutes
+* Changed: Admin Page & Form components refactored to allow custom POST processing
+* Fixed:   Database query performance. No more joins to the WP options table
+* Fixed:   Lightboxes storing absolute paths for static resources
+* Fixed:   Displayed gallery cache not regularly flushed
+* Fixed:   SQL query performance problems. Honor max_packet_allowed variable for MySQL
+* Fixed:   Corrupted MediaRSS feeds
+* Fixed:   Padding on Gallery Settings and Other Options pages
+* Fixed:   Compatibility with Headway Themes
+* Fixed:   Routing issues on subdirectory installs
+* Fixed:   Third-party incompatibilities caused by the Photocrati Resource Manager
+* Fixed:   Compatibility with web servers which don't provide PHP a document root
+* Fixed:   Importing galleries using the Attach to Post Interface
+* Fixed:   Gallery path calculations on Windows web servers
+* Fixed:   Apply maximum entity count to existing displayed galleries
+* Fixed:   NextGEN Gallery Thumbnail Widget shouldn't use ImageBrowser effect
+* Fixed:   Interface tweaks for WordPress 3.8
+
 = V2.0.40 - 11.26.2013 =
 * NEW:     Added the ability to apply lightbox effects to non-NGG images
 * NEW:     Added NGG_HIDE_STRICT_ERRORS constant. Define and set to TRUE to hide strict errors
-* NEW:     Added NEXTGEN_GALLERY_IMPORT_ROOT constant. Define and set to TRUE to browse from a custom directory
+* NEW:     Added NGG_IMPORT_ROOT constant. Define and set to TRUE to browse from a custom directory
 * NEW:     Added NGG_DEBUG constant. Define and set to TRUE to display helpful messages for debugging
 * NEW:     Each custom table record will have an associated custom post record for expansion
 * NEW:     Display helpful error messages when there's a problem uploading images

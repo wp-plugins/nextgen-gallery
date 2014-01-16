@@ -9,7 +9,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 if (!class_exists('nggLoader')) {
 	class nggLoader {
 
-		var $version     = NEXTGEN_GALLERY_PLUGIN_VERSION;
+		var $version     = NGG_PLUGIN_VERSION;
 		var $dbversion   = '1.8.1';
 		var $minimum_WP  = '3.6.1';
 		var $donators    = 'http://www.nextgen-gallery.com/donators.php';
@@ -26,7 +26,7 @@ if (!class_exists('nggLoader')) {
 
 			// Determine plugin basename based on whether NGG is being used in
 			// it's legacy form, or as a Photocrati Gallery
-			if (defined('NEXTGEN_GALLERY_PLUGIN_BASENAME')) $this->plugin_name = NEXTGEN_GALLERY_PLUGIN_BASENAME;
+			if (defined('NGG_PLUGIN_BASENAME')) $this->plugin_name = NGG_PLUGIN_BASENAME;
 			else $this->plugin_name = basename(dirname(__FILE__)).'/'.basename(__FILE__);
 
 			// Get some constants first
@@ -34,7 +34,6 @@ if (!class_exists('nggLoader')) {
 			$this->define_constant();
 			$this->define_tables();
 			$this->load_dependencies();
-			$this->start_rewrite_module();
 
 			// Start this plugin once all other plugins are fully loaded
 			add_action( 'plugins_loaded', array(&$this, 'start_plugin') );
@@ -212,15 +211,15 @@ if (!class_exists('nggLoader')) {
 
 			define(
 				'NGGALLERY_ABSPATH',
-				defined('NEXTGEN_GALLERY_NGGLEGACY_MOD_DIR') ?
-					trailingslashit(NEXTGEN_GALLERY_NGGLEGACY_MOD_DIR) :
+				defined('NGG_LEGACY_MOD_DIR') ?
+					trailingslashit(NGG_LEGACY_MOD_DIR) :
 					trailingslashit(dirname(__FILE__))
 			);
 
 			define(
 				'NGGALLERY_URLPATH',
-				defined('NEXTGEN_GALLERY_NGGLEGACY_MOD_URL') ?
-					trailingslashit(NEXTGEN_GALLERY_NGGLEGACY_MOD_URL) :
+				defined('NGG_LEGACY_MOD_URL') ?
+					trailingslashit(NGG_LEGACY_MOD_URL) :
 					trailingslashit( plugins_url( NGGFOLDER ) )
 			);
 
@@ -288,13 +287,6 @@ if (!class_exists('nggLoader')) {
 		function load_options() {
 			// Load the options
 			$this->options = get_option('ngg_options');
-		}
-
-		// Add rewrite rules
-		function start_rewrite_module() {
-			// global $nggRewrite;
-			// if (class_exists('nggRewrite'))
-			//	$nggRewrite = new nggRewrite();
 		}
 
 		// THX to Shiba for the code

@@ -741,7 +741,7 @@ class Mixin_Routing_App extends Mixin
 		$sep			= preg_quote($settings->router_param_separator,'#');
 
 		// If we detect the MVC_PARAM_SLUG, then we assume that we have parameters
-		if ($settings->router_param_slug && strpos($request_uri, '/'.$settings->router_param_slug) !== FALSE) {
+        if ($settings->router_param_slug && strpos($request_uri, '/'.$settings->router_param_slug.'/') !== FALSE) {
 			$retval = TRUE;
 		}
 

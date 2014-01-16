@@ -4,7 +4,7 @@ class A_NextGen_Basic_Tagcloud_Form extends Mixin_Display_Type_Form
 {
 	function get_display_type_name()
 	{
-		return NEXTGEN_BASIC_TAG_CLOUD_MODULE_NAME;
+		return NGG_BASIC_TAGCLOUD;
 	}
 
 

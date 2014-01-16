@@ -97,7 +97,7 @@ class nggAdminPanel{
 				if (preg_match_all("/<script.*wp-content.*jquery[-_\.](min\.)?js.*<\script>/", $html, $matches, PREG_SET_ORDER)) {
 					foreach ($matches as $match) {
 						$old_script = array_shift($match);
-						if (strpos($old_script, NEXTGEN_GALLERY_PLUGIN_DIR) === FALSE)
+						if (strpos($old_script, NGG_PLUGIN_DIR) === FALSE)
 							$html = str_replace($old_script, '', $html);
 					}
 				}
@@ -107,7 +107,7 @@ class nggAdminPanel{
 					$detected_jquery_ui = TRUE;
 					foreach ($matches as $match) {
 						$old_script = array_shift($match);
-						if (strpos($old_script, NEXTGEN_GALLERY_PLUGIN_DIR) === FALSE)
+						if (strpos($old_script, NGG_PLUGIN_DIR) === FALSE)
 							$html = str_replace($old_script, '', $html);
 					}
 				}
@@ -361,6 +361,9 @@ class nggAdminPanel{
     						'imageCount' => '1'
     			) );
     			wp_enqueue_script( 'shutter' );
+
+                // includes tooltip styling
+                wp_enqueue_style('nextgen_admin_page', $router->get_static_url('photocrati-nextgen_admin#nextgen_admin_page.css'));
 			break;
 			case "nggallery-manage-album" :
                 wp_enqueue_script( 'jquery-ui-autocomplete' );

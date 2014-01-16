@@ -428,7 +428,18 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
 	 */
 	function get_upload_relpath($gallery=FALSE)
 	{
-		return str_replace(ABSPATH, '', $this->object->get_upload_abspath($gallery));
+		$abspath = str_replace(array('/', '\\'), '/', ABSPATH);
+		$upload_path = $this->object->get_upload_abspath($gallery);
+		$upload_path = str_replace(array('/', '\\'), '/', $upload_path);
+		
+		$len = strlen($abspath);
+		
+		if (strcasecmp($abspath, substr($upload_path, 0, $len)) == 0) {
+			return substr($upload_path, $len);
+		}
+		
+		// XXX error?
+		return null;
 	}
 
 	/**
@@ -548,12 +559,13 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
 			}
 
 			// Determine filenames
-			$filename = $filename ? sanitize_title_with_dashes($filename) : uniqid('nextgen-gallery');
+			$original_filename = $filename;
+			$filename = $filename ? sanitize_file_name($original_filename) : uniqid('nextgen-gallery');
 			if (preg_match("/\-(png|jpg|gif|jpeg)$/i", $filename, $match)) {
 				$filename = str_replace($match[0], '.'.$match[1], $filename);
 			}
 			$abs_filename = path_join($upload_dir, $filename);
-
+			
 			// Create or retrieve the image object
 			$image	= NULL;
 			if ($image_id) {
@@ -564,7 +576,7 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
 			$retval	= $image;
 			
 			// Create or update the database record
-			$image->alttext		= sanitize_title_with_dashes(basename($filename, '.' . pathinfo($filename, PATHINFO_EXTENSION)));
+			$image->alttext		= basename($original_filename, '.' . pathinfo($original_filename, PATHINFO_EXTENSION));
 			$image->galleryid	= $this->object->_get_gallery_id($gallery);
 			$image->filename	= $filename;
 			$image->image_slug = nggdb::get_unique_slug( sanitize_title_with_dashes( $image->alttext ), 'image' );

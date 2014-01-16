@@ -82,34 +82,7 @@ class Mixin_Display_Type_Controller extends Mixin
             true
         );
 
-        {
-			$i=0;
-			foreach (explode("\n", $library->scripts) as $script) {
-				wp_enqueue_script(
-					$library->name.'-'.$i,
-					$script
-				);
-				if ($i == 0 AND isset($library->values)) {
-					foreach ($library->values as $name => $value) {
-						$this->object->_add_script_data(
-							$library->name . '-0',
-							$name,
-							$value,
-							FALSE
-						);
-					}
-				}
-				$i+=1;
-			}
-			$i=0;
-			foreach (explode("\n", $library->css_stylesheets) as $style) {
-				wp_enqueue_style(
-					$library->name.'-'.$i,
-					$style
-				);
-				$i+=1;
-			}
-		}
+        M_Lightbox::_register_library_resources($library, FALSE);
 	}
 
 
@@ -142,6 +115,10 @@ class Mixin_Display_Type_Controller extends Mixin
             FALSE
         );
 
+        // Enqueue trigger button resources
+        C_Displayed_Gallery_Trigger_Manager::get_instance()->enqueue_resources($displayed_gallery);
+
+        // Enqueue lightbox library
         $this->object->enqueue_lightbox_resources($displayed_gallery);
 	}
 

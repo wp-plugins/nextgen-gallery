@@ -77,7 +77,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin
 		$this->albums = $displayed_gallery->get_albums();
 
         // None of the above: Display the main album. Get the settings required for display
-        $current_page = (int)$this->param('page', 1);
+        $current_page = (int)$this->param('nggpage', 1);
         $offset = $display_settings['galleries_per_page'] * ($current_page - 1);
         $entities = $displayed_gallery->get_included_entities($display_settings['galleries_per_page'], $offset);
 
@@ -114,10 +114,10 @@ class A_NextGen_Basic_Album_Controller extends Mixin
                 $params = $this->object->prepare_display_parameters($displayed_gallery, $params);
 
                 switch ($displayed_gallery->display_type) {
-                    case NEXTGEN_GALLERY_NEXTGEN_BASIC_COMPACT_ALBUM:
+                    case NGG_BASIC_COMPACT_ALBUM:
                         $template = 'compact';
                         break;
-                    case NEXTGEN_GALLERY_NEXTGEN_BASIC_EXTENDED_ALBUM:
+                    case NGG_BASIC_EXTENDED_ALBUM:
                         $template = 'extended';
                         break;
                 }

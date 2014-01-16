@@ -53,8 +53,9 @@ function nggallery_install($installer)
 	exclude TINYINT NULL DEFAULT '0' ,
 	sortorder BIGINT(20) DEFAULT '0' NOT NULL ,
 	meta_data LONGTEXT,
+	extras_post_id BIGINT(20) DEFAULT '0' NOT NULL,
 	PRIMARY KEY  (pid),
-	KEY post_id (post_id)
+	INDEX (extras_post_id)
 	);";
 	$installer->upgrade_schema($sql);
 
@@ -69,7 +70,9 @@ function nggallery_install($installer)
 	pageid BIGINT(20) DEFAULT '0' NOT NULL ,
 	previewpic BIGINT(20) DEFAULT '0' NOT NULL ,
 	author BIGINT(20) DEFAULT '0' NOT NULL  ,
-	PRIMARY KEY  (gid)
+	extras_post_id BIGINT(20) DEFAULT '0' NOT NULL,
+	PRIMARY KEY  (gid),
+	INDEX (extras_post_id)
 	)";
 	$installer->upgrade_schema($sql);
 
@@ -82,7 +85,9 @@ function nggallery_install($installer)
 	albumdesc MEDIUMTEXT NULL ,
 	sortorder LONGTEXT NOT NULL,
 	pageid BIGINT(20) DEFAULT '0' NOT NULL,
-	PRIMARY KEY  (id)
+	extras_post_id BIGINT(20) DEFAULT '0' NOT NULL,
+	PRIMARY KEY  (id),
+	INDEX (extras_post_id)
 	)";
 	$installer->upgrade_schema($sql);
 

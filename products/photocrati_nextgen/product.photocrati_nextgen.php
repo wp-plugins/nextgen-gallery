@@ -6,7 +6,7 @@ Product: photocrati-nextgen
 }
  ***/
 
-define('NEXTGEN_GALLERY_CHANGE_OPTIONS_CAP', 'NextGEN Manage gallery');
+define('NGG_CHANGE_OPTIONS_CAP', 'NextGEN Manage gallery');
 
 class P_Photocrati_NextGen extends C_Base_Product
 {
@@ -54,7 +54,7 @@ class P_Photocrati_NextGen extends C_Base_Product
 			'photocrati-nextgen',
 			'Photocrati NextGEN',
 			'Photocrati NextGEN',
-			'2.0.40',
+			'2.0.46',
 			'http://www.nextgen-gallery.com',
 			'Photocrati Media',
 			'http://www.photocrati.com'

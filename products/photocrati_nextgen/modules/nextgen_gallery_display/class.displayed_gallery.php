@@ -77,7 +77,8 @@ class Mixin_Displayed_Gallery_Validation extends Mixin
 			}
 
 			// If no maximum_entity_count has been given, then set a maximum
-			if (!isset($this->object->maximum_entity_count)) {
+			if (!isset($this->object->maximum_entity_count)) 
+			{
 				$this->object->maximum_entity_count = C_Photocrati_Settings_Manager::get('maximum_entity_count', 500);
 			}
 
@@ -121,8 +122,18 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 		// If a maximum entity count has been set for the displayed gallery,
 		// then ensure that's honoured
 		if (isset($this->object->maximum_entity_count)) {
-			if (!$limit OR (is_numeric($limit) && $limit > $this->object->maximum_entity_count)) {
-				$limit = intval($this->object->maximum_entity_count);
+			$max = intval($this->object->maximum_entity_count);
+			if (!$limit OR (is_numeric($limit) && $limit > $max)) {
+				$limit = $max;
+			}
+		}
+		
+		// Note: always use global setting, otherwise displayed galleries are going to "remember" how much the maximum was when they were created instead of how much the maximum is now -- this property is not even exposed in the UI so it'd be fairly difficult for the user to realize what's going on
+		$max = intval(C_Photocrati_Settings_Manager::get('maximum_entity_count', 500));
+		if ($max)
+		{
+			if (!$limit OR (is_numeric($limit) && $limit > $max)) {
+				$limit = $max;
 			}
 		}
 
@@ -649,7 +660,14 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 
         if (isset($this->object->maximum_entity_count)) {
             $max = intval($this->object->maximum_entity_count);
-            if ($retval > $max) $retval = $max;
+            if ($retval > $max) {
+            	$retval = $max;
+            }
+        }
+				// Given maximum entity count can't be set, always use global setting to avoid confusion
+				$max = intval(C_Photocrati_Settings_Manager::get('maximum_entity_count', 500));
+        if ($retval > $max) {
+        	$retval = $max;
         }
 
         return $retval;
