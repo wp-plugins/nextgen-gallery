@@ -34,6 +34,7 @@ class C_Image_Mapper extends C_CustomTable_DataMapper_Driver
 		$this->define_column('exclude',		'INT', 0);
 		$this->define_column('sortorder',	'BIGINT', 0);
 		$this->define_column('meta_data',	'TEXT');
+        $this->define_column('extras_post_id', 'BIGINT', 0);
 		$this->define_column('updated_at',  'BIGINT');
 
 		// Mark the columns which should be unserialized
@@ -148,8 +149,8 @@ class Mixin_Gallery_Image_Mapper extends Mixin
 		}
 
         // Set unique slug
-        if (isset($entity->alttext)) {
-            $this->object->_set_default_value($entity, 'image_slug', nggdb::get_unique_slug( sanitize_title_with_dashes( $entity->alttext ), 'image' ));
+        if (isset($entity->alttext) && !isset($entity->image_slug)) {
+            $entity->image_slug = nggdb::get_unique_slug( sanitize_title_with_dashes( $entity->alttext ), 'image' );
         }
 
 		// Ensure that the exclude parameter is an integer or boolean-evaluated

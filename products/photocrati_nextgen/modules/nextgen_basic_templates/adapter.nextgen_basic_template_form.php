@@ -139,7 +139,7 @@ class A_NextGen_Basic_Template_Form extends Mixin
         $gallery->description = html_entity_decode(stripslashes($orig_gallery->galdesc));
         $gallery->pageid = $orig_gallery->pageid;
 
-        if ($displayed_gallery->display_settings['ajax_pagination'])
+        if (!empty($displayed_gallery->display_settings['ajax_pagination']))
             $gallery_id = $displayed_gallery->transient_id;
         else
             $gallery_id = $displayed_gallery->id();

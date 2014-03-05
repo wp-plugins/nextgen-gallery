@@ -771,12 +771,12 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 		global $wpdb;
 
         // If no tags were provided, get them from the container_ids
-        if (!$tags) $tags = $this->object->container_ids;
+        if (!$tags || !is_array($tags)) $tags = $this->object->container_ids;
 
 		// Convert container ids to a string suitable for WHERE IN
 		$container_ids = array();
-        if (!in_array('all', array_map('strtolower', $tags))) {
-			foreach ($tags as $container) {
+        if (is_array($tags) && !in_array('all', array_map('strtolower', $tags))) {
+			foreach ($tags as $ndx => $container) {
 				$container_ids[]= "'{$container}'";
 			}
 			$container_ids = implode(',', $container_ids);
@@ -794,9 +794,13 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
 
 		// Get all term_ids for each image tag slug
 		$term_ids = array();
-		foreach ($wpdb->get_results($query) as $row) {
-			$term_ids[] = $row->term_id;
-		}
+        $results = $wpdb->get_results($query);
+        if (is_array($results) && !empty($results))
+        {
+            foreach ($results as $row) {
+                $term_ids[] = $row->term_id;
+            }
+        }
 
 		return $term_ids;
 	}

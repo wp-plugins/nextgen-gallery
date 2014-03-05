@@ -25,7 +25,7 @@ class M_NextGen_Basic_Gallery extends C_Base_Module
             'photocrati-nextgen_basic_gallery',
             'NextGEN Basic Gallery',
             "Provides NextGEN Gallery's basic thumbnail/slideshow integrated gallery",
-            '0.8',
+            '0.9',
             'http://www.nextgen-gallery.com',
             'Photocrati Media',
             'http://www.photocrati.com'
@@ -38,7 +38,6 @@ class M_NextGen_Basic_Gallery extends C_Base_Module
     function get_type_list()
     {
         return array(
-            'A_Ajax_Pagination_Actions' => 'adapter.ajax_pagination_actions.php',
             'A_Nextgen_Basic_Gallery_Forms' => 'adapter.nextgen_basic_gallery_forms.php',
             'C_Nextgen_Basic_Gallery_Installer' => 'class.nextgen_basic_gallery_installer.php',
             'A_Nextgen_Basic_Gallery_Mapper' => 'adapter.nextgen_basic_gallery_mapper.php',
@@ -106,13 +105,6 @@ class M_NextGen_Basic_Gallery extends C_Base_Module
             'I_Router',
             'A_NextGen_Basic_Gallery_Routes'
         );
-        
-        
-        // Provides AJAX pagination actions required by the display types
-        $this->get_registry()->add_adapter(
-            'I_Ajax_Controller',
-            'A_Ajax_Pagination_Actions'
-        );
 
         if (is_admin()) {
             // Adds the settings forms
@@ -125,13 +117,19 @@ class M_NextGen_Basic_Gallery extends C_Base_Module
     
     function _register_hooks()
 	{
-		C_NextGen_Shortcode_Manager::add('nggallery', array(&$this, 'render'));
-		C_NextGen_Shortcode_Manager::add('nggtags',   array(&$this, 'render_based_on_tags'));
-		C_NextGen_Shortcode_Manager::add('random',    array(&$this, 'render_random_images'));
-		C_NextGen_Shortcode_Manager::add('recent',    array(&$this, 'render_recent_images'));
-		C_NextGen_Shortcode_Manager::add('thumb',	   array(&$this, 'render_thumb_shortcode'));
-		C_NextGen_Shortcode_Manager::add('slideshow',		 array(&$this, 'render_slideshow'));
-		C_NextGen_Shortcode_Manager::add('nggslideshow',	 array(&$this, 'render_slideshow'));
+        if (!defined('NGG_DISABLE_LEGACY_SHORTCODES') || !NGG_DISABLE_LEGACY_SHORTCODES)
+        {
+            C_NextGen_Shortcode_Manager::add('random',    array(&$this, 'render_random_images'));
+            C_NextGen_Shortcode_Manager::add('recent',    array(&$this, 'render_recent_images'));
+            C_NextGen_Shortcode_Manager::add('thumb',     array(&$this, 'render_thumb_shortcode'));
+            C_NextGen_Shortcode_Manager::add('slideshow', array(&$this, 'render_slideshow'));
+        }
+        C_NextGen_Shortcode_Manager::add('nggallery',    array(&$this, 'render'));
+        C_NextGen_Shortcode_Manager::add('nggtags',      array(&$this, 'render_based_on_tags'));
+        C_NextGen_Shortcode_Manager::add('nggslideshow', array(&$this, 'render_slideshow'));
+        C_NextGen_Shortcode_Manager::add('nggrandom',    array(&$this, 'render_random_images'));
+        C_NextGen_Shortcode_Manager::add('nggrecent',    array(&$this, 'render_recent_images'));
+        C_NextGen_Shortcode_Manager::add('nggthumb',     array(&$this, 'render_thumb_shortcode'));
 	}
 
     /**

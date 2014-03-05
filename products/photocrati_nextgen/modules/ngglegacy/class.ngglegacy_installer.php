@@ -101,6 +101,6 @@ class C_NggLegacy_Installer
 		$sql = str_replace($charset_collate, '', str_replace(';', '', $sql));
 
 		// Execute the query
-		dbDelta($sql. ' '. $charset_collate. ';');
+		return dbDelta($sql. ' '. $charset_collate. ';');
 	}
 }

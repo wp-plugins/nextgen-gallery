@@ -14,7 +14,7 @@ class M_Ajax extends C_Base_Module
 			'photocrati-ajax',
 			'AJAX',
 			'Provides AJAX functionality',
-			'0.6',
+			'0.7',
 			'http://www.photocrati.com',
 			'Photocrati Media',
 			'http://www.photocrati.com'

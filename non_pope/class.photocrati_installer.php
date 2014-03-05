@@ -59,6 +59,21 @@ if (!class_exists('C_Photocrati_Installer'))
 			}
 		}
 
+        static function can_do_upgrade()
+        {
+            $proceed = FALSE;
+            if (!get_option('ngg_doing_upgrade', FALSE)) {
+                update_option('ngg_doing_upgrade', TRUE);
+                $proceed = TRUE;
+            }
+            return $proceed;
+        }
+
+        static function done_upgrade()
+        {
+            update_option('ngg_doing_upgrade', FALSE);
+        }
+
 		static function update($reset=FALSE)
 		{
 			$local_settings     = C_NextGen_Settings::get_instance();
@@ -96,11 +111,17 @@ if (!class_exists('C_Photocrati_Installer'))
                 }
             }
 
-            $last_module_list    = $reset ? array() : $local_settings->get('pope_module_list', array());
+            $last_module_list = self::_get_last_module_list($reset);
 			$current_module_list = self::_generate_module_info();
 
-            if (count(($modules = array_diff($current_module_list, $last_module_list))) > 0)
+            if (count(($modules = array_diff($current_module_list, $last_module_list))) > 0 && self::can_do_upgrade())
             {
+                // Clear APC cache
+                if (function_exists('apc_clear_cache')) {
+                    @apc_clear_cache('opcode');
+                    apc_clear_cache();
+                }
+
 				// The cache should be flushed
 				C_Photocrati_Cache::flush();
 
@@ -138,6 +159,8 @@ if (!class_exists('C_Photocrati_Installer'))
 				// Save any changes settings
 				$global_settings->save();
 				$local_settings->save();
+
+                self::done_upgrade();
             }
 
             // Another workaround to an issue caused by NextGen's lack of multisite compatibility. It's possible
@@ -153,13 +176,24 @@ if (!class_exists('C_Photocrati_Installer'))
             }
 		}
 
+        static function _get_last_module_list($reset=FALSE)
+        {
+            $retval = array();
+            $local_settings     = C_NextGen_Settings::get_instance();
+            $last_module_list = $local_settings->get('pope_module_list');
+            if (is_array($last_module_list) AND !$reset) foreach ($last_module_list as $key => $value) {
+                $retval[] = $value;
+            }
+            return $retval;
+        }
+
 		static function _generate_module_info()
 		{
 			$retval = array();
 			$registry = C_Component_Registry::get_instance();
 			foreach ($registry->get_module_list() as $module_id) {
 				$module_version = $registry->get_module($module_id)->module_version;
-				$retval[$module_id] = "{$module_id}|{$module_version}";
+				$retval[] = "{$module_id}|{$module_version}";
 			}
 			return $retval;
 		}

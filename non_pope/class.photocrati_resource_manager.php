@@ -153,7 +153,7 @@ class C_Photocrati_Resource_Manager
 
 			// If W3TC is installed and activated, we can't output the
 			// scripts and manipulate the buffer, so we can only provide a warning
-			if (defined('W3TC') && defined('WP_DEBUG') && WP_DEBUG) {
+			if (defined('W3TC') && defined('WP_DEBUG') && WP_DEBUG && !is_admin()) {
 				if (!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', TRUE);
 				if (!did_action('wp_footer')) {
 					error_log("We're sorry, but your theme's page template didn't make a call to wp_footer(), which is required by NextGEN Gallery. Please add this call to your page templates.");

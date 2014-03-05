@@ -389,11 +389,14 @@ class Mixin_DataMapper_Driver_Base extends Mixin
 	{
 		foreach (get_object_vars($stdObject) as $key => $value) {
 			if (is_string($value)) {
-				$stdObject->$key = stripslashes($value);
+				$stdObject->$key = str_replace("\\'", "'", str_replace('\"', '"', str_replace("\\\\", "\\", $value)));
 			}
-			else {
+			elseif(is_object($value)) {
 				$stdObject->$key = $this->strip_slashes_deep($value);
 			}
+            elseif(is_array($value)) {
+                $stdObject->$key = $this->strip_slashes_deep($value);
+            }
 		}
 
 		return $stdObject;
@@ -414,7 +417,8 @@ class Mixin_DataMapper_Driver_Base extends Mixin
 			}
 		}
 		elseif(is_string($input)) {
-			$retval = stripslashes($input);
+			$retval = str_replace("\\'", "'", str_replace('\"', '"', str_replace("\\\\", "\\", $input)));
+
 		}
 
 		return $retval;

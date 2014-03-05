@@ -4,7 +4,11 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 {
 	function cookie_dump_action()
 	{
-		return array('success' => 1);
+        foreach ($_COOKIE as $key => &$value) {
+            if (is_string($value)) $value = stripslashes($value);
+        }
+
+		return array('success' => 1, 'cookies' => $_COOKIE);
 	}
 
     function upload_image_action()
@@ -99,7 +103,7 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		              if( count($files) > 2 ) { /* The 2 accounts for . and .. */
 		                  $html[] = "<ul class=\"jqueryFileTree\" style=\"display: none;\">";
 		                  foreach( $files as $file ) {
-		                      $file_path = path_join($browse_path, $file);
+                              $file_path = $fs->join_paths($browse_path, $file);
 		                      $rel_file_path = str_replace($root, '', $file_path);
 		                      if(@file_exists($file_path) && $file != '.' && $file != '..' && is_dir($file_path) ) {
 		                          $html[] = "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" . htmlentities($rel_file_path) . "/\">" . htmlentities($file) . "</a></li>";

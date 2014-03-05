@@ -296,6 +296,7 @@ jQuery(function($){
 			var self = this;
 			this.in_progress = true;
 			$.post(this.fetch_url, this._create_request(limit, offset), function(response){
+                if (typeof(_) == 'undefined') return;
 				if (!_.isObject(response)) response = JSON.parse(response);
 
 				if (response.items) {
@@ -1683,6 +1684,8 @@ jQuery(function($){
     });
     Ngg.DisplayTab.instance = new Ngg.DisplayTab.App();
     Ngg.DisplayTab.instance.render();
+    
+    window.Ngg = Ngg;
 
     // Invoke styling libraries
     $('span.tooltip, label.tooltip').tooltip();

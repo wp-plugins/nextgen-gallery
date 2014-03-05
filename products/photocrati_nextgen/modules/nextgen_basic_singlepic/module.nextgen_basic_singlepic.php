@@ -17,7 +17,7 @@ class M_NextGen_Basic_Singlepic extends C_Base_Module
             NGG_BASIC_SINGLEPIC,
             'NextGen Basic Singlepic',
             'Provides a singlepic gallery for NextGEN Gallery',
-            '0.6',
+            '0.7',
             'http://www.photocrati.com',
             'Photocrati Media',
             'http://www.photocrati.com'
@@ -60,7 +60,11 @@ class M_NextGen_Basic_Singlepic extends C_Base_Module
 
 	function _register_hooks()
 	{
-		C_NextGen_Shortcode_Manager::add('singlepic', array(&$this, 'render_singlepic'));
+        if (!defined('NGG_DISABLE_LEGACY_SHORTCODES') || !NGG_DISABLE_LEGACY_SHORTCODES)
+        {
+            C_NextGen_Shortcode_Manager::add('singlepic', array(&$this, 'render_singlepic'));
+        }
+        C_NextGen_Shortcode_Manager::add('nggsinglepic', array(&$this, 'render_singlepic'));
 
         // enqueue the singlepic CSS if an inline image has the ngg-singlepic class
         add_filter('the_content', array(&$this, 'enqueue_singlepic_css'), PHP_INT_MAX, 1);
@@ -74,13 +78,7 @@ class M_NextGen_Basic_Singlepic extends C_Base_Module
      */
     function enqueue_singlepic_css($content)
     {
-        $dom = new DOMDocument();
-        @$dom->loadHTML($content);
-        $xpath = new DomXPath($dom);
-        $image = $xpath->query('//img[contains(@class, "ngg-singlepic")]');
-
-        if ($image->length >= 1)
-        {
+        if (preg_match("#<img.*ngg-singlepic.*>#", $content, $matches)) {
             $router = $this->get_registry()->get_utility('I_Router');
             wp_enqueue_style(
                 'nextgen_basic_singlepic_style',

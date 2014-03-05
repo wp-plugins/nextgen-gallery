@@ -43,7 +43,10 @@ class Mixin_NextGen_Basic_Pagination extends Mixin
         $return = array('prev' => '', 'next' => '', 'output' => '');
 
         if ($maxElement <= 0)
+        {
+            $return['output'] = "<div class='ngg-clear'></div>";
             return $return;
+        }
 
         $total = $totalElement;
 

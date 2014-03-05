@@ -589,14 +589,14 @@ class nggManageGallery {
                 				if ($ngg->options['deleteImg']) {
                 					if (is_array($imagelist)) {
                 						foreach ($imagelist as $filename) {
-                							@unlink(WINABSPATH . $gallery->path . '/thumbs/thumbs_' . $filename);
-                							@unlink(WINABSPATH . $gallery->path .'/'. $filename);
-                                            @unlink(WINABSPATH . $gallery->path .'/'. $filename . '_backup');
+                							@unlink(ABSPATH . $gallery->path . '/thumbs/thumbs_' . $filename);
+                							@unlink(ABSPATH . $gallery->path .'/'. $filename);
+                                            @unlink(ABSPATH . $gallery->path .'/'. $filename . '_backup');
                 						}
                 					}
                 					// delete folder
-               						@rmdir( WINABSPATH . $gallery->path . '/thumbs' );
-               						@rmdir( WINABSPATH . $gallery->path );
+               						@rmdir( ABSPATH . $gallery->path . '/thumbs' );
+               						@rmdir( ABSPATH . $gallery->path );
                 				}
                 			}
                             do_action('ngg_delete_gallery', $id);
@@ -620,7 +620,7 @@ class nggManageGallery {
 
 			// get the default path for a new gallery
 			$defaultpath = $ngg->options['gallerypath'];
-			$newgallery = esc_attr( $_POST['galleryname']);
+			$newgallery = $_POST['galleryname'];
 			if ( !empty($newgallery) )
 				nggAdmin::create_gallery($newgallery, $defaultpath);
 
@@ -646,15 +646,17 @@ class nggManageGallery {
 
 			check_admin_referer('ngg_thickbox_form');
 
-			//save the new values for the next operation
-			$ngg->options['thumbwidth']  = (int)  $_POST['thumbwidth'];
-			$ngg->options['thumbheight'] = (int)  $_POST['thumbheight'];
-			$ngg->options['thumbfix']    = isset ($_POST['thumbfix']) ? true : false;
-			// What is in the case the user has no if cap 'NextGEN Change options' ? Check feedback
-			update_option('ngg_options', $ngg->options);
+			// save the new values for the next operation
+            $settings = C_NextGen_Settings::get_instance();
+            $settings->thumbwidth  = (int)$_POST['thumbwidth'];
+            $settings->thumbheight = (int)$_POST['thumbheight'];
+            $settings->thumbfix    = isset($_POST['thumbfix']) ? TRUE : FALSE;
+            $settings->save();
 			ngg_refreshSavedSettings();
 
+			// What is in the case the user has no if cap 'NextGEN Change options' ? Check feedback
 			$gallery_ids  = explode(',', $_POST['TB_imagelist']);
+
 			// A prefix 'gallery_' will first fetch all ids from the selected galleries
 			nggAdmin::do_ajax_operation( 'gallery_create_thumbnail' , $gallery_ids, __('Create new thumbnails','nggallery') );
 		}
@@ -726,11 +728,12 @@ class nggManageGallery {
 
 			check_admin_referer('ngg_thickbox_form');
 
-			//save the new values for the next operation
-			$ngg->options['thumbwidth']  = (int) $_POST['thumbwidth'];
-			$ngg->options['thumbheight'] = (int) $_POST['thumbheight'];
-			$ngg->options['thumbfix']    = isset ( $_POST['thumbfix'] ) ? true : false;
-			update_option('ngg_options', $ngg->options);
+			// save the new values for the next operation
+            $settings = C_NextGen_Settings::get_instance();
+            $settings->thumbwidth  = (int)$_POST['thumbwidth'];
+            $settings->thumbheight = (int)$_POST['thumbheight'];
+            $settings->thumbfix    = isset($_POST['thumbfix']) ? TRUE : FALSE;
+            $settings->save();
 			ngg_refreshSavedSettings();
 
 			$pic_ids  = explode(',', $_POST['TB_imagelist']);
@@ -844,7 +847,7 @@ class nggManageGallery {
 			check_admin_referer('ngg_updategallery');
 
 			$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$this->gid' ");
-			nggAdmin::import_gallery($gallerypath);
+			nggAdmin::import_gallery($gallerypath, $this->gid);
 		}
 
 		if (isset ($_POST['addnewpage']))  {
@@ -939,6 +942,7 @@ class nggManageGallery {
 			$image_mapper = C_Image_Mapper::get_instance();
 
 			foreach ($_POST['images'] as $pid => $data) {
+                if (!isset($data['exclude'])) $data['exclude'] = 0;
 				if (($image = $image_mapper->find($pid))) {
 					// Strip slashes from title/description/alttext fields
 					if (isset($data['description'])) {

@@ -54,13 +54,13 @@ class P_Photocrati_NextGen extends C_Base_Product
 			'photocrati-nextgen',
 			'Photocrati NextGEN',
 			'Photocrati NextGEN',
-			'2.0.46',
+            NGG_PLUGIN_VERSION,
 			'http://www.nextgen-gallery.com',
 			'Photocrati Media',
 			'http://www.photocrati.com'
 		);
 
-		$module_path = path_join(dirname(__FILE__), 'modules');
+		$module_path = implode(DIRECTORY_SEPARATOR, array(dirname(__FILE__), 'modules'));
 		$this->get_registry()->set_product_module_path($this->module_id, $module_path);
 		$this->get_registry()->add_module_path($module_path, TRUE, FALSE);
 

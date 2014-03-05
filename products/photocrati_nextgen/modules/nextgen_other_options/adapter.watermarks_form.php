@@ -19,7 +19,11 @@ class A_Watermarks_Form extends Mixin
 	function _get_watermark_fonts()
 	{
 		$retval = array();
-		foreach (scandir(path_join(NGGALLERY_ABSPATH, 'fonts')) as $filename) {
+        $path = implode(DIRECTORY_SEPARATOR, array(
+           rtrim(NGGALLERY_ABSPATH, "/\\"),
+            'fonts'
+        ));
+		foreach (scandir($path) as $filename) {
 			if (strpos($filename, '.') === 0) continue;
 			else $retval[] = $filename;
 		}
@@ -62,9 +66,14 @@ class A_Watermarks_Form extends Mixin
 	 */
 	function _render_watermark_image_fields()
 	{
-		return $this->object->render_partial('photocrati-nextgen_other_options#watermark_image_fields', array(
+        $message = 'An absolute or relative (to the site document root) file system path';
+        if (ini_get('allow_url_fopen'))
+            $message = 'An absolute or relative (to the site document root) file system path or an HTTP url';
+
+        return $this->object->render_partial('photocrati-nextgen_other_options#watermark_image_fields', array(
 			'image_url_label'			=>	_('Image URL:'),
 			'watermark_image_url'		=>	$this->object->get_model()->wmPath,
+            'watermark_image_text'      =>  _($message)
 		), TRUE);
 	}
 

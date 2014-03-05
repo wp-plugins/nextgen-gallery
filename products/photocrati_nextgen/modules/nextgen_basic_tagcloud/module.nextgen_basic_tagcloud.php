@@ -17,7 +17,7 @@ class M_NextGen_Basic_Tagcloud extends C_Base_Module
 			NGG_BASIC_TAGCLOUD,
             'NextGen Basic Tagcloud',
             'Provides a tagcloud for NextGEN Gallery',
-            '0.6',
+            '0.7',
             'http://www.photocrati.com',
             'Photocrati Media',
             'http://www.photocrati.com'
@@ -82,7 +82,11 @@ class M_NextGen_Basic_Tagcloud extends C_Base_Module
 
 	function _register_hooks()
 	{
-		C_NextGen_Shortcode_Manager::add('tagcloud', array(&$this, 'render_shortcode'));
+        if (!defined('NGG_DISABLE_LEGACY_SHORTCODES') || !NGG_DISABLE_LEGACY_SHORTCODES)
+        {
+            C_NextGen_Shortcode_Manager::add('tagcloud', array(&$this, 'render_shortcode'));
+        }
+        C_NextGen_Shortcode_Manager::add('nggtagcloud', array(&$this, 'render_shortcode'));
 
         add_filter(
             'the_posts',

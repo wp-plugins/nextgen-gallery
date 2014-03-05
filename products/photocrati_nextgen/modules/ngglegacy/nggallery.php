@@ -201,27 +201,29 @@ if (!class_exists('nggLoader')) {
 			//TODO:SHOULD BE REMOVED LATER
 			define('NGGVERSION', $this->version);
 			// Minimum required database version
-			define('NGG_DBVERSION', $this->dbversion);
 
-			// required for Windows & XAMPP
-			define('WINABSPATH', str_replace("\\", "/", ABSPATH) );
+			define('NGG_DBVERSION', $this->dbversion);
 
 			// define URL
 			define('NGGFOLDER', dirname( $this->plugin_name ) );
 
+            // Legacy expects this to have a trailing slash
 			define(
 				'NGGALLERY_ABSPATH',
 				defined('NGG_LEGACY_MOD_DIR') ?
-					trailingslashit(NGG_LEGACY_MOD_DIR) :
-					trailingslashit(dirname(__FILE__))
+					rtrim(NGG_LEGACY_MOD_DIR, "/\\").DIRECTORY_SEPARATOR :
+					rtrim(dirname(__FILE__), "/\\").DIRECTORY_SEPARATOR
 			);
 
-			define(
-				'NGGALLERY_URLPATH',
-				defined('NGG_LEGACY_MOD_URL') ?
-					trailingslashit(NGG_LEGACY_MOD_URL) :
-					trailingslashit( plugins_url( NGGFOLDER ) )
-			);
+            // Legacy expects this to have a trailing slash
+            define(
+                'NGGALLERY_URLPATH',
+                str_replace("\\", '/', str_replace(
+                    rtrim(ABSPATH, "\\/"),
+                    site_url(),
+                    NGG_LEGACY_MOD_DIR.'/'
+                ))
+            );
 
 			// look for imagerotator
 			define('NGGALLERY_IREXIST', !empty( $this->options['irURL'] ));

@@ -202,7 +202,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin
 			if ($gallery->is_album)
             {
                 if ($gallery->pageid > 0)
-                    $gallery->pagelink = get_post_permalink($gallery->pageid);
+                    $gallery->pagelink = @get_page_link($gallery->pageid);
                 else {
                     $gallery->pagelink = $this->object->set_param_for(
                         $this->object->get_routed_url(TRUE),
@@ -216,7 +216,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin
 			// /nggallery/album--slug/gallery--slug
 			else {
                 if ($gallery->pageid > 0) {
-					$gallery->pagelink = @get_post_permalink($gallery->pageid);
+					$gallery->pagelink = @get_page_link($gallery->pageid);
 				}
                 if (empty($gallery->pagelink)) {
                     $pagelink = $this->object->get_routed_url(TRUE);
@@ -244,15 +244,12 @@ class A_NextGen_Basic_Album_Controller extends Mixin
                 }
 			}
 
-			// The router by default will generate param segments that look like,
-			// /gallery--foobar. We need to convert these to the admittingly
-			// nicer links that ngglegacy uses
-            if ($gallery->pageid <= 0)
-                $gallery->pagelink = $this->object->prettify_pagelink($gallery->pagelink);
-
             // Let plugins modify the gallery
             $gallery = apply_filters('ngg_album_galleryobject', $gallery);
         }
+
+        $params['album'] = reset($this->albums);
+        $params['albums'] = $this->albums;
 
         // Clean up
         unset($storage);
@@ -262,24 +259,6 @@ class A_NextGen_Basic_Album_Controller extends Mixin
 
         return $params;
     }
-
-
-	function prettify_pagelink($pagelink)
-	{
-		$param_separator = C_NextGen_Settings::get_instance()->get('router_param_separator');
-
-		$regex = implode('', array(
-			'#',
-			'/(gallery|album)',
-			preg_quote($param_separator, '#'),
-			'([^/?]+)',
-			'#'
-		));
-		
-		$pagelink = preg_replace($regex, '/\2', $pagelink);
-		
-		return $pagelink;
-	}
 
 
     function _get_js_lib_url()

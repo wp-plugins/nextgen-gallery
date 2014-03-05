@@ -13,10 +13,6 @@ function nggallery_install($installer)
 
    	global $wpdb , $wp_roles, $wp_version;
 
-	// Check for capability
-	if ( !current_user_can('activate_plugins') )
-		return;
-
 	// Set the capabilities for the administrator
 	$role = get_role('administrator');
 	// We need this role, no other chance
@@ -55,9 +51,9 @@ function nggallery_install($installer)
 	meta_data LONGTEXT,
 	extras_post_id BIGINT(20) DEFAULT '0' NOT NULL,
 	PRIMARY KEY  (pid),
-	INDEX (extras_post_id)
+	KEY extras_post_id_key (extras_post_id)
 	);";
-	$installer->upgrade_schema($sql);
+    $installer->upgrade_schema($sql);
 
 	// Create gallery table
 	$sql = "CREATE TABLE " . $nggallery . " (
@@ -72,9 +68,9 @@ function nggallery_install($installer)
 	author BIGINT(20) DEFAULT '0' NOT NULL  ,
 	extras_post_id BIGINT(20) DEFAULT '0' NOT NULL,
 	PRIMARY KEY  (gid),
-	INDEX (extras_post_id)
+	KEY extras_post_id_key (extras_post_id)
 	)";
-	$installer->upgrade_schema($sql);
+    $installer->upgrade_schema($sql);
 
 	// Create albums table
 	$sql = "CREATE TABLE " . $nggalbum . " (
@@ -87,17 +83,15 @@ function nggallery_install($installer)
 	pageid BIGINT(20) DEFAULT '0' NOT NULL,
 	extras_post_id BIGINT(20) DEFAULT '0' NOT NULL,
 	PRIMARY KEY  (id),
-	INDEX (extras_post_id)
+	KEY extras_post_id_key (extras_post_id)
 	)";
-	$installer->upgrade_schema($sql);
+    $installer->upgrade_schema($sql);
 
-	// check one table again, to be sure
+    // check one table again, to be sure
 	if( !$wpdb->get_var( "SHOW TABLES LIKE '$nggpictures'" ) ) {
 		update_option( "ngg_init_check", __('NextGEN Gallery : Tables could not created, please check your database settings',"nggallery") );
 		return;
 	}
-
-	$options = get_option('ngg_options');
 
 	// if all is passed , save the DBVERSION
 	add_option("ngg_db_version", NGG_DBVERSION);

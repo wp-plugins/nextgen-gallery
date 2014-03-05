@@ -20,6 +20,18 @@ function nggallery_manage_gallery_main() {
 	$mapper = C_Gallery_Mapper::get_instance();
 	$total_number_of_galleries = $mapper->count();
 	$gallerylist = $mapper->select()->order_by($orderby, $order)->limit($items_per_page, $start)->run_query();
+
+    // Need for upgrading from 2.0.40 to 2.0.52 or later.
+    // For some reason, the installer doesn't always run.
+    // TODO: Remove in 2.1
+    if (!$gallerylist){
+        global $wpdb;
+        if ($wpdb->get_results("SELECT gid FROM {$wpdb->nggallery} LIMIT 1")) {
+            $installer = new C_NggLegacy_Installer();
+            $installer->install();
+            $gallerylist = $mapper->select()->order_by($orderby, $order)->limit($items_per_page, $start)->run_query();
+        }
+    }
 	$wp_list_table = new _NGG_Galleries_List_Table('nggallery-manage-gallery');
 
 	?>

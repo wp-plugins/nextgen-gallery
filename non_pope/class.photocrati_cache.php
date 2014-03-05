@@ -241,7 +241,8 @@ class C_Photocrati_Cache
 			if (is_array($key)) $key = self::generate_key($key);
 			if (self::$force_update OR $this->lookup($key, FALSE) === FALSE) {
 				set_transient($key, $value, $ttl);
-				update_option($this->group.$key, time()+$ttl);
+                delete_option($this->group.$key);
+				add_option($this->group.$key, time()+$ttl, NULL, 'no');
 				$retval = $key;
 			}
 		}

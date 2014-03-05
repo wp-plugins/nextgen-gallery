@@ -8,12 +8,10 @@
 
 define(
 	'NGG_LEGACY_MOD_DIR',
-	path_join(NGG_MODULE_DIR, basename(dirname(__FILE__)))
-);
-
-define(
-	'NGG_LEGACY_MOD_URL',
-	path_join(NGG_MODULE_URL, basename(dirname(__FILE__)))
+    implode(DIRECTORY_SEPARATOR, array(
+        rtrim(NGG_MODULE_DIR, "/\\"),
+        basename(dirname(__FILE__))
+    ))
 );
 
 class M_NggLegacy extends C_Base_Module
@@ -24,7 +22,7 @@ class M_NggLegacy extends C_Base_Module
 			'photocrati-nextgen-legacy',
 			'NextGEN Legacy',
 			'Embeds the original version of NextGEN 1.9.3 by Alex Rabe',
-			'0.7',
+			'0.13',
 			'http://www.nextgen-gallery.com',
 			'Photocrati Media',
 			'http://www.photocrati.com'
@@ -37,7 +35,10 @@ class M_NggLegacy extends C_Base_Module
 	function initialize()
 	{
 		parent::initialize();
-		include_once(path_join(dirname(__FILE__), 'nggallery.php'));
+        include_once(implode(DIRECTORY_SEPARATOR, array(
+            dirname(__FILE__),
+            'nggallery.php'
+        )));
 	}
 
 	function get_type_list()
