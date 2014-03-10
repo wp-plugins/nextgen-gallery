@@ -188,6 +188,11 @@ class Mixin_Display_Type_Controller extends Mixin
 		$effect_code = $settings->thumbCode;
 		$effect_code = str_replace('%GALLERY_ID%', $displayed_gallery->id(), $effect_code);
 		$effect_code = str_replace('%GALLERY_NAME%', $displayed_gallery->id(), $effect_code);
+
+        global $post;
+        if ($post && isset($post->ID) && $post->ID)
+            $effect_code = str_replace('%PAGE_ID%', $post->ID, $effect_code);
+
 		return $effect_code;
 	}
 

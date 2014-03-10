@@ -4,7 +4,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 /**
  * Plugin Name: NextGEN Gallery by Photocrati
  * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 9 million downloads.
- * Version: 2.0.57
+ * Version: 2.0.58
  * Author: Photocrati Media
  * Plugin URI: http://www.nextgen-gallery.com
  * Author URI: http://www.photocrati.com
@@ -256,8 +256,10 @@ class C_NextGEN_Bootstrap
 		add_filter('pre_update_site_option_'.$this->_settings_option_name, array(&$this, 'persist_settings'));
 
 		// This plugin uses jQuery extensively
-        add_action('wp_enqueue_scripts', array(&$this, 'fix_jquery'));
-        add_action('wp_print_scripts', array(&$this, 'fix_jquery'));
+        if (NGG_FIX_JQUERY) {
+            add_action('wp_enqueue_scripts', array(&$this, 'fix_jquery'));
+            add_action('wp_print_scripts', array(&$this, 'fix_jquery'));
+        }
 
         // We require a minimum of jQuery 1.11.0 for IE11, due to a problem with interframe communication
         $version = get_bloginfo('version');
@@ -274,9 +276,7 @@ class C_NextGEN_Bootstrap
 		// Delete displayed gallery transients periodically
 		add_filter('cron_schedules', array(&$this, 'add_ngg_schedule'));
 		add_action('ngg_delete_expired_transients', array(&$this, 'delete_expired_transients'));
-		if (!wp_next_scheduled('ngg_delete_expired_transients')) {
-			wp_schedule_event(time(), 'ngg_custom', 'ngg_delete_expired_transients');
-		}
+        add_action('wp', array(&$this, 'schedule_cron_jobs'));
 
 		// Update modules
 		add_action('init', array(&$this, 'update'), PHP_INT_MAX-1);
@@ -284,6 +284,13 @@ class C_NextGEN_Bootstrap
 		// Start the plugin!
 		add_action('init', array(&$this, 'route'), 11);
 	}
+
+    function schedule_cron_jobs()
+    {
+        if (!wp_next_scheduled('ngg_delete_expired_transients')) {
+            wp_schedule_event(time(), 'ngg_custom', 'ngg_delete_expired_transients');
+        }
+    }
 
 	/**
 	 * Defines a new cron schedule
@@ -334,7 +341,11 @@ class C_NextGEN_Bootstrap
 
         // Ensure that jQuery is always set to the default
         if (isset($wp_scripts->registered['jquery'])) {
-            $wp_scripts->registered['jquery']->src = FALSE;
+            $jquery = $wp_scripts->registered['jquery'];
+            $jquery->src = FALSE;
+            if (array_search('jquery-core', $jquery->deps) === FALSE) {
+                $jquery->deps[] = 'jquery-core';
+            }
         }
 
         if (isset($wp_scripts->registered['jquery-core'])) {
@@ -443,7 +454,7 @@ class C_NextGEN_Bootstrap
 		define('NGG_PRODUCT_URL', path_join(str_replace("\\", '/', NGG_PLUGIN_URL), 'products'));
 		define('NGG_MODULE_URL', path_join(str_replace("\\", '/', NGG_PRODUCT_URL), 'photocrati_nextgen/modules'));
 		define('NGG_PLUGIN_STARTED_AT', microtime());
-		define('NGG_PLUGIN_VERSION', '2.0.57');
+		define('NGG_PLUGIN_VERSION', '2.0.58');
         define('NGG_JQUERY_VERSION', '1.11.0');
 
 		if (!defined('NGG_HIDE_STRICT_ERRORS')) {
@@ -489,6 +500,11 @@ class C_NextGEN_Bootstrap
         if (!defined('EXTENSIBLE_OBJECT_ENFORCE_INTERFACES')) {
             define('EXTENSIBLE_OBJECT_ENFORCE_INTERFACES', FALSE);
 	    }
+
+        // Fix jquery
+        if (!defined('NGG_FIX_JQUERY')) {
+            define('NGG_FIX_JQUERY', TRUE);
+        }
     }
 
 	/**

@@ -199,6 +199,11 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.57.1 - 03.06.2013 =
+* Fixed:   Reset jQuery to WP defaults when modified by a third-party
+* Fixed:   Compatibility with WP jQuery Lightbox plugin
+* Fixed:   Compatibility with Peekaboo theme
+
 = V2.0.57 - 03.05.2013 =
 * NEW:     Re-introduced the Reset button
 * NEW:     Tooltip added for Page Link to functionality

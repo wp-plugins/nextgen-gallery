@@ -80,9 +80,29 @@ class M_Third_Party_Compat extends C_Base_Module
         add_filter('headway_gzip', array(&$this, 'headway_gzip'), (PHP_INT_MAX - 1));
         add_filter('get_translatable_documents', array(&$this, 'wpml_translatable_documents'));
         add_filter('the_content', array(&$this, 'check_weaverii'), -(PHP_INT_MAX-2));
+        add_action('wp', array(&$this, 'check_for_jquery_lightbox'));
 
         // TODO: Only needed for NGG Pro 1.0.10 and lower
         add_action('the_post', array(&$this, 'add_ngg_pro_page_parameter'));
+    }
+
+    function check_for_jquery_lightbox()
+    {
+        // Fix for jQuery Lightbox: http://wordpress.org/plugins/wp-jquery-lightbox/
+        // jQuery Lightbox tries to modify the content of a post, but it does so before we modify
+        // the content, and therefore it's modifications have no effect on our galleries
+        if (function_exists('jqlb_autoexpand_rel_wlightbox')) {
+            $settings = C_NextGen_Settings::get_instance();
+
+            // First, we make it appear that NGG has no lightbox effect enabled. That way
+            // we don't any lightbox resources
+            unset($settings->thumbEffect);
+
+            // We would normally just let the third-party plugin do it's thing, but it's regex doesn't
+            // seem to work on our <a> tags (perhaps because they span multiple of lines or have data attributes)
+            // So instead, we just do what the third-party plugin wants - add the rel attribute
+            $settings->thumbCode="rel='lightbox[%POST_ID%]'";
+        }
     }
 
     /**

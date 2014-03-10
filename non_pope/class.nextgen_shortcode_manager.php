@@ -101,7 +101,10 @@ class C_NextGen_Shortcode_Manager
 	{
         $this->_runlevel--;
 		$this->activate_all();
-		return do_shortcode($content);
+		$content = do_shortcode($content);
+        $content = apply_filters('ngg_content', $content);
+
+        return $content;
 	}
 
 	/**
