@@ -427,7 +427,7 @@ class Mixin_CustomPost_DataMapper_Driver extends Mixin
 	 * @param  string $sql optionally run the specified query
 	 * @return array
 	 */
-	function run_query($sql=FALSE, $model=FALSE)
+	function run_query($sql=FALSE, $model=FALSE, $convert_to_entities=TRUE)
 	{
 		$retval = array();
 
@@ -442,9 +442,10 @@ class Mixin_CustomPost_DataMapper_Driver extends Mixin
 		if (isset($this->object->debug)) $this->object->_query_args['debug'] = TRUE;
 		$query->query_vars = $this->object->_query_args;
 		add_action('pre_get_posts', array(&$this, 'set_query_args'), PHP_INT_MAX-1, 1);
-		foreach ($query->get_posts() as $row) {
+        if ($convert_to_entities) foreach ($query->get_posts() as $row) {
 			$retval[] = $this->object->convert_post_to_entity($row, $model);
 		}
+        else $retval = $query->get_posts();
 		remove_action('pre_get_posts', array(&$this, 'set_query_args'), PHP_INT_MAX-1, 1);
 
 		return $retval;
@@ -491,19 +492,10 @@ class Mixin_CustomPost_DataMapper_Driver extends Mixin
 	 */
 	function count()
 	{
-		$retval = 0;
+        $this->object->select($this->object->get_primary_key_column());
+		$retval = $this->object->run_query(FALSE, FALSE, FALSE);
 
-		global $wpdb;
-		$key = $this->object->get_primary_key_column();
-		$sql = $wpdb->prepare(
-			"SELECT COUNT({$key}) FROM {$wpdb->posts} WHERE post_type = %s",
-			$this->object->get_object_name()
-		);
-		$results = $this->object->run_query($sql);
-		if ($results && isset($results[0]->$key))
-			$retval = (int)$results[0]->$key;
-
-		return $retval;
+		return count($retval);
 	}
 
 

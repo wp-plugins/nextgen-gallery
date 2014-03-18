@@ -4,7 +4,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 /**
  * Plugin Name: NextGEN Gallery by Photocrati
  * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 9 million downloads.
- * Version: 2.0.58
+ * Version: 2.0.59
  * Author: Photocrati Media
  * Plugin URI: http://www.nextgen-gallery.com
  * Author URI: http://www.photocrati.com
@@ -261,13 +261,6 @@ class C_NextGEN_Bootstrap
             add_action('wp_print_scripts', array(&$this, 'fix_jquery'));
         }
 
-        // We require a minimum of jQuery 1.11.0 for IE11, due to a problem with interframe communication
-        $version = get_bloginfo('version');
-        if (version_compare($version, '3.9') == -1) {
-            add_action('admin_print_scripts', array(&$this, 'custom_jquery_prep'), 1);
-            add_action('admin_print_scripts', array(&$this, 'custom_jquery_install'), PHP_INT_MAX-1);
-        }
-
 		// If the selected stylesheet is using an unsafe path, then notify the user
 		if (C_NextGen_Style_Manager::get_instance()->is_directory_unsafe()) {
 			add_action('all_admin_notices', array(&$this, 'display_stylesheet_notice'));
@@ -337,44 +330,35 @@ class C_NextGEN_Bootstrap
         global $wp_scripts;
 
         // Determine which version of jQuery to include
-        $src     = '/wp-includes/js/jquery/jquery.js';
+        $src = '/wp-includes/js/jquery/jquery.js';
 
         // Ensure that jQuery is always set to the default
         if (isset($wp_scripts->registered['jquery'])) {
             $jquery = $wp_scripts->registered['jquery'];
-            $jquery->src = FALSE;
-            if (array_search('jquery-core', $jquery->deps) === FALSE) {
-                $jquery->deps[] = 'jquery-core';
+
+            // There's an exception to the rule. We'll allow the same
+            // version of jQuery as included with WP to be fetched from
+            // Google AJAX libraries, as we have a systematic means of verifying
+            // that won't cause any troubles
+            $version = preg_quote($jquery->ver, '#');
+            if (!preg_match("#ajax\\.googleapis\\.com/ajax/libs/jquery/{$version}/jquery\\.min\\.js#", $jquery->src)) {
+                $jquery->src = FALSE;
+                if (array_search('jquery-core', $jquery->deps) === FALSE) {
+                    $jquery->deps[] = 'jquery-core';
+                }
+                if (array_search('jquery-migrate', $jquery->deps) === FALSE) {
+                    $jquery->deps[] = 'jquery-migrate';
+                }
             }
         }
 
+        // Ensure that jquery-core is used, as WP intended
         if (isset($wp_scripts->registered['jquery-core'])) {
             $wp_scripts->registered['jquery-core']->src = $src;
         }
 
 		wp_enqueue_script('jquery');
 	}
-
-    function custom_jquery_prep()
-    {
-        ob_start();
-    }
-
-    function custom_jquery_install()
-    {
-        $scripts = ob_get_clean();
-        if (strpos($scripts, "jquery-core") === FALSE) {
-            if (preg_match("#<script.*jquery.js.*</script>#", $scripts, $match)) {
-                $jquery = $match[0];
-                if (preg_match("#<script.*load-scripts\\.php.*</script>#", $scripts, $match)) {
-                    $load_scripts = $match[0];
-                    $scripts = str_replace($load_scripts, "{$jquery}\n{$load_scripts}", $scripts);
-                }
-            }
-
-        }
-        echo $scripts;
-    }
 
 	/**
 	 * Displays a notice to the user that the current stylesheet location is unsafe
@@ -454,8 +438,7 @@ class C_NextGEN_Bootstrap
 		define('NGG_PRODUCT_URL', path_join(str_replace("\\", '/', NGG_PLUGIN_URL), 'products'));
 		define('NGG_MODULE_URL', path_join(str_replace("\\", '/', NGG_PRODUCT_URL), 'photocrati_nextgen/modules'));
 		define('NGG_PLUGIN_STARTED_AT', microtime());
-		define('NGG_PLUGIN_VERSION', '2.0.58');
-        define('NGG_JQUERY_VERSION', '1.11.0');
+		define('NGG_PLUGIN_VERSION', '2.0.59');
 
 		if (!defined('NGG_HIDE_STRICT_ERRORS')) {
 			define('NGG_HIDE_STRICT_ERRORS', TRUE);

@@ -62,8 +62,16 @@ if (!class_exists('C_Photocrati_Installer'))
         static function can_do_upgrade()
         {
             $proceed = FALSE;
-            if (!get_option('ngg_doing_upgrade', FALSE)) {
-                update_option('ngg_doing_upgrade', TRUE);
+
+            // Proceed if no other process has started the installer routines
+            if (!($doing_upgrade = get_option('ngg_doing_upgrade', FALSE))) {
+                update_option('ngg_doing_upgrade', time());
+                $proceed = TRUE;
+            }
+
+            // Or, force proceeding if we have a stale ngg_doing_upgrade record
+            elseif ($doing_upgrade === TRUE OR time() - $doing_upgrade > 120) {
+                update_option('ngg_doing_upgrade', time());
                 $proceed = TRUE;
             }
             return $proceed;
@@ -146,7 +154,7 @@ if (!class_exists('C_Photocrati_Installer'))
 				}
 
 				// Update the module list
-				$local_settings->set('pope_module_list', $current_module_list);
+                update_option('pope_module_list', $current_module_list);
 
                 // NOTE & TODO: if the above section that declares $global_settings_to_keep is removed this should also
                 // Since a hard-reset of the settings was forced we must again re-apply our previously saved values
@@ -178,12 +186,17 @@ if (!class_exists('C_Photocrati_Installer'))
 
         static function _get_last_module_list($reset=FALSE)
         {
-            $retval = array();
-            $local_settings     = C_NextGen_Settings::get_instance();
-            $last_module_list = $local_settings->get('pope_module_list');
-            if (is_array($last_module_list) AND !$reset) foreach ($last_module_list as $key => $value) {
-                $retval[] = $value;
+            // Return empty array to reset
+            if ($reset) return array();
+
+            // First try getting the list from a single WP option, "pope_module_list"
+            $retval = get_option('pope_module_list', array());
+            if (!$retval) {
+                $local_settings     = C_NextGen_Settings::get_instance();
+                $retval = $local_settings->get('pope_module_list', array());
+                $local_settings->delete('pope_module_list');
             }
+
             return $retval;
         }
 

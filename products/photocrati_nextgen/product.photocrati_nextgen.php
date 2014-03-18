@@ -33,7 +33,6 @@ class P_Photocrati_NextGen extends C_Base_Product
 		'photocrati-attach_to_post',
 		'photocrati-nextgen_other_options',
 		'photocrati-nextgen_pro_upgrade',
-		'photocrati-jsconsole',
 		'photocrati-mediarss',
 		'photocrati-cache',
 		'photocrati-lightbox',

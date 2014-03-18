@@ -33,6 +33,8 @@ class C_NggLegacy_Installer
 
 	function uninstall($hard=FALSE)
 	{
+		include_once('admin/install.php');
+
 		delete_option('ngg_init_check');
 		delete_option('ngg_update_exists');
 		delete_option( 'ngg_options' );

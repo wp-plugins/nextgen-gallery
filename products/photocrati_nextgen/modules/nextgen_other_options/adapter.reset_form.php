@@ -31,9 +31,12 @@ class A_Reset_Form extends Mixin
         C_Photocrati_Cache::flush('all');
 
         // Uninstall the plugin
-		$installer = C_Photocrati_Installer::get_instance();
-        $settings  = C_NextGen_Settings::get_instance();
-		$installer->uninstall(NGG_PLUGIN_BASENAME);
+        $settings = C_NextGen_Settings::get_instance();
+
+        if (defined('NGG_PRO_PLUGIN_VERSION') || defined('NEXTGEN_GALLERY_PRO_VERSION'))
+		    C_Photocrati_Installer::uninstall('photocrati-nextgen-pro');
+
+		C_Photocrati_Installer::uninstall('photocrati-nextgen');
 
         // removes all ngg_options entry in wp_options
         $settings->reset();

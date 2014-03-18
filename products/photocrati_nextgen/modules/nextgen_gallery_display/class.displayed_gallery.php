@@ -665,7 +665,7 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
             }
         }
 				// Given maximum entity count can't be set, always use global setting to avoid confusion
-				$max = intval(C_Photocrati_Settings_Manager::get('maximum_entity_count', 500));
+                $max = intval(C_NextGen_Settings::get_instance()->get('maximum_entity_count', 500));
         if ($retval > $max) {
         	$retval = $max;
         }

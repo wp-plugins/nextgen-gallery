@@ -10,7 +10,8 @@ class A_WordPress_Router extends Mixin
 		// Set context to path if subdirectory install
 		$parts = parse_url($this->object->get_base_url(FALSE));
 		if (isset($parts['path'])) {
-			$this->object->context = array_shift(explode('/index.php', $parts['path']));
+            $parts = explode('/index.php', $parts['path']);
+			$this->object->context = array_shift($parts);
 		}
 
 

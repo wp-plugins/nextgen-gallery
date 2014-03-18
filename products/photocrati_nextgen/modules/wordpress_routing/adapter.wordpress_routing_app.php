@@ -36,7 +36,7 @@ class A_WordPress_Routing_App extends Mixin
         $original_url       = $generated_url;
         $generated_parts    = explode($settings->router_param_slug, $generated_url);
         $generated_url      = $generated_parts[0];
-        $ngg_parameters     = isset($generated_parts[1]) ? array_shift(explode('?', $generated_parts[1])) : '/';
+        $ngg_parameters     = isset($generated_parts[1]) ? @array_shift(explode('?', $generated_parts[1])) : '/';
         $post_permalink = get_permalink(isset($_REQUEST['p']) ? $_REQUEST['p'] : 0);
         if ($post_permalink == '/') $post_permalink = $base_url;
 

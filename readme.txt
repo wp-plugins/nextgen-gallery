@@ -199,7 +199,16 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
-= V2.0.58 - 03.06.2014 =
+= V2.0.59 - 03.18.2014 =
+* Changed: Separated pope_module_list from ngg_options record in options table
+* Fixed:   Removed code causing jQuery compatibility issues in WP Admin
+* Fixed:   Allow third-parties to override jQuery with Google's CDN
+* Fixed:   When resetting the 'jquery' handle, ensure that jquery-migrate is a dependency
+* Fixed:   Silenced many PHP warnings
+* Fixed:   Datamapper->count() not returning the correct count
+* Fixed:   Compatibility with Gravity Forms
+
+= V2.0.58 - 03.09.2014 =
 * Fixed:   Reset jQuery to WP defaults when modified by a third-party
 * Fixed:   Compatibility with WP jQuery Lightbox plugin
 * Fixed:   Compatibility with Peekaboo theme

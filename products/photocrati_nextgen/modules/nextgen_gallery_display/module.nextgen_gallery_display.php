@@ -2,8 +2,7 @@
 
 /***
 	{
-		Module: photocrati-nextgen_gallery_display,
-		Depends: { photocrati-simple_html_dom }
+		Module: photocrati-nextgen_gallery_display
 	}
 ***/
 
