@@ -199,6 +199,10 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.60 - 04.01.2014 =
+* Fixed:   Compatibility with WP 3.9
+* Fixed:   Exception thrown when using Reset button
+
 = V2.0.59 - 03.18.2014 =
 * Changed: Separated pope_module_list from ngg_options record in options table
 * Fixed:   Removed code causing jQuery compatibility issues in WP Admin

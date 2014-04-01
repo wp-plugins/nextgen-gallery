@@ -338,16 +338,6 @@ class Mixin_Fs_Instance_Methods extends Mixin
 	 */
 	function get_document_root()
 	{
-        if (empty($this->_document_root)) {
-            // TODO: If this function is being called before set_document_root
-            // is called, then we need to determine where that call is being made
-            // and ensure that doesn't happen
-            //
-            // In the interim most http servers provide DOCUMENT_ROOT
-            if (!empty($_SERVER['DOCUMENT_ROOT']))
-                $this->set_document_root($_SERVER['DOCUMENT_ROOT']);
-        }
-
 		return $this->_document_root;
 	}
 
@@ -358,6 +348,8 @@ class Mixin_Fs_Instance_Methods extends Mixin
 	 */
 	function set_document_root($value)
 	{
-		return ($this->_document_root = rtrim($value, "/\\"));
+        if ($value !== DIRECTORY_SEPARATOR)
+            $value = rtrim($value, "/\\");
+		return ($this->_document_root = $value);
 	}
 }

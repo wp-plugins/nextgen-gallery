@@ -49,7 +49,14 @@ class A_Reset_Form extends Mixin
         $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->posts} WHERE post_type = %s", 'lightbox_library'));
 
         // the installation will run on the next page load; so make our own request before reloading the browser
-        wp_remote_get(admin_url('plugins.php'));
+        wp_remote_get(
+            admin_url('plugins.php'),
+            array(
+                'timeout' => 180,
+                'blocking' => true,
+                'sslverify' => false
+            )
+        );
 
         header('Location: ' . $_SERVER['REQUEST_URI']);
         throw new E_Clean_Exit();
