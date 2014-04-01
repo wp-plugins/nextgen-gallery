@@ -1,7 +1,7 @@
 NextGEN Gallery
 by Photocrati Media
 
-= V2.0.60 - 04.01.2014 =
+= V2.0.61 - 04.01.2014 =
 * Fixed:   Compatibility with WP 3.9
 * Fixed:   Exception thrown when using Reset button
 

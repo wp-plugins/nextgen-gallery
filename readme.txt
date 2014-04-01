@@ -199,7 +199,7 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
-= V2.0.60 - 04.01.2014 =
+= V2.0.61 - 04.01.2014 =
 * Fixed:   Compatibility with WP 3.9
 * Fixed:   Exception thrown when using Reset button
 

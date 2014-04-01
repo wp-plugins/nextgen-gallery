@@ -269,8 +269,15 @@ class M_Attach_To_Post extends C_Base_Module
 	 */
 	function add_attach_to_post_tinymce_plugin($plugins)
 	{
-		$router = $this->get_registry()->get_utility('I_Router');
-		$plugins[$this->attach_to_post_tinymce_plugin] = $router->get_static_url('photocrati-attach_to_post#ngg_attach_to_post_tinymce_plugin.js');
+        global $wp_version;
+        $router = $this->get_registry()->get_utility('I_Router');
+
+        if ($wp_version >= 3.9)
+            $file = $router->get_static_url('photocrati-attach_to_post#ngg_attach_to_post_tinymce_plugin.js');
+        else
+            $file = $router->get_static_url('photocrati-attach_to_post#ngg_attach_to_post_tinymce_plugin_wp38_compat.js');
+
+		$plugins[$this->attach_to_post_tinymce_plugin] = $file;
 		return $plugins;
 	}
 

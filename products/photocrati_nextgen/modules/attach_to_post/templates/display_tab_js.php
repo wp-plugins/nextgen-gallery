@@ -69,7 +69,8 @@ jQuery(function($){
 
 		text_field: 'title',
 
-        initialize: function(){
+        initialize: function(options) {
+            this.options = options || {};
 			_.each(this.options, function(value, key){
 				this[key] = value;
 			}, this);
@@ -145,7 +146,8 @@ jQuery(function($){
 
             model: null,
 
-            initialize: function(){
+            initialize: function(options) {
+                this.options = options || {};
 				_.each(this.options, function(value, key){
 					this[key] = value;
 				}, this);
@@ -170,7 +172,8 @@ jQuery(function($){
 	Ngg.Views.Chosen								= Backbone.View.extend({
 		tagName: 'span',
 
-		initialize: function(){
+		initialize: function(options) {
+            this.options = options || {};
 			this.collection = this.options.collection;
 			if (!this.options.multiple) this.options.include_blank = true;
 			this.select_tag = new Ngg.Views.SelectTag(this.options);
@@ -920,7 +923,8 @@ jQuery(function($){
 				this.entities.reset();
 			},
 
-			initialize: function(){
+			initialize: function(options) {
+                this.options = options || {};
 				_.each(this.options, function(value, key){
 					this[key] = value;
 				}, this);
@@ -938,7 +942,8 @@ jQuery(function($){
 		ExcludeButtons: Backbone.View.extend({
 			className: 'header_row',
 
-			initialize: function(){
+			initialize: function(options) {
+                this.options = options || {};
 				_.each(this.options, function(value, key){
 					this[key] = value;
 				}, this);
@@ -974,7 +979,8 @@ jQuery(function($){
 					click: 'clicked'
 				},
 
-				initialize: function(){
+				initialize: function(options) {
+                    this.options = options || {};
 					_.each(this.options, function(value, key){
 						this[key] = value;
 					}, this);
@@ -997,7 +1003,8 @@ jQuery(function($){
 		SortButtons: Backbone.View.extend({
 			className: 'header_row',
 
-			initialize: 		function(){
+			initialize: function(options) {
+                this.options = options || {};
 				_.each(this.options, function(value, key){
 					this[key] = value;
 				}, this);
@@ -1137,7 +1144,8 @@ jQuery(function($){
 			Button: Backbone.View.extend({
 				tagName: 'a',
 
-				initialize: function(){
+				initialize: function(options) {
+                    this.options = options || {};
 					_.each(this.options, function(value, key){
 						this[key] = value;
 					}, this);
@@ -1172,7 +1180,8 @@ jQuery(function($){
 				drop: 'item_dropped'
 			},
 
-			initialize: function(){
+			initialize: function(options) {
+                this.options = options || {};
 				_.each(this.options, function(value, key){
 					this[key] = value;
 				}, this);
@@ -1228,7 +1237,8 @@ jQuery(function($){
 					this.model.set('exclude', e.target.checked);
 				},
 
-				initialize: function(){
+				initialize: function(options) {
+                    this.options = options || {};
 					_.each(this.options, function(value, key){
 						this[key] = value;
 					}, this);
