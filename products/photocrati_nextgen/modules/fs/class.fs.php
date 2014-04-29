@@ -348,8 +348,13 @@ class Mixin_Fs_Instance_Methods extends Mixin
 	 */
 	function set_document_root($value)
 	{
+        // some web servers like home.pl and PhpStorm put the document root in "/" or (even weirder) "//"
+        if ($value == DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR)
+            $value = DIRECTORY_SEPARATOR;
+
         if ($value !== DIRECTORY_SEPARATOR)
             $value = rtrim($value, "/\\");
+
 		return ($this->_document_root = $value);
 	}
 }

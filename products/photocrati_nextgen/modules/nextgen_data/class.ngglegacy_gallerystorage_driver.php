@@ -568,7 +568,8 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
 				// Get the paths to fullsize and thumbnail files
 				$abspaths = array(
                     $this->object->get_full_abspath($image),
-                    $this->object->get_thumb_abspath($image)
+                    $this->object->get_thumb_abspath($image),
+                    $this->object->get_backup_abspath($image)
                 );
 
 				if (isset($image->meta_data))

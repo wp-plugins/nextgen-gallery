@@ -38,7 +38,7 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		          }
 		          else {
 		              $error = TRUE;
-		              $retval['error'] = "No gallery name specified";
+		              $retval['error'] = __("No gallery name specified", 'nggallery');
 		          }
 		      }
 
@@ -52,13 +52,13 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		                  if (($results = $storage->upload_zip($gallery_id))) {
 		                      $retval = $results;
 		                  }
-		                  else $retval['error'] = 'Failed to extract images from ZIP';
+		                  else $retval['error'] = __('Failed to extract images from ZIP', 'nggallery');
 		              }
 		              elseif (($image = $storage->upload_image($gallery_id))) {
 		                  $retval['image_ids'] = array($image->id());
 		              }
 		              else {
-		                  $retval['error'] = 'Image generation failed';
+		                  $retval['error'] = __('Image generation failed', 'nggallery');
 		                  $error = TRUE;
 		              }
 		          }
@@ -67,14 +67,14 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		              $error = TRUE;
 		          }
 		          catch (Exception $ex) {
-		              $retval['error']            = "An unexpected error occured.";
+		              $retval['error']            = __("An unexpected error occured.", 'nggallery');
 		              $retval['error_details']    = $ex->getMessage();
 		              $error = TRUE;
 		          }
 		      }
 		}
 		else {
-          $retval['error'] = "No permissions to upload images. Try refreshing the page or ensuring that your user account has sufficient roles/privileges.";
+          $retval['error'] = __("No permissions to upload images. Try refreshing the page or ensuring that your user account has sufficient roles/privileges.", 'nggallery');
           $error = TRUE;
 		}
 
@@ -94,7 +94,10 @@ class A_NextGen_AddGallery_Ajax extends Mixin
         {
 		      if (($dir = urldecode($this->param('dir')))) {
 		          $fs = $this->get_registry()->get_utility('I_Fs');
-		          $root = NGG_IMPORT_ROOT;
+                  if (is_multisite())
+                      $root = $this->object->get_registry()->get_utility('I_Gallery_Storage')->get_upload_abspath();
+                  else
+                      $root = NGG_IMPORT_ROOT;
 
 		          $browse_path = $fs->join_paths($root, $dir);
 		          if (@file_exists($browse_path)) {
@@ -114,15 +117,15 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		              $retval['html'] = implode("\n", $html);
 		          }
 		          else {
-		              $retval['error'] = "Directory does not exist.";
+		              $retval['error'] = __("Directory does not exist.", 'nggallery');
 		          }
 		      }
 		      else {
-		          $retval['error'] = "No directory specified.";
+		          $retval['error'] = __("No directory specified.", 'nggallery');
 		      }
 	      }
         else {
-          $retval['error'] = "No permissions to browse folders. Try refreshing the page or ensuring that your user account has sufficient roles/privileges.";
+          $retval['error'] = __("No permissions to browse folders. Try refreshing the page or ensuring that your user account has sufficient roles/privileges.", 'nggallery');
         }
 
         return $retval;
@@ -139,24 +142,28 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		          $storage = C_Gallery_Storage::get_instance();
 				  $fs	   = C_Fs::get_instance();
 		          try {
-					$keep_files = $this->param('keep_location') == 'on';
-		              $retval = $storage->import_gallery_from_fs($fs->join_paths(NGG_IMPORT_ROOT, $folder), false, !$keep_files);
+                      $keep_files = $this->param('keep_location') == 'on';
+                      if (is_multisite())
+                          $root = $this->object->get_registry()->get_utility('I_Gallery_Storage')->get_upload_abspath();
+                      else
+                          $root = NGG_IMPORT_ROOT;
+		              $retval = $storage->import_gallery_from_fs($fs->join_paths($root, $folder), false, !$keep_files);
 		              if (!$retval) $retval = array('error' => "Could not import folder. No images found.");
 		          }
 				  catch (E_NggErrorException $ex) {
 					  $retval['error'] = $ex->getMessage();
 				  }
 				  catch (Exception $ex) {
-					  $retval['error']            = "An unexpected error occured.";
+					  $retval['error']            = __("An unexpected error occured.", 'nggallery');
 					  $retval['error_details']    = $ex->getMessage();
 				  }
 		      }
 		      else {
-		          $retval['error'] = "No folder specified";
+		          $retval['error'] = __("No folder specified", 'nggallery');
 		      }
         }
         else {
-          $retval['error'] = "No permissions to import folders. Try refreshing the page or ensuring that your user account has sufficient roles/privileges.";
+          $retval['error'] = __("No permissions to import folders. Try refreshing the page or ensuring that your user account has sufficient roles/privileges.", 'nggallery');
         }
 
         return $retval;
