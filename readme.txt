@@ -199,6 +199,9 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.65 - 05.04.2014 =
+* Secured: Limit uploads to images and zips
+
 = V2.0.63 - 04.29.2014 =
 * NEW:     Translation ready
 * NEW: 	   Including German translation by Roland Stumpp

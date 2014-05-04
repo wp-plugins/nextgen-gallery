@@ -15,16 +15,17 @@ class A_NextGen_AddGallery_Ajax extends Mixin
     {
         $retval = array();
 
-        $gallery_id     = intval($this->param('gallery_id'));
-        $gallery_name   = urldecode($this->param('gallery_name'));
-        $error          = FALSE;
+        $created_gallery    = FALSE;
+        $gallery_id         = intval($this->param('gallery_id'));
+        $gallery_name       = urldecode($this->param('gallery_name'));
+        $gallery_mapper     = $this->object->get_registry()->get_utility('I_Gallery_Mapper');
+        $error              = FALSE;
         
         if ($this->validate_ajax_request('nextgen_upload_image'))
         {
 		      // We need to create a gallery
 		      if ($gallery_id == 0) {
 		          if (strlen($gallery_name) > 0) {
-		              $gallery_mapper = $this->object->get_registry()->get_utility('I_Gallery_Mapper');
 		              $gallery = $gallery_mapper->create(array(
 		                  'title' =>  $gallery_name
 		              ));
@@ -33,7 +34,8 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		                  $error = TRUE;
 		              }
 		              else {
-		                  $gallery_id = $gallery->id();
+                          $created_gallery  = TRUE;
+		                  $gallery_id       = $gallery->id();
 		              }
 		          }
 		          else {
@@ -65,6 +67,7 @@ class A_NextGen_AddGallery_Ajax extends Mixin
 		          catch (E_NggErrorException $ex) {
 		              $retval['error'] = $ex->getMessage();
 		              $error = TRUE;
+                      if ($created_gallery) $gallery_mapper->destroy($gallery_id);
 		          }
 		          catch (Exception $ex) {
 		              $retval['error']            = __("An unexpected error occured.", 'nggallery');

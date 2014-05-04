@@ -462,6 +462,38 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
 		return $this->object->copy_images($images, $gallery, $db, TRUE);
 	}
 
+    function is_image_file()
+    {
+        $retval = FALSE;
+
+        if ((isset($_FILES['file']) && $_FILES['file']['error'] == 0)) {
+            $file_info = $_FILES['file'];
+
+            if (isset($file_info['type'])) {
+                $type = strtolower($file_info['type']);
+                error_log("Attempted to upload {$type}.");
+                $valid_types = array(
+                    'image/gif',
+                    'image/jpg',
+                    'image/jpeg',
+                    'image/pjpeg',
+                    'image/png',
+                );
+                $valid_regex = '/\.(jpg|jpeg|gif|png)$/';
+
+                // Is this a valid type?
+                if (in_array($type, $valid_types)) $retval = TRUE;
+
+                // Is this a valid extension?
+                else if (strpos($type, 'octem-stream') !== FALSE && preg_match($valid_regex, $type)) {
+                    $retval = TRUE;
+                }
+            }
+        }
+
+        return $retval;
+    }
+
 
     function is_zip()
     {
