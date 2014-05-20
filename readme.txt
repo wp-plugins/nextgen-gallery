@@ -199,6 +199,9 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.66 - 05.20.2014 =
+* Secured: Check mime type of image files using a variety of mechanisms
+
 = V2.0.65 - 05.04.2014 =
 * Secured: Limit uploads to images and zips
 
