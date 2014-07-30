@@ -59,18 +59,22 @@ class M_Ajax extends C_Base_Module
         $settings = C_NextGen_Settings::get_instance();
         $router   = $this->get_registry()->get_utility('I_Router');
 
-        $site_url = $router->get_base_url(TRUE);
-        $home_url = $router->get_base_url();
-
         wp_register_script('photocrati_ajax', $settings->ajax_js_url);
         wp_enqueue_script('photocrati_ajax');
 
         $vars = array(
             'url' => $router->get_url($settings->ajax_slug, FALSE),
-            'wp_site_url' => $home_url,
-            'wp_site_static_url' => str_replace('/index.php', '', str_replace('/index.php', '', $site_url))
+            'wp_home_url' => $router->get_base_url('home'),
+            'wp_site_url' => $router->get_base_url('site'),
+            'wp_root_url' => $router->get_base_url('root'),
+            'wp_plugins_url' => $router->get_base_url('plugins'),
+            'wp_content_url' => $router->get_base_url('content'),
+            'wp_includes_url' => includes_url()
         );
         wp_localize_script('photocrati_ajax', 'photocrati_ajax', $vars);
+
+        if (defined('NGG_SKIP_LOAD_SCRIPTS') && NGG_SKIP_LOAD_SCRIPTS)
+            return;
 
 		wp_register_script('persist-js', 	$router->get_static_url('photocrati-ajax#persist.js'));
 		wp_register_script('store-js',	 	$router->get_static_url('photocrati-ajax#store.js'));

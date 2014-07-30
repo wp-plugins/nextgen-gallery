@@ -69,17 +69,52 @@ class A_WordPress_Router extends Mixin
 	}
 
 
-	function get_base_url($site_url = FALSE)
-	{
-        $retval = NULL;
-        if ($site_url)
-            $retval = $this->_add_index_dot_php_to_url(site_url());
-        else
-            $retval = $this->_add_index_dot_php_to_url(home_url());
+    function get_base_url($site_url = FALSE)
+    {
+        $retval    = NULL;
+        $add_index = TRUE;
 
-		if ($this->object->is_https())
-			$retval = preg_replace('/^http:\\/\\//i', 'https://', $retval, 1);
+        if ($site_url === TRUE || $site_url === 'site')
+        {
+            $retval = site_url();
+        }
+        else if ($site_url === FALSE || $site_url === 'home') {
+            $retval = home_url();
+        }
+        else if ($site_url === 'plugins') {
+            $retval = plugins_url();
+            $add_index = FALSE;
+        }
+        else if ($site_url === 'content') {
+            $retval = content_url();
+            $add_index = FALSE;
+        }
+        else if ($site_url === 'root') {
+            $retval = get_option('home');
+            if (is_ssl())
+                $scheme = 'https';
+            else
+                $scheme = parse_url($retval, PHP_URL_SCHEME);
+            $retval = set_url_scheme($retval, $scheme);
+        }
+        else if ($site_url === 'gallery') {
+            $add_index = FALSE;
+            $root_type = defined('NGG_GALLERY_ROOT_TYPE') ? NGG_GALLERY_ROOT_TYPE : 'site';
+            if ($root_type === 'content')
+                $retval = content_url();
+            else
+                $retval = site_url();
+        }
+        else {
+            $retval = home_url();
+        }
 
-		return $retval;
-	}
+        if ($add_index)
+            $retval = $this->_add_index_dot_php_to_url($retval);
+
+        if ($this->object->is_https())
+            $retval = preg_replace('/^http:\\/\\//i', 'https://', $retval, 1);
+
+        return $retval;
+    }
 }

@@ -169,14 +169,14 @@ class M_Attach_To_Post extends C_Base_Module
 		// To match ATP entries we compare the stored url against a generic path
 		// We must check HTTP and HTTPS as well as permalink and non-permalink forms
 		$preview_url = parse_url($router->join_paths(
-			$router->remove_url_segment('index.php', $router->get_base_url()),
+			$router->remove_url_segment('index.php', $router->get_base_url('root')),
 			'/nextgen-attach_to_post/preview'
 		));
         $router->debug = TRUE;
 		$preview_url = preg_quote($preview_url['host'] . $preview_url['path'], '#');
 
 		$alt_preview_url = parse_url($router->join_paths(
-			$router->remove_url_segment('index.php', $router->get_base_url()),
+			$router->remove_url_segment('index.php', $router->get_base_url('root')),
 			'index.php/nextgen-attach_to_post/preview'
 		));
 		$alt_preview_url = preg_quote($alt_preview_url['host'] . $alt_preview_url['path'], '#');
@@ -246,6 +246,7 @@ class M_Attach_To_Post extends C_Base_Module
             if (get_user_option('rich_editing') == 'true') {
                 add_filter('mce_buttons', array(&$this, 'add_attach_to_post_button'));
                 add_filter('mce_external_plugins', array(&$this, 'add_attach_to_post_tinymce_plugin'));
+                add_filter('wp_mce_translation', array($this, 'add_attach_to_post_tinymce_i18n'));
             }
         }
 	}
@@ -286,6 +287,18 @@ class M_Attach_To_Post extends C_Base_Module
 		$plugins[$this->attach_to_post_tinymce_plugin] = $file;
 		return $plugins;
 	}
+
+
+    /**
+     * Adds the Attach To Post TinyMCE i18n strings
+     * @param $mce_translation
+     * @return mixed
+     */
+    function add_attach_to_post_tinymce_i18n($mce_translation)
+    {
+        $mce_translation['ngg_attach_to_post.title'] = __('Attach NextGEN Gallery to Post', 'nggallery');
+        return $mce_translation;
+    }
 
 
 	/**

@@ -199,6 +199,40 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.66.16 - 07.30.2014 =
+* NEW:     Added new "limit" setting to Slideshow widgets
+* NEW:     Added a "ngg_routes" action for other plugins to hook into to provide new routes
+* NEW:     Added NGG_SKIP_LOAD_SCRIPTS constant, which existed in 1.9.x
+* NEW:     Added NGG_GALLERY_ROOT_TYPE constant. Set to 'content' to load galleries from the content_dir / content_url
+* NEW: 	   Bosnian (bs_BA) language thanks to Nevesin Srdoc
+* NEW: 	   Chinese (zh_CN) language thanks to Vahi Chen, http://www.vahichen.com
+* NEW: 	   Dutch (nl_NL) language thanks to Taeke Kooiker
+* NEW: 	   Filipino (fil) language thanks to Find Hold, http://www.findhold.dk/
+* NEW: 	   French (fr_FR) language thanks to Jean-Yves Dumaine & Le Blog de Lise
+* NEW: 	   Hungarian (hu_HU) language thanks to Zoltán Varanka
+* NEW: 	   Italian (it_IT) language thanks to Jacopo Caggiano, @tizz
+* NEW: 	   Russian (ru_RU) language thanks to SnakeD3
+* NEW: 	   Spanish (es_ES) language thanks to Andrew Kurtis at WebHostingHub
+* Changed: Updated Czech language thanks to Separatista; additional thanks to Martin Krizek for the original translation who was mistakenly unaccredited
+* Changed: "Upgrade to Pro" page has new design, advertises for NextGEN Plus
+* Changed: Basic Albums templates now given the image counter <p> element the class 'ngg-album-gallery-image-counter' (by user request)
+* Changed: Gallery widgets now apply height:auto to their element; fixes compatibility with some themes
+* Changed: Random galleries should be substantially faster now (1000% or more for large image tables)
+* Fixed:   Complete WPML compatibility
+* Fixed:   Disable Buddypress 'bp_do_redirect_canonical' filter as it ruins our routing system
+* Fixed:   Use plugins_url() content_url() when appropriate rather than just site_url() and home_url()
+* Fixed:   WP Cron job will remove not only displayed gallery transients, but rendering transients as well
+* Fixed:   NGG_RENDERING_CACHE_TTL constant is honored properly
+* Fixed:   If using the caption template for Basic Thumbnails, only show the image caption when appropriate
+* Fixed:   If NGG is uninstalled, so are it's custom capabilities
+* Fixed:   Translate "Attach NextGEN Gallery to Post" ATP icon alt text when translations are active
+* Fixed:   Multisite gallery path tooltip gave a wrong default setting
+* Fixed:   Flush 'all' caches when pope_module_list setting changes
+* Fixed:   Don't enqueue related images css in the admin
+* Fixed:   Basic Slideshows fixes WP creating extraneous <p> element above the slideshow display
+* Fixed:   Basic Singlepic will now display images marked 'excluded' in the admin
+* Fixed:   Admin pages can now update when the "Save" button text has been translated
+
 = V2.0.66 - 05.20.2014 =
 * Secured: Check mime type of image files using a variety of mechanisms
 

@@ -4,7 +4,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 /**
  * Plugin Name: NextGEN Gallery by Photocrati
  * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 9 million downloads.
- * Version: 2.0.66
+ * Version: 2.0.66.16
  * Author: Photocrati Media
  * Plugin URI: http://www.nextgen-gallery.com
  * Author URI: http://www.photocrati.com
@@ -299,7 +299,7 @@ class C_NextGEN_Bootstrap
 	 */
 	function delete_expired_transients()
 	{
-		C_Photocrati_Cache::flush('displayed_galleries', TRUE);
+		C_Photocrati_Cache::flush('all', TRUE);
 	}
 
 	/**
@@ -392,7 +392,8 @@ class C_NextGEN_Bootstrap
 	function route()
 	{
 		$this->_load_pope();
-		$router = $this->_registry->get_utility('I_Router');
+        $router = C_Router::get_instance();
+        do_action_ref_array('ngg_routes', array(&$router));
 		if (!$router->serve_request() && $router->has_parameter_segments()) {
 			return $router->passthru();
 		}
@@ -430,7 +431,7 @@ class C_NextGEN_Bootstrap
 		define('NGG_PRODUCT_URL', path_join(str_replace("\\", '/', NGG_PLUGIN_URL), 'products'));
 		define('NGG_MODULE_URL', path_join(str_replace("\\", '/', NGG_PRODUCT_URL), 'photocrati_nextgen/modules'));
 		define('NGG_PLUGIN_STARTED_AT', microtime());
-		define('NGG_PLUGIN_VERSION', '2.0.66');
+		define('NGG_PLUGIN_VERSION', '2.0.66.16');
 
 		if (!defined('NGG_HIDE_STRICT_ERRORS')) {
 			define('NGG_HIDE_STRICT_ERRORS', TRUE);

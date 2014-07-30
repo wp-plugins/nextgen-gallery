@@ -240,7 +240,7 @@ class Mixin_Mvc_View_Instance_Methods extends Mixin
        $path = $path . '.php';
 
 	   $retval = $fs->join_paths(
-		 $fs->get_document_root(),
+		 $fs->get_document_root('plugins'),
 		 $this->object->get_registry()->get_module_dir($module),
 		 $settings->mvc_template_dirname,
 		 $path

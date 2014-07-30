@@ -83,13 +83,47 @@ class M_Third_Party_Compat extends C_Base_Module
         add_action('plugins_loaded', array(&$this, 'wpml'), PHP_INT_MAX);
         add_action('plugins_loaded', array(&$this, 'wpml_translation_management'), PHP_INT_MAX);
 
+        add_filter('home_url', array(&$this, 'wpml_home_url'), -1, 4);
         add_filter('headway_gzip', array(&$this, 'headway_gzip'), (PHP_INT_MAX - 1));
         add_filter('ckeditor_external_plugins', array(&$this, 'ckeditor_plugins'), 11);
+        add_filter('bp_do_redirect_canonical', '__return_false');
         add_filter('the_content', array(&$this, 'check_weaverii'), -(PHP_INT_MAX-2));
         add_action('wp', array(&$this, 'check_for_jquery_lightbox'));
 
         // TODO: Only needed for NGG Pro 1.0.10 and lower
         add_action('the_post', array(&$this, 'add_ngg_pro_page_parameter'));
+    }
+
+    /**
+     * WPML's home_url filter causes a conflict with NextGEN's url generation, but doesn't appear to be necessary for
+     * WPML to function. This is necessary until we properly support WP_CONTENT_URL & WP_PLUGINS_URL.
+     *
+     * @param $url
+     * @param $path
+     * @param $orig_scheme
+     * @param $blog_id
+     * @return mixed
+     */
+    function wpml_home_url($url, $path, $orig_scheme, $blog_id)
+    {
+        if (!class_exists('SitePress'))
+            return $url;
+
+        global $wp_filter;
+
+        if (empty($wp_filter['home_url'][1]))
+            return $url;
+
+        foreach ($wp_filter['home_url'][1] as $id => $filter) {
+            if (!strpos($id, 'home_url'))
+                continue;
+            $object = $filter['function'][0];
+            if (is_object($object) && get_class($object) != 'SitePress')
+                continue;
+            remove_filter('home_url', array($object, 'home_url'), 1);
+        }
+
+        return $url;
     }
 
     /**

@@ -24,8 +24,9 @@ class A_MVC_Fs extends Mixin
 			$path
 		);
 
-		// Get the relative path, if asked
-		if ($relative) $path = str_replace($fs->get_document_root(), '', $path);
+		// Get the relative path, if asked. Skip when docroot=/ lest we generate url like
+        // wp-contentpluginsnextgen-galleryproducts..
+		if ($relative) $path = str_replace($fs->get_document_root('plugins'), '', $path);
 
 		return $path;
 	}

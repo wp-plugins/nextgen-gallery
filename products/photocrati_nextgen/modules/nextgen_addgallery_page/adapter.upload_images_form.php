@@ -66,6 +66,7 @@ class A_Upload_Images_Form extends Mixin
         $retval['flash_swf_url']        = includes_url('js/plupload/plupload.flash.swf');
         $retval['silverlight_xap_url']  = includes_url('js/plupload/plupload.silverlight.xap');
         $retval['debug']                = TRUE;
+        $retval['prevent_duplicates']   = TRUE;
 
         return $retval;
     }

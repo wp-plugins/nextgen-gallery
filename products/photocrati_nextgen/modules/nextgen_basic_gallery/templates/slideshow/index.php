@@ -84,7 +84,7 @@
     </script>
 
 <?php else: ?>
-	<!-- Display JQuery Cycle Slideshow -->
+	<?php // Display JQuery Cycle Slideshow ?>
 	<div class="ngg-slideshow-image-list ngg-slideshow-nojs" id="<?php echo_h($anchor)?>-image-list">
 		<?php
     
