@@ -2,7 +2,7 @@
 <?php if ($show_thumbnail_link): ?>
 <!-- Thumbnails Link -->
 <div class="slideshowlink">
-    <a href='<?php echo $thumbnail_link ?>'><?php echo_h($thumbnail_link_text) ?></a>
+    <a href='<?php esc_attr_e($thumbnail_link) ?>'><?php echo_h($thumbnail_link_text) ?></a>
 </div>
 <?php endif ?>
 

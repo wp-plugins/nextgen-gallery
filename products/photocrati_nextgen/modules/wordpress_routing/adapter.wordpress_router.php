@@ -112,6 +112,10 @@ class A_WordPress_Router extends Mixin
         if ($add_index)
             $retval = $this->_add_index_dot_php_to_url($retval);
 
+        // in case the user's home/site/content/plugins_url constant does not contain their domain
+        if (!parse_url($retval, PHP_URL_HOST))
+            $retval = 'http://' . $_SERVER['SERVER_NAME'] . $retval;
+
         if ($this->object->is_https())
             $retval = preg_replace('/^http:\\/\\//i', 'https://', $retval, 1);
 

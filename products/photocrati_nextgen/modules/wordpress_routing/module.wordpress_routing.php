@@ -45,7 +45,8 @@ class M_WordPress_Routing extends C_Base_Module
             $request_uri    = $_SERVER['ORIG_REQUEST_URI'];
             $_SERVER['UNENCODED_URL'] = $_SERVER['HTTP_X_ORIGINAL_URL'] = $_SERVER['REQUEST_URI'] = $request_uri;
 		}
-        else {
+        // this is the proper behavior but it causes problems with WPML
+        else if (!class_exists('SitePress')) {
             wp_old_slug_redirect();
             redirect_canonical();
         }

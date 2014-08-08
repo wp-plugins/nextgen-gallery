@@ -199,7 +199,13 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
-= V2.0.66.15 - 07.29.2014 =
+= V2.0.66.17 - 08.08.2014 =
+* NEW:	   Added french translations
+* Secured: XSS vulnerability in jQuery Plupload Queue (thanks Codevigilant Team)
+* Secured: XSS vulnerability in thumbnail/slideshow integration links
+* Secured: XSS vulnerability on Manage Albums page
+
+= V2.0.66.16 - 07.30.2014 =
 * NEW:     Added new "limit" setting to Slideshow widgets
 * NEW:     Added a "ngg_routes" action for other plugins to hook into to provide new routes
 * NEW:     Added NGG_SKIP_LOAD_SCRIPTS constant, which existed in 1.9.x
@@ -215,7 +221,7 @@ For more information, feel free to visit the official website for the NextGEN Ga
 * NEW: 	   Spanish (es_ES) language thanks to Andrew Kurtis at WebHostingHub
 * Changed: Updated Czech language thanks to Separatista; additional thanks to Martin Krizek for the original translation who was mistakenly unaccredited
 * Changed: "Upgrade to Pro" page has new design, advertises for NextGEN Plus
-* Changed: Basic Albums templates now given the image counter element the class 'ngg-album-gallery-image-counter' (by user request)
+* Changed: Basic Albums templates now given the image counter <p> element the class 'ngg-album-gallery-image-counter' (by user request)
 * Changed: Gallery widgets now apply height:auto to their element; fixes compatibility with some themes
 * Changed: Random galleries should be substantially faster now (1000% or more for large image tables)
 * Fixed:   Complete WPML compatibility
