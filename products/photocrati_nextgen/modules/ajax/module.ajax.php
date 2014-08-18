@@ -21,11 +21,16 @@ class M_Ajax extends C_Base_Module
 		);
 
 		include_once('class.ajax_option_handler.php');
-		C_NextGen_Settings::add_option_handler('C_Ajax_Option_Handler', array(
+		C_NextGen_Settings::get_instance()->add_option_handler('C_Ajax_Option_Handler', array(
 			'ajax_slug',
 			'ajax_url',
 			'ajax_js_url'
 		));
+        if (is_multisite()) C_NextGen_Global_Settings::get_instance()->add_option_handler('C_Ajax_Option_Handler', array(
+            'ajax_slug',
+            'ajax_url',
+            'ajax_js_url'
+        ));
 
 		include_once('class.ajax_installer.php');
 		C_Photocrati_Installer::add_handler($this->module_id, 'C_Ajax_Installer');

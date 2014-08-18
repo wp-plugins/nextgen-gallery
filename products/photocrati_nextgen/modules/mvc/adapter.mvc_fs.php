@@ -26,7 +26,18 @@ class A_MVC_Fs extends Mixin
 
 		// Get the relative path, if asked. Skip when docroot=/ lest we generate url like
         // wp-contentpluginsnextgen-galleryproducts..
-		if ($relative) $path = str_replace($fs->get_document_root('plugins'), '', $path);
+		if ($relative) {
+            $original_length = strlen($path);
+            $roots = array('plugins', 'plugins_mu', 'templates', 'stylesheets');
+            $found_root = FALSE;
+            foreach ($roots as $root) {
+                $path = str_replace($this->object->get_document_root($root), '', $path);
+                if (strlen($path) != $original_length) {
+                    $found_root = $root;
+                    break;
+                }
+            }
+        }
 
 		return $path;
 	}

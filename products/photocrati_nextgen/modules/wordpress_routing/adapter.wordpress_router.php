@@ -71,50 +71,71 @@ class A_WordPress_Router extends Mixin
 
     function get_base_url($site_url = FALSE)
     {
-        $retval    = NULL;
-        $add_index = TRUE;
+        $retval             = NULL;
+        $add_index_dot_php  = TRUE;
 
-        if ($site_url === TRUE || $site_url === 'site')
-        {
-            $retval = site_url();
-        }
-        else if ($site_url === FALSE || $site_url === 'home') {
-            $retval = home_url();
-        }
-        else if ($site_url === 'plugins') {
-            $retval = plugins_url();
-            $add_index = FALSE;
-        }
-        else if ($site_url === 'content') {
-            $retval = content_url();
-            $add_index = FALSE;
-        }
-        else if ($site_url === 'root') {
-            $retval = get_option('home');
-            if (is_ssl())
-                $scheme = 'https';
-            else
-                $scheme = parse_url($retval, PHP_URL_SCHEME);
-            $retval = set_url_scheme($retval, $scheme);
-        }
-        else if ($site_url === 'gallery') {
-            $add_index = FALSE;
-            $root_type = defined('NGG_GALLERY_ROOT_TYPE') ? NGG_GALLERY_ROOT_TYPE : 'site';
-            if ($root_type === 'content')
+        switch ($site_url) {
+            case $site_url === TRUE:
+            case 'site':
+                $retval = site_url();
+                break;
+            case $site_url === FALSE:
+            case 'home':
+                $retval = home_url();
+                break;
+            case 'plugins':
+            case 'plugin':
+                $retval = plugins_url();
+                $add_index_dot_php = FALSE;
+                break;
+            case 'plugins_mu':
+            case 'plugin_mu':
+                $retval = WPMU_PLUGIN_URL;
+                $retval = set_url_scheme($retval);
+                $retval = apply_filters( 'plugins_url', $retval, '', '');
+                $add_index_dot_php = FALSE;
+                break;
+            case 'templates':
+            case 'template':
+            case 'themes':
+            case 'theme':
+                $retval = get_template_directory_uri();
+                $add_index_dot_php = FALSE;
+                break;
+            case 'styles':
+            case 'style':
+            case 'stylesheets':
+            case 'stylesheet':
+                $retval = get_stylesheet_directory_uri();
+                $add_index_dot_php = FALSE;
+                break;
+            case 'content':
                 $retval = content_url();
-            else
+                $add_index_dot_php = FALSE;
+                break;
+            case 'root':
+                $retval = get_option('home');
+                if (is_ssl())
+                    $scheme = 'https';
+                else
+                    $scheme = parse_url($retval, PHP_URL_SCHEME);
+                $retval = set_url_scheme($retval, $scheme);
+                break;
+            case 'gallery':
+            case 'galleries':
+                $root_type = defined('NGG_GALLERY_ROOT_TYPE') ? NGG_GALLERY_ROOT_TYPE : 'site';
+                $add_index_dot_php = FALSE;
+                if ($root_type === 'content')
+                    $retval = content_url();
+                else
+                    $retval = site_url();
+                break;
+            default:
                 $retval = site_url();
         }
-        else {
-            $retval = home_url();
-        }
 
-        if ($add_index)
+        if ($add_index_dot_php)
             $retval = $this->_add_index_dot_php_to_url($retval);
-
-        // in case the user's home/site/content/plugins_url constant does not contain their domain
-        if (!parse_url($retval, PHP_URL_HOST))
-            $retval = 'http://' . $_SERVER['SERVER_NAME'] . $retval;
 
         if ($this->object->is_https())
             $retval = preg_replace('/^http:\\/\\//i', 'https://', $retval, 1);

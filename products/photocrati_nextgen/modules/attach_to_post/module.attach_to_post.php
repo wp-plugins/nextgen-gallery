@@ -31,11 +31,16 @@ class M_Attach_To_Post extends C_Base_Module
 		);
 
 		include_once('class.attach_to_post_option_handler.php');
-		C_NextGen_Settings::add_option_handler('C_Attach_To_Post_Option_Handler', array(
+		C_NextGen_Settings::get_instance()->add_option_handler('C_Attach_To_Post_Option_Handler', array(
 			'attach_to_post_url',
 			'gallery_preview_url',
 			'attach_to_post_display_tab_js_url'
 		));
+        if (is_multisite()) C_NextGen_Global_Settings::get_instance()->add_option_handler('C_Attach_To_Post_Option_Handler', array(
+            'attach_to_post_url',
+            'gallery_preview_url',
+            'attach_to_post_display_tab_js_url'
+        ));
 
 		include_once('class.attach_to_post_installer.php');
 		C_Photocrati_Installer::add_handler($this->module_id, 'C_Attach_To_Post_Installer');
