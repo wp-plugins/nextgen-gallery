@@ -199,6 +199,9 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.66.27 - 08.18.2014 =
+* Fixed:   Missing class.frame_communication_option_handerl.php error
+
 = V2.0.66.26 - 08.18.2014 =
 * NEW:     Added fault tolerance to bulk action AJAX requests
 * Changed: Moved some settings from DB to in-memory
