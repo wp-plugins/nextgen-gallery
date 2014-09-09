@@ -2,7 +2,7 @@
 Contributors: photocrati
 Tags:gallery,image,images,photo,photos,picture,pictures,slideshow,flash,media,thumbnails,photo-albums,nextgen-gallery,nextgen
 Requires at least: 3.6.1
-Tested up to: 3.9.1
+Tested up to: 4.0
 Stable tag: trunk
 License: GPLv2
 
