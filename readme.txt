@@ -1,6 +1,6 @@
 === NextGEN Gallery ===
 Contributors: photocrati
-Tags:gallery,image,images,photo,photos,picture,pictures,slideshow,flash,media,thumbnails,photo-albums,nextgen-gallery,nextgen
+Tags: nextgen, nextgen gallery, gallery, galleries, image, images, image gallery, photo, photos, photo gallery, picture, pictures, picture gallery, album, albums, photo albums, image album, media, media gallery, thumbnails, thumbnail gallery, thumbnail galleries, slideshow, slideshows, slideshow gallery, slideshow galleries, fancybox, lightbox, responsive, responsive gallery, responsive galleries, wordpress responsive gallery, nextcellent, wordpress gallery plugin, wordpress photo gallery plugin, wp gallery, wp gallery plugins, best gallery plugin, free photo gallery, singlepic, image captions imagebrowser, watermarks, watermarking, photography, photographer
 Requires at least: 3.6.1
 Tested up to: 4.0
 Stable tag: trunk
