@@ -199,6 +199,13 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
+= V2.0.66.33 - 11.24.2014 =
+* Fixed:   Broken NextGEN Pro ecommerce-related shortcodes
+* Fixed:   Spanish PO file
+
+= V2.0.66.31 - 11.21.2014 =
+* Fixed:   Broken shortcodes with WordPress 4.0.1
+
 = V2.0.66.29 - 09.17.2014 =
 * NEW:     Added skip_excluding_globally_excluded_images property to displayed gallery objects
 * Fixed:   SQL generation for random image selection
