@@ -33,7 +33,8 @@ class C_Photocrati_Resource_Manager
      */
     function print_marker()
     {
-        print $this->marker;
+        // is_feed() is important to not break Wordpress feeds and the WooCommerce api
+        if ($this->valid_request && !is_feed()) print $this->marker;
     }
 
 	/**
@@ -42,25 +43,33 @@ class C_Photocrati_Resource_Manager
 	 */
 	function validate_request()
 	{
-		$retval = TRUE;
-
-		if (is_admin()) {
-			if (isset($_REQUEST['page']) && !preg_match("#^(ngg|nextgen)#", $_REQUEST['page'])) $retval = FALSE;
-		}
-
-		if (strpos($_SERVER['REQUEST_URI'], 'wp-admin/update') !== FALSE) $retval = FALSE;
-		else if (isset($_GET['display_gallery_iframe'])) 				  $retval = FALSE;
-        else if (defined('WP_ADMIN') && WP_ADMIN && defined('DOING_AJAX') && DOING_AJAX) $retval = FALSE;
-		else if (preg_match("/(js|css|xsl|xml|kml)$/", $_SERVER['REQUEST_URI'])) $retval = FALSE;
-        else if (preg_match("#/feed(/?)$#i", $_SERVER['REQUEST_URI']) || !empty($_GET['feed'])) $retval = FALSE;
-		elseif (preg_match("/\\.(\\w{3,4})$/", $_SERVER['REQUEST_URI'], $match)) {
-			if (!in_array($match[1], array('htm', 'html', 'php'))) {
-				$retval = FALSE;
-			}
-		}
-
-		$this->valid_request = $retval;
+		$this->valid_request = $this->is_valid_request();
 	}
+
+    function is_valid_request()
+    {
+        $retval = TRUE;
+
+        if (is_admin()) {
+            if (isset($_REQUEST['page']) && !preg_match("#^(ngg|nextgen)#", $_REQUEST['page'])) $retval = FALSE;
+        }
+
+        if (preg_match("#wp-admin/update|wp-login|wp-signup#", $_SERVER['REQUEST_URI'])) $retval = FALSE;
+        else if (isset($_GET['display_gallery_iframe'])) 				  $retval = FALSE;
+        else if (defined('WP_ADMIN') && WP_ADMIN && defined('DOING_AJAX') && DOING_AJAX) $retval = FALSE;
+        else if (preg_match("/(js|css|xsl|xml|kml)$/", $_SERVER['REQUEST_URI'])) $retval = FALSE;
+        else if (preg_match("#/feed(/?)$#i", $_SERVER['REQUEST_URI']) || !empty($_GET['feed'])) $retval = FALSE;
+        elseif (preg_match("/\\.(\\w{3,4})$/", $_SERVER['REQUEST_URI'], $match)) {
+            if (!in_array($match[1], array('htm', 'html', 'php'))) {
+                $retval = FALSE;
+            }
+        }
+	    elseif ((isset($_SERVER['PATH_INFO']) && strpos($_SERVER['PATH_INFO'], 'nextgen-pro-lightbox-gallery') !== FALSE) OR strpos($_SERVER['REQUEST_URI'], 'nextgen-pro-lightbox-gallery') !== FALSE) {
+		    $retval = FALSE;
+	    }
+
+        return $retval;
+    }
 
 	/**
 	 * Start the output buffers
@@ -127,6 +136,7 @@ class C_Photocrati_Resource_Manager
 	function move_resources()
 	{
 		if ($this->valid_request) {
+
 			// Move stylesheets to head
 			if ($this->styles) {
 				$this->buffer = str_ireplace('</head>', $this->styles.'</head>', $this->buffer);
@@ -172,15 +182,16 @@ class C_Photocrati_Resource_Manager
 			// The output_buffer() function has been called in the PHP shutdown callback
 			// This will allow us to print the scripts ourselves and manipulate the buffer
 			if ($in_shutdown === TRUE) {
-				ob_start();
-				if (!did_action('wp_footer')) {
-					wp_footer();
+				if ($this->valid_request) {
+					ob_start();
+					if (!did_action('wp_footer')) {
+						wp_footer();
+					}
+					else {
+						wp_print_footer_scripts();
+					}
+					$this->other_output = ob_get_clean();
 				}
-				else {
-					wp_print_footer_scripts();
-				}
-				$this->other_output = ob_get_clean();
-
 			}
 
 			// W3TC isn't activated and we're not in the shutdown callback.

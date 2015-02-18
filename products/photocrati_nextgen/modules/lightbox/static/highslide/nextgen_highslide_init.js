@@ -1,19 +1,19 @@
 // Apply default settings
 var galleryOptions = {
-	  align: 'center',
-	  dimmingOpacity: 0.8,
-	  fadeInOut: true,
-	  marginBottom: 80,
-	  marginLeft: 100,
-	  numberPosition: 'caption',
-	  slideshowGroup: 'gallery',
-	  transitions: ['expand', 'crossfade'],
-	  wrapperClassName: 'dark borderless floating-caption',
-	  graphicsDir: nextgen_highslide_graphics_dir + '/'
+    align: 'center',
+    dimmingOpacity: 0.8,
+    fadeInOut: true,
+    marginBottom: 80,
+    marginLeft: 100,
+    numberPosition: 'caption',
+    slideshowGroup: 'gallery',
+    transitions: ['expand', 'crossfade'],
+    wrapperClassName: 'dark borderless floating-caption',
+    graphicsDir: nextgen_highslide_graphics_dir + '/'
 };
 
-if (typeof ngg_lightbox_i18n != 'undefined') {
-    hs.lang = ngg_lightbox_i18n;
+if (typeof nextgen_highslide_i18n != 'undefined') {
+    hs.lang = nextgen_highslide_i18n;
 }
 hs.align            = galleryOptions['align'];
 hs.dimmingOpacity   = galleryOptions['dimmingOpacity'];
@@ -27,22 +27,22 @@ hs.graphicsDir      = galleryOptions['graphicsDir'];
 hs.wrapperClassName = galleryOptions['wrapperClassName'];
 
 jQuery(function($) {
-	var selector = nextgen_lightbox_filter_selector($, $([]));
-	selector.addClass('highslide');
-	selector.click(function () { return hs.expand(this) });
-	
-	hs.updateAnchors();
-	
-	// Enable slideshows
-	hs.addSlideshow({
-		  fixedControls: true,
-		  interval: 5000,
-		  overlayOptions: {
-		      hideOnMouseOut: true,
-		      opacity: .6,
-		      position: 'top center'
-		  },
-		  repeat: true,
-		  useControls: true
-	});
+    var selector = nextgen_lightbox_filter_selector($, $([]));
+    selector.addClass('highslide');
+    selector.click(function () { return hs.expand(this) });
+
+    hs.updateAnchors();
+
+    // Enable slideshows
+    hs.addSlideshow({
+        fixedControls: true,
+        interval: 5000,
+        overlayOptions: {
+            hideOnMouseOut: true,
+            opacity: .6,
+            position: 'top center'
+        },
+        repeat: true,
+        useControls: true
+    });
 });
