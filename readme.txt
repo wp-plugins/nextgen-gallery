@@ -224,7 +224,7 @@ For more information, feel free to visit the official website for the NextGEN Ga
 * Fixed:   Compatibility issue with PHP's transparent ZLIB compression
 * Fixed:   Imagebrowser as lightbox effect not working when non-default permalink slug used
 * Fixed:   Angled quotations marks used in shortcode parameters
-* Fixed:   Compatbility between ImageBrowser display type and TwentyFifteen theme
+* Fixed:   Compatibility between ImageBrowser display type and TwentyFifteen theme
 * Fixed:   Allow pagination to retain query string url parameters when linking to other pages
 * Fixed:   Fixed pagination issues with slideshow galleries displayed as thumbnails
 * Fixed:   Fix C_GalleryStorage_Driver_Base->import_gallery_from_fs() not checking imgBackup
