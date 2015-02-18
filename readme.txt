@@ -199,7 +199,7 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 == Changelog ==
 
-= V2.0.68 - 02.18.2015 =
+= V2.0.69 - 02.18.2015 =
 * NEW:     Module files are compiled into a single package file to reduce disk I/O
 * NEW:     All CSS stylesheets and Javascript source files are minified to reduce latency
 * NEW:     All lightboxes are configured using an in-memory management class.
