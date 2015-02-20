@@ -47,7 +47,8 @@ class M_Lightbox extends C_Base_Module
     function get_type_list()
     {
         return array(
-            'C_Lightbox_Library_Manager'    =>  'class.lightbox_library_manager.php',
+            'C_Lightbox_Installer'       => 'class.lightbox_legacy_installer.php',
+            'C_Lightbox_Library_Manager' => 'class.lightbox_library_manager.php'
         );
     }
 }

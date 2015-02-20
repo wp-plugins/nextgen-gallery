@@ -1,4 +1,32 @@
 <?php
+class C_Lightbox_Installer_Mapper
+{
+    public function find_by_name()
+    {
+        return NULL;
+    }
+}
+class C_Lightbox_Installer
+{
+    public function __construct()
+    {
+        $this->mapper = new C_Lightbox_Installer_Mapper();
+    }
+    public function install_lightbox($name, $title, $code, $stylesheet_paths = array(), $script_paths = array(), $values = array(), $i18n = array())
+    {
+        $lightbox = new stdClass();
+        $lightbox->name = $name;
+        $lightbox->title = $title;
+        $lightbox->code = $code;
+        $lightbox->values = $values;
+        $lightbox->i18n = $i18n;
+        $lightbox->styles = implode('
+', $stylesheet_paths);
+        $lightbox->scripts = implode('
+', $script_paths);
+        C_Lightbox_Library_Manager::get_instance()->register($name, $lightbox);
+    }
+}
 class C_Lightbox_Library_Manager
 {
     private $_lightboxes = array();
@@ -24,14 +52,6 @@ class C_Lightbox_Library_Manager
         $none = new stdClass();
         $none->title = __('None', 'nggallery');
         $this->register('none', $none);
-        // Add JQuery Lightbox
-        $lightbox = new stdClass();
-        $lightbox->title = __('jQuery Lightbox', 'nggallery');
-        $lightbox->code = 'class="ngg_lightbox"';
-        $lightbox->styles = array('photocrati-lightbox#jquery.lightbox/jquery.lightbox.css');
-        $lightbox->scripts = array('photocrati-lightbox#jquery.lightbox/jquery.lightbox.min.js', 'photocrati-lightbox#jquery.lightbox/nextgen_lightbox_init.js');
-        $lightbox->values = array('nextgen_lightbox_loading_img_url' => $router->get_static_url('photocrati-lightbox#jquery.lightbox/lightbox-ico-loading.gif'), 'nextgen_lightbox_close_btn_url' => $router->get_static_url('photocrati-lightbox#jquery.lightbox/lightbox-btn-close.gif'), 'nextgen_lightbox_btn_prev_url' => $router->get_static_url('photocrati-lightbox#jquery.lightbox/lightbox-btn-prev.gif'), 'nextgen_lightbox_btn_next_url' => $router->get_static_url('photocrati-lightbox#jquery.lightbox/lightbox-btn-next.gif'), 'nextgen_lightbox_blank_img_url' => $router->get_static_url('photocrati-lightbox#jquery.lightbox/lightbox-blank.gif'));
-        $this->register('lightbox', $lightbox);
         // Add Fancybox
         $fancybox = new stdClass();
         $fancybox->title = __('Fancybox', 'nggallery');
@@ -39,14 +59,6 @@ class C_Lightbox_Library_Manager
         $fancybox->styles = array('photocrati-lightbox#fancybox/jquery.fancybox-1.3.4.css');
         $fancybox->scripts = array('photocrati-lightbox#fancybox/jquery.easing-1.3.pack.js', 'photocrati-lightbox#fancybox/jquery.fancybox-1.3.4.pack.js', 'photocrati-lightbox#fancybox/nextgen_fancybox_init.js');
         $this->register('fancybox', $fancybox);
-        // Add Highslide
-        $highslide = new stdClass();
-        $highslide->title = __('Highslide', 'nggallery');
-        $highslide->code = 'class="highslide" onclick="return hs.expand(this, {slideshowGroup: ' . '\'%GALLERY_NAME%\'' . '});"';
-        $highslide->styles = array('photocrati-lightbox#highslide/highslide.css');
-        $highslide->scripts = array('photocrati-lightbox#highslide/highslide-full.js', 'photocrati-lightbox#highslide/nextgen_highslide_init.js');
-        $highslide->values = array('nextgen_highslide_graphics_dir' => $router->get_static_url('photocrati-lightbox#highslide/graphics'), 'nextgen_highslide_i18n' => array('cssDirection' => __('ltr', 'nggallery'), 'loadingText' => __('Loading...', 'nggallery'), 'previousText' => __('Previous', 'nggallery'), 'nextText' => __('Next', 'nggallery'), 'moveText' => __('Move', 'nggallery'), 'closeText' => __('Close', 'nggallery'), 'resizeTitle' => __('Resize', 'nggallery'), 'playText' => __('Play', 'nggallery'), 'pauseText' => __('Pause', 'nggallery'), 'moveTitle' => __('Move', 'nggallery'), 'fullExpandText' => __('1:1', 'nggallery'), 'closeTitle' => __('Close (esc)', 'nggallery'), 'pauseTitle' => __('Pause slideshow (spacebar)', 'nggallery'), 'loadingTitle' => __('Click to cancel', 'nggallery'), 'focusTitle' => __('Click to bring to front', 'nggallery'), 'fullExpandTitle' => __('Expand to actual size (f)', 'nggallery'), 'creditsText' => __('Powered by Highslide JS', 'nggallery'), 'playTitle' => __('Play slideshow (spacebar)', 'nggallery'), 'previousTitle' => __('Previous (arrow left)', 'nggallery'), 'nextTitle' => __('Next (arrow right)', 'nggallery'), 'number' => __('Image %1 of %2', 'nggallery'), 'creditsTitle' => __('Go to the Highslide JS homepage', 'nggallery'), 'restoreTitle' => __('Click to close image, click and drag to move. Use arrow keys for next and previous.', 'nggallery')));
-        $this->register('highslide', $highslide);
         // Add Shutter
         $shutter = new stdClass();
         $shutter->title = __('Shutter', 'nggallery');
@@ -126,9 +138,19 @@ class C_Lightbox_Library_Manager
         }
         return $retval;
     }
+    /**
+     * Returns which lightbox effect has been chosen
+     *
+     * Highslide and jQuery.Lightbox were removed in 2.0.73 due to licensing. If a user has selected
+     * either of those options we silently make their selection fallback to Fancybox
+     * @return null|string
+     */
     public function get_selected()
     {
         $settings = C_NextGen_Settings::get_instance();
+        if (in_array($settings->thumbEffect, array('highslide', 'lightbox'))) {
+            $settings->thumbEffect = 'fancybox';
+        }
         return $this->get($settings->thumbEffect);
     }
     public function get_selected_context()
