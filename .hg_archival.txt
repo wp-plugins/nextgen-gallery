@@ -1,0 +1,5 @@
+repo: 2b82bc45fbe039c6f4c9f0c667e9cd1ee4d84cbb
+node: e9143584179bac0443e95f490a7f32b131ac859b
+branch: no-input-file-fix
+latesttag: 2.0.72
+latesttagdistance: 1
