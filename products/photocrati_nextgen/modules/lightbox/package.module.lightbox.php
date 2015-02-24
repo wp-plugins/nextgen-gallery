@@ -201,7 +201,9 @@ class C_Lightbox_Library_Manager
                 if (strpos($src, 'wordpress#') === 0) {
                     wp_enqueue_style(@array_pop(explode('wordpress#', $src)));
                 } else {
-                    wp_enqueue_style($lightbox->name . "-{$i}", $this->_handle_url($src));
+                    if (!empty($src)) {
+                        wp_enqueue_style($lightbox->name . "-{$i}", $this->_handle_url($src));
+                    }
                 }
             }
             // Enqueue scripts
@@ -212,7 +214,9 @@ class C_Lightbox_Library_Manager
                     $handle = @array_pop(explode('wordpress#', $src));
                     wp_enqueue_script($handle);
                 } else {
-                    wp_enqueue_script($handle, $this->_handle_url($src), array('ngg_lightbox_context'), NULL, TRUE);
+                    if (!empty($src)) {
+                        wp_enqueue_script($handle, $this->_handle_url($src), array('ngg_lightbox_context'), NULL, TRUE);
+                    }
                 }
                 if ($i == 0 and isset($lightbox->values)) {
                     foreach ($lightbox->values as $name => $value) {

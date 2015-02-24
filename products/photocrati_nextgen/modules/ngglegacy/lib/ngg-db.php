@@ -130,10 +130,8 @@ class nggdb
 	    if ($limit && $start) $image_mapper->limit($limit, $start);
 	    elseif ($limit) $image_mapper->limit($limit);
 
-	    $storage = C_Gallery_Storage::get_instance();
-
-        foreach ($image_mapper->run_query() as $image) {
-			$image->thumbURL = $storage->get_thumb_url($image);
+        foreach ($image_mapper->run_query() as $dbimage) {
+            $image = new C_Image_Wrapper($dbimage);
 	        $retval[] = $image;
         }
 

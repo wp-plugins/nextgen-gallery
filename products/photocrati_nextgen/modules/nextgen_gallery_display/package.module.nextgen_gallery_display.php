@@ -797,7 +797,7 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
             }
         }
         // Adjust the query more based on what source was selected
-        if ($this->object->source == 'recent_images') {
+        if (in_array($this->object->source, array('recent', 'recent_images'))) {
             $sort_direction = 'DESC';
             $sort_by = 'imagedate';
         } elseif ($this->object->source == 'random_images' && empty($this->object->entity_ids)) {
@@ -1031,7 +1031,7 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
         $max = intval(C_NextGen_Settings::get_instance()->get('maximum_entity_count', 500));
         $sources = C_Displayed_Gallery_Source_Manager::get_instance();
         $source_obj = $this->object->get_source();
-        if ($source_obj === $sources->get('random') || $source_obj == $sources->get('recent')) {
+        if (in_array($source_obj, array($sources->get('random'), $sources->get('random_images'), $sources->get('recent'), $sources->get('recent_images')))) {
             $max = intval($this->object->maximum_entity_count);
         }
         return $max;

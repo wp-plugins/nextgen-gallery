@@ -1,6 +1,16 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V2.0.76 - 02.24.2015 =
+* Fixed:   Compatibility checks for very old versions of NextGEN Pro
+* Fixed:   Zero-byte downloads in WooCommerce and WPE-Commerce
+* Fixed:   Invalid URL being enqueued if a custom lightbox is selected with no URL provided
+* Fixed:   Restored a method to nggAdmin to fix compatibility with NextGen Public Uploader
+* Fixed:   Bug preventing source='recent' from displaying images in the correct order
+* Fixed:   Include more quotation symbols in our shortcode manager (foreign language shortcodes)
+* Fixed:   WPML/ATP compatibility issue
+* Fixed:   $nggdb->get_gallery() returning a different result than before
+
 = V2.0.74 - 02.20.2015 =
 * Changed: Removed jQuery Lightbox and Highslide due to incompatible licensing with GPL
 

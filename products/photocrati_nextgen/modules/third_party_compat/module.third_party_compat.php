@@ -109,6 +109,8 @@ class M_Third_Party_Compat extends C_Base_Module
         add_filter('get_the_excerpt', array(&$this, 'enable_galleries_in_excerpts'), PHP_INT_MAX-1);
 	    add_action('debug_bar_enqueue_scripts', array(&$this, 'no_debug_bar'));
         add_filter('ngg_non_minified_modules', array($this, 'dont_minify_nextgen_pro_cssjs'));
+        add_filter('run_ngg_resource_manager', array(&$this, 'check_woocommerce_download'));
+        add_filter('run_ngg_resource_manager', array(&$this, 'check_wpecommerce_download'));
 
         // WPML fix
         if (class_exists('SitePress')) {
@@ -119,6 +121,34 @@ class M_Third_Party_Compat extends C_Base_Module
 
         // TODO: Only needed for NGG Pro 1.0.10 and lower
         add_action('the_post', array(&$this, 'add_ngg_pro_page_parameter'));
+    }
+
+    /**
+     * Determine if the requested URL is a WooCommerce download and adjust the resource manager
+     *
+     * Our resource manager's output buffers conflict with Woo's use of output buffers to handle chunked reading of
+     * large files in WC_Download_Handler::readfile_chunked()
+     * @param bool $valid_request
+     * @return bool
+     */
+    function check_woocommerce_download($valid_request = TRUE)
+    {
+        if (class_exists('WC_Download_Handler') && isset($_GET['download_file']) && isset($_GET['order']) && isset($_GET['email']))
+            $valid_request = FALSE;
+        return $valid_request;
+    }
+
+    /**
+     * Determine if the requested URL is a WPE-Commerce download and adjust the resource manager
+     *
+     * @param bool $valid_request
+     * @return bool
+     */
+    function check_wpecommerce_download($valid_request = TRUE)
+    {
+        if (function_exists('wpsc_download_file') && isset($_GET['downloadid']))
+            $valid_request = FALSE;
+        return $valid_request;
     }
 
     function no_debug_bar()
@@ -224,7 +254,7 @@ class M_Third_Party_Compat extends C_Base_Module
         if (!class_exists('SitePress'))
             return;
 
-        if (FALSE === strpos(strtolower($_SERVER['REQUEST_URI']), '/nextgen-attach_to_post'))
+        if (!M_Attach_To_Post::is_atp_url())
             return;
 
         global $wp_filter;
@@ -253,7 +283,7 @@ class M_Third_Party_Compat extends C_Base_Module
         if (!class_exists('WPML_Translation_Management'))
             return;
 
-        if (FALSE === strpos(strtolower($_SERVER['REQUEST_URI']), '/nextgen-attach_to_post'))
+        if (!M_Attach_To_Post::is_atp_url())
             return;
 
         global $wp_filter;

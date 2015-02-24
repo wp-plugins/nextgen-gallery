@@ -799,6 +799,24 @@ class nggAdmin{
 
         return $output;
     }
+
+    /**
+     * Deprecated function, restored to fix compatibility with "NextGen Public Uploader"
+     *
+     * @deprecated
+     * @class nggAdmin
+     * @param string $filename
+     * @return bool $result
+     */
+    function chmod($filename = '')
+    {
+        $stat = @stat(dirname($filename));
+        $perms = $stat['mode'] & 0000666;
+        if (@chmod($filename, $perms))
+            return true;
+        return false;
+    }
+
 } // END class nggAdmin
 
 // XXX temporary...used as a quick fix to refresh I_Settings_Manager when the nextgen option is updated manually in order to run Hooks etc.
