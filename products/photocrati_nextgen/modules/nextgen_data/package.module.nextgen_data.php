@@ -646,6 +646,18 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
         $retval = FALSE;
         if ($image_path = $this->object->get_image_abspath($image)) {
             $retval = copy($image_path, $this->object->get_backup_abspath($image));
+            // Store the dimensions of the image
+            if (function_exists('getimagesize')) {
+                $mapper = C_Image_Mapper::get_instance();
+                if (!is_object($image)) {
+                    $image = $mapper->find($image);
+                }
+                if ($image) {
+                    $dimensions = getimagesize($retval);
+                    $image->meta_data['backup'] = array('filename' => basename($retval), 'width' => $dimensions[0], 'height' => $dimensions[1], 'generated' => microtime());
+                    $mapper->save($image);
+                }
+            }
         }
         return $retval;
     }
@@ -701,11 +713,19 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
      */
     public function get_backup_abspath($image)
     {
-        $retval = NULL;
+        $retval = null;
         if ($image_path = $this->object->get_image_abspath($image)) {
             $retval = $image_path . '_backup';
         }
         return $retval;
+    }
+    public function get_backup_dimensions($image)
+    {
+        return $this->object->get_image_dimensions($image, 'backup');
+    }
+    public function get_backup_url($image)
+    {
+        return $this->object->get_image_url($image, 'backup');
     }
     /**
      * Returns the absolute path to the cache directory of a gallery.
@@ -1839,6 +1859,25 @@ class Mixin_Gallery_Image_Mapper extends Mixin
         }
         return $retval;
     }
+    public function reimport_metadata($image_or_id)
+    {
+        // Get the image
+        $image = NULL;
+        if (is_int($image_or_id)) {
+            $image = $this->object->find($image_or_id);
+        } else {
+            $image = $image_or_id;
+        }
+        // Reset all image details that would have normally been imported
+        $image->alttext = '';
+        $image->description = '';
+        if (is_array($image->meta_data)) {
+            unset($image->meta_data['saved']);
+        }
+        wp_delete_object_term_relationships($image->{$image->id_field}, 'ngg_tag');
+        nggAdmin::import_MetaData($image);
+        return $this->object->save($image);
+    }
     /**
      * Retrieves the id from an image
      * @param $image
@@ -2046,7 +2085,7 @@ class C_Image_Wrapper
                     $gallery_map = $this->get_gallery($this->__get('galleryid'));
                     $gallery = $gallery_map->find($this->__get('galleryid'));
                 }
-                $this->_cache['gid'] = $gallery->name;
+                $this->_cache['gid'] = $gallery->{$gallery->id_field};
                 return $this->_cache['gid'];
             case 'href':
                 return $this->__get('imageHTML');
@@ -2183,7 +2222,11 @@ class C_Image_Wrapper
                 $this->_cache['thumbnailURL'] = $storage->get_image_url($this->_orig_image, $thumbnail_size_name);
                 return $this->_cache['thumbnailURL'];
             case 'thumbcode':
-                $this->_cache['thumbcode'] = isset($this->_orig_image->thumbcode) ? $this->_orig_image->thumbcode : $this->get_thumbcode($this->__get('name'));
+                if ($this->_displayed_gallery && isset($this->_displayed_gallery->display_settings) && isset($this->_displayed_gallery->display_settings['use_imagebrowser_effect']) && $this->_displayed_gallery->display_settings['use_imagebrowser_effect'] && !empty($this->_orig_image->thumbcode)) {
+                    $this->_cache['thumbcode'] = $this->_orig_image->thumbcode;
+                } else {
+                    $this->_cache['thumbcode'] = $this->get_thumbcode($this->__get('name'));
+                }
                 return $this->_cache['thumbcode'];
             case 'thumbURL':
                 return $this->__get('thumbnailURL');
@@ -2482,23 +2525,27 @@ class C_NextGen_Metadata extends C_Component
         return FALSE;
     }
     /**
-     * Return a parsed meta-data attribute of an object
+     * return the saved meta data from the database
      *
-     * @param stdClass $object (optional)
-     * @return array|mixed Returns either the complete array or the single object
+     * @since 1.4.0
+     * @param string $object (optional)
+     * @return array|mixed return either the complete array or the single object
      */
-    public function get_saved_meta($object = FALSE)
+    public function get_saved_meta($object = false)
     {
         $meta = $this->image->meta_data;
-        // check if we already import the meta data to the database
-        if (!is_array($meta) || !isset($meta['saved']) or $meta['saved'] != TRUE) {
-            return FALSE;
+        if (!isset($meta['saved'])) {
+            $meta['saved'] = FALSE;
+        }
+        //check if we already import the meta data to the database
+        if (!is_array($meta) || $meta['saved'] != true) {
+            return false;
         }
         // return one element if requested
         if ($object) {
             return $meta[$object];
         }
-        // remove saved parameter we don't need that to show
+        //removed saved parameter we don't need that to show
         unset($meta['saved']);
         // and remove empty tags or arrays
         foreach ($meta as $key => $value) {
@@ -2507,22 +2554,21 @@ class C_NextGen_Metadata extends C_Component
             }
         }
         // on request sanitize the output
-        if (TRUE == $this->sanitize) {
+        if ($this->sanitize == true) {
             array_walk($meta, create_function('&$value', '$value = esc_html($value);'));
         }
         return $meta;
     }
     /**
-     * Parses exif data into an array
-     * 
-     * @param stdClass $object 
-     * @see http://trac.wordpress.org/changeset/6313
-     * @return array structured EXIF data
+     * nggMeta::get_EXIF()
+     * See also http://trac.wordpress.org/changeset/6313
+     *
+     * @return structured EXIF data
      */
-    public function get_EXIF($object = FALSE)
+    public function get_EXIF($object = false)
     {
         if (!$this->exif_data) {
-            return FALSE;
+            return false;
         }
         if (!is_array($this->exif_array)) {
             $meta = array();
@@ -2539,6 +2585,10 @@ class C_NextGen_Metadata extends C_Component
                 } else {
                     if (!empty($exif['DateTimeOriginal'])) {
                         $meta['created_timestamp'] = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $this->exif_date2ts($exif['DateTimeOriginal']));
+                    } else {
+                        if (!empty($exif['FileDateTime'])) {
+                            $meta['created_timestamp'] = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $this->exif_date2ts($exif['FileDateTime']));
+                        }
                     }
                 }
                 if (!empty($exif['FocalLength'])) {
@@ -2595,22 +2645,17 @@ class C_NextGen_Metadata extends C_Component
             $this->exif_array = $meta;
         }
         // return one element if requested
-        if ($object == TRUE) {
-            $value = isset($this->exif_array[$object]) ? $this->exif_array[$object] : FALSE;
+        if ($object == true) {
+            $value = isset($this->exif_array[$object]) ? $this->exif_array[$object] : false;
             return $value;
         }
         // on request sanitize the output
-        if ($this->sanitize == TRUE) {
+        if ($this->sanitize == true) {
             array_walk($this->exif_array, create_function('&$value', '$value = esc_html($value);'));
         }
         return $this->exif_array;
     }
-    /**
-     * Convert a fraction string to a decimal
-     * 
-     * @param string $str
-     * @return string 
-     */
+    // convert a fraction string to a decimal
     public function exif_frac2dec($str)
     {
         @(list($n, $d) = explode('/', $str));
@@ -2619,31 +2664,27 @@ class C_NextGen_Metadata extends C_Component
         }
         return $str;
     }
-    /**
-     * Convert EXIF date format to a unix timestamp
-     * 
-     * @param $str
-     * @return int
-     */
+    // convert the exif date format to a unix timestamp
     public function exif_date2ts($str)
     {
+        // seriously, who formats a date like 'YYYY:MM:DD hh:mm:ss'?
         @(list($date, $time) = explode(' ', trim($str)));
         @(list($y, $m, $d) = explode(':', $date));
         return strtotime("{$y}-{$m}-{$d} {$time}");
     }
     /**
-     * Parses IPTC Data Information for EXIF Display
+     * nggMeta::readIPTC() - IPTC Data Information for EXIF Display
      *
      * @param mixed $output_tag
-     * @return array IPTC tags
+     * @return IPTC-tags
      */
-    public function get_IPTC($object = FALSE)
+    public function get_IPTC($object = false)
     {
         if (!$this->iptc_data) {
-            return FALSE;
+            return false;
         }
         if (!is_array($this->iptc_array)) {
-            // Set up array functions
+            // --------- Set up Array Functions --------- //
             $iptcTags = array('2#005' => 'title', '2#007' => 'status', '2#012' => 'subject', '2#015' => 'category', '2#025' => 'keywords', '2#055' => 'created_date', '2#060' => 'created_time', '2#080' => 'author', '2#085' => 'position', '2#090' => 'city', '2#092' => 'location', '2#095' => 'state', '2#100' => 'country_code', '2#101' => 'country', '2#105' => 'headline', '2#110' => 'credit', '2#115' => 'source', '2#116' => 'copyright', '2#118' => 'contact', '2#120' => 'caption');
             $meta = array();
             foreach ($iptcTags as $key => $value) {
@@ -2658,45 +2699,49 @@ class C_NextGen_Metadata extends C_Component
             return isset($this->iptc_array[$object]) ? $this->iptc_array[$object] : NULL;
         }
         // on request sanitize the output
-        if ($this->sanitize == TRUE) {
+        if ($this->sanitize == true) {
             array_walk($this->iptc_array, create_function('&$value', '$value = esc_html($value);'));
         }
         return $this->iptc_array;
     }
     /**
-     * Extracts XMP DATA
-     * 
-     * Code by Pekka Saarinen: http://photography-on-the.net
+     * nggMeta::extract_XMP()
+     * get XMP DATA
+     * code by Pekka Saarinen http://photography-on-the.net
+     *
      * @param mixed $filename
      * @return XML data
      */
     public function extract_XMP($filename)
     {
-        // TODO: Requires a lot of memory; this could be done better
+        //TODO:Require a lot of memory, could be better
         ob_start();
         @readfile($filename);
         $source = ob_get_contents();
         ob_end_clean();
         $start = strpos($source, '<x:xmpmeta');
         $end = strpos($source, '</x:xmpmeta>');
-        if (!$start === FALSE && !$end === FALSE) {
-            $length = $end - $start;
-            $xmp_data = substr($source, $start, $length + 12);
+        if (!$start === false && !$end === false) {
+            $lenght = $end - $start;
+            $xmp_data = substr($source, $start, $lenght + 12);
             unset($source);
             return $xmp_data;
         }
         unset($source);
-        return FALSE;
+        return false;
     }
     /**
-     * @see http://php.net/manual/en/function.xml-parse-into-struct.php
+     * nggMeta::get_XMP()
+     *
+     * @package Taken from http://php.net/manual/en/function.xml-parse-into-struct.php
      * @author Alf Marius Foss Olsen & Alex Rabe
      * @return XML Array or object
+     *
      */
-    public function get_XMP($object = FALSE)
+    public function get_XMP($object = false)
     {
         if (!$this->xmp_data) {
-            return FALSE;
+            return false;
         }
         if (!is_array($this->xmp_array)) {
             $parser = xml_parser_create();
@@ -2714,33 +2759,33 @@ class C_NextGen_Metadata extends C_Component
             // tmp array used for stacking
             $list_array = array();
             // tmp array for list elements
-            $list_element = FALSE;
+            $list_element = false;
             // rdf:li indicator
             foreach ($values as $val) {
                 if ($val['type'] == 'open') {
                     array_push($stack, $val['tag']);
                 } elseif ($val['type'] == 'close') {
                     // reset the compared stack
-                    if ($list_element == FALSE) {
+                    if ($list_element == false) {
                         array_pop($stack);
                     }
                     // reset the rdf:li indicator & array
-                    $list_element = FALSE;
+                    $list_element = false;
                     $list_array = array();
                 } elseif ($val['type'] == 'complete') {
                     if ($val['tag'] == 'rdf:li') {
                         // first go one element back
-                        if ($list_element == FALSE) {
+                        if ($list_element == false) {
                             array_pop($stack);
                         }
-                        $list_element = TRUE;
+                        $list_element = true;
                         // do not parse empty tags
                         if (empty($val['value'])) {
                             continue;
                         }
                         // save it in our temp array
                         $list_array[] = $val['value'];
-                        // in the case it's a list element we serialize it
+                        // in the case it's a list element we seralize it
                         $value = implode(',', $list_array);
                         $this->setArrayValue($xmlarray, $stack, $value);
                     } else {
@@ -2753,15 +2798,17 @@ class C_NextGen_Metadata extends C_Component
                     }
                 }
             }
+            // foreach
             // don't parse a empty array
             if (empty($xmlarray) || empty($xmlarray['x:xmpmeta'])) {
-                return FALSE;
+                return false;
             }
             // cut off the useless tags
             $xmlarray = $xmlarray['x:xmpmeta']['rdf:RDF']['rdf:Description'];
-            // Some values from the XMP format
+            // --------- Some values from the XMP format--------- //
             $xmpTags = array('xap:CreateDate' => 'created_timestamp', 'xap:ModifyDate' => 'last_modfied', 'xap:CreatorTool' => 'tool', 'dc:format' => 'format', 'dc:title' => 'title', 'dc:creator' => 'author', 'dc:subject' => 'keywords', 'dc:description' => 'caption', 'photoshop:AuthorsPosition' => 'position', 'photoshop:City' => 'city', 'photoshop:Country' => 'country');
             foreach ($xmpTags as $key => $value) {
+                // if the kex exist
                 if (isset($xmlarray[$key])) {
                     switch ($key) {
                         case 'xap:CreateDate':
@@ -2775,11 +2822,11 @@ class C_NextGen_Metadata extends C_Component
             }
         }
         // return one element if requested
-        if ($object != FALSE) {
-            return isset($this->xmp_array[$object]) ? $this->xmp_array[$object] : FALSE;
+        if ($object != false) {
+            return isset($this->xmp_array[$object]) ? $this->xmp_array[$object] : false;
         }
         // on request sanitize the output
-        if ($this->sanitize == TRUE) {
+        if ($this->sanitize == true) {
             array_walk($this->xmp_array, create_function('&$value', '$value = esc_html($value);'));
         }
         return $this->xmp_array;
@@ -2795,12 +2842,12 @@ class C_NextGen_Metadata extends C_Component
         }
     }
     /**
-     * Return meta values from the available list
+     * nggMeta::get_META() - return a meta value form the available list
      *
      * @param string $object
      * @return mixed $value
      */
-    public function get_META($object = FALSE)
+    public function get_META($object = false)
     {
         // defined order first look into database, then XMP, IPTC and EXIF.
         if ($value = $this->get_saved_meta($object)) {
@@ -2815,11 +2862,11 @@ class C_NextGen_Metadata extends C_Component
         if ($value = $this->get_EXIF($object)) {
             return $value;
         }
-        // nothing found
-        return FALSE;
+        // nothing found ?
+        return false;
     }
     /**
-     * nggMeta::i18n_name() -  localize the tag name
+     * nggMeta::i8n_name() -  localize the tag name
      *
      * @param mixed $key
      * @return translated $key
@@ -2833,32 +2880,38 @@ class C_NextGen_Metadata extends C_Component
         return $key;
     }
     /**
-     * Return the Timestamp from the image. If possible it's read from exif data.
-     *
-     * @return
+     * Return the Timestamp from the image , if possible it's read from exif data
+     * @return int
      */
     public function get_date_time()
     {
-        // get exif - data
-        if (isset($this->exif_data['EXIF'])) {
-            // try to read the date / time from the exif
-            if (empty($this->exif_data['EXIF']['DateTimeDigitized'])) {
-                $date_time = $this->exif_data['EXIF']['DateTimeOriginal'];
-            } else {
-                $date_time = $this->exif_data['EXIF']['DateTimeDigitized'];
-            }
-            // if we didn't get the correct exif value we take filetime
-            if ($date_time == NULL) {
-                $date_time = $this->exif_data['FILE']['FileDateTime'];
-            } else {
-                $date_time = $this->exif_date2ts($date_time);
-            }
+        $date = time();
+        // Try XMP first
+        if (isset($this->xmp_array['created_timestamp'])) {
+            $date = @strtotime($this->xmp_array['created_timestamp']);
         } else {
-            // if no other date available, get the filetime
-            $date_time = @filectime($this->file_path);
+            if (isset($this->exif_array['created_timestamp'])) {
+                $date = @strtotime($this->exif_array['created_timestamp']);
+            } else {
+                if (isset($this->iptc_array['created_date'])) {
+                    $date = $this->iptc_array['created_date'];
+                    if (isset($this->iptc_array['created_time'])) {
+                        $date .= " {$this->iptc_array['created_time']}";
+                    }
+                    $date = @strtotime($date);
+                } else {
+                    if ($this->image->imagePath) {
+                        $date = @filectime($this->image->imagePath);
+                    }
+                }
+            }
+        }
+        // Failback
+        if (!$date) {
+            $date = time();
         }
         // Return the MySQL format
-        $date_time = date('Y-m-d H:i:s', $date_time);
+        $date_time = date('Y-m-d H:i:s', $date);
         return $date_time;
     }
     /**
@@ -2870,11 +2923,12 @@ class C_NextGen_Metadata extends C_Component
      */
     public function get_common_meta()
     {
+        global $wpdb;
         $meta = array('aperture' => 0, 'credit' => '', 'camera' => '', 'caption' => '', 'created_timestamp' => 0, 'copyright' => '', 'focal_length' => 0, 'iso' => 0, 'shutter_speed' => 0, 'flash' => 0, 'title' => '', 'keywords' => '');
         $meta = apply_filters('ngg_read_image_metadata', $meta);
         // meta should be still an array
         if (!is_array($meta)) {
-            return FALSE;
+            return false;
         }
         foreach ($meta as $key => $value) {
             $meta[$key] = $this->get_META($key);
@@ -2891,7 +2945,7 @@ class C_NextGen_Metadata extends C_Component
      */
     public function sanitize()
     {
-        $this->sanitize = TRUE;
+        $this->sanitize = true;
     }
 }
 class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
@@ -2998,7 +3052,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
                         break;
                     case 'backup':
                         $retval = $fs->join_paths($gallery_path, $image->filename . '_backup');
-                        if (!@file_exists($retval)) {
+                        if ($check_existance && !file_exists($retval)) {
                             $retval = $fs->join_paths($gallery_path, $image->filename);
                         }
                         break;
@@ -3023,14 +3077,15 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
                         } else {
                             $image_path = $fs->join_paths($image_path, "{$prefix}_{$image->filename}");
                         }
-                        // Should we check whether the image actually exists?
-                        if ($check_existance && @file_exists($image_path)) {
-                            $retval = $image_path;
-                        } elseif (!$check_existance) {
-                            $retval = $image_path;
-                        }
+                        $retval = $image_path;
                         break;
                 }
+            }
+        }
+        // Check the existance of the file
+        if ($retval && $check_existance) {
+            if (!file_exists($retval)) {
+                $retval = NULL;
             }
         }
         return $retval ? rtrim($retval, '/\\') : $retval;
@@ -3067,7 +3122,7 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
             $request_uri = '/' . ltrim(str_replace('\\', '/', $request_uri), '/');
             $retval = $router->remove_url_segment('/index.php', $router->get_url($request_uri, FALSE, 'gallery'));
         }
-        return $retval;
+        return apply_filters('ngg_get_image_url', $retval, $image, $size);
     }
     /**
      * Uploads an image for a particular gallerys
@@ -3516,32 +3571,28 @@ class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
      */
     public function recover_image($image)
     {
+        $retval = FALSE;
         if (is_numeric($image)) {
             $image = $this->object->_image_mapper->find($image);
         }
-        if (isset($image->meta_data)) {
-            $orig_metadata = $image->meta_data;
+        if ($image) {
+            $full_abspath = $this->object->get_image_abspath($image);
+            $backup_abspath = $this->object->get_image_abspath($image, 'backup');
+            if ($backup_abspath != $full_abspath && file_exists($backup_abspath)) {
+                if (is_writable($full_abspath) && is_writable(dirname($full_abspath))) {
+                    // Copy the backup
+                    if (@copy($backup_abspath, $full_abspath)) {
+                        // Re-create all image sizes
+                        foreach ($this->object->get_image_sizes($image) as $named_size) {
+                            $this->object->generate_image_clone($backup_abspath, $this->object->get_image_abspath($image, $named_size), $this->object->get_image_size_params($image, $named_size));
+                        }
+                        // Reimport all metadata
+                        $retval = $this->object->_image_mapper->reimport_metadata($image);
+                    }
+                }
+            }
         }
-        $path = C_Gallery_Storage::get_instance()->get_image_abspath($image);
-        if (!is_object($image)) {
-            return __('Could not find image', 'nggallery');
-        }
-        if (!is_writable($path) && !is_writable(dirname($path))) {
-            return ' <strong>' . esc_html($image->filename) . __(' is not writeable', 'nggallery') . '</strong>';
-        }
-        if (!@file_exists($path . '_backup')) {
-            return ' <strong>' . __('Backup file does not exist', 'nggallery') . '</strong>';
-        }
-        if (!@copy($path . '_backup', $path)) {
-            return ' <strong>' . __('Could not restore original image', 'nggallery') . '</strong>';
-        }
-        if (isset($orig_metadata)) {
-            $NextGen_Metadata = new C_NextGen_Metadata($image);
-            $new_metadata = $NextGen_Metadata->get_common_meta();
-            $image->meta_data = array_merge((array) $orig_metadata, (array) $new_metadata);
-            $this->object->_image_mapper->save($image);
-        }
-        return '1';
+        return $retval;
     }
 }
 class C_NggLegacy_GalleryStorage_Driver extends C_GalleryStorage_Driver_Base
@@ -4429,7 +4480,17 @@ class C_NggLegacy_Thumbnail
             imagecopy($tempimage, $this->oldImage, 0, 0, 0, 0, $sourcefile_width, $sourcefile_height);
             $this->newImage = $tempimage;
         }
-        imagecopy($this->newImage, $this->workingImage, $dest_x, $dest_y, 0, 0, $watermarkfile_width, $watermarkfile_height);
+        $this->imagecopymerge_alpha($this->newImage, $this->workingImage, $dest_x, $dest_y, 0, 0, $watermarkfile_width, $watermarkfile_height, 100);
+    }
+    /**
+     * Wrapper to imagecopymerge() that allows PNG transparency
+     */
+    public function imagecopymerge_alpha($destination_image, $source_image, $destination_x, $destination_y, $source_x, $source_y, $source_w, $source_h, $pct)
+    {
+        $cut = imagecreatetruecolor($source_w, $source_h);
+        imagecopy($cut, $destination_image, 0, 0, $destination_x, $destination_y, $source_w, $source_h);
+        imagecopy($cut, $source_image, 0, 0, $source_x, $source_y, $source_w, $source_h);
+        imagecopymerge($destination_image, $cut, $destination_x, $destination_y, 0, 0, $source_w, $source_h, $pct);
     }
     /**
      * Modfied imagecopyresampled function to save transparent images
@@ -4516,7 +4577,7 @@ class Mixin_WordPress_GalleryStorage_Driver extends Mixin
                 $retval = $parts['url'];
             }
         }
-        return $retval;
+        return apply_filters('ngg_get_image_url', $retval, $image, $size);
     }
 }
 class C_WordPress_GalleryStorage_Driver extends C_GalleryStorage_Driver_Base

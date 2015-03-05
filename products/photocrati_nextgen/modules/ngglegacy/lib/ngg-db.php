@@ -105,6 +105,74 @@ class nggdb
 	}
 
     /**
+     * Finds all albums
+     *
+     * @deprecated
+     * @param string $order_by
+     * @param string $order_dir
+     * @param int $limit number of albums, 0 shows all albums
+     * @param int $start the start index for paged albums
+     * @return array $album
+     */
+    function find_all_album($order_by = 'id', $order_dir = 'ASC', $limit = '0', $start = '0')
+    {
+        $mapper = C_Album_Mapper::get_instance();
+        $mapper->select();
+        $mapper->where_and(array());
+        $mapper->order_by($order_by, $order_dir);
+        if ($limit > 0)
+            $mapper->limit($limit, $start);
+        return $mapper->run_query();
+    }
+
+    /**
+     * Search for a filename
+     *
+     * @deprecated
+     * @param string $filename
+     * @param int (optional) $galleryID
+     * @return Array Result of the request
+     */
+    function search_for_file($filename, $galleryID = false)
+    {
+        $retval = array();
+        $mapper = C_Image_Mapper::get_instance();
+        $mapper->select();
+        $mapper->where_and(array('filename = %s', $filename));
+        if ($galleryID)
+            $mapper->where_and(array('galleryid = %d', $galleryID));
+        foreach ($mapper->run_query() as $dbimage) {
+            $image = new C_Image_Wrapper($dbimage);
+            $retval[] = $image;
+        }
+        return $retval;
+    }
+
+    /**
+     * Get random images from one or more gallery
+     *
+     * @deprecated
+     * @param integer $number of images
+     * @param integer $galleryID optional a Gallery
+     * @return A nggImage object representing the image (null if not found)
+     */
+    function get_random_images($number = 1, $gallery_id = 0)
+    {
+        $mapper = C_Image_Mapper::get_instance();
+        $mapper->select();
+        $mapper->where_and(array('exclude != 1'));
+        if ($gallery_id !== 0)
+            $mapper->where_and(array('galleryid = %d', $gallery_id));
+        $mapper->order_by('rand()');
+        $mapper->limit($number, 0);
+        foreach ($mapper->run_query() as $dbimage) {
+            $image = new C_Image_Wrapper($dbimage);
+            $retval[] = $image;
+        }
+        return $retval;
+    }
+
+    /**
      * This function return all information about the gallery and the images inside
      *
      * @deprecated
@@ -122,7 +190,10 @@ class nggdb
 	    $retval = array();
 
 		$image_mapper = C_Image_Mapper::get_instance();
-	    $image_mapper->select()->where(array("galleryid = %d", $id));
+        if (is_numeric($id))
+            $image_mapper->select()->where(array("galleryid = %d", $id));
+        else
+            $image_mapper->select()->where(array("slug = %s", $id));
 	    $image_mapper->order_by($order_by, $order_dir);
 
 	    if ($exclude) $image_mapper->where(array('exclude != %d', 1));

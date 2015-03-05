@@ -52,10 +52,10 @@ function ngg_ajax_operation() {
 				$result = nggAdmin::set_watermark($picture);
 			break;
 			case 'recover_image' :
-				$result = nggAdmin::recover_image($picture);
+				$result = nggAdmin::recover_image($id) ? '1': '0';
 			break;
 			case 'import_metadata' :
-				$result = nggAdmin::import_MetaData( $id );
+				$result = C_Image_Mapper::get_instance()->reimport_metadata($id) ? '1' : '0';
 			break;
 			case 'get_image_ids' :
 				$result = nggAdmin::get_image_ids( $id );

@@ -123,7 +123,7 @@ class A_NextGen_Basic_ImageBrowser_Controller extends Mixin
             $picture->number = $picture_list_pos;
             $picture->total = $total;
             $picture->anchor = $anchor;
-            return $this->object->legacy_render($display_settings['template'], array('image' => $picture, 'meta' => $meta, 'exif' => $meta_results['exif'], 'iptc' => $meta_results['iptc'], 'xmp' => $meta_results['xmp'], 'db' => $meta_results['db']), TRUE, 'imagebrowser');
+            return $this->object->legacy_render($display_settings['template'], array('image' => $picture, 'meta' => $meta, 'exif' => $meta_results['exif'], 'iptc' => $meta_results['iptc'], 'xmp' => $meta_results['xmp'], 'db' => $meta_results['db'], 'displayed_gallery' => $displayed_gallery), TRUE, 'imagebrowser');
         } else {
             $params = $display_settings;
             $params['anchor'] = $anchor;

@@ -270,7 +270,12 @@ class nggManageAlbum {
 			foreach ($albums as $subalbum) $retval += $this->get_available_preview_images($subalbum);
 		}
 		else {
-			$retval = C_Image_Mapper::get_instance()->find_all();
+            // enforce a reasonable limit on how many images to offer
+            $retval = C_Image_Mapper::get_instance()
+                ->select()
+                ->where_and(array())
+                ->limit(intval(C_NextGen_Settings::get_instance()->get('maximum_entity_count', 500)))
+                ->run_query();
 		}
 
 		return $retval;

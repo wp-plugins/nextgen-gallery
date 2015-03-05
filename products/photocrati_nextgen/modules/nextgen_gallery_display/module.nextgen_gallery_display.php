@@ -122,7 +122,28 @@ class M_Gallery_Display extends C_Base_Module
         add_action('before_delete_post', array(&$this, 'locate_stale_displayed_galleries'));
         add_action('post_updated',	array(&$this, 'cleanup_displayed_galleries'));
         add_action('after_delete_post', array(&$this, 'cleanup_displayed_galleries'));
+
+        add_action('wp_print_styles', array($this, 'fix_nextgen_custom_css_order'), PHP_INT_MAX-1);
 	}
+
+    /**
+     * This moves the NextGen custom CSS to the last of the queue
+     */
+    function fix_nextgen_custom_css_order()
+    {
+        global $wp_styles;
+        if (in_array('nggallery', $wp_styles->queue))
+        {
+            foreach ($wp_styles->queue as $ndx => $style) {
+                if ($style == 'nggallery')
+                {
+                    unset($wp_styles->queue[$ndx]);
+                    $wp_styles->queue[] = 'nggallery';
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      * Locates the ids of displayed galleries that have been

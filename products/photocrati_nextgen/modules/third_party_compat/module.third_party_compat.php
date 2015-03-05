@@ -452,29 +452,13 @@ class M_Third_Party_Compat extends C_Base_Module
      */
     function dont_minify_nextgen_pro_cssjs($modules_to_not_minify)
     {
-        $modules_to_not_minify += array(
-            'photocrati-galleria',
-            'photocrati-comments',
-            'photocrati-nextgen_pro_slideshow',
-            'photocrati-nextgen_pro_horizontal_filmstrip',
-            'photocrati-nextgen_pro_thumbnail_grid',
-            'photocrati-nextgen_pro_blog_gallery',
-            'photocrati-nextgen_pro_film',
-            'photocrati-nextgen_pro_masonry',
-            'photocrati-nextgen_pro_albums',
-            'photocrati-auto_update',
-            'photocrati-auto_update-admin',
-            'photocrati-nextgen_pro_lightbox',
-            'photocrati-nextgen_pro_lightbox_legacy',
-            'photocrati-nextgen_pro_ecommerce',
-            'photocrati-paypal_express_checkout',
-            'photocrati-paypal_standard',
-            'photocrati-stripe',
-            'photocrati-test_gateway',
-            'photocrati-cheque',
-            'photocrati-image_protection',
-            'photocrati-nextgen_pro_proofing'
-        );
+        if (defined('NGG_PRO_PLUGIN_VERSION')) {
+            $modules_to_not_minify += P_Photocrati_NextGen_Pro::$modules;
+        }
+        else if (defined('NGG_PLUS_PLUGIN_VERSION')) {
+            $modules_to_not_minify += P_Photocrati_NextGen_Plus::$modules;
+        }
+
         return $modules_to_not_minify;
     }
 

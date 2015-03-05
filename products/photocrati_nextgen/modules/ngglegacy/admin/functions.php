@@ -373,34 +373,7 @@ class nggAdmin{
 
     static function recover_image($image) {
 
-        global $ngg;
-
-        if ( is_numeric($image) )
-            $image = nggdb::find_image( $image );
-
-        if ( !is_object( $image ) )
-            return __('Object didn\'t contain correct data','nggallery');
-
-        if (!is_writable( $image->imagePath ))
-            return ' <strong>' . esc_html( $image->filename ) . __(' is not writeable','nggallery') . '</strong>';
-
-        if (!file_exists( $image->imagePath . '_backup' )) {
-            return ' <strong>'.__('File do not exists','nggallery').'</strong>';
-        }
-
-        if (!@copy( $image->imagePath . '_backup' , $image->imagePath) )
-            return ' <strong>'.__('Couldn\'t restore original image','nggallery').'</strong>';
-
-        require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
-
-        $meta_obj = new nggMeta( $image->pid );
-
-        $common = $meta_obj->get_common_meta();
-        $common['saved']  = true;
-        $result = nggdb::update_image_meta($image->pid, $common);
-
-        return '1';
-
+        return C_Gallery_Storage::get_instance()->recover_image($image);
     }
 
     /**
@@ -489,10 +462,16 @@ class nggAdmin{
 
         foreach($imagesIds as $imageID) {
 
-            $image = nggdb::find_image( $imageID );
-            if (!$image->error) {
+	        // Get the image
+	        $image = NULL;
+	        if (is_int($imageID)) {
+		        $image = C_Image_Mapper::get_instance()->find($imageID);
+	        }
+	        else $image = $imageID;
 
-                $meta = nggAdmin::get_MetaData( $image->pid );
+            if ($image) {
+
+                $meta = nggAdmin::get_MetaData( $image);
 
                 // get the title
                 $alttext = empty( $meta['title'] ) ? $image->alttext : $meta['title'];
@@ -502,6 +481,7 @@ class nggAdmin{
 
                 // get the file date/time from exif
                 $timestamp = $meta['timestamp'];
+
                 // first update database
                 $result = $wpdb->query(
                     $wpdb->prepare("UPDATE $wpdb->nggpictures SET
@@ -541,13 +521,13 @@ class nggAdmin{
      * @param int $id image ID
      * @return array metadata
      */
-    static function get_MetaData($id) {
+    static function get_MetaData($image_or_id) {
 
         require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
 
         $meta = array();
 
-        $pdata = new nggMeta( $id );
+        $pdata = new nggMeta($image_or_id);
 
         $meta['title'] = trim ( $pdata->get_META('title') );
         $meta['caption'] = trim ( $pdata->get_META('caption') );
@@ -570,11 +550,11 @@ class nggAdmin{
      * @param int $id
      * @return result
      */
-    function maybe_import_meta( $id ) {
+    function maybe_import_meta( $image_or_id ) {
 
         require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
-
-        $meta_obj = new nggMeta( $id );
+		$id = is_int($image_or_id) ? $image_or_id : $image_or_id->{$image_or_id->id_field};
+        $meta_obj = new nggMeta( $image_or_id );
 
         if ( $meta_obj->image->meta_data['saved'] != true ) {
             $common = $meta_obj->get_common_meta();
