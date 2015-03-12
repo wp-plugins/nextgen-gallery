@@ -2051,12 +2051,7 @@ class C_Image_Wrapper
                 $this->_cache['alttext'] = empty($this->_cache['alttext']) ? ' ' : html_entity_decode(stripslashes($this->_cache['alttext']));
                 return $this->_cache['alttext'];
             case 'author':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['author'] = $gallery->name;
                 return $this->_cache['author'];
             case 'caption':
@@ -2070,21 +2065,11 @@ class C_Image_Wrapper
                 $this->_cache['description'] = empty($this->_cache['description']) ? ' ' : html_entity_decode(stripslashes($this->_cache['description']));
                 return $this->_cache['description'];
             case 'galdesc':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['galdesc'] = $gallery->name;
                 return $this->_cache['galdesc'];
             case 'gid':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['gid'] = $gallery->{$gallery->id_field};
                 return $this->_cache['gid'];
             case 'href':
@@ -2108,30 +2093,15 @@ class C_Image_Wrapper
                 $this->_cache['linktitle'] = htmlspecialchars(stripslashes($this->__get('description')));
                 return $this->_cache['linktitle'];
             case 'name':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['name'] = $gallery->name;
                 return $this->_cache['name'];
             case 'pageid':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['pageid'] = $gallery->name;
                 return $this->_cache['pageid'];
             case 'path':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['path'] = $gallery->name;
                 return $this->_cache['path'];
             case 'permalink':
@@ -2148,12 +2118,7 @@ class C_Image_Wrapper
                 $this->_cache['pidlink'] = $controller->set_param_for($application->get_routed_url(TRUE), 'pid', $this->__get('image_slug'));
                 return $this->_cache['pidlink'];
             case 'previewpic':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['previewpic'] = $gallery->name;
                 return $this->_cache['previewpic'];
             case 'size':
@@ -2179,12 +2144,7 @@ class C_Image_Wrapper
                 }
                 return "width='{$w}' height='{$h}'";
             case 'slug':
-                if ($this->_legacy) {
-                    $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
-                } else {
-                    $gallery_map = $this->get_gallery($this->__get('galleryid'));
-                    $gallery = $gallery_map->find($this->__get('galleryid'));
-                }
+                $gallery = $this->get_legacy_gallery($this->__get('galleryid'));
                 $this->_cache['slug'] = $gallery->name;
                 return $this->_cache['slug'];
             case 'tags':
@@ -2282,8 +2242,7 @@ class C_Image_Wrapper
         if (isset($this->container) && method_exists($this->container, 'get_gallery')) {
             return $this->container->get_gallery($gallery_id);
         }
-        $gallery_map = C_Gallery_Mapper::get_instance();
-        return $gallery_map->find($gallery_id);
+        return C_Gallery_Mapper::get_instance()->find($gallery_id);
     }
     /**
      * Retrieves I_Gallery_Mapper instance.

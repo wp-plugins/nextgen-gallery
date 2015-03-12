@@ -196,7 +196,6 @@ class nggAdminPanel{
 
     // show the network page
     function show_network_settings() {
-		include_once ( dirname (__FILE__) . '/style.php' );
 		include_once ( dirname (__FILE__) . '/wpmu.php' );
 		nggallery_wpmu_setup();
     }

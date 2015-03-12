@@ -1,6 +1,13 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V2.0.77.3 - 03.12.2015 =
+* Secured: Upload images and importing galleries from folders
+* Fixed:   When importing galleries from folders, allow symlinks
+* Fixed:   Use of C_Gallery_Mapper in C_Image_Wrapper
+* Fixed:   Properly handle themes that don't call wp_footer() or wp_print_footer_scripts()
+* Fixed:   Warning about missing style.php file on Network Admin -> Gallery page
+
 = V2.0.77 - 03.05.2015 =
 * NEW:     Added "ngg_get_image_url" filter
 * Changed: Use a more reliable means of excluding Pro/Plus modules from using minified static resources

@@ -14,7 +14,7 @@ class A_Import_Folder_Form extends Mixin
     }
     public function render()
     {
-        return $this->object->render_partial('photocrati-nextgen_addgallery_page#import_folder', array(), TRUE);
+        return $this->object->render_partial('photocrati-nextgen_addgallery_page#import_folder', array('browse_sec_token' => C_WordPress_Security_Manager::get_instance()->get_request_token('nextgen_upload_image'), 'import_sec_token' => C_WordPress_Security_Manager::get_instance()->get_request_token('nextgen_upload_image')), TRUE);
     }
 }
 class A_NextGen_AddGallery_Ajax extends Mixin
@@ -36,7 +36,7 @@ class A_NextGen_AddGallery_Ajax extends Mixin
         $gallery_name = urldecode($this->param('gallery_name'));
         $gallery_mapper = C_Gallery_Mapper::get_instance();
         $error = FALSE;
-        if ($this->validate_ajax_request('nextgen_upload_image')) {
+        if ($this->validate_ajax_request('nextgen_upload_image', TRUE)) {
             // We need to create a gallery
             if ($gallery_id == 0) {
                 if (strlen($gallery_name) > 0) {
@@ -107,13 +107,12 @@ class A_NextGen_AddGallery_Ajax extends Mixin
     {
         $retval = array();
         $html = array();
-        if ($this->validate_ajax_request('nextgen_upload_image')) {
+        if ($this->validate_ajax_request('nextgen_upload_image', TRUE)) {
             if ($dir = urldecode($this->param('dir'))) {
                 $fs = C_Fs::get_instance();
                 $root = $this->get_import_root_abspath();
-                $browse_path = $fs->join_paths($root, $dir);
-                $import_path = @realpath($browse_path);
-                if (strpos($import_path, $root) === 0) {
+                if ($dir != '.' && $dir != '..') {
+                    $browse_path = $fs->join_paths($root, $dir);
                     if (@file_exists($browse_path)) {
                         $files = scandir($browse_path);
                         natcasesort($files);
@@ -148,16 +147,15 @@ class A_NextGen_AddGallery_Ajax extends Mixin
     public function import_folder_action()
     {
         $retval = array();
-        if ($this->validate_ajax_request('nextgen_upload_image')) {
+        if ($this->validate_ajax_request('nextgen_upload_image', TRUE)) {
             if ($folder = $this->param('folder')) {
                 $storage = C_Gallery_Storage::get_instance();
                 $fs = C_Fs::get_instance();
                 try {
                     $keep_files = $this->param('keep_location') == 'on';
                     $root = $this->get_import_root_abspath();
-                    $import_path = $fs->join_paths($root, $folder);
-                    $import_path = @realpath($import_path);
-                    if (strpos($import_path, $root) === 0) {
+                    if ($folder != '.' && $folder != '..') {
+                        $import_path = $fs->join_paths($root, $folder);
                         $retval = $storage->import_gallery_from_fs($import_path, FALSE, !$keep_files);
                         if (!$retval) {
                             $retval = array('error' => 'Could not import folder. No images found.');
@@ -254,7 +252,7 @@ class A_Upload_Images_Form extends Mixin
     }
     public function render()
     {
-        return $this->object->render_partial('photocrati-nextgen_addgallery_page#upload_images', array('plupload_options' => json_encode($this->object->get_plupload_options()), 'galleries' => $this->object->get_galleries()), TRUE);
+        return $this->object->render_partial('photocrati-nextgen_addgallery_page#upload_images', array('plupload_options' => json_encode($this->object->get_plupload_options()), 'galleries' => $this->object->get_galleries(), 'sec_token' => C_WordPress_Security_Manager::get_instance()->get_request_token('nextgen_upload_image')), TRUE);
     }
     public function get_plupload_options()
     {
