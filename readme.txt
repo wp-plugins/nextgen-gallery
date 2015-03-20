@@ -3,7 +3,7 @@ Contributors: photocrati
 Tags: nextgen, nextgen gallery, gallery, galleries, image, images, image gallery, photo, photos, photo gallery, picture, pictures, picture gallery, album, albums, photo albums, image album, media, media gallery, thumbnails, thumbnail gallery, thumbnail galleries, slideshow, slideshows, slideshow gallery, slideshow galleries, fancybox, lightbox, responsive, responsive gallery, responsive galleries, wordpress responsive gallery, nextcellent, wordpress gallery plugin, wordpress photo gallery plugin, wp gallery, wp gallery plugins, best gallery plugin, free photo gallery, singlepic, image captions imagebrowser, watermarks, watermarking, photography, photographer
 Requires at least: 3.6.1
 Tested up to: 4.1.1
-Stable tag: 2.0.77.3
+Stable tag: 2.0.79
 License: GPLv2
 
 The most popular WordPress gallery plugin and one of the most popular plugins of all time with over 12 million downloads.
@@ -198,6 +198,9 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 
 == Changelog ==
+
+= V2.0.79 - 03.20.2015 =
+* Secured: Usage of find_in_set() mysql function
 
 = V2.0.77.3 - 03.12.2015 =
 * Secured: Upload images and importing galleries from folders

@@ -1,6 +1,9 @@
 NextGEN Gallery
 by Photocrati Media
 
+= V2.0.79 - 03.20.2015 =
+* Secured: Usage of find_in_set() mysql function
+
 = V2.0.77.3 - 03.12.2015 =
 * Secured: Upload images and importing galleries from folders
 * Fixed:   When importing galleries from folders, allow symlinks
