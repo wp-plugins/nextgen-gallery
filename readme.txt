@@ -216,6 +216,7 @@ For more information, feel free to visit the official website for the NextGEN Ga
 * Changed: Removed link to capsman plugin in Roles accordion
 * Changed: Taxnomies now use internationalized strings
 * Changed: Image date/time meta data fields are stored as UNIX timestamps
+* Secured: Uploading zips
 * Fixed:   Various PHP warnings and notices
 * Fixed:   Compatibility fixes for WPML
 * Fixed:   Ensure that backup image functionality fails gracefully

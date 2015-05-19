@@ -960,7 +960,7 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
             if (isset($file_info['type'])) {
                 $type = strtolower($file_info['type']);
                 $valid_types = array('image/gif', 'image/jpg', 'image/jpeg', 'image/pjpeg', 'image/png');
-                $valid_regex = '/\\.(jpg|jpeg|gif|png)$/';
+                $valid_regex = '/\\.(jpg|jpeg|gif|png)$/i';
                 // Is this a valid type?
                 if (in_array($type, $valid_types)) {
                     // If we can, we'll verify the mime type
@@ -1236,7 +1236,7 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
                 if ($gallery_id) {
                     $retval = array('gallery_id' => $gallery_id, 'image_ids' => array());
                     foreach ($files as $file) {
-                        if (!preg_match('/\\.(jpg|jpeg|gif|png)/i', $file)) {
+                        if (!preg_match('/\\.(jpg|jpeg|gif|png)$/i', $file)) {
                             continue;
                         }
                         $file_abspath = $fs->join_paths($abspath, $file);

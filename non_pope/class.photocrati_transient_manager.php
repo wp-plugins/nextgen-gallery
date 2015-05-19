@@ -81,7 +81,7 @@ class C_Photocrati_Transient_Manager
 			$params = implode('', $params);
 		}
 
-		return $this->get_group_id($group).'__'.crc32($params);
+		return $this->get_group_id($group).'__'.str_replace('-', '_', crc32($params));
 	}
 
 	function get($key, $default=NULL, $lookup=NULL)
