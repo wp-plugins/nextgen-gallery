@@ -1,7 +1,7 @@
 NextGEN Gallery
 by Photocrati Media
 
-= V2.1.2 - 07.15.2015 =
+= V2.1.2 - 07.20.2015 =
 * NEW:     Ability to import from Media Library
 * NEW:     Added filter 'ngg_datamapper_table_name'
 * NEW:     Added filter `ngg_legacy_template_directories` for legacy template locator (thanks Ross McKay)
