@@ -56,11 +56,14 @@ class Mixin_Cache extends Mixin
      */
     public function flush_galleries($galleries = array())
     {
+        global $wpdb;
         if (empty($galleries)) {
             $galleries = C_Gallery_Mapper::get_instance()->find_all();
         }
         foreach ($galleries as $gallery) {
             C_Gallery_Storage::get_instance()->flush_cache($gallery);
         }
+        // Remove images still in the DB whose gallery no longer exists
+        $wpdb->query("DELETE FROM `{$wpdb->nggpictures}` WHERE `galleryid` NOT IN (SELECT `gid` FROM `{$wpdb->nggallery}`)");
     }
 }
